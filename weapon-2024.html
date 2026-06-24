@@ -438,7 +438,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   </button>
 
   <div class="row2" style="margin-top:13px;">
-    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Цена</div><input class="si" type="text" id="fc" placeholder="15" maxlength="7"/></div>
+    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Цена</div><input class="si" type="text" id="fc" placeholder="15" maxlength="7" inputmode="decimal"/></div>
     <div class="sf"><div class="lbl" style="margin:0 0 5px;">Монеты</div>
       <select class="si" id="fcoin">
         <option>мм</option><option>см</option><option>эм</option><option selected>зм</option><option>пм</option>
@@ -446,7 +446,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     </div>
   </div>
   <div class="row2" style="margin-top:7px;">
-    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Вес (фунтов)</div><input class="si" type="text" id="fwgt" placeholder="3" maxlength="7"/></div>
+    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Вес (фунтов)</div><input class="si" type="text" id="fwgt" placeholder="3" maxlength="7" inputmode="decimal"/></div>
     <div class="sf"></div>
   </div>
 
@@ -485,8 +485,8 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   </select>
   <div class="lbl">Дистанция (обычная / макс.)</div>
   <div class="row2">
-    <div class="sf"><div class="sl">Обычная</div><input class="si" type="text" id="fr1" placeholder="20"/></div>
-    <div class="sf"><div class="sl">Максимальная</div><input class="si" type="text" id="fr2" placeholder="60"/></div>
+    <div class="sf"><div class="sl">Обычная</div><input class="si" type="text" id="fr1" placeholder="20" maxlength="4" inputmode="numeric"/></div>
+    <div class="sf"><div class="sl">Максимальная</div><input class="si" type="text" id="fr2" placeholder="60" maxlength="4" inputmode="numeric"/></div>
   </div>
   <div class="lbl">Тип урона</div>
   <select class="si" id="fdt"><option value="">— выбрать —</option><option>Рубящий</option><option>Дробящий</option><option>Колющий</option></select>
@@ -495,9 +495,9 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   <div class="lbl">Урон (две руки)</div>
   <select class="si" id="fd2"><option value="">—</option><option>1</option><option>1d4</option><option>1d6</option><option>1d8</option><option>1d10</option><option>1d12</option><option>2d4</option><option>2d6</option><option>2d8</option><option>2d10</option><option>2d12</option></select>
   <div class="lbl">Бонус урона (сила или ловкость)</div>
-  <input class="si" type="text" id="fstr" placeholder="3" style="width:80px;"/>
+  <input class="si" type="text" id="fstr" placeholder="3" style="width:80px;" maxlength="2" inputmode="numeric"/>
   <div class="lbl">Бонус владения (мастерства)</div>
-  <input class="si" type="text" id="fpr" placeholder="2" style="width:80px;"/>
+  <input class="si" type="text" id="fpr" placeholder="2" style="width:80px;" maxlength="2" inputmode="numeric"/>
 
   <div class="divider"></div>
 
@@ -738,6 +738,8 @@ document.querySelectorAll('.rp').forEach(function(el){
 document.querySelector('.sb').addEventListener('input',function(){renderCard(readForm());});
 document.getElementById('fc').addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9.,\/]/g,'');this.setSelectionRange(p,p);});
 document.getElementById('fwgt').addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9.,\/]/g,'');this.setSelectionRange(p,p);});
+['fr1','fr2'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9]/g,'').slice(0,4);this.setSelectionRange(p,p);});});
+['fstr','fpr'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;var v=this.value.replace(/[^0-9-]/g,'');v=v.charAt(0)+v.slice(1).replace(/-/g,'');this.value=v.slice(0,2);this.setSelectionRange(p,p);});});
 document.querySelector('.sb').addEventListener('change',function(){renderCard(readForm());});
 
 /* char counters */
