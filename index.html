@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>D&D Card Forge — генераторы карточек</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#111009;--bg2:#1a1814;--bg3:#252018;--bg4:#2e2a20;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.13);
+  --text:#e0d8c8;--text2:#a09070;--text3:#5a5040;
+  --gold:#c8941a;--gold-l:#f0b830;--accent-l:#8070e0;
+}
+body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,serif;min-height:100vh;
+  background-image:radial-gradient(circle at 50% -20%,rgba(200,148,26,.07),transparent 60%);}
+.wrap{max-width:1080px;margin:0 auto;padding:48px 20px 64px;}
+.hero{text-align:center;margin-bottom:44px;}
+.logo{font-family:'Cinzel',serif;font-size:34px;font-weight:700;letter-spacing:.14em;color:var(--gold-l);line-height:1.1;}
+.logo span{color:var(--text2);font-weight:400;}
+.tagline{font-style:italic;font-size:15px;color:var(--text2);margin-top:10px;}
+.sect-lbl{font-family:'Cinzel',serif;font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--text3);
+  margin:34px 0 14px;display:flex;align-items:center;gap:12px;}
+.sect-lbl::after{content:'';flex:1;height:.5px;background:var(--border);}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+.card{display:flex;align-items:center;gap:14px;padding:16px 16px;background:var(--bg2);border:0.5px solid var(--border);
+  border-radius:12px;text-decoration:none;color:inherit;transition:all .15s;}
+.card:hover{background:var(--bg3);border-color:rgba(200,148,26,.35);transform:translateY(-2px);
+  box-shadow:0 6px 20px rgba(0,0,0,.35);}
+.ic{width:42px;height:42px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  background:rgba(200,148,26,.1);border:0.5px solid rgba(200,148,26,.25);color:var(--gold-l);}
+.ic svg{width:22px;height:22px;}
+.card.alt .ic{background:rgba(128,112,224,.1);border-color:rgba(128,112,224,.3);color:var(--accent-l);}
+.ct{min-width:0;}
+.ct-name{font-family:'Cinzel',serif;font-size:13px;font-weight:600;letter-spacing:.04em;color:var(--text);margin-bottom:3px;}
+.ct-desc{font-size:12.5px;color:var(--text2);line-height:1.35;}
+.foot{margin-top:48px;text-align:center;font-size:12px;color:var(--text3);line-height:1.7;}
+.foot a{color:var(--text2);}
+@media(max-width:520px){
+  .wrap{padding:32px 14px 48px;}
+  .logo{font-size:26px;}
+  .grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="logo">D&D <span>CARD</span> FORGE</div>
+    <div class="tagline">Генераторы карточек для D&amp;D 5e — оружие, доспехи, снаряжение и не только</div>
+  </div>
+
+  <div class="sect-lbl">Оружие и доспехи</div>
+  <div class="grid">
+    <a class="card" href="weapon-2014.html">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M2 22l7.5-7.5"/></svg></div>
+      <div class="ct"><div class="ct-name">Оружие — 5e (2014)</div><div class="ct-desc">Классические правила</div></div>
+    </a>
+    <a class="card" href="weapon-2024.html">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M2 22l7.5-7.5"/></svg></div>
+      <div class="ct"><div class="ct-name">Оружие — 5e (2024)</div><div class="ct-desc">Новая редакция с «Мастерством»</div></div>
+    </a>
+    <a class="card" href="armor.html">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div class="ct"><div class="ct-name">Доспехи</div><div class="ct-desc">Лёгкие, средние, тяжёлые, щиты</div></div>
+    </a>
+  </div>
+
+  <div class="sect-lbl">Снаряжение</div>
+  <div class="grid">
+    <a class="card" href="equipment.html">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+      <div class="ct"><div class="ct-name">Снаряжение</div><div class="ct-desc">Авантюрное снаряжение и предметы</div></div>
+    </a>
+    <a class="card" href="tools.html">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+      <div class="ct"><div class="ct-name">Инструменты</div><div class="ct-desc">Ремесло, музыка, воровские наборы</div></div>
+    </a>
+    <a class="card" href="kits.html">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="16" y1="10" x2="8" y2="10"/></svg></div>
+      <div class="ct"><div class="ct-name">Наборы снаряжения</div><div class="ct-desc">Готовые комплекты предметов</div></div>
+    </a>
+    <a class="card" href="poisons.html">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><line x1="8.5" y1="2" x2="15.5" y2="2"/></svg></div>
+      <div class="ct"><div class="ct-name">Яды</div><div class="ct-desc">Контактные, инъекционные и др.</div></div>
+    </a>
+  </div>
+
+  <div class="sect-lbl">Библиотека</div>
+  <div class="grid">
+    <a class="card alt" href="collection.html">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+      <div class="ct"><div class="ct-name">Моя коллекция</div><div class="ct-desc">Все созданные карточки в одном месте</div></div>
+    </a>
+    <a class="card alt" href="templates.html">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+      <div class="ct"><div class="ct-name">Готовые шаблоны</div><div class="ct-desc">Примеры карточек для быстрого старта</div></div>
+    </a>
+  </div>
+
+  <div class="foot">
+    Карточки сохраняются локально в вашем браузере.<br/>
+    Делайте резервную копию через «Сохранить проект» — это же позволяет перенести коллекцию на другое устройство.
+  </div>
+
+</div>
+</body>
+</html>
