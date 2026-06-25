@@ -143,7 +143,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-body{flex:1;min-height:0;padding:3px 14px 2px;display:flex;flex-direction:column;overflow:hidden;}
 .c-name{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:#2a1e0a;line-height:1.2;margin-bottom:0;flex-shrink:0;}
 .c-dmgline{font-family:'Cinzel',serif;font-size:10px;color:#7a6850;margin-bottom:1px;letter-spacing:.04em;flex-shrink:0;}
-.c-rule{height:.7px;background:#8a7860;opacity:.55;margin:1px 0 2px;flex-shrink:0;}
+.c-rule{height:.7px;background:#8a7860;opacity:.55;margin:2px 0;flex-shrink:0;}
 .c-stats{display:flex;flex-wrap:wrap;gap:2px;margin-bottom:1px;justify-content:center;flex-shrink:0;}
 .cst{background:rgba(0,0,0,.07);border:.5px solid rgba(0,0,0,.12);border-radius:4px;padding:2px 6px;display:flex;flex-direction:column;align-items:center;min-width:40px;}
 .cst-l{font-family:'Cinzel',serif;font-size:7.5px;color:#8a7860;letter-spacing:.05em;text-transform:uppercase;margin-bottom:1px;}
@@ -151,7 +151,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-attune{font-family:'Crimson Text',Georgia,serif;font-size:10px;font-style:italic;color:#6a5040;margin-bottom:1px;flex-shrink:0;}
 .c-props{font-family:'Cinzel',serif;font-size:10px;color:#5a4830;line-height:1.35;margin-bottom:1px;flex-shrink:0;}
 .c-quote{font-family:'Crimson Text',Georgia,serif;font-size:11px;font-weight:700;font-style:italic;text-align:center;color:#4a3820;line-height:1.4;margin-bottom:1px;padding:0 4px;flex-shrink:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
-.c-desc{font-family:'Crimson Text',Georgia,serif;font-size:11px;line-height:1.5;color:#2a1e0a;font-style:italic;text-indent:1.4em;flex:1;overflow:hidden;white-space:pre-wrap;}
+.c-desc{font-family:'Crimson Text',Georgia,serif;font-size:11px;line-height:1.5;color:#2a1e0a;flex:1;overflow:hidden;white-space:pre-wrap;}
 .c-foot{height:26px;flex-shrink:0;padding:0 14px;display:flex;align-items:center;justify-content:space-between;}
 .c-wgt{font-family:'Cinzel',serif;font-size:10px;color:#8a7860;letter-spacing:.04em;}
 .c-gem{width:14px;height:14px;border-radius:50%;opacity:.7;background:var(--ca,#a09080);transition:background .2s;}
@@ -172,6 +172,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .cb-lbl{font-family:'Cinzel',serif;font-size:8px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:#8a7860;margin-bottom:6px;display:flex;align-items:center;gap:6px;flex-shrink:0;}
 .cb-lbl::after{content:'';flex:1;height:.5px;background:rgba(0,0,0,.15);}
 .cb-desc{font-family:'Crimson Text',Georgia,serif;font-size:11px;line-height:1.5;color:#2a1e0a;flex:1;overflow:hidden;white-space:pre-wrap;}
+
 
 /* CROP MODAL */
 .crop-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:none;align-items:center;justify-content:center;}
@@ -288,6 +289,8 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .coll-full-link{display:flex;align-items:center;gap:5px;padding:5px 14px 8px;font-family:'Cinzel',serif;font-size:9px;letter-spacing:.07em;color:var(--text3);text-decoration:none;flex-shrink:0;transition:color .13s;border-bottom:0.5px solid var(--border);}
 .coll-full-link:hover{color:var(--gold-l);}
 .coll-full-link svg{flex-shrink:0;}
+.c-rule{height:.7px;background:#8a7860;opacity:.55;margin:1px 0 2px;flex-shrink:0;}
+.c-desc{font-family:'Crimson Text',Georgia,serif;font-size:11px;line-height:1.5;color:#2a1e0a;font-style:italic;text-indent:1.4em;flex:1;overflow:hidden;white-space:pre-wrap;}
 </style>
 <link rel="stylesheet" href="mobile.css"/>
 </head>
@@ -710,9 +713,10 @@ var R={
   veryrare: {l:'Очень редкий',a:'#9870cc',cb:'#9870cc',cs:'#503888'},
   legendary:{l:'Легендарный', a:'#e09820',cb:'#e09820',cs:'#906008'}
 };
-var cr='common', imgDataUrl=null, collection=[], currentCard=null;
 var LS_KEY='dnd_cardforge_weapon2024';
-var IDB_NAME='dnd_weapon2024_imgs',IDB_STORE='imgs',_idb=null;
+var IDB_NAME='dnd_weapon2024_imgs';
+var cr='common', imgDataUrl=null, collection=[], currentCard=null;
+var IDB_STORE='imgs',_idb=null;
 function _openIDB(cb){if(_idb){cb(_idb);return;}var r=indexedDB.open(IDB_NAME,1);r.onupgradeneeded=function(e){e.target.result.createObjectStore(IDB_STORE);};r.onsuccess=function(e){_idb=e.target.result;cb(_idb);};r.onerror=function(){cb(null);};}
 function _saveImg(id,img){_openIDB(function(db){if(!db||!img)return;try{db.transaction(IDB_STORE,'readwrite').objectStore(IDB_STORE).put(img,String(id));}catch(e){}});}
 function _delImg(id){_openIDB(function(db){if(!db)return;try{db.transaction(IDB_STORE,'readwrite').objectStore(IDB_STORE).delete(String(id));}catch(e){}});}
@@ -727,26 +731,28 @@ function applyR(r){
   var prar=document.getElementById('p-rar'); if(prar) prar.textContent=d.l;
 }
 
+/* выбор редкости (пикер .rp есть не на всех страницах — где нет, forEach пуст) */
 document.querySelectorAll('.rp').forEach(function(el){
   el.addEventListener('click',function(){
     document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');});
     el.classList.add('on');cr=el.getAttribute('data-r');
-    document.getElementById('rn').textContent=R[cr].l;
-    applyR(cr);updateAttuneWrap();renderCard(readForm());
+    var rn=document.getElementById('rn'); if(rn) rn.textContent=R[cr].l;
+    applyR(cr);
+    if(typeof updateAttuneWrap==='function') updateAttuneWrap();
+    renderCard(readForm());
   });
 });
 
-/* live preview — любые изменения в форме */
+/* живой предпросмотр + фильтры цены/веса (общие для всех страниц) */
 document.querySelector('.sb').addEventListener('input',function(){renderCard(readForm());});
 document.getElementById('fc').addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9.,\/]/g,'');this.setSelectionRange(p,p);});
 document.getElementById('fwgt').addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9.,\/]/g,'');this.setSelectionRange(p,p);});
-['fr1','fr2'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9]/g,'').slice(0,4);this.setSelectionRange(p,p);});});
-['fstr','fpr'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;var v=this.value.replace(/[^0-9-]/g,'');v=v.charAt(0)+v.slice(1).replace(/-/g,'');this.value=v.slice(0,2);this.setSelectionRange(p,p);});});
 document.querySelector('.sb').addEventListener('change',function(){renderCard(readForm());});
 
-/* char counters */
+/* счётчик символов */
 function mkCounter(inputId,countId,max){
   var inp=document.getElementById(inputId),cnt=document.getElementById(countId);
+  if(!inp||!cnt)return;
   function upd(){
     var n=inp.value.length;
     cnt.textContent=n+'/'+max;
@@ -754,10 +760,9 @@ function mkCounter(inputId,countId,max){
   }
   if(!inp._cbound){inp.addEventListener('input',upd);inp._cbound=true;}upd();
 }
-mkCounter('fn','cnt-fn',30);
-mkCounter('fflv','cnt-flv',70);
-mkCounter('fdesc','cnt-desc',130);
-mkCounter('fbk','cnt-bk',750);
+['fr1','fr2'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9]/g,'').slice(0,4);this.setSelectionRange(p,p);});});
+['fstr','fpr'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;var v=this.value.replace(/[^0-9-]/g,'');v=v.charAt(0)+v.slice(1).replace(/-/g,'');this.value=v.slice(0,2);this.setSelectionRange(p,p);});});
+mkCounter('fn','cnt-fn',30);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',130);mkCounter('fbk','cnt-bk',750);
 
 /* image upload & crop */
 var fImgInput=document.getElementById('f-img');
@@ -1113,6 +1118,9 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   toast('Поля сброшены');
 });
 
+var DEFAULT_NAME='Оружие';
+var JSON_NAME='dnd_project_weapon2024';
+function collItemSub(card){return card.cat||'';}
 var editingId=null;
 function updateBuildBtn(){var g=document.getElementById('gbtn'),n=document.getElementById('gbtn-new');if(!g)return;if(editingId){g.textContent='💾 Сохранить изменения';if(n)n.style.display='';}else{g.textContent='✦ Создать карточку';if(n)n.style.display='none';}}
 function _saveCard(asNew){currentCard=readForm();renderCard(currentCard);var card=JSON.parse(JSON.stringify(currentCard));if(!asNew&&editingId){card.id=editingId;var i=collection.findIndex(function(c){return c.id===editingId;});if(i>-1){collection[i]=card;}else{collection.unshift(card);}toast('💾 Изменения сохранены');}else{card.id=Date.now();collection.unshift(card);editingId=card.id;toast('✦ Карточка создана и добавлена в коллекцию!');}updateBuildBtn();renderCollection();saveToLS();}
@@ -1158,11 +1166,11 @@ function makeCollItem(card){
   var item=document.createElement('div');
   item.className='coll-item'+(selMode?' sel-mode':'')+(selectedIds.has(card.id)?' selected':'');
   var cbHtml='<input type="checkbox" class="coll-item-cb"'+(selectedIds.has(card.id)?' checked':'')+'/>';
-  item.innerHTML=cbHtml+'<div class="coll-item-thumb"><div class="coll-item-stripe" style="background:'+d.a+';"></div>'+(card.img?'<img src="'+card.img+'" alt=""/>':'')+'</div><div class="coll-item-info"><div class="coll-item-name">'+(card.name||'Оружие')+'</div><div class="coll-item-sub">'+(card.cat||'')+'</div></div>'+(selMode?'':'<button class="coll-item-del">✕</button>');
+  item.innerHTML=cbHtml+'<div class="coll-item-thumb"><div class="coll-item-stripe" style="background:'+d.a+';"></div>'+(card.img?'<img src="'+card.img+'" alt=""/>':'')+'</div><div class="coll-item-info"><div class="coll-item-name">'+(card.name||DEFAULT_NAME)+'</div><div class="coll-item-sub">'+collItemSub(card)+'</div></div>'+(selMode?'':'<button class="coll-item-del">✕</button>');
   if(!selMode){
     item.querySelector('.coll-item-del').addEventListener('click',function(e){
       e.stopPropagation();
-      showConfirmDelete([card.id],'Удалить карточку «'+(card.name||'Оружие')+'»?');
+      showConfirmDelete([card.id],'Удалить карточку «'+(card.name||DEFAULT_NAME)+'»?');
     });
   }
   item.addEventListener('click',function(){
@@ -1463,7 +1471,7 @@ document.getElementById('btn-export-json').addEventListener('click',function(){
   if(!collection.length){toast('⚠ Проект пуст');return;}
   var json=JSON.stringify({version:1,exported:new Date().toISOString(),cards:collection},null,2);
   var a=document.createElement('a');
-  a.download='dnd_project_weapon2024_'+new Date().toISOString().slice(0,10)+'.json';
+  a.download=JSON_NAME+'_'+new Date().toISOString().slice(0,10)+'.json';
   a.href=URL.createObjectURL(new Blob([json],{type:'application/json'}));a.click();
   URL.revokeObjectURL(a.href);toast('✦ Проект сохранён ('+collection.length+' карт.)');
 });
