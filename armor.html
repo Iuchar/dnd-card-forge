@@ -502,6 +502,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   </div>
 
   <button class="btn-build" id="gbtn">✦ Создать карточку</button>
+  <button class="btn-build-alt" id="gbtn-new" style="display:none;">+ Создать как новую</button>
 </aside>
 
 <main class="cv">
@@ -1029,7 +1030,7 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   document.getElementById('fattune').selectedIndex=0;
   document.getElementById('fstealth').checked=false;
   document.getElementById('attune-wrap').style.display='none';
-  imgDataUrl=null;rawImgDataUrl=null;currentCard=null;
+  imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();
   var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';
   document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';
   document.getElementById('f-img').value='';
@@ -1049,11 +1050,11 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   toast('Поля сброшены');
 });
 
-document.getElementById('gbtn').addEventListener('click',function(){
-  currentCard=readForm();renderCard(currentCard);
-  var card=JSON.parse(JSON.stringify(currentCard));card.id=Date.now();
-  collection.unshift(card);renderCollection();saveToLS();toast('✦ Карточка создана и добавлена в коллекцию!');
-});
+var editingId=null;
+function updateBuildBtn(){var g=document.getElementById('gbtn'),n=document.getElementById('gbtn-new');if(!g)return;if(editingId){g.textContent='💾 Сохранить изменения';if(n)n.style.display='';}else{g.textContent='✦ Создать карточку';if(n)n.style.display='none';}}
+function _saveCard(asNew){currentCard=readForm();renderCard(currentCard);var card=JSON.parse(JSON.stringify(currentCard));if(!asNew&&editingId){card.id=editingId;var i=collection.findIndex(function(c){return c.id===editingId;});if(i>-1){collection[i]=card;}else{collection.unshift(card);}toast('💾 Изменения сохранены');}else{card.id=Date.now();collection.unshift(card);editingId=card.id;toast('✦ Карточка создана и добавлена в коллекцию!');}updateBuildBtn();renderCollection();saveToLS();}
+document.getElementById('gbtn').addEventListener('click',function(){_saveCard(false);});
+document.getElementById('gbtn-new').addEventListener('click',function(){_saveCard(true);});
 
 var selMode=false,selectedIds=new Set(),pendingDeleteIds=new Set();
 
@@ -1109,7 +1110,7 @@ function makeCollItem(card){
       item.querySelector('.coll-item-cb').checked=selectedIds.has(card.id);
       updateSelActions();
     }else{
-      applyFormData(card);renderCard(card);currentCard=JSON.parse(JSON.stringify(card));
+      applyFormData(card);renderCard(card);currentCard=JSON.parse(JSON.stringify(card));editingId=card.id;updateBuildBtn();
       toast('Карточка загружена');
     }
   });
