@@ -178,11 +178,12 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:9px 18px;font-family:'Cinzel',serif;font-size:11px;color:var(--text);letter-spacing:.06em;z-index:500;transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 </style>
+<link rel="stylesheet" href="mobile.css"/>
 </head>
 <body>
 
 <header class="header">
-  <div class="logo" style="display:flex;align-items:center;gap:10px;">D&D <span>CARD</span> FORGE
+  <div class="logo" style="display:flex;align-items:center;gap:10px;"><b class="logo-brand" style="display:flex;align-items:center;gap:10px;font-weight:700;">D&D <span>CARD</span> FORGE</b>
     <div class="nav-wrap" id="nav-wrap">
       <button class="nav-toggle" id="nav-toggle">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>

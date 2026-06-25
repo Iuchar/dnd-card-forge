@@ -57,9 +57,15 @@
 
   /* --- 7. UX-мелочи --- */
   /* инпуты >=16px — иначе iOS зумит страницу при фокусе */
-  .si, .coll-search { font-size: 16px; }
+  .si, .coll-search, .filter-search { font-size: 16px; }
   /* коллекция: секции не ограничиваем по высоте (страница и так скроллит) */
   .coll-sect-body { max-height: none; overflow: visible; }
+
+  /* --- Галереи (collection / templates) --- */
+  /* внутренний скролл сетки -> скролл всей страницы */
+  .pg-layout { overflow: visible; min-height: 0; }
+  .grid-wrap { overflow: visible; }
+  .grid-area { padding: 14px 10px; gap: 12px; }
 }
 
 /* Очень узкие экраны (компактные телефоны) */

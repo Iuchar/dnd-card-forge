@@ -187,10 +187,11 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .coll-item.sel-mode .coll-item-cb{display:block;}
 .coll-item.sel-mode.selected{background:rgba(160,120,56,.1);border-color:rgba(160,120,56,.35);}
 </style>
+<link rel="stylesheet" href="mobile.css"/>
 </head>
 <body>
 <header class="header">
-  <div class="logo" style="display:flex;align-items:center;gap:10px;">D&amp;D <span>CARD</span> FORGE
+  <div class="logo" style="display:flex;align-items:center;gap:10px;"><b class="logo-brand" style="display:flex;align-items:center;gap:10px;font-weight:700;">D&amp;D <span>CARD</span> FORGE</b>
     <div class="nav-wrap" id="nav-wrap">
       <button class="nav-toggle" id="nav-toggle">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -280,7 +281,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   </button>
 
   <div class="row2" style="margin-top:13px;">
-    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Цена</div><input class="si" type="text" id="fc" placeholder="12" maxlength="7"/></div>
+    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Цена</div><input class="si" type="text" id="fc" placeholder="12" maxlength="7" inputmode="decimal"/></div>
     <div class="sf"><div class="lbl" style="margin:0 0 5px;">Монеты</div>
       <select class="si" id="fcoin">
         <option>мм</option><option>см</option><option>эм</option><option selected>зм</option><option>пм</option>
@@ -288,7 +289,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     </div>
   </div>
   <div class="row2" style="margin-top:7px;">
-    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Вес (фунтов)</div><input class="si" type="text" id="fwgt" placeholder="61.5" maxlength="7"/></div>
+    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Вес (фунтов)</div><input class="si" type="text" id="fwgt" placeholder="61.5" maxlength="7" inputmode="decimal"/></div>
     <div class="sf"></div>
   </div>
 

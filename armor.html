@@ -286,11 +286,12 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .coll-full-link:hover{color:var(--gold-l);}
 .coll-full-link svg{flex-shrink:0;}
 </style>
+<link rel="stylesheet" href="mobile.css"/>
 </head>
 <body>
 
 <header class="header">
-  <div class="logo" style="display:flex;align-items:center;gap:10px;">D&amp;D <span>CARD</span> FORGE
+  <div class="logo" style="display:flex;align-items:center;gap:10px;"><b class="logo-brand" style="display:flex;align-items:center;gap:10px;font-weight:700;">D&amp;D <span>CARD</span> FORGE</b>
   <div class="nav-wrap" id="nav-wrap">
     <button class="nav-toggle" id="nav-toggle">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -435,7 +436,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   </button>
 
   <div class="row2" style="margin-top:13px;">
-    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Цена</div><input class="si" type="text" id="fc" placeholder="1500" maxlength="7"/></div>
+    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Цена</div><input class="si" type="text" id="fc" placeholder="1500" maxlength="7" inputmode="decimal"/></div>
     <div class="sf"><div class="lbl" style="margin:0 0 5px;">Монеты</div>
       <select class="si" id="fcoin">
         <option>мм</option><option>см</option><option>эм</option><option selected>зм</option><option>пм</option>
@@ -443,7 +444,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     </div>
   </div>
   <div class="row2" style="margin-top:7px;">
-    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Вес (фунтов)</div><input class="si" type="text" id="fwgt" placeholder="65" maxlength="7"/></div>
+    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Вес (фунтов)</div><input class="si" type="text" id="fwgt" placeholder="65" maxlength="7" inputmode="decimal"/></div>
     <div class="sf"></div>
   </div>
 
@@ -468,7 +469,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   </select>
 
   <div class="lbl">КБ базовый</div>
-  <input class="si" type="text" id="facbase" placeholder="18" style="width:80px;"/>
+  <input class="si" type="text" id="facbase" placeholder="18" style="width:80px;" inputmode="numeric"/>
 
   <div class="lbl">Материал <span style="color:var(--text3);font-size:9px;font-family:'Crimson Text',serif;font-style:italic;text-transform:none;letter-spacing:0;">необязательно · макс. 26 симв.</span></div>
   <div class="field-wrap field-mb">
@@ -477,7 +478,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   </div>
 
   <div class="lbl">Треб. Силы <span style="color:var(--text3);font-size:9px;font-family:'Crimson Text',serif;font-style:italic;text-transform:none;letter-spacing:0;">необязательно</span></div>
-  <input class="si" type="text" id="fstrreq" placeholder="13" style="width:80px;"/>
+  <input class="si" type="text" id="fstrreq" placeholder="13" style="width:80px;" inputmode="numeric"/>
 
   <div class="lbl" style="margin-bottom:4px;">Особенности</div>
   <label class="pcb">
