@@ -143,7 +143,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-body{flex:1;min-height:0;padding:3px 14px 2px;display:flex;flex-direction:column;overflow:hidden;}
 .c-name{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:#2a1e0a;line-height:1.2;margin-bottom:0;flex-shrink:0;}
 .c-dmgline{font-family:'Cinzel',serif;font-size:10px;color:#7a6850;margin-bottom:1px;letter-spacing:.04em;flex-shrink:0;}
-.c-rule{height:.7px;background:#8a7860;opacity:.55;margin:2px 0;flex-shrink:0;}
+.c-rule{height:.7px;background:#8a7860;opacity:.55;margin:1px 0 2px;flex-shrink:0;}
 .c-stats{display:flex;flex-wrap:wrap;gap:2px;margin-bottom:1px;justify-content:center;flex-shrink:0;}
 .cst{background:rgba(0,0,0,.07);border:.5px solid rgba(0,0,0,.12);border-radius:4px;padding:2px 6px;display:flex;flex-direction:column;align-items:center;min-width:40px;}
 .cst-l{font-family:'Cinzel',serif;font-size:7.5px;color:#8a7860;letter-spacing:.05em;text-transform:uppercase;margin-bottom:1px;}
@@ -151,7 +151,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-attune{font-family:'Crimson Text',Georgia,serif;font-size:10px;font-style:italic;color:#6a5040;margin-bottom:1px;flex-shrink:0;}
 .c-props{font-family:'Cinzel',serif;font-size:10px;color:#5a4830;line-height:1.35;margin-bottom:1px;flex-shrink:0;}
 .c-quote{font-family:'Crimson Text',Georgia,serif;font-size:11px;font-weight:700;font-style:italic;text-align:center;color:#4a3820;line-height:1.4;margin-bottom:1px;padding:0 4px;flex-shrink:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
-.c-desc{font-family:'Crimson Text',Georgia,serif;font-size:11px;line-height:1.5;color:#2a1e0a;flex:1;overflow:hidden;white-space:pre-wrap;}
+.c-desc{font-family:'Crimson Text',Georgia,serif;font-size:11px;line-height:1.5;color:#2a1e0a;font-style:italic;text-indent:1.4em;flex:1;overflow:hidden;white-space:pre-wrap;}
 .c-foot{height:26px;flex-shrink:0;padding:0 14px;display:flex;align-items:center;justify-content:space-between;}
 .c-wgt{font-family:'Cinzel',serif;font-size:10px;color:#8a7860;letter-spacing:.04em;}
 .c-gem{width:14px;height:14px;border-radius:50%;opacity:.7;background:var(--ca,#a09080);transition:background .2s;}
@@ -289,8 +289,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .coll-full-link{display:flex;align-items:center;gap:5px;padding:5px 14px 8px;font-family:'Cinzel',serif;font-size:9px;letter-spacing:.07em;color:var(--text3);text-decoration:none;flex-shrink:0;transition:color .13s;border-bottom:0.5px solid var(--border);}
 .coll-full-link:hover{color:var(--gold-l);}
 .coll-full-link svg{flex-shrink:0;}
-.c-rule{height:.7px;background:#8a7860;opacity:.55;margin:1px 0 2px;flex-shrink:0;}
-.c-desc{font-family:'Crimson Text',Georgia,serif;font-size:11px;line-height:1.5;color:#2a1e0a;font-style:italic;text-indent:1.4em;flex:1;overflow:hidden;white-space:pre-wrap;}
 </style>
 <link rel="stylesheet" href="mobile.css"/>
 </head>
@@ -726,7 +724,7 @@ function loadFromLS(){try{var d=localStorage.getItem(LS_KEY);if(d){var arr=JSON.
 var rawImgDataUrl=null;
 
 function applyR(r){
-  var d=R[r];
+  var d=R[r]||R.common;
   document.documentElement.style.setProperty('--ca',d.a);
   var prar=document.getElementById('p-rar'); if(prar) prar.textContent=d.l;
 }
@@ -973,10 +971,13 @@ document.getElementById('crop-apply').addEventListener('click',function(){
   var nh = Math.ceil((sel.y + sel.h) * scaleY) - ny;
   nx=Math.max(0,nx); ny=Math.max(0,ny);
   nw=Math.min(nw,cropNW-nx); nh=Math.min(nh,cropNH-ny);
+  var maxW=900, maxH=450, dw=nw, dh=nh;
+  if(dw>maxW){ dh=Math.round(dh*maxW/dw); dw=maxW; }
+  if(dh>maxH){ dw=Math.round(dw*maxH/dh); dh=maxH; }
   var out = document.createElement('canvas');
-  out.width=nw; out.height=nh;
-  out.getContext('2d').drawImage(cropImg, nx, ny, nw, nh, 0, 0, nw, nh);
-  imgDataUrl = out.toDataURL('image/png');
+  out.width=dw; out.height=dh;
+  out.getContext('2d').drawImage(cropImg, nx, ny, nw, nh, 0, 0, dw, dh);
+  imgDataUrl = out.toDataURL('image/jpeg', 0.85);
   var th=document.getElementById('img-thumb');
   th.style.backgroundImage='url('+imgDataUrl+')'; th.style.display='block';
   document.getElementById('img-icon').style.display='none';

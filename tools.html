@@ -557,7 +557,7 @@ function loadFromLS(){try{var d=localStorage.getItem(LS_KEY);if(d){var arr=JSON.
 var rawImgDataUrl=null;
 
 function applyR(r){
-  var d=R[r];
+  var d=R[r]||R.common;
   document.documentElement.style.setProperty('--ca',d.a);
   var prar=document.getElementById('p-rar'); if(prar) prar.textContent=d.l;
 }
@@ -802,10 +802,13 @@ document.getElementById('crop-apply').addEventListener('click',function(){
   var nh = Math.ceil((sel.y + sel.h) * scaleY) - ny;
   nx=Math.max(0,nx); ny=Math.max(0,ny);
   nw=Math.min(nw,cropNW-nx); nh=Math.min(nh,cropNH-ny);
+  var maxW=900, maxH=450, dw=nw, dh=nh;
+  if(dw>maxW){ dh=Math.round(dh*maxW/dw); dw=maxW; }
+  if(dh>maxH){ dw=Math.round(dw*maxH/dh); dh=maxH; }
   var out = document.createElement('canvas');
-  out.width=nw; out.height=nh;
-  out.getContext('2d').drawImage(cropImg, nx, ny, nw, nh, 0, 0, nw, nh);
-  imgDataUrl = out.toDataURL('image/png');
+  out.width=dw; out.height=dh;
+  out.getContext('2d').drawImage(cropImg, nx, ny, nw, nh, 0, 0, dw, dh);
+  imgDataUrl = out.toDataURL('image/jpeg', 0.85);
   var th=document.getElementById('img-thumb');
   th.style.backgroundImage='url('+imgDataUrl+')'; th.style.display='block';
   document.getElementById('img-icon').style.display='none';
