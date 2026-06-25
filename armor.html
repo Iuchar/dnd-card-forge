@@ -297,7 +297,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
       Разделы
     </button>
-    <div class="nav-menu" id="nav-menu">
+<div class="nav-menu" id="nav-menu">
       <a class="nav-item" href="collection.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
         Моя коллекция
@@ -321,7 +321,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
           <a class="nav-item" href="weapon-2024.html">D&D 5e (2024)</a>
         </div>
       </div>
-      <a class="nav-item nav-active" href="armor.html">
+      <a class="nav-item" href="armor.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         Доспехи
       </a>
@@ -1502,6 +1502,10 @@ loadFromLS();
 (function(){
   var toggle=document.getElementById('nav-toggle');
   var menu=document.getElementById('nav-menu');
+  /* подсветка активного пункта по текущему URL */
+  var _cur=(location.pathname.split('/').pop()||'index.html');
+  var _act=menu.querySelector('a[href="'+_cur+'"]');
+  if(_act){_act.classList.add('nav-active');var _g=_act.closest('.nav-group');if(_g)_g.classList.add('has-active','open');}
   toggle.addEventListener('click',function(e){
     e.stopPropagation();
     var open=menu.classList.toggle('open');
