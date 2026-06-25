@@ -543,86 +543,684 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 (function(){
 var R={common:{l:'Обычный',a:'#888077',cb:'#888077',cs:'#5a5030'},uncommon:{l:'Необычный',a:'#52aa40',cb:'#52aa40',cs:'#286820'},rare:{l:'Редкий',a:'#4a8ccc',cb:'#4a8ccc',cs:'#1e4c88'},veryrare:{l:'Очень редкий',a:'#9870cc',cb:'#9870cc',cs:'#503888'},legendary:{l:'Легендарный',a:'#e09820',cb:'#e09820',cs:'#906008'}};
 var RARITY_ORDER=['common','uncommon','rare','veryrare','legendary'];
-var cr='common',imgDataUrl=null,rawImgDataUrl=null,collection=[],currentCard=null;
-var collapsedSections={},pendingDeleteIds=new Set(),selMode=false,selectedIds=new Set();
 var LS_KEY='dnd_cardforge_tools';
-var IDB_NAME='dnd_tools_imgs',IDB_STORE='imgs',_idb=null;
+var IDB_NAME='dnd_tools_imgs';
+function updateAttuneWrap(){document.getElementById('attune-wrap').style.display=cr==='common'?'none':'block';if(cr==='common')document.getElementById('fattune').value='';}
+var cr='common', imgDataUrl=null, collection=[], currentCard=null;
+var IDB_STORE='imgs',_idb=null;
 function _openIDB(cb){if(_idb){cb(_idb);return;}var r=indexedDB.open(IDB_NAME,1);r.onupgradeneeded=function(e){e.target.result.createObjectStore(IDB_STORE);};r.onsuccess=function(e){_idb=e.target.result;cb(_idb);};r.onerror=function(){cb(null);};}
 function _saveImg(id,img){_openIDB(function(db){if(!db||!img)return;try{db.transaction(IDB_STORE,'readwrite').objectStore(IDB_STORE).put(img,String(id));}catch(e){}});}
 function _delImg(id){_openIDB(function(db){if(!db)return;try{db.transaction(IDB_STORE,'readwrite').objectStore(IDB_STORE).delete(String(id));}catch(e){}});}
-function saveToLS(){try{var slim=collection.map(function(c){var o=Object.assign({},c);delete o.rawImg;delete o.img;return o;});localStorage.setItem(LS_KEY,JSON.stringify(slim));}catch(e){}collection.forEach(function(c){if(c.id&&c.img)_saveImg(c.id,c.img);});}
+function saveToLS(){try{var slim=collection.map(function(c){var o=Object.assign({},c);delete o.rawImg;delete o.img;return o;});localStorage.setItem(LS_KEY,JSON.stringify(slim));}catch(e){}collection.forEach(function(c){if(c.id&&c.img)_saveImg(c.id,c.img);}); }
 function _finishLoad(){renderCollection();var first=collection[0];applyFormData(first);renderCard(first);currentCard=JSON.parse(JSON.stringify(first));}
 function loadFromLS(){try{var d=localStorage.getItem(LS_KEY);if(d){var arr=JSON.parse(d);if(Array.isArray(arr)&&arr.length){collection=arr;}}}catch(e){}if(!collection.length)return;_openIDB(function(db){if(!db){_finishLoad();return;}var pending=collection.length;var tx=db.transaction(IDB_STORE,'readonly');collection.forEach(function(c){var req=tx.objectStore(IDB_STORE).get(String(c.id));req.onsuccess=function(e){if(e.target.result)c.img=e.target.result;if(--pending===0)_finishLoad();};req.onerror=function(){if(--pending===0)_finishLoad();};});});}
-function applyR(r){var d=R[r]||R.common;document.documentElement.style.setProperty('--ca',d.a);var prar=document.getElementById('p-rar');if(prar)prar.textContent=d.l;}
-document.querySelectorAll('.rp').forEach(function(el){el.addEventListener('click',function(){document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');});el.classList.add('on');cr=el.getAttribute('data-r');document.getElementById('rn').textContent=R[cr].l;applyR(cr);updateAttuneWrap();renderCard(readForm());});});
-function updateAttuneWrap(){document.getElementById('attune-wrap').style.display=cr==='common'?'none':'block';if(cr==='common')document.getElementById('fattune').value='';}
+var rawImgDataUrl=null;
+
+function applyR(r){
+  var d=R[r];
+  document.documentElement.style.setProperty('--ca',d.a);
+  var prar=document.getElementById('p-rar'); if(prar) prar.textContent=d.l;
+}
+
+/* выбор редкости (пикер .rp есть не на всех страницах — где нет, forEach пуст) */
+document.querySelectorAll('.rp').forEach(function(el){
+  el.addEventListener('click',function(){
+    document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');});
+    el.classList.add('on');cr=el.getAttribute('data-r');
+    var rn=document.getElementById('rn'); if(rn) rn.textContent=R[cr].l;
+    applyR(cr);
+    if(typeof updateAttuneWrap==='function') updateAttuneWrap();
+    renderCard(readForm());
+  });
+});
+
+/* живой предпросмотр + фильтры цены/веса (общие для всех страниц) */
 document.querySelector('.sb').addEventListener('input',function(){renderCard(readForm());});
 document.getElementById('fc').addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9.,\/]/g,'');this.setSelectionRange(p,p);});
 document.getElementById('fwgt').addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9.,\/]/g,'');this.setSelectionRange(p,p);});
 document.querySelector('.sb').addEventListener('change',function(){renderCard(readForm());});
-function mkCounter(id,cid,max){var i=document.getElementById(id),c=document.getElementById(cid);if(!i||!c)return;function u(){var n=i.value.length;c.textContent=n+'/'+max;c.className='char-counter'+(n>=max?' over':n>max*.88?' warn':'');}if(!i._cbound){i.addEventListener('input',u);i._cbound=true;}u();}
+
+/* счётчик символов */
+function mkCounter(inputId,countId,max){
+  var inp=document.getElementById(inputId),cnt=document.getElementById(countId);
+  if(!inp||!cnt)return;
+  function upd(){
+    var n=inp.value.length;
+    cnt.textContent=n+'/'+max;
+    cnt.className='char-counter'+(n>=max?' over':n>max*.88?' warn':'');
+  }
+  if(!inp._cbound){inp.addEventListener('input',upd);inp._cbound=true;}upd();
+}
 mkCounter('fn','cnt-fn',34);mkCounter('fengname','cnt-eng',42);mkCounter('fdesc','cnt-desc',750);
-document.getElementById('f-img').addEventListener('change',function(){var file=this.files[0];if(!file)return;var r=new FileReader();r.onload=function(e){rawImgDataUrl=e.target.result;openCrop(rawImgDataUrl);};r.readAsDataURL(file);this.value='';});
-document.getElementById('btn-recrop').addEventListener('click',function(){if(rawImgDataUrl)openCrop(rawImgDataUrl);});
-document.getElementById('btn-del-img').addEventListener('click',function(){imgDataUrl=null;rawImgDataUrl=null;var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('f-img').value='';setCardImg(null);});
-function setCardImg(src){var ci=document.getElementById('cib'),ex=ci.querySelector('.c-img-el');if(src){if(!ex){ex=document.createElement('img');ex.className='c-img-el';ci.insertBefore(ex,ci.firstChild);}ex.src=src;document.getElementById('img-ph').style.display='none';document.getElementById('btn-recrop').style.display='flex';document.getElementById('btn-del-img').style.display='flex';}else{if(ex)ex.remove();document.getElementById('img-ph').style.display='flex';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';}}
-var cropImg=new Image(),cropNW=1,cropNH=1,cropDW=1,cropDH=1,sel={x:0,y:0,w:100,h:45},cropState=null,IMG_RATIO=236/116;
+
+/* image upload & crop */
+var fImgInput=document.getElementById('f-img');
+fImgInput.addEventListener('change',function(){
+  var file=this.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){rawImgDataUrl=e.target.result;openCrop(rawImgDataUrl);};
+  reader.readAsDataURL(file);
+  /* reset so same file can be picked again */
+  this.value='';
+});
+
+/* п.2: separate recrop button */
+document.getElementById('btn-recrop').addEventListener('click',function(){
+  if(rawImgDataUrl) openCrop(rawImgDataUrl);
+});
+
+document.getElementById('btn-del-img').addEventListener('click',function(){
+  imgDataUrl=null; rawImgDataUrl=null;
+  var th=document.getElementById('img-thumb');
+  th.style.display='none'; th.style.backgroundImage='';
+  document.getElementById('img-icon').style.display='';
+  document.getElementById('img-lbl').style.display='';
+  document.getElementById('f-img').value='';
+  setCardImg(null);
+});
+
+function setCardImg(src){
+  var ci=document.getElementById('cib');
+  var ex=ci.querySelector('.c-img-el');
+  if(src){
+    if(!ex){ex=document.createElement('img');ex.className='c-img-el';ci.insertBefore(ex,ci.firstChild);}
+    ex.src=src;
+    document.getElementById('img-ph').style.display='none';
+    document.getElementById('btn-recrop').style.display='flex';
+    document.getElementById('btn-del-img').style.display='flex';
+  }else{
+    if(ex)ex.remove();
+    document.getElementById('img-ph').style.display='flex';
+    document.getElementById('btn-recrop').style.display='none';
+    document.getElementById('btn-del-img').style.display='none';
+  }
+}
+
+/* CROP */
+/* CROP — image fills canvas fully, selection in display-px,
+   mapped back to natural-image-px on apply */
+var cropImg = new Image();
+var cropNW = 1, cropNH = 1;   /* natural size */
+var cropDW = 1, cropDH = 1;   /* display size (canvas CSS px) */
+/* selection in display-px */
+var sel = {x:0,y:0,w:100,h:100};
+var cropState = null;
+
 function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
-function openCrop(src){cropImg=new Image();cropImg.onload=function(){cropNW=cropImg.naturalWidth;cropNH=cropImg.naturalHeight;document.getElementById('crop-modal-bg').classList.add('open');requestAnimationFrame(function(){var area=document.getElementById('crop-area');area.style.width='';var maxW=area.clientWidth||500,maxH=Math.max(160,window.innerHeight-200),aW=maxW,aH=Math.round(aW*cropNH/cropNW);if(aH>maxH){aH=maxH;aW=Math.round(aH*cropNW/cropNH);}area.style.width=aW+'px';area.style.margin='0 auto';var cv=document.getElementById('crop-canvas');cv.width=aW;cv.height=aH;cv.style.width=aW+'px';cv.style.height=aH+'px';cropDW=aW;cropDH=aH;cv.getContext('2d').drawImage(cropImg,0,0,aW,aH);var iW=aW,iH=Math.round(aW/IMG_RATIO);if(iH>aH){iH=aH;iW=Math.round(aH*IMG_RATIO);}sel={x:Math.round((aW-iW)/2),y:Math.round((aH-iH)/2),w:iW,h:iH};updateCropUI();});};cropImg.src=src;}
-function updateCropUI(){var r=document.getElementById('crop-rect'),t=sel.y,l=sel.x,b=cropDH-(sel.y+sel.h),rr=cropDW-(sel.x+sel.w);r.style.top=t+'px';r.style.left=l+'px';r.style.bottom=b+'px';r.style.right=rr+'px';document.getElementById('cov-t').style.cssText='top:0;left:0;right:0;height:'+t+'px';document.getElementById('cov-b').style.cssText='bottom:0;left:0;right:0;height:'+b+'px';document.getElementById('cov-l').style.cssText='top:'+t+'px;bottom:'+b+'px;left:0;width:'+l+'px';document.getElementById('cov-r').style.cssText='top:'+t+'px;bottom:'+b+'px;right:0;width:'+rr+'px';document.getElementById('crop-coords-lbl').textContent='Область: '+Math.round(sel.x/cropDW*cropNW)+', '+Math.round(sel.y/cropDH*cropNH)+' → '+Math.round(sel.w/cropDW*cropNW)+'×'+Math.round(sel.h/cropDH*cropNH)+' px';}
-document.getElementById('crop-rect').addEventListener('pointerdown',function(e){var h=e.target.getAttribute('data-h');cropState={h:h||'move',sx:e.clientX,sy:e.clientY,ox:sel.x,oy:sel.y,ow:sel.w,oh:sel.h};e.preventDefault();e.stopPropagation();});
-document.addEventListener('pointermove',function(e){if(!cropState)return;var dx=e.clientX-cropState.sx,dy=e.clientY-cropState.sy,MIN=40,ox=cropState.ox,oy=cropState.oy,ow=cropState.ow,oh=cropState.oh,nx=ox,ny=oy,nw=ow,nh=oh,delta;if(cropState.h==='move'){nx=clamp(ox+dx,0,cropDW-ow);ny=clamp(oy+dy,0,cropDH-oh);}else if(cropState.h==='tl'){delta=-(dx+dy*IMG_RATIO)/2;nw=clamp(ow+delta,MIN,Math.min(ox+ow,cropDH*IMG_RATIO));nh=nw/IMG_RATIO;nx=ox+ow-nw;ny=oy+oh-nh;if(nx<0){nx=0;nw=ox+ow;nh=nw/IMG_RATIO;ny=oy+oh-nh;}if(ny<0){ny=0;nh=oy+oh;nw=nh*IMG_RATIO;nx=ox+ow-nw;}}else if(cropState.h==='tr'){delta=(dx-dy*IMG_RATIO)/2;nw=clamp(ow+delta,MIN,Math.min(cropDW-ox,cropDH*IMG_RATIO));nh=nw/IMG_RATIO;ny=oy+oh-nh;if(ny<0){ny=0;nh=oy+oh;nw=nh*IMG_RATIO;}}else if(cropState.h==='bl'){delta=(-dx+dy*IMG_RATIO)/2;nw=clamp(ow+delta,MIN,Math.min(ox+ow,cropDH*IMG_RATIO));nh=nw/IMG_RATIO;nx=ox+ow-nw;if(nx<0){nx=0;nw=ox+ow;nh=nw/IMG_RATIO;}if(ny+nh>cropDH){nh=cropDH-ny;nw=nh*IMG_RATIO;nx=ox+ow-nw;}}else if(cropState.h==='br'){delta=(dx+dy*IMG_RATIO)/2;nw=clamp(ow+delta,MIN,Math.min(cropDW-ox,(cropDH-oy)*IMG_RATIO));nh=nw/IMG_RATIO;if(nx+nw>cropDW){nw=cropDW-nx;nh=nw/IMG_RATIO;}if(ny+nh>cropDH){nh=cropDH-ny;nw=nh*IMG_RATIO;}}nw=Math.round(nw);nh=Math.round(nh);nx=Math.round(nx);ny=Math.round(ny);if(nx<0)nx=0;if(ny<0)ny=0;if(nx+nw>cropDW){nw=cropDW-nx;nh=Math.round(nw/IMG_RATIO);}if(ny+nh>cropDH){nh=cropDH-ny;nw=Math.round(nh*IMG_RATIO);}if(nw<MIN){nw=MIN;nh=Math.round(nw/IMG_RATIO);}sel={x:nx,y:ny,w:nw,h:nh};updateCropUI();});
+
+/* Card image slot ratio: 310px wide : 163px tall */
+var CARD_RATIO = 296 / 149;
+
+function openCrop(src){
+  cropImg = new Image();
+  cropImg.onload = function(){
+    cropNW = cropImg.naturalWidth;
+    cropNH = cropImg.naturalHeight;
+    /* Открываем модал до измерения, чтобы clientWidth был корректным */
+    document.getElementById('crop-modal-bg').classList.add('open');
+    requestAnimationFrame(function(){
+      var area = document.getElementById('crop-area');
+      area.style.width='';
+      var maxW = area.clientWidth || 500;
+      var maxH = Math.max(160, window.innerHeight - 200);
+      var aW = maxW;
+      var aH = Math.round(aW * cropNH / cropNW);
+      if(aH > maxH){ aH = maxH; aW = Math.round(aH * cropNW / cropNH); }
+      area.style.width = aW + 'px'; area.style.margin = '0 auto';
+      var cv = document.getElementById('crop-canvas');
+      cv.width = aW; cv.height = aH;
+      cv.style.width = aW+'px'; cv.style.height = aH+'px';
+      cropDW = aW; cropDH = aH;
+      var ctx = cv.getContext('2d');
+      ctx.drawImage(cropImg, 0, 0, aW, aH);
+      /* initial selection: card-ratio rect centered in image */
+      var initW = aW;
+      var initH = Math.round(aW / CARD_RATIO);
+      if(initH > aH){ initH = aH; initW = Math.round(aH * CARD_RATIO); }
+      sel = {
+        x: Math.round((aW - initW) / 2),
+        y: Math.round((aH - initH) / 2),
+        w: initW, h: initH
+      };
+      updateCropUI();
+    });
+  };
+  cropImg.src = src;
+}
+
+function updateCropUI(){
+  var r = document.getElementById('crop-rect');
+  /* top/left/bottom/right in px relative to crop-area */
+  var t = sel.y;
+  var l = sel.x;
+  var b = cropDH - (sel.y + sel.h);
+  var rr = cropDW - (sel.x + sel.w);
+  r.style.top    = t+'px';
+  r.style.left   = l+'px';
+  r.style.bottom = b+'px';
+  r.style.right  = rr+'px';
+  document.getElementById('cov-t').style.cssText = 'top:0;left:0;right:0;height:'+t+'px';
+  document.getElementById('cov-b').style.cssText = 'bottom:0;left:0;right:0;height:'+b+'px';
+  document.getElementById('cov-l').style.cssText = 'top:'+t+'px;bottom:'+b+'px;left:0;width:'+l+'px';
+  document.getElementById('cov-r').style.cssText = 'top:'+t+'px;bottom:'+b+'px;right:0;width:'+rr+'px';
+  /* show natural-px coords for debug */
+  var sx = Math.round(sel.x / cropDW * cropNW);
+  var sy = Math.round(sel.y / cropDH * cropNH);
+  var sw = Math.round(sel.w / cropDW * cropNW);
+  var sh = Math.round(sel.h / cropDH * cropNH);
+  document.getElementById('crop-coords-lbl').textContent =
+    'Область: '+sx+', '+sy+' → '+sw+'×'+sh+' px';
+}
+
+document.getElementById('crop-rect').addEventListener('pointerdown',function(e){
+  var h = e.target.getAttribute('data-h');
+  cropState = {
+    h: h || 'move',
+    sx: e.clientX, sy: e.clientY,
+    ox: sel.x, oy: sel.y, ow: sel.w, oh: sel.h
+  };
+  e.preventDefault(); e.stopPropagation();
+});
+
+document.addEventListener('pointermove',function(e){
+  if(!cropState) return;
+  var dx = e.clientX - cropState.sx;
+  var dy = e.clientY - cropState.sy;
+  var MIN = 40;
+  var ox=cropState.ox, oy=cropState.oy, ow=cropState.ow, oh=cropState.oh;
+  var nx=ox, ny=oy, nw=ow, nh=oh;
+
+  if(cropState.h==='move'){
+    /* move: keep size, clamp to canvas */
+    nx = clamp(ox+dx, 0, cropDW-ow);
+    ny = clamp(oy+dy, 0, cropDH-oh);
+  } else {
+    /* resize: diagonal only, fixed ratio CARD_RATIO (w/h) */
+    /* use the larger of |dx|/|dy| projected onto the ratio */
+    var delta;
+    if(cropState.h==='tl'){
+      /* growing toward top-left: dx<0 grows, dy<0 grows */
+      delta = -(dx + dy * CARD_RATIO) / 2;
+      nw = clamp(ow + delta, MIN, Math.min(ox+ow, cropDH*CARD_RATIO));
+      nh = nw / CARD_RATIO;
+      nx = ox + ow - nw;
+      ny = oy + oh - nh;
+      /* clamp so we don't go negative */
+      if(nx < 0){ nx=0; nw=ox+ow; nh=nw/CARD_RATIO; ny=oy+oh-nh; }
+      if(ny < 0){ ny=0; nh=oy+oh; nw=nh*CARD_RATIO; nx=ox+ow-nw; }
+    } else if(cropState.h==='tr'){
+      /* growing toward top-right: dx>0 grows, dy<0 grows */
+      delta = (dx - dy * CARD_RATIO) / 2;
+      nw = clamp(ow + delta, MIN, Math.min(cropDW-ox, cropDH*CARD_RATIO));
+      nh = nw / CARD_RATIO;
+      ny = oy + oh - nh;
+      if(ny < 0){ ny=0; nh=oy+oh; nw=nh*CARD_RATIO; }
+    } else if(cropState.h==='bl'){
+      /* growing toward bottom-left: dx<0 grows, dy>0 grows */
+      delta = (-dx + dy * CARD_RATIO) / 2;
+      nw = clamp(ow + delta, MIN, Math.min(ox+ow, cropDH*CARD_RATIO));
+      nh = nw / CARD_RATIO;
+      nx = ox + ow - nw;
+      if(nx < 0){ nx=0; nw=ox+ow; nh=nw/CARD_RATIO; }
+      if(ny+nh > cropDH){ nh=cropDH-ny; nw=nh*CARD_RATIO; nx=ox+ow-nw; }
+    } else if(cropState.h==='br'){
+      /* growing toward bottom-right: dx>0 grows, dy>0 grows */
+      delta = (dx + dy * CARD_RATIO) / 2;
+      nw = clamp(ow + delta, MIN, Math.min(cropDW-ox, (cropDH-oy)*CARD_RATIO));
+      nh = nw / CARD_RATIO;
+      if(nx+nw > cropDW){ nw=cropDW-nx; nh=nw/CARD_RATIO; }
+      if(ny+nh > cropDH){ nh=cropDH-ny; nw=nh*CARD_RATIO; }
+    }
+    /* round */
+    nw=Math.round(nw); nh=Math.round(nh);
+    nx=Math.round(nx); ny=Math.round(ny);
+    /* hard clamp: selection must not exceed canvas bounds */
+    if(nx < 0){ nx=0; }
+    if(ny < 0){ ny=0; }
+    if(nx + nw > cropDW){ nw = cropDW - nx; nh = Math.round(nw / CARD_RATIO); }
+    if(ny + nh > cropDH){ nh = cropDH - ny; nw = Math.round(nh * CARD_RATIO); }
+    if(nw < MIN){ nw=MIN; nh=Math.round(nw/CARD_RATIO); }
+    if(nh < Math.round(MIN/CARD_RATIO)){ nh=Math.round(MIN/CARD_RATIO); nw=Math.round(nh*CARD_RATIO); }
+  }
+  sel = {x:nx, y:ny, w:nw, h:nh};
+  updateCropUI();
+});
+
 document.addEventListener('pointerup',function(){cropState=null;});
-document.getElementById('crop-cancel').addEventListener('click',function(){document.getElementById('crop-modal-bg').classList.remove('open');});
-document.getElementById('crop-apply').addEventListener('click',function(){var sX=cropNW/cropDW,sY=cropNH/cropDH,nx=Math.floor(sel.x*sX),ny=Math.floor(sel.y*sY),nw=Math.ceil((sel.x+sel.w)*sX)-nx,nh=Math.ceil((sel.y+sel.h)*sY)-ny;nx=Math.max(0,nx);ny=Math.max(0,ny);nw=Math.min(nw,cropNW-nx);nh=Math.min(nh,cropNH-ny);var out=document.createElement('canvas');out.width=nw;out.height=nh;out.getContext('2d').drawImage(cropImg,nx,ny,nw,nh,0,0,nw,nh);imgDataUrl=out.toDataURL('image/png');rawImgDataUrl=rawImgDataUrl||imgDataUrl;var th=document.getElementById('img-thumb');th.style.backgroundImage='url('+imgDataUrl+')';th.style.display='block';document.getElementById('img-icon').style.display='none';document.getElementById('img-lbl').style.display='none';setCardImg(imgDataUrl);document.getElementById('crop-modal-bg').classList.remove('open');toast('✦ Картинка применена');});
+
+document.getElementById('crop-cancel').addEventListener('click',function(){
+  document.getElementById('crop-modal-bg').classList.remove('open');
+});
+
+document.getElementById('crop-apply').addEventListener('click',function(){
+  /* map display-px selection → natural-image-px */
+  var scaleX = cropNW / cropDW;
+  var scaleY = cropNH / cropDH;
+  var nx = Math.floor(sel.x * scaleX);
+  var ny = Math.floor(sel.y * scaleY);
+  var nw = Math.ceil((sel.x + sel.w) * scaleX) - nx;
+  var nh = Math.ceil((sel.y + sel.h) * scaleY) - ny;
+  nx=Math.max(0,nx); ny=Math.max(0,ny);
+  nw=Math.min(nw,cropNW-nx); nh=Math.min(nh,cropNH-ny);
+  var out = document.createElement('canvas');
+  out.width=nw; out.height=nh;
+  out.getContext('2d').drawImage(cropImg, nx, ny, nw, nh, 0, 0, nw, nh);
+  imgDataUrl = out.toDataURL('image/png');
+  var th=document.getElementById('img-thumb');
+  th.style.backgroundImage='url('+imgDataUrl+')'; th.style.display='block';
+  document.getElementById('img-icon').style.display='none';
+  document.getElementById('img-lbl').style.display='none';
+  setCardImg(imgDataUrl);
+  document.getElementById('crop-modal-bg').classList.remove('open');
+  toast('✦ Картинка применена');
+});
 function splitDesc(data){var desc=document.getElementById('pdesc');var full=data.desc||'';desc.textContent='';if(!full){renderBackCard({rarity:data.rarity,back:''});return;}requestAnimationFrame(function(){desc.textContent=full;var ch=desc.clientHeight;if(!ch||desc.scrollHeight<=ch+2){renderBackCard({rarity:data.rarity,back:''});return;}var lo=0,hi=full.length;while(lo<hi-1){var mid=Math.floor((lo+hi)/2);desc.textContent=full.slice(0,mid);if(desc.scrollHeight<=ch+2)lo=mid;else hi=mid;}var cut=lo;for(var i=cut;i>Math.max(0,cut-60);i--){if(full[i]===' '||full[i]==='\n'){cut=i;break;}}desc.textContent=full.slice(0,cut);var backStart=(full[cut]===' '||full[cut]==='\n')?cut+1:cut;renderBackCard({rarity:data.rarity,back:full.slice(backStart)});});}
 function readForm(){return{type:'tool',rarity:cr,toolType:document.getElementById('ftooltype').value,name:document.getElementById('fn').value.trim(),engname:document.getElementById('fengname').value.trim(),cost:document.getElementById('fc').value.trim(),coin:document.getElementById('fcoin').value,wgt:document.getElementById('fwgt').value.trim(),stat:document.getElementById('fstat').value,desc:document.getElementById('fdesc').value,attune:document.getElementById('fattune').value,img:imgDataUrl,rawImg:rawImgDataUrl};}
 function renderCard(data){var d=R[data.rarity||'common'];document.getElementById('p-rar').textContent=d.l;document.getElementById('p-type').textContent='Инструмент';document.getElementById('pnm').textContent=data.name||'Название инструмента';var en=document.getElementById('pengname');if(data.engname){en.textContent=data.engname;en.style.display='';}else{en.style.display='none';}var cm=document.getElementById('p-cost');if(cm){if(data.cost){cm.textContent=data.cost+' '+(data.coin||'зм');cm.style.visibility='visible';}else{cm.style.visibility='hidden';}}document.getElementById('pwgt').textContent=data.wgt?data.wgt+' фнт.':'';var tt=document.getElementById('ptooltype');if(data.toolType){tt.textContent=data.toolType;tt.style.display='';}else{tt.style.display='none';}var st=document.getElementById('pstat');if(data.stat){document.getElementById('pstat-val').textContent=data.stat;st.style.display='';}else{st.style.display='none';}document.getElementById('prule-desc').style.display=(data.toolType||data.stat)?'':'none';setCardImg(data.img||null);applyR(data.rarity||'common');splitDesc(data);}
 function renderBackCard(data){var hasBack=data.back&&data.back.trim();var rubashka=document.getElementById('pb-rubashka');var pbs=document.getElementById('pbs');var pbs2=document.getElementById('pbs2');var pbBody=document.getElementById('pb-body');var pbFoot=document.getElementById('pb-foot');var pbDesc=document.getElementById('pb-desc');var pbgm=document.getElementById('pbgm');if(hasBack){rubashka.style.display='none';pbs.style.display='';pbs2.style.display='';pbBody.style.display='flex';pbFoot.style.display='';pbDesc.textContent=data.back;var d=R[data.rarity||'common'];pbs.style.background=d.a;pbgm.style.background=d.a;}else{rubashka.style.display='block';pbs.style.display='none';pbs2.style.display='none';pbBody.style.display='none';pbFoot.style.display='none';}}
 function applyFormData(data){cr=data.rarity||'common';document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');});var rEl=document.querySelector('.rp[data-r="'+cr+'"]');if(rEl)rEl.classList.add('on');document.getElementById('rn').textContent=R[cr].l;document.getElementById('ftooltype').value=data.toolType||'';document.getElementById('fn').value=data.name||'';document.getElementById('fengname').value=data.engname||'';document.getElementById('fc').value=data.cost||'';document.getElementById('fcoin').value=data.coin||'зм';document.getElementById('fwgt').value=data.wgt||'';document.getElementById('fstat').value=data.stat||'';document.getElementById('fdesc').value=data.desc||'';document.getElementById('fattune').value=data.attune||'';updateAttuneWrap();imgDataUrl=data.img||null;rawImgDataUrl=data.rawImg||data.img||null;var th=document.getElementById('img-thumb');if(imgDataUrl){th.style.backgroundImage='url('+imgDataUrl+')';th.style.display='block';document.getElementById('img-icon').style.display='none';document.getElementById('img-lbl').style.display='none';document.getElementById('btn-recrop').style.display='flex';document.getElementById('btn-del-img').style.display='flex';}else{th.style.display='none';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';}mkCounter('fn','cnt-fn',34);mkCounter('fengname','cnt-eng',42);mkCounter('fdesc','cnt-desc',750);}
 document.getElementById('btn-reset').addEventListener('click',function(){if(!confirm('Сбросить все поля?'))return;cr='common';document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');});document.querySelector('.rp[data-r="common"]').classList.add('on');document.getElementById('rn').textContent=R.common.l;['fn','fengname','fc','fwgt','fdesc'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('fcoin').value='зм';document.getElementById('ftooltype').selectedIndex=0;document.getElementById('fstat').selectedIndex=0;document.getElementById('fattune').selectedIndex=0;document.getElementById('attune-wrap').style.display='none';imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('f-img').value='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';setCardImg(null);applyR('common');renderCard({});toast('Поля сброшены');});
+var DEFAULT_NAME='Инструмент';
+var JSON_NAME='dnd_tools';
+function collItemSub(card){return card.toolType||'Инструмент';}
 var editingId=null;
 function updateBuildBtn(){var g=document.getElementById('gbtn'),n=document.getElementById('gbtn-new');if(!g)return;if(editingId){g.textContent='💾 Сохранить изменения';if(n)n.style.display='';}else{g.textContent='✦ Создать карточку';if(n)n.style.display='none';}}
 function _saveCard(asNew){currentCard=readForm();renderCard(currentCard);var card=JSON.parse(JSON.stringify(currentCard));if(!asNew&&editingId){card.id=editingId;var i=collection.findIndex(function(c){return c.id===editingId;});if(i>-1){collection[i]=card;}else{collection.unshift(card);}toast('💾 Изменения сохранены');}else{card.id=Date.now();collection.unshift(card);editingId=card.id;toast('✦ Карточка создана и добавлена в коллекцию!');}updateBuildBtn();renderCollection();saveToLS();}
 document.getElementById('gbtn').addEventListener('click',function(){_saveCard(false);});
 document.getElementById('gbtn-new').addEventListener('click',function(){_saveCard(true);});
-function updateSelActions(){var n=selectedIds.size;var info=document.getElementById('coll-sel-info');if(selMode){info.style.display='';info.textContent='Выбрано: '+n;}document.getElementById('btn-dl-sel').disabled=!selMode||n===0;document.getElementById('btn-print-sel').disabled=!selMode||n===0;document.getElementById('btn-del-sel').disabled=!selMode||n===0;}
-function enterSelMode(){selMode=true;document.getElementById('btn-sel-mode').classList.add('active');document.getElementById('btn-sel-mode').textContent='Отмена';document.getElementById('coll-sel-info').style.display='';updateSelActions();renderCollection();}
-function exitSelMode(){selMode=false;selectedIds.clear();document.getElementById('btn-sel-mode').classList.remove('active');document.getElementById('btn-sel-mode').textContent='Выбрать';document.getElementById('coll-sel-info').style.display='none';updateSelActions();renderCollection();}
-function makeCollItem(card){var d=R[card.rarity||'common'];var item=document.createElement('div');item.className='coll-item'+(selMode?' sel-mode':'')+(selectedIds.has(card.id)?' selected':'');var sub=card.toolType||'Инструмент';var cbHtml='<input type="checkbox" class="coll-item-cb"'+(selectedIds.has(card.id)?' checked':'')+'/>';item.innerHTML=cbHtml+'<div class="coll-item-thumb"><div class="coll-item-stripe" style="background:'+d.a+';"></div>'+(card.img?'<img src="'+card.img+'" alt=""/>':'')+'</div><div class="coll-item-info"><div class="coll-item-name">'+(card.name||'Инструмент')+'</div><div class="coll-item-sub">'+sub+'</div></div>'+(selMode?'':'<button class="coll-item-del">✕</button>');if(!selMode){item.querySelector('.coll-item-del').addEventListener('click',function(e){e.stopPropagation();showConfirmDelete([card.id],'Удалить «'+(card.name||'инструмент')+'»?');});}item.addEventListener('click',function(){if(selMode){if(selectedIds.has(card.id)){selectedIds.delete(card.id);}else{selectedIds.add(card.id);}item.classList.toggle('selected',selectedIds.has(card.id));item.querySelector('.coll-item-cb').checked=selectedIds.has(card.id);updateSelActions();}else{applyFormData(card);renderCard(card);currentCard=JSON.parse(JSON.stringify(card));editingId=card.id;updateBuildBtn();toast('Карточка загружена');}});return item;}
-function renderCollection(){var list=document.getElementById('coll-list'),empty=document.getElementById('coll-empty');document.getElementById('coll-count').textContent=collection.length;Array.from(list.children).forEach(function(el){if(el.id!=='coll-empty')el.remove();});if(!collection.length){empty.style.display='';applyCollSearch();return;}empty.style.display='none';var groups={};RARITY_ORDER.forEach(function(r){groups[r]=[];});collection.forEach(function(card){(groups[card.rarity||'common']||groups['common']).push(card);});RARITY_ORDER.forEach(function(r){var cards=groups[r];if(!cards.length)return;cards.sort(function(a,b){return(a.name||'').localeCompare(b.name||'','ru');});var d=R[r],isC=!!collapsedSections[r];var wrap=document.createElement('div');wrap.className='coll-sect-wrap'+(isC?' collapsed':'');var head=document.createElement('div');head.className='coll-sect-head';head.innerHTML='<div class="coll-sect-dot" style="background:'+d.a+';"></div><span class="coll-sect-label">'+d.l+'</span><span class="coll-sect-count">'+cards.length+'</span><div class="coll-sect-line"></div><svg class="coll-sect-chevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>';head.addEventListener('click',function(){collapsedSections[r]=!collapsedSections[r];wrap.classList.toggle('collapsed',collapsedSections[r]);});var body=document.createElement('div');body.className='coll-sect-body';cards.forEach(function(card){body.appendChild(makeCollItem(card));});wrap.appendChild(head);wrap.appendChild(body);list.appendChild(wrap);});applyCollSearch();}
+
+var selMode=false;
+var selectedIds=new Set();
+var pendingDeleteIds=new Set();
+
+function updateSelActions(){
+  var n=selectedIds.size;
+  var info=document.getElementById('coll-sel-info');
+  if(selMode){info.style.display='';info.textContent='Выбрано: '+n;}
+  document.getElementById('btn-dl-sel').disabled=!selMode||n===0;
+  document.getElementById('btn-print-sel').disabled=!selMode||n===0;
+  document.getElementById('btn-del-sel').disabled=!selMode||n===0;
+}
+
+function enterSelMode(){
+  selMode=true;
+  document.getElementById('btn-sel-mode').classList.add('active');
+  document.getElementById('btn-sel-mode').textContent='Отмена';
+  document.getElementById('coll-sel-info').style.display='';
+  updateSelActions();
+  renderCollection();
+}
+
+function exitSelMode(){
+  selMode=false;selectedIds.clear();
+  document.getElementById('btn-sel-mode').classList.remove('active');
+  document.getElementById('btn-sel-mode').textContent='Выбрать';
+  document.getElementById('coll-sel-info').style.display='none';
+  updateSelActions();
+  renderCollection();
+}
+
+var RARITY_ORDER=['common','uncommon','rare','veryrare','legendary'];
+var collapsedSections={};
+
+function makeCollItem(card){
+  var d=R[card.rarity||'common'];
+  var item=document.createElement('div');
+  item.className='coll-item'+(selMode?' sel-mode':'')+(selectedIds.has(card.id)?' selected':'');
+  var cbHtml='<input type="checkbox" class="coll-item-cb"'+(selectedIds.has(card.id)?' checked':'')+'/>';
+  item.innerHTML=cbHtml+'<div class="coll-item-thumb"><div class="coll-item-stripe" style="background:'+d.a+';"></div>'+(card.img?'<img src="'+card.img+'" alt=""/>':'')+'</div><div class="coll-item-info"><div class="coll-item-name">'+(card.name||DEFAULT_NAME)+'</div><div class="coll-item-sub">'+collItemSub(card)+'</div></div>'+(selMode?'':'<button class="coll-item-del">✕</button>');
+  if(!selMode){
+    item.querySelector('.coll-item-del').addEventListener('click',function(e){
+      e.stopPropagation();
+      showConfirmDelete([card.id],'Удалить карточку «'+(card.name||DEFAULT_NAME)+'»?');
+    });
+  }
+  item.addEventListener('click',function(){
+    if(selMode){
+      if(selectedIds.has(card.id)){selectedIds.delete(card.id);}else{selectedIds.add(card.id);}
+      item.classList.toggle('selected',selectedIds.has(card.id));
+      item.querySelector('.coll-item-cb').checked=selectedIds.has(card.id);
+      updateSelActions();
+    } else {
+      applyFormData(card);renderCard(card);currentCard=JSON.parse(JSON.stringify(card));editingId=card.id;updateBuildBtn();
+      toast('Карточка загружена');
+    }
+  });
+  return item;
+}
+
+function renderCollection(){
+  var list=document.getElementById('coll-list'),empty=document.getElementById('coll-empty');
+  document.getElementById('coll-count').textContent=collection.length;
+  Array.from(list.children).forEach(function(el){if(el.id!=='coll-empty')el.remove();});
+  if(!collection.length){empty.style.display='';updateSelActions();return;}
+  empty.style.display='none';
+
+  /* group by rarity */
+  var groups={};
+  RARITY_ORDER.forEach(function(r){groups[r]=[];});
+  collection.forEach(function(card){
+    var r=card.rarity||'common';
+    (groups[r]||groups['common']).push(card);
+  });
+
+  RARITY_ORDER.forEach(function(r){
+    var cards=groups[r];
+    if(!cards.length)return;
+    cards.sort(function(a,b){return(a.name||'').localeCompare(b.name||'','ru');});
+    var d=R[r];
+    var isCollapsed=!!collapsedSections[r];
+
+    var wrap=document.createElement('div');
+    wrap.className='coll-sect-wrap'+(isCollapsed?' collapsed':'');
+
+    var head=document.createElement('div');
+    head.className='coll-sect-head';
+    head.innerHTML='<div class="coll-sect-dot" style="background:'+d.a+';"></div>'
+      +'<span class="coll-sect-label">'+d.l+'</span>'
+      +'<span class="coll-sect-count">'+cards.length+'</span>'
+      +'<div class="coll-sect-line"></div>'
+      +'<svg class="coll-sect-chevron" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>';
+    head.addEventListener('click',function(){
+      collapsedSections[r]=!collapsedSections[r];
+      wrap.classList.toggle('collapsed',collapsedSections[r]);
+    });
+
+    var body=document.createElement('div');
+    body.className='coll-sect-body';
+    cards.forEach(function(card){body.appendChild(makeCollItem(card));});
+
+    wrap.appendChild(head);
+    wrap.appendChild(body);
+    list.appendChild(wrap);
+  });
+
+  updateSelActions();
+  applyCollSearch();
+}
+
+/* collection search */
 var collSearchQuery='';
-function applyCollSearch(){var q=collSearchQuery.toLowerCase().trim();document.getElementById('coll-search-clear').style.display=q?'':'none';document.querySelectorAll('.coll-sect-wrap').forEach(function(wrap){var v=0;wrap.querySelectorAll('.coll-item').forEach(function(item){var n=(item.querySelector('.coll-item-name')||{}).textContent||'';var s=!q||n.toLowerCase().includes(q);item.style.display=s?'':'none';if(s)v++;});wrap.style.display=v===0&&q?'none':'';});}
-document.getElementById('coll-search').addEventListener('input',function(){collSearchQuery=this.value;applyCollSearch();});
-document.getElementById('coll-search-clear').addEventListener('click',function(){collSearchQuery='';document.getElementById('coll-search').value='';applyCollSearch();});
-function showConfirmDelete(ids,label){pendingDeleteIds=new Set(ids);document.getElementById('conf-modal-h').textContent=label;document.getElementById('conf-modal-bg').classList.add('open');}
-document.getElementById('conf-keep').addEventListener('click',function(){document.getElementById('conf-modal-bg').classList.remove('open');pendingDeleteIds.clear();});
-document.getElementById('conf-del').addEventListener('click',function(){document.getElementById('conf-modal-bg').classList.remove('open');var n=pendingDeleteIds.size;collection=collection.filter(function(c){return!pendingDeleteIds.has(c.id);});pendingDeleteIds.forEach(function(id){selectedIds.delete(id);_delImg(id);});pendingDeleteIds.clear();if(!selMode||!selectedIds.size)exitSelMode();else renderCollection();saveToLS();toast('Удалено'+(n>1?' карточек: '+n:' карточка'));});
-document.getElementById('btn-sel-mode').addEventListener('click',function(){if(selMode){exitSelMode();}else{enterSelMode();}});
-document.getElementById('btn-del-sel').addEventListener('click',function(){if(!selectedIds.size)return;showConfirmDelete(selectedIds,'Удалить выбранные карточки ('+selectedIds.size+')?');});
-document.getElementById('btn-dl-sel').addEventListener('click',function(){if(!selectedIds.size)return;var cards=collection.filter(function(c){return selectedIds.has(c.id);});var savedCard=currentCard?JSON.parse(JSON.stringify(currentCard)):null;var imgs=[];var el=document.getElementById('pc');var elB=document.getElementById('pb');toast('Подготовка '+cards.length+' карт...');var i=0;function captureNext(){if(i>=cards.length){if(savedCard){applyFormData(savedCard);renderCard(savedCard);currentCard=savedCard;}var zip=new JSZip();imgs.forEach(function(img,idx){if(img){var n=((cards[idx].name||'card').replace(/\s+/g,'_')||'card')+'_'+(idx+1)+'.png';zip.file(n,img.split(',')[1],{base64:true});}});zip.generateAsync({type:'blob'}).then(function(blob){var a=document.createElement('a');a.download='dnd_cards_'+new Date().toISOString().slice(0,10)+'.zip';a.href=URL.createObjectURL(blob);a.click();URL.revokeObjectURL(a.href);toast('✦ ZIP скачан ('+cards.length+' карт.)');});return;}var card=cards[i];i++;applyFormData(card);renderCard(card);setTimeout(function(){el.style.transform='none';html2canvas(el,{scale:3,useCORS:true,allowTaint:true,logging:false,backgroundColor:null}).then(function(frontC){el.style.transform='';elB.style.transform='none';html2canvas(elB,{scale:3,useCORS:true,allowTaint:true,logging:false,backgroundColor:null}).then(function(backC){elB.style.transform='';var pad=90,gap=60,cardW=750,cardH=1062,lblH=66;var out=document.createElement('canvas');out.width=pad+cardW+gap+cardW+pad;out.height=pad+lblH+cardH+pad;var ctx=out.getContext('2d');ctx.fillStyle='#f0ece2';ctx.fillRect(0,0,out.width,out.height);ctx.font='500 28px "Cinzel",serif';ctx.fillStyle='#b0a890';ctx.textAlign='center';ctx.fillText('ЛИЦЕВАЯ',pad+cardW/2,pad+38);ctx.fillText('ОБОРОТНАЯ',pad+cardW+gap+cardW/2,pad+38);ctx.drawImage(frontC,0,0,frontC.width,frontC.height,pad,pad+lblH,cardW,cardH);ctx.drawImage(backC,0,0,backC.width,backC.height,pad+cardW+gap,pad+lblH,cardW,cardH);imgs.push(out.toDataURL('image/png'));captureNext();}).catch(function(){elB.style.transform='';imgs.push(null);captureNext();});}).catch(function(){el.style.transform='';imgs.push(null);captureNext();});},80);}captureNext();});
+function applyCollSearch(){
+  var q=collSearchQuery.toLowerCase().trim();
+  document.getElementById('coll-search-clear').style.display=q?'':'none';
+  document.querySelectorAll('.coll-sect-wrap').forEach(function(wrap){
+    var visible=0;
+    wrap.querySelectorAll('.coll-item').forEach(function(item){
+      var name=(item.querySelector('.coll-item-name')||{}).textContent||'';
+      var show=!q||name.toLowerCase().includes(q);
+      item.style.display=show?'':'none';
+      if(show)visible++;
+    });
+    wrap.style.display=visible===0&&q?'none':'';
+  });
+}
+document.getElementById('coll-search').addEventListener('input',function(){
+  collSearchQuery=this.value;
+  applyCollSearch();
+});
+document.getElementById('coll-search-clear').addEventListener('click',function(){
+  collSearchQuery='';
+  document.getElementById('coll-search').value='';
+  applyCollSearch();
+  document.getElementById('coll-search').focus();
+});
+
+document.getElementById('btn-sel-mode').addEventListener('click',function(){
+  if(selMode){exitSelMode();}else{enterSelMode();}
+});
+
+/* delete helpers */
+function showConfirmDelete(ids,label){
+  pendingDeleteIds=new Set(ids);
+  document.getElementById('conf-modal-h').textContent=label;
+  document.getElementById('conf-modal-bg').classList.add('open');
+}
+document.getElementById('conf-keep').addEventListener('click',function(){
+  document.getElementById('conf-modal-bg').classList.remove('open');
+  pendingDeleteIds.clear();
+});
+document.getElementById('conf-del').addEventListener('click',function(){
+  document.getElementById('conf-modal-bg').classList.remove('open');
+  var n=pendingDeleteIds.size;
+  collection=collection.filter(function(c){return !pendingDeleteIds.has(c.id);});
+  pendingDeleteIds.forEach(function(id){selectedIds.delete(id);_delImg(id);});
+  pendingDeleteIds.clear();
+  if(!selMode||!selectedIds.size)exitSelMode();else renderCollection();
+  saveToLS();
+  toast('Удалено'+(n>1?' карточек: '+n:' карточка'));
+});
+
+/* batch delete */
+document.getElementById('btn-del-sel').addEventListener('click',function(){
+  if(!selectedIds.size)return;
+  showConfirmDelete(selectedIds,'Удалить выбранные карточки ('+selectedIds.size+')?');
+});
+
+/* batch download */
+document.getElementById('btn-dl-sel').addEventListener('click',function(){
+  if(!selectedIds.size)return;
+  var cards=collection.filter(function(c){return selectedIds.has(c.id);});
+  var savedCard=currentCard?JSON.parse(JSON.stringify(currentCard)):null;
+  var zip=new JSZip();
+  var row=document.getElementById('cards-row');
+  toast('Подготовка '+cards.length+' карт...');
+  var i=0;
+  function next(){
+    if(i>=cards.length){
+      zip.generateAsync({type:'blob'}).then(function(blob){
+        var a=document.createElement('a');
+        a.download='dnd_cards_'+new Date().toISOString().slice(0,10)+'.zip';
+        a.href=URL.createObjectURL(blob);a.click();URL.revokeObjectURL(a.href);
+        if(savedCard){applyFormData(savedCard);renderCard(savedCard);currentCard=savedCard;}
+        toast('✦ ZIP скачан ('+cards.length+' карт.)');
+      });
+      return;
+    }
+    var card=cards[i];i++;
+    applyFormData(card);renderCard(card);
+    setTimeout(function(){
+      html2canvas(row,{backgroundColor:'#f0ece2',scale:3,useCORS:true,allowTaint:true,logging:false}).then(function(canvas){
+        var name=(card.name||'card').replace(/\s+/g,'_')+'.png';
+        zip.file(name,canvas.toDataURL('image/png').split(',')[1],{base64:true});
+        next();
+      }).catch(function(){next();});
+    },80);
+  }
+  next();
+});
+
+/* print one */
 var pendingPrintCards=null;
-document.getElementById('btn-print-one').addEventListener('click',function(){if(!currentCard){toast('⚠ Сначала создайте карточку');return;}pendingPrintCards=[currentCard];document.getElementById('print-modal-bg').classList.add('open');});
-document.getElementById('btn-print-sel').addEventListener('click',function(){if(!selectedIds.size)return;pendingPrintCards=collection.filter(function(c){return selectedIds.has(c.id);});document.getElementById('print-modal-bg').classList.add('open');});
-document.getElementById('btn-print-cancel').addEventListener('click',function(){document.getElementById('print-modal-bg').classList.remove('open');pendingPrintCards=null;});
-document.getElementById('btn-print-single').addEventListener('click',function(){document.getElementById('print-modal-bg').classList.remove('open');var cards=pendingPrintCards||[];pendingPrintCards=null;startPrintCapture(cards,false);});
-document.getElementById('btn-print-duplex').addEventListener('click',function(){document.getElementById('print-modal-bg').classList.remove('open');var cards=pendingPrintCards||[];pendingPrintCards=null;startPrintCapture(cards,true);});
-function startPrintCapture(cards,duplex){var fronts=[],backs=[];var savedCard=currentCard?JSON.parse(JSON.stringify(currentCard)):null;var elF=document.getElementById('pc');var elB=document.getElementById('pb');var i=0;toast('Подготовка к печати ('+cards.length+' карт.)...');function captureNext(){if(i>=cards.length){if(savedCard){applyFormData(savedCard);renderCard(savedCard);currentCard=savedCard;}buildPrintWindow(cards,fronts,backs,duplex);return;}var card=cards[i];i++;applyFormData(card);renderCard(card);setTimeout(function(){elF.style.transform='none';html2canvas(elF,{scale:3,useCORS:true,allowTaint:true,logging:false,backgroundColor:null}).then(function(cf){elF.style.transform='';var out=document.createElement('canvas');out.width=750;out.height=1062;out.getContext('2d').drawImage(cf,0,0,750,1062);fronts.push(out.toDataURL('image/png'));elB.style.transform='none';html2canvas(elB,{scale:3,useCORS:true,allowTaint:true,logging:false,backgroundColor:null}).then(function(cb){elB.style.transform='';var ob=document.createElement('canvas');ob.width=750;ob.height=1062;ob.getContext('2d').drawImage(cb,0,0,750,1062);backs.push(ob.toDataURL('image/png'));captureNext();}).catch(function(){elB.style.transform='';backs.push(null);captureNext();});}).catch(function(){elF.style.transform='';fronts.push(null);backs.push(null);captureNext();});},80);}captureNext();}
-function buildPrintWindow(cards,fronts,backs,duplex){var n=cards.length;var cW=63,cH=89;var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'portrait'});var pageW=210,pageH=297;var first=true;function newPage(){if(first){first=false;}else{doc.addPage();}}if(!duplex){var margin=10,rows=3,vgap=5,hgap=10;var pairW=cW*2+hgap;var lx=margin+(pageW-2*margin-pairW)/2;var rx=lx+cW+hgap;var totalH=rows*cH+(rows-1)*vgap;var startY=margin+(pageH-2*margin-totalH)/2;var stepY=cH+vgap;var perPage=rows;for(var p=0;p<Math.ceil(n/perPage);p++){newPage();for(var r=0;r<rows;r++){var idx=p*perPage+r;if(idx>=n)break;var y=startY+r*stepY;if(fronts[idx])doc.addImage(fronts[idx],'PNG',lx,y,cW,cH);if(backs[idx])doc.addImage(backs[idx],'PNG',rx,y,cW,cH);}}}else{var margin=7,gap=3,cols=3,rows=3,perPage=cols*rows;var totalW=cols*cW+(cols-1)*gap;var totalH=rows*cH+(rows-1)*gap;var startX=margin+(pageW-2*margin-totalW)/2;var startY=margin+(pageH-2*margin-totalH)/2;var stepX=cW+gap,stepY=cH+gap;var nPages=Math.ceil(n/perPage);for(var p=0;p<nPages;p++){newPage();for(var r=0;r<rows;r++){for(var c=0;c<cols;c++){var idx=p*perPage+r*cols+c;if(idx>=n)continue;if(fronts[idx])doc.addImage(fronts[idx],'PNG',startX+c*stepX,startY+r*stepY,cW,cH);}}}for(var p=0;p<nPages;p++){doc.addPage();for(var r=0;r<rows;r++){for(var c=0;c<cols;c++){var idx=p*perPage+r*cols+(cols-1-c);if(idx>=n)continue;if(backs[idx])doc.addImage(backs[idx],'PNG',startX+c*stepX,startY+r*stepY,cW,cH);}}}}var suffix=duplex?'_2стор':'_1стор';doc.save('dnd_print_'+new Date().toISOString().slice(0,10)+suffix+'.pdf');toast('✦ PDF для печати скачан');}
-document.getElementById('btn-png').addEventListener('click',function(){var el=document.getElementById('pc');var elB=document.getElementById('pb');var baseName=(document.getElementById('pnm').textContent||'card').replace(/\s+/g,'_');el.style.transform='none';html2canvas(el,{scale:3,useCORS:true,allowTaint:true,logging:false,backgroundColor:null}).then(function(frontC){el.style.transform='';elB.style.transform='none';html2canvas(elB,{scale:3,useCORS:true,allowTaint:true,logging:false,backgroundColor:null}).then(function(backC){elB.style.transform='';var pad=90,gap=60,cardW=750,cardH=1062,lblH=66;var out=document.createElement('canvas');out.width=pad+cardW+gap+cardW+pad;out.height=pad+lblH+cardH+pad;var ctx=out.getContext('2d');ctx.fillStyle='#f0ece2';ctx.fillRect(0,0,out.width,out.height);ctx.font='500 28px "Cinzel",serif';ctx.fillStyle='#b0a890';ctx.textAlign='center';ctx.fillText('ЛИЦЕВАЯ',pad+cardW/2,pad+38);ctx.fillText('ОБОРОТНАЯ',pad+cardW+gap+cardW/2,pad+38);ctx.drawImage(frontC,0,0,frontC.width,frontC.height,pad,pad+lblH,cardW,cardH);ctx.drawImage(backC,0,0,backC.width,backC.height,pad+cardW+gap,pad+lblH,cardW,cardH);var a=document.createElement('a');a.download=baseName+'.png';a.href=out.toDataURL('image/png');a.click();toast('✦ PNG сохранён (лицо + оборот)!');}).catch(function(){elB.style.transform='';toast('⚠ Ошибка экспорта (оборот)');});}).catch(function(){el.style.transform='';toast('⚠ Ошибка экспорта');});});
-document.getElementById('btn-export-json').addEventListener('click',function(){if(!collection.length){toast('⚠ Проект пуст');return;}var json=JSON.stringify({version:1,exported:new Date().toISOString(),type:'tools',cards:collection},null,2);var a=document.createElement('a');a.download='dnd_tools_'+new Date().toISOString().slice(0,10)+'.json';a.href=URL.createObjectURL(new Blob([json],{type:'application/json'}));a.click();URL.revokeObjectURL(a.href);toast('✦ Проект сохранён ('+collection.length+' карт.)');});
-document.getElementById('btn-import-json').addEventListener('change',function(){var file=this.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(e){try{var data=JSON.parse(e.target.result);var cards=Array.isArray(data)?data:(data.cards||[]);if(!cards.length){toast('⚠ Файл не содержит карточек');return;}collection=cards;renderCollection();toast('✦ Загружено '+cards.length+' карт.');saveToLS();}catch(err){toast('⚠ Ошибка чтения файла');}};reader.readAsText(file);this.value='';});
+document.getElementById('btn-print-one').addEventListener('click',function(){
+  if(!currentCard){toast('⚠ Сначала создайте карточку');return;}
+  pendingPrintCards=[currentCard];
+  document.getElementById('print-modal-bg').classList.add('open');
+});
+
+/* print selected */
+document.getElementById('btn-print-sel').addEventListener('click',function(){
+  if(!selectedIds.size)return;
+  pendingPrintCards=collection.filter(function(c){return selectedIds.has(c.id);});
+  document.getElementById('print-modal-bg').classList.add('open');
+});
+document.getElementById('btn-print-cancel').addEventListener('click',function(){
+  document.getElementById('print-modal-bg').classList.remove('open');
+  pendingPrintCards=null;
+});
+['btn-print-single','btn-print-duplex'].forEach(function(id){
+  document.getElementById(id).addEventListener('click',function(){
+    document.getElementById('print-modal-bg').classList.remove('open');
+    var mode=id==='btn-print-single'?'single':'duplex';
+    var cards=pendingPrintCards||[];
+    pendingPrintCards=null;
+    startPrintCapture(mode,cards);
+  });
+});
+
+function startPrintCapture(mode,cards){
+  var frontImgs=[],backImgs=[];
+  var savedCard=currentCard?JSON.parse(JSON.stringify(currentCard)):null;
+  var elFront=document.getElementById('pc'),elBack=document.getElementById('pb');
+  var i=0;
+  toast('Подготовка к печати ('+cards.length+' карт.)...');
+  function captureNext(){
+    if(i>=cards.length){
+      if(savedCard){applyFormData(savedCard);renderCard(savedCard);currentCard=savedCard;}
+      buildPrintWindow(mode,cards,frontImgs,backImgs);
+      return;
+    }
+    var card=cards[i];i++;
+    applyFormData(card);renderCard(card);
+    setTimeout(function(){
+      html2canvas(elFront,{scale:3,useCORS:true,allowTaint:true,logging:false}).then(function(fc){
+        return html2canvas(elBack,{scale:3,useCORS:true,allowTaint:true,logging:false}).then(function(bc){
+          frontImgs.push(fc.toDataURL('image/png'));
+          backImgs.push(bc.toDataURL('image/png'));
+          captureNext();
+        });
+      }).catch(function(){captureNext();});
+    },80);
+  }
+  captureNext();
+}
+
+function buildPrintWindow(mode,cards,frontImgs,backImgs){
+  var n=cards.length;
+  var cW=63,cH=89;
+  var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
+  var pageW=210,pageH=297;
+  var first=true;
+
+  function newPage(){if(first){first=false;}else{doc.addPage();}}
+
+  if(mode==='single'){
+    /* 10mm page margin; 3 pairs per page, 5mm vertical gap between rows */
+    var margin=10,rows=3,gap=5;
+    var pairW=cW*2+10; /* 136mm, 10mm gap between front and back */
+    var lx=margin+(pageW-2*margin-pairW)/2;  /* centre horizontally */
+    var rx=lx+cW+10;
+    var totalH=rows*cH+(rows-1)*gap;          /* 277mm = fills printable height exactly */
+    var startY=margin+(pageH-2*margin-totalH)/2;
+    var stepY=cH+gap;
+    var perPage=rows;
+    for(var p=0;p<Math.ceil(n/perPage);p++){
+      newPage();
+      for(var r=0;r<rows;r++){
+        var idx=p*perPage+r;
+        if(idx>=n)break;
+        var y=startY+r*stepY;
+        doc.addImage(frontImgs[idx],'PNG',lx,y,cW,cH);
+        doc.addImage(backImgs[idx],'PNG',rx,y,cW,cH);
+      }
+    }
+  } else {
+    /* 7mm page margin; 3×3 grid, 3mm gaps between cards */
+    var margin=7,gap=3,cols=3,rows=3,perPage=cols*rows;
+    var totalW=cols*cW+(cols-1)*gap;  /* 195mm */
+    var totalH=rows*cH+(rows-1)*gap;  /* 273mm */
+    var startX=margin+(pageW-2*margin-totalW)/2;  /* 7.5mm */
+    var startY=margin+(pageH-2*margin-totalH)/2;  /* 12mm */
+    var stepX=cW+gap,stepY=cH+gap;
+    var pageCount=Math.ceil(n/perPage);
+
+    for(var p=0;p<pageCount;p++){
+      newPage();
+      for(var r=0;r<rows;r++){
+        for(var c=0;c<cols;c++){
+          var idx=p*perPage+r*cols+c;
+          if(idx>=n)continue;
+          doc.addImage(frontImgs[idx],'PNG',startX+c*stepX,startY+r*stepY,cW,cH);
+        }
+      }
+    }
+    /* back pages — columns mirrored for long-edge duplex flip */
+    for(var p=0;p<pageCount;p++){
+      doc.addPage();
+      for(var r=0;r<rows;r++){
+        for(var c=0;c<cols;c++){
+          var idx=p*perPage+r*cols+(cols-1-c);
+          if(idx>=n)continue;
+          doc.addImage(backImgs[idx],'PNG',startX+c*stepX,startY+r*stepY,cW,cH);
+        }
+      }
+    }
+  }
+
+  var suffix=mode==='single'?'_1стор':'_2стор';
+  doc.save('dnd_print_'+new Date().toISOString().slice(0,10)+suffix+'.pdf');
+  toast('✦ PDF для печати скачан');
+}
+
+/* PNG */
+document.getElementById('btn-png').addEventListener('click',function(){
+  var row=document.getElementById('cards-row');
+  html2canvas(row,{backgroundColor:'#f0ece2',scale:3,useCORS:true,allowTaint:true,logging:false}).then(function(canvas){
+    var pad=90; /* 30px CSS × scale3 ≈ 8mm safe zone */
+    var out=document.createElement('canvas');
+    out.width=canvas.width+pad*2;out.height=canvas.height+pad*2;
+    var ctx=out.getContext('2d');
+    ctx.fillStyle='#f0ece2';ctx.fillRect(0,0,out.width,out.height);
+    ctx.drawImage(canvas,pad,pad);
+    var a=document.createElement('a');
+    a.download=(document.getElementById('pnm').textContent||'card').replace(/\s+/g,'_')+'.png';
+    a.href=out.toDataURL('image/png');a.click();toast('✦ PNG сохранён!');
+  }).catch(function(){toast('⚠ Ошибка экспорта');});
+});
+
+/* JSON export */
+document.getElementById('btn-export-json').addEventListener('click',function(){
+  if(!collection.length){toast('⚠ Проект пуст');return;}
+  var json=JSON.stringify({version:1,exported:new Date().toISOString(),cards:collection},null,2);
+  var a=document.createElement('a');
+  a.download=JSON_NAME+'_'+new Date().toISOString().slice(0,10)+'.json';
+  a.href=URL.createObjectURL(new Blob([json],{type:'application/json'}));a.click();
+  URL.revokeObjectURL(a.href);toast('✦ Проект сохранён ('+collection.length+' карт.)');
+});
+
+/* JSON import */
+document.getElementById('btn-import-json').addEventListener('change',function(){
+  var file=this.files[0];if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{var data=JSON.parse(e.target.result);var cards=Array.isArray(data)?data:(data.cards||[]);
+    if(!cards.length){toast('⚠ Файл не содержит карточек');return;}
+    collection=cards;renderCollection();toast('✦ Загружено '+cards.length+' карт.');saveToLS();}
+    catch(err){toast('⚠ Ошибка чтения файла');}
+  };
+  reader.readAsText(file);this.value='';
+});
+
 var toastT;
 function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('show');},2600);}
-applyR('common');loadFromLS();
+
+applyR('common');
+loadFromLS();
 })();
 </script>
 <script>
 (function(){
-  var toggle=document.getElementById('nav-toggle'),menu=document.getElementById('nav-menu');
-  toggle.addEventListener('click',function(e){e.stopPropagation();var open=menu.classList.toggle('open');toggle.classList.toggle('open',open);});
-  document.addEventListener('click',function(e){if(!document.getElementById('nav-wrap').contains(e.target)){menu.classList.remove('open');toggle.classList.remove('open');}});
-  document.querySelectorAll('.nav-group-head').forEach(function(head){head.addEventListener('click',function(){head.closest('.nav-group').classList.toggle('open');});});
+  var toggle=document.getElementById('nav-toggle');
+  var menu=document.getElementById('nav-menu');
+  toggle.addEventListener('click',function(e){
+    e.stopPropagation();
+    var open=menu.classList.toggle('open');
+    toggle.classList.toggle('open',open);
+  });
+  document.addEventListener('click',function(e){
+    if(!document.getElementById('nav-wrap').contains(e.target)){
+      menu.classList.remove('open');
+      toggle.classList.remove('open');
+    }
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){menu.classList.remove('open');toggle.classList.remove('open');}
+  });
+  document.querySelectorAll('.nav-group-head').forEach(function(head){
+    head.addEventListener('click',function(){
+      head.closest('.nav-group').classList.toggle('open');
+    });
+  });
 })();
 </script>
 </body>
