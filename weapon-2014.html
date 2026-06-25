@@ -182,8 +182,8 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .crop-area{position:relative;width:100%;background:#555;border-radius:8px;overflow:hidden;cursor:crosshair;user-select:none;}
 .crop-area img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;}
 .cov{position:absolute;background:rgba(0,0,0,.52);pointer-events:none;}
-.crop-rect{position:absolute;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.3);cursor:move;z-index:2;}
-.ch{position:absolute;width:12px;height:12px;background:#fff;border:1.5px solid rgba(0,0,0,.4);border-radius:2px;}
+.crop-rect{touch-action:none;position:absolute;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.3);cursor:move;z-index:2;}
+.ch{touch-action:none;position:absolute;width:12px;height:12px;background:#fff;border:1.5px solid rgba(0,0,0,.4);border-radius:2px;}
 .ch.tl{top:-6px;left:-6px;cursor:nw-resize;}
 .ch.tr{top:-6px;right:-6px;cursor:ne-resize;}
 .ch.bl{bottom:-6px;left:-6px;cursor:sw-resize;}
@@ -861,7 +861,7 @@ function updateCropUI(){
     'Область: '+sx+', '+sy+' → '+sw+'×'+sh+' px';
 }
 
-document.getElementById('crop-rect').addEventListener('mousedown',function(e){
+document.getElementById('crop-rect').addEventListener('pointerdown',function(e){
   var h = e.target.getAttribute('data-h');
   cropState = {
     h: h || 'move',
@@ -871,7 +871,7 @@ document.getElementById('crop-rect').addEventListener('mousedown',function(e){
   e.preventDefault(); e.stopPropagation();
 });
 
-document.addEventListener('mousemove',function(e){
+document.addEventListener('pointermove',function(e){
   if(!cropState) return;
   var dx = e.clientX - cropState.sx;
   var dy = e.clientY - cropState.sy;
@@ -935,7 +935,7 @@ document.addEventListener('mousemove',function(e){
   updateCropUI();
 });
 
-document.addEventListener('mouseup',function(){cropState=null;});
+document.addEventListener('pointerup',function(){cropState=null;});
 
 document.getElementById('crop-cancel').addEventListener('click',function(){
   document.getElementById('crop-modal-bg').classList.remove('open');
