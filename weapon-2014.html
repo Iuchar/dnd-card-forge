@@ -43,8 +43,8 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .img-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
 .img-thumb{position:absolute;inset:0;background-size:cover;background-position:center;border-radius:6px;}
 .divider{height:0.5px;background:var(--border);margin:12px 0;}
-.btn-reset{width:100%;padding:6px 9px;margin-top:6px;font-family:'Cinzel',serif;font-size:10px;font-weight:500;letter-spacing:.08em;cursor:pointer;border:0.5px solid var(--border);border-radius:6px;background:transparent;color:var(--text3);transition:all .14s;display:flex;align-items:center;justify-content:center;gap:5px;}
-.btn-reset:hover{background:rgba(220,60,60,.1);color:#e08070;border-color:rgba(220,60,60,.3);}
+.btn-reset{width:100%;padding:8px 9px;margin-top:10px;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.08em;cursor:pointer;border:1px solid rgba(220,60,60,.35);border-radius:6px;background:rgba(220,60,60,.08);color:#cf8474;transition:all .14s;display:flex;align-items:center;justify-content:center;gap:5px;}
+.btn-reset:hover{background:rgba(220,60,60,.18);color:#ec9282;border-color:rgba(220,60,60,.55);}
 .btn-reset svg{width:12px;height:12px;}
 .btn-recrop{width:100%;padding:5px 9px;margin-top:5px;font-family:'Cinzel',serif;font-size:10px;font-weight:500;letter-spacing:.08em;cursor:pointer;border:0.5px solid var(--border2);border-radius:6px;background:rgba(255,255,255,.04);color:var(--text2);transition:all .14s;display:flex;align-items:center;justify-content:center;gap:5px;}
 .btn-recrop:hover{background:rgba(255,255,255,.09);color:var(--text);}
@@ -382,10 +382,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     <div class="rp"    data-r="legendary" title="Легендарный"></div>
     <span class="rname" id="rn">Обычный</span>
   </div>
-  <button class="btn-reset" id="btn-reset">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
-    Сбросить все поля
-  </button>
 
   <div class="lbl">Название <span style="color:var(--text3);font-size:9px;font-family:'Crimson Text',serif;font-style:italic;text-transform:none;letter-spacing:0;">макс. 30 симв.</span></div>
   <div class="field-wrap field-mb">
@@ -481,6 +477,10 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 
   <button class="btn-build" id="gbtn">✦ Создать карточку</button>
   <button class="btn-build-alt" id="gbtn-new" style="display:none;">+ Создать как новую</button>
+  <button class="btn-reset" id="btn-reset">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
+    Сбросить все поля
+  </button>
 </aside>
 
 <main class="cv">
