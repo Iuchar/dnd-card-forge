@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>D&D — Готовые шаблоны</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,700&display=swap" rel="stylesheet"/>
-<script src="lib/html2canvas.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -177,6 +176,27 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 /* TOAST */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:9px 18px;font-family:'Cinzel',serif;font-size:11px;color:var(--text);letter-spacing:.06em;z-index:500;transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
 .toast.show{transform:translateX(-50%) translateY(0);}
+
+/* группы галереи */
+#grid-area{display:block;padding:0;}
+.gal-section{padding-bottom:4px;}
+.gal-section-head{display:flex;align-items:center;gap:10px;padding:16px 20px 4px;}
+.gal-section-title{font-family:'Cinzel',serif;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);}
+.gal-section-count{font-family:'Cinzel',serif;font-size:10px;color:var(--text3);background:var(--bg3);border:0.5px solid var(--border2);border-radius:20px;padding:2px 9px;}
+.gal-grid{display:grid;grid-template-columns:repeat(auto-fill,155px);gap:16px;padding:6px 20px 14px;justify-content:center;}
+/* простое превью */
+.prev-simple{display:flex;gap:16px;padding:2px 0 14px;}
+.prev-simple-img{width:210px;height:110px;flex-shrink:0;border:2px solid var(--accent-l);border-radius:6px;overflow:hidden;background:#1a1814;display:flex;align-items:center;justify-content:center;}
+.prev-simple-img img{width:100%;height:100%;object-fit:cover;}
+.m-img-ph{color:var(--text3);font-size:11px;font-family:'Cinzel',serif;letter-spacing:.06em;}
+.prev-simple-info{flex:1;min-width:0;}
+.prev-simple-name{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.prev-simple-meta{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
+.m-tag{font-family:'Cinzel',serif;font-size:9px;font-weight:700;color:#1a1208;padding:3px 9px;border-radius:20px;}
+.m-tag2{font-family:'Cinzel',serif;font-size:9px;color:var(--text2);background:var(--bg3);border:0.5px solid var(--border2);padding:3px 9px;border-radius:20px;}
+.m-field{font-size:13px;color:var(--text2);margin-bottom:8px;}
+.m-field b{color:var(--text);}
+.m-field-text{font-size:13px;color:var(--text2);line-height:1.5;white-space:pre-wrap;max-height:220px;overflow:auto;}
 </style>
 <link rel="stylesheet" href="mobile.css"/>
 </head>
@@ -189,65 +209,67 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         Разделы
       </button>
-      <div class="nav-menu" id="nav-menu">
-        <a class="nav-item" href="collection.html">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-          Моя коллекция
-        </a>
-        <a class="nav-item nav-active" href="templates.html">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          Готовые шаблоны
-        </a>
-        <div class="nav-sep"></div>
-        <div class="nav-section-lbl">Генераторы</div>
-        <div class="nav-group" id="ng-weapon">
-          <div class="nav-group-head">
-            <div class="nav-group-head-inner">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M2 22l7.5-7.5"/></svg>
-              Оружие
-            </div>
-            <svg class="nav-group-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+<div class="nav-menu" id="nav-menu">
+      <a class="nav-item" href="collection.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+        Моя коллекция
+      </a>
+      <a class="nav-item" href="templates.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Готовые шаблоны
+      </a>
+      <div class="nav-sep"></div>
+      <div class="nav-section-lbl">Генераторы</div>
+      <div class="nav-group" id="ng-weapon">
+        <div class="nav-group-head">
+          <div class="nav-group-head-inner">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M2 22l7.5-7.5"/></svg>
+            Оружие
           </div>
-          <div class="nav-sub">
-            <a class="nav-item" href="weapon-2014.html">D&D 5e (2014)</a>
-            <a class="nav-item" href="weapon-2024.html">D&D 5e (2024)</a>
-          </div>
+          <svg class="nav-group-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
-        <a class="nav-item" href="armor.html">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          Доспехи
-        </a>
-        <div class="nav-sep"></div>
-        <span class="nav-item nav-disabled">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-          Заклинания
-        </span>
-        <span class="nav-item nav-disabled">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="16" y1="10" x2="8" y2="10"/></svg>
-          Наборы снаряжения
-        </span>
-        <span class="nav-item nav-disabled">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/></svg>
-          Снаряжение
-        </span>
-        <span class="nav-item nav-disabled">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-          Инструменты
-        </span>
-        <span class="nav-item nav-disabled">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>
-          Огнестрел и взрывчатка        </span>
-        <span class="nav-item nav-disabled">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-          Осадное снаряжение        </span>
-        <span class="nav-item nav-disabled">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><line x1="8.5" y1="2" x2="15.5" y2="2"/></svg>
-          Яды        </span>
-        <span class="nav-item nav-disabled">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-          Существа
-        </span>
+        <div class="nav-sub">
+          <a class="nav-item" href="weapon-2014.html">D&D 5e (2014)</a>
+          <a class="nav-item" href="weapon-2024.html">D&D 5e (2024)</a>
+        </div>
       </div>
+      <a class="nav-item" href="armor.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Доспехи
+      </a>
+      <div class="nav-sep"></div>
+      <div class="nav-section-lbl">Снаряжение</div>
+      <a class="nav-item" href="equipment.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        Снаряжение
+      </a>
+      <a class="nav-item" href="tools.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        Инструменты
+      </a>
+      <a class="nav-item" href="kits.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="16" y1="10" x2="8" y2="10"/></svg>
+        Наборы снаряжения
+      </a>
+      <a class="nav-item" href="poisons.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><line x1="8.5" y1="2" x2="15.5" y2="2"/></svg>
+        Яды      </a>
+      <div class="nav-sep"></div>
+      <span class="nav-item nav-disabled">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Заклинания
+      </span>
+      <span class="nav-item nav-disabled">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>
+        Огнестрел и взрывчатка      </span>
+      <span class="nav-item nav-disabled">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+        Осадное снаряжение      </span>
+      <span class="nav-item nav-disabled">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Существа
+      </span>
+    </div>
     </div>
     <span style="font-size:12px;color:var(--text2);font-family:'Crimson Text',serif;font-style:italic;font-weight:400;">— Готовые шаблоны</span>
   </div>
@@ -268,7 +290,8 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
       <input class="filter-search" id="filter-search" type="text" placeholder="Поиск по названию…" autocomplete="off"/>
       <button class="filter-search-clear" id="filter-search-clear" title="Очистить">✕</button>
     </div>
-    <div class="filter-tabs">
+    <div class="filter-tabs" id="type-tabs"></div>
+    <div class="filter-tabs" id="edition-tabs" style="display:none;">
       <button class="ftab active" data-src="">Все</button>
       <button class="ftab" data-src="2014">2014</button>
       <button class="ftab" data-src="2024">2024</button>
@@ -292,7 +315,7 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
       <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
       <div class="empty-state-title" id="empty-title">Шаблонов пока нет</div>
       <div class="empty-state-sub" id="empty-sub">Создайте карточки в редакторе шаблонов<br/>и сохраните их.</div>
-      <div class="empty-hint">Редактор: dev-editor.html</div>
+      
     </div>
   </div>
 
@@ -301,97 +324,18 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 <!-- PREVIEW MODAL -->
 <div class="prev-bg" id="prev-bg">
   <div class="prev-box">
-    <div class="prev-head">
-      <span class="prev-title" id="prev-title">Предпросмотр</span>
-      <button class="prev-close" id="prev-close">✕</button>
-    </div>
-    <div class="prev-cards">
-      <div class="prev-card-col">
-        <div class="side-lbl">Лицевая</div>
-        <div class="dc" id="m-pc">
-          <div class="c-stripe-wrap"><div class="c-stripe" id="m-ps"></div><div class="c-stripe-under"></div></div>
-          <div class="c-meta">
-            <div class="c-meta-orn"><svg viewBox="0 0 20 20" fill="none"><path d="M3 10 L10 3 L17 10 L10 17 Z" stroke="#5a4820" stroke-width="1.2" fill="#d4c4a0" opacity="0.8"/><circle cx="10" cy="10" r="2" fill="#5a4820" opacity="0.7"/></svg></div>
-            <div class="c-meta-inner">
-              <span class="c-meta-item cost" id="m-p-cost" style="visibility:hidden;">—</span>
-              <span class="c-meta-item" id="m-p-rar">Обычный</span>
-              <span class="c-meta-item" id="m-p-type">Оружие</span>
-            </div>
-            <div class="c-meta-orn"><svg viewBox="0 0 20 20" fill="none"><path d="M3 10 L10 3 L17 10 L10 17 Z" stroke="#5a4820" stroke-width="1.2" fill="#d4c4a0" opacity="0.8"/><circle cx="10" cy="10" r="2" fill="#5a4820" opacity="0.7"/></svg></div>
-          </div>
-          <div class="c-img" id="m-cib">
-            <div class="c-img-ph" id="m-img-ph"><svg viewBox="0 0 24 24" fill="none" stroke="#8a7860" stroke-width="1.2"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M2 22l7.5-7.5"/></svg></div>
-            <svg class="img-frame-svg" viewBox="0 0 310 163" xmlns="http://www.w3.org/2000/svg">
-              <rect x="1" y="1" width="308" height="161" fill="none" stroke="#3a2810" stroke-width="2" opacity="0.9"/>
-              <rect x="5" y="5" width="300" height="153" fill="none" stroke="#a07838" stroke-width="1" opacity="0.85"/>
-              <rect x="1"   y="1"   width="22" height="22" fill="#e8dcc8" stroke="#3a2810" stroke-width="2" opacity="0.95"/>
-              <line x1="4"  y1="19" x2="19" y2="4"  stroke="#3a2810" stroke-width="1.5" opacity="0.9"/>
-              <rect x="287" y="1"   width="22" height="22" fill="#e8dcc8" stroke="#3a2810" stroke-width="2" opacity="0.95"/>
-              <line x1="290" y1="19" x2="305" y2="4" stroke="#3a2810" stroke-width="1.5" opacity="0.9"/>
-              <rect x="1"   y="140" width="22" height="22" fill="#e8dcc8" stroke="#3a2810" stroke-width="2" opacity="0.95"/>
-              <line x1="4"  y1="144" x2="19" y2="159" stroke="#3a2810" stroke-width="1.5" opacity="0.9"/>
-              <rect x="287" y="140" width="22" height="22" fill="#e8dcc8" stroke="#3a2810" stroke-width="2" opacity="0.95"/>
-              <line x1="290" y1="144" x2="305" y2="159" stroke="#3a2810" stroke-width="1.5" opacity="0.9"/>
-              <line x1="23"  y1="3"   x2="287" y2="3"   stroke="#a07838" stroke-width="1" opacity="0.8"/>
-              <line x1="23"  y1="160" x2="287" y2="160" stroke="#a07838" stroke-width="1" opacity="0.8"/>
-              <line x1="3"   y1="23"  x2="3"   y2="140" stroke="#a07838" stroke-width="1" opacity="0.8"/>
-              <line x1="307" y1="23"  x2="307" y2="140" stroke="#a07838" stroke-width="1" opacity="0.8"/>
-            </svg>
-          </div>
-          <div class="c-body">
-            <div class="c-name" id="m-pnm">Имя</div>
-            <!-- WEAPON -->
-            <div id="m-wblock">
-              <div class="c-dmgline" id="m-pdmgl" style="display:none;"></div>
-              <div class="c-attune" id="m-pattune" style="display:none;"></div>
-              <div class="c-rule"></div>
-              <div class="c-stats" id="m-pst"></div>
-              <div class="c-props" id="m-pprops" style="display:none;"></div>
-              <div class="c-quote" id="m-pquote" style="display:none;"></div>
-              <div class="c-desc" id="m-pds"></div>
-            </div>
-            <!-- ARMOR -->
-            <div id="m-ablock" style="display:none;">
-              <div class="c-rule"></div>
-              <div class="c-info-row">
-                <div class="c-infolist" id="m-pinfolist"></div>
-                <div class="c-ac-col">
-                  <div class="c-ac-lbl">КБ</div>
-                  <div class="c-ac-num" id="m-pac-num">—</div>
-                  <div class="c-ac-mod" id="m-pac-mod"></div>
-                </div>
-              </div>
-              <div class="c-rule" id="m-sep-aflv" style="display:none;"></div>
-              <div class="c-quote" id="m-aquote" style="display:none;"></div>
-              <div class="c-rule" id="m-sep-aprops" style="display:none;"></div>
-              <div class="c-aprops" id="m-aprops" style="display:none;"></div>
-            </div>
-          </div>
-          <div class="c-foot">
-            <span class="c-wgt" id="m-pwgt"></span>
-            <div class="c-gem" id="m-pgm"></div>
-          </div>
-        </div>
-      </div>
-      <div class="prev-card-col">
-        <div class="side-lbl">Оборотная</div>
-        <div class="dc-back" id="m-pb">
-          <div class="c-stripe-wrap"><div class="c-stripe" id="m-pbs"></div><div class="c-stripe-under"></div></div>
-          <div class="cb-body">
-            <div class="cb-lbl">Описание</div>
-            <div class="cb-desc" id="m-pbk"></div>
-          </div>
-          <div class="cb-foot"><div class="c-gem" id="m-pbgm" style="width:12px;height:12px;"></div></div>
-        </div>
+    <div class="prev-head"><span class="prev-title" id="prev-title">Предпросмотр</span><button class="prev-close" id="prev-close">✕</button></div>
+    <div class="prev-simple">
+      <div class="prev-simple-img" id="m-img"></div>
+      <div class="prev-simple-info">
+        <div class="prev-simple-name" id="m-name">Имя</div>
+        <div class="prev-simple-meta" id="m-meta"></div>
+        <div class="prev-simple-fields" id="m-fields"></div>
       </div>
     </div>
     <div class="prev-actions">
-      <button class="hbtn" id="btn-m-png">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Сохранить PNG
-      </button>
+      <a class="hbtn" id="m-edit" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Открыть генератор</a>
     </div>
-    <div class="prev-note">Шаблоны доступны только для просмотра. Управление — в редакторе dev-editor.html</div>
   </div>
 </div>
 
@@ -399,367 +343,62 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 
 <script>
 (function(){
-
+var R={common:{l:'Обычный',a:'#888077'},uncommon:{l:'Необычный',a:'#52aa40'},rare:{l:'Редкий',a:'#4a8ccc'},veryrare:{l:'Очень редкий',a:'#9870cc'},legendary:{l:'Легендарный',a:'#e09820'}};
 var LS_KEY='dnd_cardforge_templates';
-
-var R={
-  common:   {l:'Обычный',     a:'#888077',cb:'#888077',cs:'#5a5030'},
-  uncommon: {l:'Необычный',   a:'#52aa40',cb:'#52aa40',cs:'#286820'},
-  rare:     {l:'Редкий',      a:'#4a8ccc',cb:'#4a8ccc',cs:'#1e4c88'},
-  veryrare: {l:'Очень редкий',a:'#9870cc',cb:'#9870cc',cs:'#503888'},
-  legendary:{l:'Легендарный', a:'#e09820',cb:'#e09820',cs:'#906008'}
-};
-
-var templates=[];
-var filterSrc='';
-var filterRarity='';
-var filterQuery='';
-var previewCard=null;
-
-/* ─── LOAD ───────────────────────────── */
-function loadAll(){
-  templates=[];
-  try{
-    var d=localStorage.getItem(LS_KEY);
-    if(d){var arr=JSON.parse(d);if(Array.isArray(arr))templates=arr;}
-  }catch(e){}
-}
-
-/* ─── FILTER ─────────────────────────── */
-function getFiltered(){
-  return templates.filter(function(t){
-    if(filterSrc&&(t._edition||'2014')!==filterSrc)return false;
-    if(filterRarity&&(t.rarity||'common')!==filterRarity)return false;
-    if(filterQuery&&!(t.name||'').toLowerCase().includes(filterQuery))return false;
-    return true;
-  });
-}
-
-/* ─── RENDER GRID ────────────────────── */
-function renderGrid(){
-  var cards=getFiltered();
-  var grid=document.getElementById('grid-area');
-  var empty=document.getElementById('empty-state');
-  grid.innerHTML='';
-
-  var total=templates.length;
-  var total14=templates.filter(function(t){return(t._edition||'2014')==='2014';}).length;
-  var total24=templates.filter(function(t){return(t._edition||'2014')==='2024';}).length;
-  var vis=cards.length;
-
-  var statsEl=document.getElementById('filter-stats');
-  if(total===0){
-    statsEl.innerHTML='Нет шаблонов';
-  }else{
-    statsEl.innerHTML='<b>'+vis+'</b> из <b>'+total+'</b>'
-      +' &nbsp;·&nbsp; 2014: <b>'+total14+'</b>'
-      +' &nbsp;·&nbsp; 2024: <b>'+total24+'</b>';
-  }
-
-  if(total===0||(vis===0&&total>0)){
-    empty.style.display='';
-    if(total>0&&vis===0){
-      document.getElementById('empty-title').textContent='Ничего не найдено';
-      document.getElementById('empty-sub').textContent='Попробуйте изменить фильтры.';
-      document.querySelector('.empty-hint').style.display='none';
-    }else{
-      document.getElementById('empty-title').textContent='Шаблонов пока нет';
-      document.getElementById('empty-sub').innerHTML='Создайте карточки в редакторе шаблонов<br/>и сохраните их.';
-      document.querySelector('.empty-hint').style.display='';
-    }
-    return;
-  }
-  empty.style.display='none';
-  cards.forEach(function(t){grid.appendChild(makeGridCard(t));});
-}
-
-function makeGridCard(tpl){
-  var r=tpl.rarity||'common';
-  var d=R[r]||R.common;
-  var ed=tpl._edition||'2014';
-
-  var wrap=document.createElement('div');
-  wrap.className='g-card';
-  wrap.style.setProperty('--gc-border',d.cb);
-  wrap.style.setProperty('--gc-shadow',d.cs);
-
-  var stripe=document.createElement('div');
-  stripe.className='g-card-stripe';
-  stripe.style.background=d.a;
-
-  var imgWrap=document.createElement('div');
-  imgWrap.className='g-card-img';
-  if(tpl.img){
-    var img=document.createElement('img');
-    img.src=tpl.img;img.alt='';
-    imgWrap.appendChild(img);
-  }else{
-    imgWrap.innerHTML='<div class="g-card-img-ph"><svg viewBox="0 0 24 24" fill="none" stroke="#8a7860" stroke-width="1.2"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M2 22l7.5-7.5"/></svg></div>';
-  }
-
-  var foot=document.createElement('div');
-  foot.className='g-card-foot';
-  foot.innerHTML='<span class="g-card-name">'+(tpl.name||'Оружие')+'</span>'
-    +'<span class="g-card-sub"><span style="overflow:hidden;text-overflow:ellipsis;">'+(tpl.cat||tpl.kind||'')+'</span>'
-    +'<span class="g-card-badge '+(ed==='2014'?'ed14':'ed24')+'">'+ed+'</span></span>';
-
-  var ov=document.createElement('div');
-  ov.className='g-card-ov';
-  ov.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
-
-  wrap.appendChild(stripe);
-  wrap.appendChild(imgWrap);
-  wrap.appendChild(foot);
-  wrap.appendChild(ov);
-  wrap.addEventListener('click',function(){openPreview(tpl);});
-  return wrap;
-}
-
-/* ─── PREVIEW MODAL ──────────────────── */
-function openPreview(tpl){
-  previewCard=tpl;
-  renderModalCard(tpl);
-  var ed=tpl._edition||'2014';
-  document.getElementById('prev-title').textContent=(tpl.name||'Оружие')+' · '+ed;
-  document.getElementById('prev-bg').classList.add('open');
-}
-
-function closePreview(){
-  document.getElementById('prev-bg').classList.remove('open');
-  previewCard=null;
-}
-
-function splitAcDisplay(str){
-  if(!str||str==='—')return{num:'—',mod:''};
-  if(/^\+/.test(str)){var m=str.match(/^(\+\d+)\s*(.*)/);return m?{num:m[1],mod:m[2].trim()}:{num:str,mod:''};}
-  var m=str.match(/^(\d+)\s*(.*)/);
-  return m?{num:m[1],mod:m[2].trim()}:{num:str,mod:''};
-}
-
-function renderModalCard(data){
-  var r=data.rarity||'common';
-  var d=R[r]||R.common;
-  var isArmor=data._edition==='armor';
-
-  var mpc=document.getElementById('m-pc');
-  var mpb=document.getElementById('m-pb');
-  mpc.style.removeProperty('--cb');mpc.style.removeProperty('--cs');
-  mpb.style.removeProperty('--cb');mpb.style.removeProperty('--cs');
-  ['m-ps','m-pbs'].forEach(function(id){document.getElementById(id).style.background=d.a;});
-  document.getElementById('m-pgm').style.background=d.a;
-  document.getElementById('m-pbgm').style.background=d.a;
-  document.getElementById('m-p-rar').textContent=d.l;
-
-  document.getElementById('m-p-type').textContent=isArmor?'Доспех':'Оружие';
-  document.getElementById('m-pnm').textContent=data.name||(isArmor?'Доспех':'Оружие');
-
-  var co=document.getElementById('m-p-cost');
-  if(data.cost){co.textContent=data.cost+' зм';co.style.visibility='visible';}
-  else{co.style.visibility='hidden';}
-
-  var wblock=document.getElementById('m-wblock');
-  var ablock=document.getElementById('m-ablock');
-
-  if(isArmor){
-    wblock.style.display='none';
-    ablock.style.display='';
-
-    var ac=splitAcDisplay(data.acDisplay||'');
-    document.getElementById('m-pac-num').textContent=ac.num;
-    var modEl=document.getElementById('m-pac-mod');
-    if(ac.mod){modEl.textContent=ac.mod;modEl.style.display='';}
-    else{modEl.textContent='';modEl.style.display='none';}
-
-    var il=document.getElementById('m-pinfolist');
-    il.innerHTML='';
-    function addInfo(icon,text){
-      var row=document.createElement('div');row.className='c-info-item';
-      var ic=document.createElement('span');ic.className='c-info-icon';ic.textContent=icon;
-      var tx=document.createElement('span');tx.textContent=text;
-      row.appendChild(ic);row.appendChild(tx);il.appendChild(row);
-    }
-    if(data.armorType)addInfo('✦',data.armorType==='Щит'?'Щит':data.armorType+' доспех');
-    if(data.material)addInfo('◈',data.material);
-    if(data.strReq)addInfo('♦','Требует Силы: '+data.strReq);
-    if(data.stealth)addInfo('⊙','Помеха скрытности');
-    if(data.attune)addInfo('◇',data.attune);
-    var timParts=[];
-    if(data.donnTime)timParts.push('Надевание: '+data.donnTime);
-    if(data.doffTime)timParts.push('Снятие: '+data.doffTime);
-    if(timParts.length){
-      var tl=document.createElement('div');tl.className='c-timing-line';
-      timParts.forEach(function(p){var s=document.createElement('span');s.textContent=p;tl.appendChild(s);});
-      il.appendChild(tl);
-    }
-
-    var aqEl=document.getElementById('m-aquote');
-    var sepFlv=document.getElementById('m-sep-aflv');
-    if(data.flv){
-      aqEl.textContent='«'+data.flv.replace(/^[«"]/,'').replace(/[»"]$/,'')+'»';
-      aqEl.style.display='block';sepFlv.style.display='';
-    }else{aqEl.style.display='none';sepFlv.style.display='none';}
-
-    var apEl=document.getElementById('m-aprops');
-    var sepPr=document.getElementById('m-sep-aprops');
-    if(data.props&&typeof data.props==='string'&&data.props){
-      apEl.textContent=data.props;apEl.style.display='block';sepPr.style.display='';
-    }else{apEl.style.display='none';sepPr.style.display='none';}
-
-  }else{
-    wblock.style.display='';
-    ablock.style.display='none';
-
-    var dl=document.getElementById('m-pdmgl');
-    var dlp=[];
-    if(data.kind)dlp.push(data.kind);
-    if(data.cat)dlp.push(data.cat);
-    if(data.dt)dlp.push(data.dt);
-    if(dlp.length){dl.textContent=dlp.join(' · ');dl.style.display='block';}
-    else{dl.style.display='none';}
-
-    var sr=document.getElementById('m-pst');sr.innerHTML='';
-    function addS(l,v){
-      if(!v)return;
-      var el=document.createElement('div');el.className='cst';
-      el.innerHTML='<div class="cst-l">'+l+'</div><div class="cst-v">'+v+'</div>';
-      sr.appendChild(el);
-    }
-    var bonus=data.strBonus?'+'+data.strBonus:'';
-    if(data.d1)addS('Урон',data.d1+bonus);
-    if(data.d2)addS('2 руки',data.d2+bonus);
-    if(data.r1||data.r2)addS('Дист.',(data.r1||'?')+'/'+(data.r2||'?'));
-    if(data._edition){addS('Влад.','+БМ');}
-    else if(data.profBonus){var pb=Number(data.profBonus);addS('Влад.',(pb>0?'+':'')+pb);}
-
-    var atEl=document.getElementById('m-pattune');
-    if(data.attune){atEl.textContent='('+data.attune+')';atEl.style.display='block';}
-    else{atEl.style.display='none';}
-
-    var prEl=document.getElementById('m-pprops');
-    var prParts=[];
-    if(data.ammo)prParts.push('Боеприпас: '+data.ammo);
-    var fp=(data.props||[]).filter(function(p){return !(data.ammo&&p==='Боеприпас');});
-    if(fp.length)prParts=prParts.concat(fp);
-    if(data.mastery)prParts.push('Мастерство: '+data.mastery);
-    if(prParts.length){prEl.textContent=prParts.join(' · ');prEl.style.display='block';}
-    else{prEl.style.display='none';}
-
-    var qEl=document.getElementById('m-pquote');
-    if(data.flv){qEl.textContent='«'+data.flv.replace(/^[«"]/,'').replace(/[»"]$/,'')+'»';qEl.style.display='block';}
-    else{qEl.style.display='none';}
-
-    document.getElementById('m-pds').textContent=data.desc||'';
-  }
-
-  document.getElementById('m-pwgt').textContent=data.wgt?data.wgt+' фнт.':'';
-  document.getElementById('m-pbk').textContent=data.back||'';
-
-  var ci=document.getElementById('m-cib');
-  var ex=ci.querySelector('.c-img-el');
-  if(data.img){
-    if(!ex){ex=document.createElement('img');ex.className='c-img-el';ci.insertBefore(ex,ci.firstChild);}
-    ex.src=data.img;document.getElementById('m-img-ph').style.display='none';
-  }else{
-    if(ex)ex.remove();document.getElementById('m-img-ph').style.display='flex';
-  }
-}
-
+var GROUPS=[{id:'weapon',label:'Оружие'},{id:'armor',label:'Доспехи'},{id:'equipment',label:'Снаряжение'},{id:'tools',label:'Инструменты'},{id:'kits',label:'Наборы'},{id:'poisons',label:'Яды'}];
+var GENPAGE={weapon:'weapon-2014.html',armor:'armor.html',equipment:'equipment.html',tools:'tools.html',kits:'kits.html',poisons:'poisons.html'};
+function grpLabel(id){for(var i=0;i<GROUPS.length;i++)if(GROUPS[i].id===id)return GROUPS[i].label;return id;}
+function grpOf(t){var e=t._group||t._edition||'2014';if(e==='2014'||e==='2024')return 'weapon';return e;}
+function srcOf(t){var e=t._edition||'2014';if(e==='2014')return 'weapon2014';if(e==='2024')return 'weapon2024';return e;}
+var allCards=[],filterType='',filterSrc='',filterRarity='',filterQuery='',previewCard=null;
+function loadAll(){allCards=[];try{var d=localStorage.getItem(LS_KEY);if(d){var arr=JSON.parse(d);if(Array.isArray(arr))arr.forEach(function(t){allCards.push(Object.assign({},t,{_group:grpOf(t),_source:srcOf(t)}));});}}catch(e){}}
+function getFiltered(){return allCards.filter(function(c){if(filterType&&c._group!==filterType)return false;if(filterType==='weapon'&&filterSrc&&c._source!==filterSrc)return false;if(filterRarity&&(c.rarity||'common')!==filterRarity)return false;if(filterQuery&&!(c.name||'').toLowerCase().includes(filterQuery))return false;return true;});}
+function subLabel(c){switch(c._group){case 'armor':return (c.armorType||'Доспех')+(c.acDisplay?' · КБ '+c.acDisplay:'');case 'equipment':return c.category||'';case 'tools':return c.toolType||'';case 'kits':return (c.composition||'').split('\n').filter(function(x){return x.trim();}).length+' предм.';case 'poisons':return c.poisonType||'';default:return c.cat||c.kind||'';}}
+function badgeText(c){if(c._source==='weapon2014')return '2014';if(c._source==='weapon2024')return '2024';return grpLabel(c._group);}
+function makeGridCard(card){var d=R[card.rarity||'common']||R.common;var wrap=document.createElement('div');wrap.className='g-card';var stripe=document.createElement('div');stripe.className='g-card-stripe';stripe.style.background=d.a;var imgWrap=document.createElement('div');imgWrap.className='g-card-img';if(card.img){var img=document.createElement('img');img.src=card.img;img.alt='';imgWrap.appendChild(img);}else{imgWrap.innerHTML='<div class="g-card-img-ph"><svg viewBox="0 0 24 24" fill="none" stroke="#8a7860" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>';}var foot=document.createElement('div');foot.className='g-card-foot';var badgeCls='g-card-badge'+(card._source==='weapon2014'?' ed14':card._source==='weapon2024'?' ed24':'');foot.innerHTML='<span class="g-card-name">'+(card.name||'Без названия')+'</span><span class="g-card-sub"><span style="overflow:hidden;text-overflow:ellipsis;">'+subLabel(card)+'</span><span class="'+badgeCls+'">'+badgeText(card)+'</span></span>';var ov=document.createElement('div');ov.className='g-card-ov';ov.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';wrap.appendChild(stripe);wrap.appendChild(imgWrap);wrap.appendChild(foot);wrap.appendChild(ov);wrap.addEventListener('click',function(){openPreview(card);});return wrap;}
+function buildTypeTabs(){var present=GROUPS.filter(function(g){return allCards.some(function(c){return c._group===g.id;});});var host=document.getElementById('type-tabs');host.innerHTML='<button class="ftab active" data-type="">Все</button>'+present.map(function(g){return '<button class="ftab" data-type="'+g.id+'">'+g.label+'</button>';}).join('');[].forEach.call(host.querySelectorAll('.ftab'),function(btn){btn.addEventListener('click',function(){[].forEach.call(host.querySelectorAll('.ftab'),function(b){b.classList.remove('active');});btn.classList.add('active');filterType=btn.getAttribute('data-type');var ed=document.getElementById('edition-tabs');ed.style.display=(filterType==='weapon')?'':'none';if(filterType!=='weapon'){filterSrc='';[].forEach.call(document.querySelectorAll('#edition-tabs .ftab'),function(b){b.classList.remove('active');});var dd=document.querySelector('#edition-tabs .ftab[data-src=""]');if(dd)dd.classList.add('active');}renderGrid();});});filterType='';}
+function renderGrid(){var cards=getFiltered();var area=document.getElementById('grid-area');var empty=document.getElementById('empty-state');area.innerHTML='';var total=allCards.length,vis=cards.length;var statsEl=document.getElementById('filter-stats');if(total===0){statsEl.textContent='Шаблонов нет';}else{var parts=['<b>'+vis+'</b> из <b>'+total+'</b>'];GROUPS.forEach(function(g){var n=allCards.filter(function(c){return c._group===g.id;}).length;if(n)parts.push(g.label+': <b>'+n+'</b>');});statsEl.innerHTML=parts.join(' &nbsp;·&nbsp; ');}if(vis===0){empty.style.display='';if(total>0){document.getElementById('empty-title').textContent='Ничего не найдено';document.getElementById('empty-sub').textContent='Измените фильтры или поиск.';}else{document.getElementById('empty-title').textContent='Шаблонов пока нет';document.getElementById('empty-sub').innerHTML='Готовые шаблоны появятся здесь,<br/>когда будут добавлены.';}return;}empty.style.display='none';GROUPS.forEach(function(g){var gc=cards.filter(function(c){return c._group===g.id;});if(!gc.length)return;var sect=document.createElement('div');sect.className='gal-section';var head=document.createElement('div');head.className='gal-section-head';head.innerHTML='<span class="gal-section-title">'+g.label+'</span><span class="gal-section-count">'+gc.length+'</span>';var grid=document.createElement('div');grid.className='gal-grid';gc.forEach(function(c){grid.appendChild(makeGridCard(c));});sect.appendChild(head);sect.appendChild(grid);area.appendChild(sect);});}
+function openPreview(card){previewCard=card;var d=R[card.rarity||'common']||R.common;var grp=card._group;document.getElementById('prev-title').textContent=(card.name||'Без названия')+' · '+grpLabel(grp);var imgEl=document.getElementById('m-img');imgEl.innerHTML=card.img?'<img src="'+card.img+'" alt=""/>':'<div class="m-img-ph">нет картинки</div>';imgEl.style.borderColor=d.a;document.getElementById('m-name').textContent=card.name||'Без названия';var meta=['<span class="m-tag" style="background:'+d.a+'">'+d.l+'</span>','<span class="m-tag2">'+grpLabel(grp)+'</span>'];if(card.cost)meta.push('<span class="m-tag2">'+card.cost+' '+(card.coin||'зм')+'</span>');if(card.wgt)meta.push('<span class="m-tag2">'+card.wgt+' фнт.</span>');document.getElementById('m-meta').innerHTML=meta.join('');var sub=subLabel(card),txt=card.desc||card.back||card.props||'';function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;');}document.getElementById('m-fields').innerHTML=(sub?'<div class="m-field"><b>'+grpLabel(grp)+':</b> '+esc(sub)+'</div>':'')+(txt?'<div class="m-field-text">'+esc(txt)+'</div>':'<div class="m-field-text" style="opacity:.5">(описание не заполнено)</div>');document.getElementById('m-edit').href=GENPAGE[grp]||'#';document.getElementById('prev-bg').classList.add('open');}
+function closePreview(){document.getElementById('prev-bg').classList.remove('open');previewCard=null;}
 document.getElementById('prev-close').addEventListener('click',closePreview);
 document.getElementById('prev-bg').addEventListener('click',function(e){if(e.target===this)closePreview();});
-
-/* ─── PNG EXPORT ─────────────────────── */
-document.getElementById('btn-m-png').addEventListener('click',function(){
-  if(!previewCard)return;
-  var btn=this;btn.disabled=true;btn.textContent='Рендер…';
-  html2canvas(document.getElementById('m-pc'),{
-    scale:3,useCORS:true,allowTaint:true,backgroundColor:null
-  }).then(function(canvas){
-    var a=document.createElement('a');
-    var nm=(previewCard.name||'card').replace(/[^a-zA-Zа-яА-ЯёЁ0-9]/g,'_');
-    a.download='tpl_'+nm+'.png';a.href=canvas.toDataURL('image/png');a.click();
-    btn.disabled=false;
-    btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Сохранить PNG';
-    toast('PNG сохранён');
-  }).catch(function(){
-    btn.disabled=false;btn.textContent='Ошибка';
-    setTimeout(function(){btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Сохранить PNG';},2000);
-  });
-});
-
-/* ─── FILTERS ────────────────────────── */
-document.querySelectorAll('.ftab').forEach(function(btn){
-  btn.addEventListener('click',function(){
-    document.querySelectorAll('.ftab').forEach(function(b){b.classList.remove('active');});
-    btn.classList.add('active');
-    filterSrc=btn.getAttribute('data-src');
-    renderGrid();
-  });
-});
-
-document.querySelectorAll('.fr-dot').forEach(function(dot){
-  dot.addEventListener('click',function(){
-    var r=dot.getAttribute('data-r');
-    if(filterRarity===r){
-      filterRarity='';
-      document.querySelectorAll('.fr-dot').forEach(function(d){d.classList.remove('on');});
-    }else{
-      filterRarity=r;
-      document.querySelectorAll('.fr-dot').forEach(function(d){d.classList.remove('on');});
-      dot.classList.add('on');
-    }
-    renderGrid();
-  });
-});
-
-document.getElementById('filter-search').addEventListener('input',function(){
-  filterQuery=this.value.toLowerCase().trim();
-  document.getElementById('filter-search-clear').style.display=filterQuery?'':'none';
-  renderGrid();
-});
-document.getElementById('filter-search-clear').addEventListener('click',function(){
-  document.getElementById('filter-search').value='';
-  filterQuery='';this.style.display='none';renderGrid();
-});
-
-/* ─── REFRESH ────────────────────────── */
-document.getElementById('btn-refresh').addEventListener('click',function(){
-  loadAll();renderGrid();toast('Обновлено');
-});
-
-/* ─── NAV ────────────────────────────── */
-var navToggle=document.getElementById('nav-toggle');
-var navMenu=document.getElementById('nav-menu');
-var navWrap=document.getElementById('nav-wrap');
-navToggle.addEventListener('click',function(e){
-  e.stopPropagation();
-  var open=navMenu.classList.toggle('open');
-  navToggle.classList.toggle('open',open);
-});
-document.addEventListener('click',function(e){
-  if(!navWrap.contains(e.target)){navMenu.classList.remove('open');navToggle.classList.remove('open');}
-});
-document.addEventListener('keydown',function(e){
-  if(e.key==='Escape'){navMenu.classList.remove('open');navToggle.classList.remove('open');closePreview();}
-});
-document.querySelectorAll('.nav-group-head').forEach(function(head){
-  head.addEventListener('click',function(e){
-    e.stopPropagation();head.parentElement.classList.toggle('open');
-  });
-});
-
-/* ─── TOAST ──────────────────────────── */
+document.getElementById('btn-refresh').addEventListener('click',function(){loadAll();buildTypeTabs();renderGrid();toast('Обновлено');});
+[].forEach.call(document.querySelectorAll('#edition-tabs .ftab'),function(btn){btn.addEventListener('click',function(){[].forEach.call(document.querySelectorAll('#edition-tabs .ftab'),function(b){b.classList.remove('active');});btn.classList.add('active');var v=btn.getAttribute('data-src');filterSrc=v?'weapon'+v:'';renderGrid();});});
+[].forEach.call(document.querySelectorAll('.fr-dot'),function(dot){dot.addEventListener('click',function(){var r=dot.getAttribute('data-r');if(filterRarity===r){filterRarity='';[].forEach.call(document.querySelectorAll('.fr-dot'),function(x){x.classList.remove('on');});}else{filterRarity=r;[].forEach.call(document.querySelectorAll('.fr-dot'),function(x){x.classList.remove('on');});dot.classList.add('on');}renderGrid();});});
+document.getElementById('filter-search').addEventListener('input',function(){filterQuery=this.value.toLowerCase().trim();document.getElementById('filter-search-clear').style.display=filterQuery?'':'none';renderGrid();});
+document.getElementById('filter-search-clear').addEventListener('click',function(){document.getElementById('filter-search').value='';filterQuery='';this.style.display='none';renderGrid();});
 var toastTimer=null;
-function toast(msg){
-  var el=document.getElementById('toast');
-  el.textContent=msg;el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(function(){el.classList.remove('show');},2200);
-}
-
-/* ─── INIT ───────────────────────────── */
-loadAll();
-renderGrid();
-
+function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){el.classList.remove('show');},2200);}
+loadAll();buildTypeTabs();renderGrid();
+})();
+</script>
+<script>
+(function(){
+  var toggle=document.getElementById('nav-toggle');
+  var menu=document.getElementById('nav-menu');
+  /* подсветка активного пункта по текущему URL */
+  var _cur=(location.pathname.split('/').pop()||'index.html');
+  var _act=menu.querySelector('a[href="'+_cur+'"]');
+  if(_act){_act.classList.add('nav-active');var _g=_act.closest('.nav-group');if(_g)_g.classList.add('has-active','open');}
+  toggle.addEventListener('click',function(e){
+    e.stopPropagation();
+    var open=menu.classList.toggle('open');
+    toggle.classList.toggle('open',open);
+  });
+  document.addEventListener('click',function(e){
+    if(!document.getElementById('nav-wrap').contains(e.target)){
+      menu.classList.remove('open');
+      toggle.classList.remove('open');
+    }
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){menu.classList.remove('open');toggle.classList.remove('open');}
+  });
+  document.querySelectorAll('.nav-group-head').forEach(function(head){
+    head.addEventListener('click',function(){
+      head.closest('.nav-group').classList.toggle('open');
+    });
+  });
 })();
 </script>
 </body>
