@@ -1159,25 +1159,72 @@ document.getElementById('btn-png').addEventListener('click',function(){
   }).catch(function(){toast('⚠ Ошибка экспорта');});
 });
 
-/* JSON export */
+/* ── Общий проект: экспорт/импорт ВСЕХ 7 коллекций одним файлом ── */
+var ALL_COLLECTIONS=[
+  {key:'dnd_cardforge_weapon2014',idb:'dnd_weapon2014_imgs'},
+  {key:'dnd_cardforge_weapon2024',idb:'dnd_weapon2024_imgs'},
+  {key:'dnd_cardforge_armor',idb:'dnd_armor_imgs'},
+  {key:'dnd_cardforge_equipment',idb:'dnd_equipment_imgs'},
+  {key:'dnd_cardforge_tools',idb:'dnd_tools_imgs'},
+  {key:'dnd_cardforge_kits',idb:'dnd_kits_imgs'},
+  {key:'dnd_cardforge_poisons',idb:'dnd_poisons_imgs'}
+];
+function _idbReadAll(name,cb){
+  var req=indexedDB.open(name,1);
+  req.onupgradeneeded=function(e){try{e.target.result.createObjectStore('imgs');}catch(_){}};
+  req.onsuccess=function(e){var db=e.target.result,out={};try{var cur=db.transaction('imgs','readonly').objectStore('imgs').openCursor();cur.onsuccess=function(ev){var c=ev.target.result;if(c){out[c.key]=c.value;c.continue();}else cb(out);};cur.onerror=function(){cb(out);};}catch(_){cb(out);}};
+  req.onerror=function(){cb({});};
+}
+function _idbWriteAll(name,cards,cb){
+  var req=indexedDB.open(name,1);
+  req.onupgradeneeded=function(e){try{e.target.result.createObjectStore('imgs');}catch(_){}};
+  req.onsuccess=function(e){var db=e.target.result;try{var tx=db.transaction('imgs','readwrite'),st=tx.objectStore('imgs');cards.forEach(function(c){if(c.img&&c.id)st.put(c.img,String(c.id));});tx.oncomplete=function(){cb();};tx.onerror=function(){cb();};}catch(_){cb();}};
+  req.onerror=function(){cb();};
+}
+
+/* Сохранить проект — все 7 коллекций (карточки + картинки) одним файлом */
 document.getElementById('btn-export-json').addEventListener('click',function(){
-  if(!collection.length){toast('⚠ Проект пуст');return;}
-  var json=JSON.stringify({version:1,exported:new Date().toISOString(),cards:collection},null,2);
-  var a=document.createElement('a');
-  a.download=JSON_NAME+'_'+new Date().toISOString().slice(0,10)+'.json';
-  a.href=URL.createObjectURL(new Blob([json],{type:'application/json'}));a.click();
-  URL.revokeObjectURL(a.href);toast('✦ Проект сохранён ('+collection.length+' карт.)');
+  toast('Сбор проекта со всех страниц…');
+  var res={version:2,type:'dnd-all',exported:new Date().toISOString(),collections:{}},i=0;
+  (function next(){
+    if(i>=ALL_COLLECTIONS.length){
+      var cnt=0,k;for(k in res.collections)cnt+=res.collections[k].length;
+      if(!cnt){toast('⚠ Все коллекции пусты');return;}
+      var a=document.createElement('a');
+      a.download='dnd_project_'+new Date().toISOString().slice(0,10)+'.json';
+      a.href=URL.createObjectURL(new Blob([JSON.stringify(res)],{type:'application/json'}));a.click();URL.revokeObjectURL(a.href);
+      toast('✦ Проект сохранён ('+cnt+' карт. со всех страниц)');return;
+    }
+    var pg=ALL_COLLECTIONS[i++],cards=[];
+    try{var d=localStorage.getItem(pg.key);if(d){var arr=JSON.parse(d);if(Array.isArray(arr))cards=arr;}}catch(_){}
+    if(!cards.length){res.collections[pg.key]=[];next();return;}
+    _idbReadAll(pg.idb,function(imgs){cards.forEach(function(c){var im=imgs[String(c.id)];if(im)c.img=im;});res.collections[pg.key]=cards;next();});
+  })();
 });
 
-/* JSON import */
+/* Загрузить проект — общий формат (все 7) + обратная совместимость со старым (одна страница) */
 document.getElementById('btn-import-json').addEventListener('change',function(){
   var file=this.files[0];if(!file)return;
   var reader=new FileReader();
   reader.onload=function(e){
-    try{var data=JSON.parse(e.target.result);var cards=Array.isArray(data)?data:(data.cards||[]);
-    if(!cards.length){toast('⚠ Файл не содержит карточек');return;}
-    collection=cards;renderCollection();toast('✦ Загружено '+cards.length+' карт.');saveToLS();}
-    catch(err){toast('⚠ Ошибка чтения файла');}
+    var data;try{data=JSON.parse(e.target.result);}catch(err){toast('⚠ Ошибка чтения файла');return;}
+    if(data&&data.type==='dnd-all'&&data.collections){
+      if(!confirm('Загрузить проект? Это ЗАМЕНИТ коллекции на ВСЕХ 7 страницах.'))return;
+      var keys=Object.keys(data.collections),i=0,total=0;
+      (function next(){
+        if(i>=keys.length){toast('✦ Проект загружен ('+total+' карт.). Обновляю…');setTimeout(function(){location.reload();},900);return;}
+        var key=keys[i++],cards=data.collections[key]||[],pg=null;
+        ALL_COLLECTIONS.forEach(function(x){if(x.key===key)pg=x;});
+        var slim=cards.map(function(c){var o=Object.assign({},c);delete o.rawImg;delete o.img;return o;});
+        try{localStorage.setItem(key,JSON.stringify(slim));}catch(_){}
+        total+=cards.length;
+        if(pg)_idbWriteAll(pg.idb,cards,next);else next();
+      })();
+    }else{
+      var cards=Array.isArray(data)?data:(data.cards||[]);
+      if(!cards.length){toast('⚠ Файл не содержит карточек');return;}
+      collection=cards;renderCollection();toast('✦ Загружено '+cards.length+' карт.');saveToLS();
+    }
   };
   reader.readAsText(file);this.value='';
 });
