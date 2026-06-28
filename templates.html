@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>D&D — Готовые шаблоны</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,700&display=swap" rel="stylesheet"/>
+<script src="lib/jszip.min.js"></script>
+<script src="lib/jspdf.umd.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -81,7 +83,7 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .filter-stats b{color:var(--text2);}
 
 /* GRID */
-.grid-wrap{flex:1;min-height:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
+.grid-wrap{flex:1;min-height:0;overflow-y:auto;background:#f0ece2;scrollbar-width:thin;scrollbar-color:#b8a888 transparent;}
 .grid-wrap::-webkit-scrollbar{width:5px;}.grid-wrap::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px;}
 .grid-area{display:grid;grid-template-columns:repeat(auto-fill,155px);gap:16px;padding:20px;justify-content:center;align-content:start;min-height:100%;}
 
@@ -112,7 +114,7 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 /* PREVIEW MODAL */
 .prev-bg{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;display:none;align-items:center;justify-content:center;padding:16px;}
 .prev-bg.open{display:flex;}
-.prev-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:14px;padding:20px;max-width:95vw;max-height:95vh;overflow-y:auto;display:flex;flex-direction:column;gap:16px;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
+.prev-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:14px;padding:20px;width:min(750px,94vw);max-width:min(750px,94vw);max-height:95vh;overflow-y:auto;display:flex;flex-direction:column;gap:16px;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
 .prev-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;}
 .prev-title{font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:var(--gold-l);letter-spacing:.07em;}
 .prev-close{width:28px;height:28px;background:rgba(255,255,255,.05);border:0.5px solid var(--border2);border-radius:50%;color:var(--text2);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .13s;flex-shrink:0;}
@@ -179,10 +181,10 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 
 /* группы галереи */
 #grid-area{display:block;padding:0;}
-.gal-section{padding-bottom:4px;}
+.gal-section{padding-bottom:12px;border-top:1px solid rgba(90,72,32,.22);border-bottom:1px solid rgba(90,72,32,.22);}
 .gal-section-head{display:flex;align-items:center;gap:10px;padding:16px 20px 4px;}
-.gal-section-title{font-family:'Cinzel',serif;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);}
-.gal-section-count{font-family:'Cinzel',serif;font-size:10px;color:var(--text3);background:var(--bg3);border:0.5px solid var(--border2);border-radius:20px;padding:2px 9px;}
+.gal-section-title{font-family:'Cinzel',serif;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#5a4820;}
+.gal-section-count{font-family:'Cinzel',serif;font-size:10px;color:#6b5828;background:rgba(90,72,32,.1);border:0.5px solid rgba(90,72,32,.25);border-radius:20px;padding:2px 9px;}
 .gal-grid{display:grid;grid-template-columns:repeat(auto-fill,155px);gap:16px;padding:6px 20px 14px;justify-content:center;}
 /* простое превью */
 .prev-simple{display:flex;gap:16px;padding:2px 0 14px;}
@@ -197,6 +199,42 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .m-field{font-size:13px;color:var(--text2);margin-bottom:8px;}
 .m-field b{color:var(--text);}
 .m-field-text{font-size:13px;color:var(--text2);line-height:1.5;white-space:pre-wrap;max-height:220px;overflow:auto;}
+/* текстовый разбор полей карточки */
+#m-fields{max-height:48vh;overflow:auto;padding-right:4px;}
+.cf-rows{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin-bottom:10px;}
+.cf-row{display:contents;}
+.cf-k{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--text3);white-space:nowrap;padding-top:1px;}
+.cf-v{font-size:13px;color:var(--text);min-width:0;word-break:break-word;}
+.cf-block{margin-bottom:9px;}
+.cf-block-h{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--gold);margin-bottom:2px;}
+.cf-block-t{font-size:13px;color:var(--text2);line-height:1.5;white-space:pre-wrap;overflow-wrap:break-word;word-break:break-word;}
+.cf-empty{font-size:13px;color:var(--text3);opacity:.7;}
+
+/* действия галереи: печать/сохранение */
+.gp-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;display:none;align-items:center;justify-content:center;}
+.gp-bg.open{display:flex;}
+.gp-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:12px;padding:22px 22px 18px;width:360px;box-shadow:0 8px 32px rgba(0,0,0,.5);}
+.gp-box h3{font-family:'Cinzel',serif;font-size:15px;color:var(--text);margin:0 0 4px;text-align:center;}
+.gp-box p{font-size:12px;color:var(--text2);margin:0 0 14px;text-align:center;}
+.gp-btns{display:flex;flex-direction:column;gap:8px;}
+.gp-btns .hbtn{justify-content:center;}
+.gal-grp-acts{display:inline-flex;gap:5px;margin-left:auto;}
+.gal-grp-save,.gal-grp-print{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;border:0.5px solid rgba(90,72,32,.28);background:rgba(90,72,32,.06);color:#5a4820;cursor:pointer;padding:0;}
+.gal-grp-save:hover,.gal-grp-print:hover{color:#2a1e0a;background:rgba(90,72,32,.13);border-color:rgba(90,72,32,.5);}
+
+/* множественный выбор */
+.hbtn.active{background:rgba(200,148,26,.15);color:var(--gold-l);border-color:rgba(200,148,26,.3);}
+.sel-bar{display:none;align-items:center;gap:8px;padding:8px 20px;border-bottom:0.5px solid var(--border);background:rgba(200,148,26,.06);flex-wrap:wrap;}
+.sel-bar.open{display:flex;}
+.sel-info{font-family:'Cinzel',serif;font-size:11px;color:var(--text2);margin-right:auto;}
+.sel-info b{color:var(--gold-l);}
+.g-card-cbx{position:absolute;top:8px;left:8px;width:20px;height:20px;border-radius:5px;border:2px solid rgba(255,255,255,.75);background:rgba(0,0,0,.45);display:none;z-index:3;}
+.ga-selmode .g-card-cbx{display:block;}
+.ga-selmode .g-card-del{display:none;}
+.ga-selmode .g-card-ov{display:none;}
+.g-card.gsel{outline:3px solid var(--gold-l);outline-offset:-2px;}
+.g-card.gsel .g-card-cbx{background:var(--gold-l);border-color:var(--gold-l);}
+.g-card.gsel .g-card-cbx::after{content:"¹3";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#1a1208;font-size:13px;font-weight:bold;}
 </style>
 <link rel="stylesheet" href="mobile.css"/>
 </head>
@@ -274,6 +312,9 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
     <span style="font-size:12px;color:var(--text2);font-family:'Crimson Text',serif;font-style:italic;font-weight:400;">— Готовые шаблоны</span>
   </div>
   <div class="header-right">
+    <button class="hbtn" id="btn-select-mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span class="bsm-lbl">Выбрать</span></button>
+    <button class="hbtn" id="btn-save-all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Сохранить все</button>
+    <button class="hbtn" id="btn-print-all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Печать все</button>
     <button class="hbtn" id="btn-refresh">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
       Обновить
@@ -309,6 +350,12 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
   </div>
 
   <!-- GRID -->
+  <div class="sel-bar" id="sel-bar">
+    <span class="sel-info">Выбрано: <b id="sel-count">0</b></span>
+    <button class="hbtn" id="sel-save" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Сохранить выбранные</button>
+    <button class="hbtn" id="sel-print" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Печать выбранные</button>
+    <button class="hbtn" id="sel-clear">Снять выделение</button>
+  </div>
   <div class="grid-wrap" id="grid-wrap">
     <div class="grid-area" id="grid-area"></div>
     <div class="empty-state" id="empty-state" style="display:none;">
@@ -334,15 +381,72 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
       </div>
     </div>
     <div class="prev-actions">
+      <button class="hbtn" id="btn-prev-save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Сохранить PNG</button>
+      <button class="hbtn" id="btn-prev-print"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Печать</button>
       <a class="hbtn" id="m-edit" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Открыть генератор</a>
     </div>
   </div>
 </div>
 
+<div class="gp-bg" id="gprint-bg">
+  <div class="gp-box">
+    <h3>Печать карточек</h3>
+    <p>Карточек: <b id="gprint-count">0</b>. Выберите режим:</p>
+    <div class="gp-btns">
+      <button class="hbtn" id="gprint-single"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>На одном листе (лицо + оборот рядом)</button>
+      <button class="hbtn" id="gprint-duplex"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Двусторонняя (3×3, для дуплекс-принтера)</button>
+      <button class="hbtn" id="gprint-cancel">Отмена</button>
+    </div>
+  </div>
+</div>
 <div class="toast" id="toast"></div>
 
 <script>
 (function(){
+/* Единый текстовый разбор карточки для превью галерей (collection/templates).
+   Маленькая картинка остаётся отдельно; здесь — компактный список всех свойств
+   + текстовые блоки лицевой и оборотной сторон. Значения select уже на русском. */
+function _cfEsc(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+function _cfEmpty(v){
+  if(v==null)return true;
+  var s=String(v).trim().toLowerCase();
+  return s===''||s==='0'||s==='—'||s==='-'||s==='нет'||s==='не требуется'||s==='не требует настройки';
+}
+function describeCard(card){
+  var rows=[];
+  function add(label,val){ if(_cfEmpty(val))return; rows.push('<div class="cf-row"><span class="cf-k">'+label+'</span><span class="cf-v">'+_cfEsc(String(val).trim())+'</span></div>'); }
+  add('Тип', card.kind);
+  add('Категория', card.cat||card.category);
+  add('Тип доспеха', card.armorType);
+  add('Тип инструмента', card.toolType);
+  add('Тип яда', card.poisonType);
+  if(!_cfEmpty(card.d1)){ var dmg=_cfEsc(card.d1)+(_cfEmpty(card.dt)?'':' · '+_cfEsc(card.dt))+(_cfEmpty(card.d2)?'':' · универс. '+_cfEsc(card.d2)); rows.push('<div class="cf-row"><span class="cf-k">Урон</span><span class="cf-v">'+dmg+'</span></div>'); }
+  add('Класс брони', card.acDisplay);
+  if(!_cfEmpty(card.r1)) add('Дистанция', card.r1+(_cfEmpty(card.r2)?'':' / '+card.r2));
+  add('Характеристика', card.stat);
+  add('Спасбросок', card.savingThrow);
+  add('Урон', card.damageDice);
+  add('Длительность', card.duration);
+  if(card.props){ var p=Array.isArray(card.props)?card.props.join(', '):card.props; add('Свойства', p); }
+  add('Мастерство', card.mastery);
+  add('Боеприпас', card.ammo);
+  add('Материал', card.material);
+  add('Требование Силы', card.strReq);
+  add('Бонус к урону', card.strBonus);
+  add('Бонус владения', card.profBonus);
+  if(card.stealth===true) rows.push('<div class="cf-row"><span class="cf-k">Скрытность</span><span class="cf-v">помеха</span></div>');
+  add('Надевание', card.donnTime);
+  add('Снятие', card.doffTime);
+  add('Настройка', card.attune);
+  var blocks=[];
+  function block(label,val){ if(_cfEmpty(val))return; blocks.push('<div class="cf-block"><div class="cf-block-h">'+label+'</div><div class="cf-block-t">'+_cfEsc(String(val).trim())+'</div></div>'); }
+  block('Цитата', card.flv);
+  block('Описание', card.desc);
+  block('Состав', card.composition);
+  block('Оборотная сторона', card.back);
+  var html=(rows.length?'<div class="cf-rows">'+rows.join('')+'</div>':'')+blocks.join('');
+  return html||'<div class="cf-empty">(свойства не заполнены)</div>';
+}
 var R={common:{l:'Обычный',a:'#888077'},uncommon:{l:'Необычный',a:'#52aa40'},rare:{l:'Редкий',a:'#4a8ccc'},veryrare:{l:'Очень редкий',a:'#9870cc'},legendary:{l:'Легендарный',a:'#e09820'}};
 var LS_KEY='dnd_cardforge_templates';
 var GROUPS=[{id:'weapon',label:'Оружие'},{id:'armor',label:'Доспехи'},{id:'equipment',label:'Снаряжение'},{id:'tools',label:'Инструменты'},{id:'kits',label:'Наборы'},{id:'poisons',label:'Яды'}];
@@ -355,10 +459,10 @@ function loadAll(){allCards=[];try{var d=localStorage.getItem(LS_KEY);if(d){var 
 function getFiltered(){return allCards.filter(function(c){if(filterType&&c._group!==filterType)return false;if(filterType==='weapon'&&filterSrc&&c._source!==filterSrc)return false;if(filterRarity&&(c.rarity||'common')!==filterRarity)return false;if(filterQuery&&!(c.name||'').toLowerCase().includes(filterQuery))return false;return true;});}
 function subLabel(c){switch(c._group){case 'armor':return (c.armorType||'Доспех')+(c.acDisplay?' · КБ '+c.acDisplay:'');case 'equipment':return c.category||'';case 'tools':return c.toolType||'';case 'kits':return (c.composition||'').split('\n').filter(function(x){return x.trim();}).length+' предм.';case 'poisons':return c.poisonType||'';default:return c.cat||c.kind||'';}}
 function badgeText(c){if(c._source==='weapon2014')return '2014';if(c._source==='weapon2024')return '2024';return grpLabel(c._group);}
-function makeGridCard(card){var d=R[card.rarity||'common']||R.common;var wrap=document.createElement('div');wrap.className='g-card';var stripe=document.createElement('div');stripe.className='g-card-stripe';stripe.style.background=d.a;var imgWrap=document.createElement('div');imgWrap.className='g-card-img';if(card.img){var img=document.createElement('img');img.src=card.img;img.alt='';imgWrap.appendChild(img);}else{imgWrap.innerHTML='<div class="g-card-img-ph"><svg viewBox="0 0 24 24" fill="none" stroke="#8a7860" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>';}var foot=document.createElement('div');foot.className='g-card-foot';var badgeCls='g-card-badge'+(card._source==='weapon2014'?' ed14':card._source==='weapon2024'?' ed24':'');foot.innerHTML='<span class="g-card-name">'+(card.name||'Без названия')+'</span><span class="g-card-sub"><span style="overflow:hidden;text-overflow:ellipsis;">'+subLabel(card)+'</span><span class="'+badgeCls+'">'+badgeText(card)+'</span></span>';var ov=document.createElement('div');ov.className='g-card-ov';ov.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';wrap.appendChild(stripe);wrap.appendChild(imgWrap);wrap.appendChild(foot);wrap.appendChild(ov);wrap.addEventListener('click',function(){openPreview(card);});return wrap;}
+function makeGridCard(card){var d=R[card.rarity||'common']||R.common;var wrap=document.createElement('div');wrap.className='g-card';var stripe=document.createElement('div');stripe.className='g-card-stripe';stripe.style.background=d.a;var imgWrap=document.createElement('div');imgWrap.className='g-card-img';if(card.img){var img=document.createElement('img');img.src=card.img;img.alt='';imgWrap.appendChild(img);}else{imgWrap.innerHTML='<div class="g-card-img-ph"><svg viewBox="0 0 24 24" fill="none" stroke="#8a7860" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>';}var foot=document.createElement('div');foot.className='g-card-foot';var badgeCls='g-card-badge'+(card._source==='weapon2014'?' ed14':card._source==='weapon2024'?' ed24':'');foot.innerHTML='<span class="g-card-name">'+(card.name||'Без названия')+'</span><span class="g-card-sub"><span style="overflow:hidden;text-overflow:ellipsis;">'+subLabel(card)+'</span><span class="'+badgeCls+'">'+badgeText(card)+'</span></span>';var ov=document.createElement('div');ov.className='g-card-ov';ov.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';wrap.appendChild(stripe);wrap.appendChild(imgWrap);wrap.appendChild(foot);wrap.appendChild(ov);wrap.addEventListener('click',function(){if(typeof gaSelMode==='function'&&gaSelMode()){gaToggleSelect(card,wrap);}else{openPreview(card);}});if(typeof gaIsSelected==='function'&&gaIsSelected(card))wrap.classList.add('gsel');var _cbx=document.createElement('div');_cbx.className='g-card-cbx';wrap.appendChild(_cbx);return wrap;}
 function buildTypeTabs(){var present=GROUPS.filter(function(g){return allCards.some(function(c){return c._group===g.id;});});var host=document.getElementById('type-tabs');host.innerHTML='<button class="ftab active" data-type="">Все</button>'+present.map(function(g){return '<button class="ftab" data-type="'+g.id+'">'+g.label+'</button>';}).join('');[].forEach.call(host.querySelectorAll('.ftab'),function(btn){btn.addEventListener('click',function(){[].forEach.call(host.querySelectorAll('.ftab'),function(b){b.classList.remove('active');});btn.classList.add('active');filterType=btn.getAttribute('data-type');var ed=document.getElementById('edition-tabs');ed.style.display=(filterType==='weapon')?'':'none';if(filterType!=='weapon'){filterSrc='';[].forEach.call(document.querySelectorAll('#edition-tabs .ftab'),function(b){b.classList.remove('active');});var dd=document.querySelector('#edition-tabs .ftab[data-src=""]');if(dd)dd.classList.add('active');}renderGrid();});});filterType='';}
-function renderGrid(){var cards=getFiltered();var area=document.getElementById('grid-area');var empty=document.getElementById('empty-state');area.innerHTML='';var total=allCards.length,vis=cards.length;var statsEl=document.getElementById('filter-stats');if(total===0){statsEl.textContent='Шаблонов нет';}else{var parts=['<b>'+vis+'</b> из <b>'+total+'</b>'];GROUPS.forEach(function(g){var n=allCards.filter(function(c){return c._group===g.id;}).length;if(n)parts.push(g.label+': <b>'+n+'</b>');});statsEl.innerHTML=parts.join(' &nbsp;·&nbsp; ');}if(vis===0){empty.style.display='';if(total>0){document.getElementById('empty-title').textContent='Ничего не найдено';document.getElementById('empty-sub').textContent='Измените фильтры или поиск.';}else{document.getElementById('empty-title').textContent='Шаблонов пока нет';document.getElementById('empty-sub').innerHTML='Готовые шаблоны появятся здесь,<br/>когда будут добавлены.';}return;}empty.style.display='none';GROUPS.forEach(function(g){var gc=cards.filter(function(c){return c._group===g.id;});if(!gc.length)return;var sect=document.createElement('div');sect.className='gal-section';var head=document.createElement('div');head.className='gal-section-head';head.innerHTML='<span class="gal-section-title">'+g.label+'</span><span class="gal-section-count">'+gc.length+'</span>';var grid=document.createElement('div');grid.className='gal-grid';gc.forEach(function(c){grid.appendChild(makeGridCard(c));});sect.appendChild(head);sect.appendChild(grid);area.appendChild(sect);});}
-function openPreview(card){previewCard=card;var d=R[card.rarity||'common']||R.common;var grp=card._group;document.getElementById('prev-title').textContent=(card.name||'Без названия')+' · '+grpLabel(grp);var imgEl=document.getElementById('m-img');imgEl.innerHTML=card.img?'<img src="'+card.img+'" alt=""/>':'<div class="m-img-ph">нет картинки</div>';imgEl.style.borderColor=d.a;document.getElementById('m-name').textContent=card.name||'Без названия';var meta=['<span class="m-tag" style="background:'+d.a+'">'+d.l+'</span>','<span class="m-tag2">'+grpLabel(grp)+'</span>'];if(card.cost)meta.push('<span class="m-tag2">'+card.cost+' '+(card.coin||'зм')+'</span>');if(card.wgt)meta.push('<span class="m-tag2">'+card.wgt+' фнт.</span>');document.getElementById('m-meta').innerHTML=meta.join('');var sub=subLabel(card),txt=card.desc||card.back||card.props||'';function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;');}document.getElementById('m-fields').innerHTML=(sub?'<div class="m-field"><b>'+grpLabel(grp)+':</b> '+esc(sub)+'</div>':'')+(txt?'<div class="m-field-text">'+esc(txt)+'</div>':'<div class="m-field-text" style="opacity:.5">(описание не заполнено)</div>');document.getElementById('m-edit').href=GENPAGE[grp]||'#';document.getElementById('prev-bg').classList.add('open');}
+function renderGrid(){var cards=getFiltered();var area=document.getElementById('grid-area');var empty=document.getElementById('empty-state');area.innerHTML='';var total=allCards.length,vis=cards.length;var statsEl=document.getElementById('filter-stats');if(total===0){statsEl.textContent='Шаблонов нет';}else{var parts=['<b>'+vis+'</b> из <b>'+total+'</b>'];GROUPS.forEach(function(g){var n=allCards.filter(function(c){return c._group===g.id;}).length;if(n)parts.push(g.label+': <b>'+n+'</b>');});statsEl.innerHTML=parts.join(' &nbsp;·&nbsp; ');}if(vis===0){empty.style.display='';if(total>0){document.getElementById('empty-title').textContent='Ничего не найдено';document.getElementById('empty-sub').textContent='Измените фильтры или поиск.';}else{document.getElementById('empty-title').textContent='Шаблонов пока нет';document.getElementById('empty-sub').innerHTML='Готовые шаблоны появятся здесь,<br/>когда будут добавлены.';}return;}empty.style.display='none';GROUPS.forEach(function(g){var gc=cards.filter(function(c){return c._group===g.id;});if(!gc.length)return;var sect=document.createElement('div');sect.className='gal-section';var head=document.createElement('div');head.className='gal-section-head';head.innerHTML='<span class="gal-section-title">'+g.label+'</span><span class="gal-section-count">'+gc.length+'</span><span class="gal-grp-acts"><button class="gal-grp-save" data-group="'+g.id+'" title="Сохранить группу"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button><button class="gal-grp-print" data-group="'+g.id+'" title="Печать группы"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button></span>';var grid=document.createElement('div');grid.className='gal-grid';gc.forEach(function(c){grid.appendChild(makeGridCard(c));});sect.appendChild(head);sect.appendChild(grid);area.appendChild(sect);});}
+function openPreview(card){previewCard=card;var d=R[card.rarity||'common']||R.common;var grp=card._group;document.getElementById('prev-title').textContent=(card.name||'Без названия')+' · '+grpLabel(grp);var imgEl=document.getElementById('m-img');imgEl.innerHTML=card.img?'<img src="'+card.img+'" alt=""/>':'<div class="m-img-ph">нет картинки</div>';imgEl.style.borderColor=d.a;document.getElementById('m-name').textContent=card.name||'Без названия';var meta=['<span class="m-tag" style="background:'+d.a+'">'+d.l+'</span>','<span class="m-tag2">'+grpLabel(grp)+'</span>'];if(card.cost)meta.push('<span class="m-tag2">'+card.cost+' '+(card.coin||'зм')+'</span>');if(card.wgt)meta.push('<span class="m-tag2">'+card.wgt+' фнт.</span>');document.getElementById('m-meta').innerHTML=meta.join('');document.getElementById('m-fields').innerHTML=describeCard(card);document.getElementById('m-edit').href=GENPAGE[grp]||'#';document.getElementById('prev-bg').classList.add('open');}
 function closePreview(){document.getElementById('prev-bg').classList.remove('open');previewCard=null;}
 document.getElementById('prev-close').addEventListener('click',closePreview);
 document.getElementById('prev-bg').addEventListener('click',function(e){if(e.target===this)closePreview();});
@@ -369,6 +473,173 @@ document.getElementById('filter-search').addEventListener('input',function(){fil
 document.getElementById('filter-search-clear').addEventListener('click',function(){document.getElementById('filter-search').value='';filterQuery='';this.style.display='none';renderGrid();});
 var toastTimer=null;
 function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){el.classList.remove('show');},2200);}
+function _genPageOf(card){return GENPAGE[card._group]||null;}
+/* Сохранение и печать карточек из галерей (collection/templates).
+   Реальные стороны карточек рендерятся через сами страницы-генераторы
+   (скрытый iframe + window.__dndRenderCard), затем PNG/ZIP или PDF.
+   Печать — по тем же правилам, что в редакторе (на одном листе / двусторонняя).
+   Страница обязана определить: _genPageOf(card), getFiltered(), GROUPS, toast. */
+
+function _gaDownload(name,url){var a=document.createElement('a');a.download=name;a.href=url;a.click();}
+function _gaStamp(){var d=new Date(),p=function(n){return(n<10?'0':'')+n;};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'_'+p(d.getHours())+'-'+p(d.getMinutes())+'-'+p(d.getSeconds());}
+
+/* ── пул скрытых iframe-генераторов ── */
+var _genFrames={};
+function _withGen(page,cb){
+  if(!page){cb(null);return;}
+  var fr=_genFrames[page];
+  if(fr&&fr._ready){cb(fr.contentWindow);return;}
+  if(fr){fr._q.push(cb);return;}
+  fr=document.createElement('iframe');
+  fr.style.cssText='position:fixed;left:-10000px;top:0;width:420px;height:840px;border:0;opacity:0;pointer-events:none;';
+  fr._ready=false;fr._q=[cb];
+  fr.onload=function(){
+    var tries=0;
+    (function w(){tries++;var win=fr.contentWindow;
+      if(win&&win.__dndReady&&typeof win.__dndRenderCard==='function'){fr._ready=true;var q=fr._q;fr._q=[];q.forEach(function(f){f(win);});}
+      else if(tries<150){setTimeout(w,50);}else{var q2=fr._q;fr._q=[];q2.forEach(function(f){f(null);});}
+    })();
+  };
+  _genFrames[page]=fr;fr.src=page;document.body.appendChild(fr);
+}
+
+/* ── последовательный рендер набора карт в PNG обеих сторон ── */
+function _renderImages(cards,done){
+  var out=[],i=0;
+  (function next(){
+    if(i>=cards.length){done(out);return;}
+    var card=cards[i];i++;
+    toast('Рендер карт: '+i+'/'+cards.length+'…');
+    _withGen(_genPageOf(card),function(win){
+      if(!win){out.push({card:card,front:null,back:null});next();return;}
+      win.__dndRenderCard(card,function(res){
+        out.push({card:card,front:res?res.front:null,back:res?res.back:null});next();
+      });
+    });
+  })();
+}
+
+/* ── лицо+оборот рядом в один PNG (для сохранения) ── */
+function _combinePNG(front,back,cb){
+  var fi=new Image(),bi=new Image(),loaded=0;
+  function ready(){
+    var pad=40,gap=44;
+    var h=Math.max(fi.height,bi.height),w=fi.width+bi.width+gap;
+    var cv=document.createElement('canvas');cv.width=w+pad*2;cv.height=h+pad*2;
+    var ctx=cv.getContext('2d');ctx.fillStyle='#f0ece2';ctx.fillRect(0,0,cv.width,cv.height);
+    ctx.drawImage(fi,pad,pad);ctx.drawImage(bi,pad+fi.width+gap,pad);
+    cb(cv.toDataURL('image/png'));
+  }
+  fi.onload=function(){if(++loaded===2)ready();};
+  bi.onload=function(){if(++loaded===2)ready();};
+  fi.onerror=bi.onerror=function(){cb(null);};
+  fi.src=front;bi.src=back;
+}
+
+/* ── СОХРАНЕНИЕ: одна → PNG, несколько → ZIP ── */
+function saveCards(cards){
+  if(!cards||!cards.length){toast('Нет карточек');return;}
+  toast('Подготовка ('+cards.length+')…');
+  _renderImages(cards,function(items){
+    items=items.filter(function(it){return it.front&&it.back;});
+    if(!items.length){toast('⚠ Не удалось отрендерить');return;}
+    if(items.length===1){
+      _combinePNG(items[0].front,items[0].back,function(url){
+        if(!url){toast('⚠ Ошибка');return;}
+        _gaDownload((items[0].card.name||'card').replace(/\s+/g,'_')+'_'+_gaStamp()+'.png',url);
+        toast('✦ PNG сохранён');
+      });
+      return;
+    }
+    var zip=new JSZip(),i=0;
+    (function nx(){
+      if(i>=items.length){zip.generateAsync({type:'blob'}).then(function(blob){_gaDownload('dnd_cards_'+_gaStamp()+'.zip',URL.createObjectURL(blob));toast('✦ ZIP сохранён ('+items.length+' карт.)');});return;}
+      var it=items[i];i++;
+      _combinePNG(it.front,it.back,function(url){if(url)zip.file((it.card.name||'card').replace(/\s+/g,'_')+'_'+i+'.png',url.split(',')[1],{base64:true});nx();});
+    })();
+  });
+}
+
+/* ── ПЕЧАТЬ ── */
+var _pendingPrint=null;
+function openPrintModal(cards){
+  if(!cards||!cards.length){toast('Нет карточек');return;}
+  _pendingPrint=cards;
+  document.getElementById('gprint-count').textContent=cards.length;
+  document.getElementById('gprint-bg').classList.add('open');
+}
+function _startPrint(mode){
+  var cards=_pendingPrint||[];_pendingPrint=null;
+  document.getElementById('gprint-bg').classList.remove('open');
+  if(!cards.length)return;
+  toast('Подготовка к печати ('+cards.length+')…');
+  _renderImages(cards,function(items){
+    items=items.filter(function(it){return it.front&&it.back;});
+    if(!items.length){toast('⚠ Ошибка рендера');return;}
+    _buildPDF(mode,items);
+  });
+}
+function _buildPDF(mode,items){
+  var n=items.length,cW=63,cH=89;
+  var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
+  var pageW=210,pageH=297,first=true;
+  function newPage(){if(first){first=false;}else{doc.addPage();}}
+  if(mode==='single'){
+    var margin=10,rows=3,gap=5;
+    var pairW=cW*2+10,lx=margin+(pageW-2*margin-pairW)/2,rx=lx+cW+10;
+    var totalH=rows*cH+(rows-1)*gap,startY=margin+(pageH-2*margin-totalH)/2,stepY=cH+gap,perPage=rows;
+    for(var p=0;p<Math.ceil(n/perPage);p++){
+      newPage();
+      for(var r=0;r<rows;r++){var idx=p*perPage+r;if(idx>=n)break;var y=startY+r*stepY;
+        doc.addImage(items[idx].front,'PNG',lx,y,cW,cH);doc.addImage(items[idx].back,'PNG',rx,y,cW,cH);}
+    }
+  }else{
+    var margin2=7,gap2=3,cols=3,rows2=3,perPage2=cols*rows2;
+    var totalW=cols*cW+(cols-1)*gap2,totalH2=rows2*cH+(rows2-1)*gap2;
+    var startX=margin2+(pageW-2*margin2-totalW)/2,startY2=margin2+(pageH-2*margin2-totalH2)/2;
+    var stepX=cW+gap2,stepY2=cH+gap2,pageCount=Math.ceil(n/perPage2);
+    for(var p2=0;p2<pageCount;p2++){newPage();
+      for(var r3=0;r3<rows2;r3++)for(var c=0;c<cols;c++){var i1=p2*perPage2+r3*cols+c;if(i1>=n)continue;doc.addImage(items[i1].front,'PNG',startX+c*stepX,startY2+r3*stepY2,cW,cH);}}
+    for(var p3=0;p3<pageCount;p3++){doc.addPage();
+      for(var r4=0;r4<rows2;r4++)for(var c2=0;c2<cols;c2++){var i2=p3*perPage2+r4*cols+(cols-1-c2);if(i2>=n)continue;doc.addImage(items[i2].back,'PNG',startX+c2*stepX,startY2+r4*stepY2,cW,cH);}}
+  }
+  doc.save('dnd_print_'+_gaStamp()+(mode==='single'?'_1стор':'_2стор')+'.pdf');
+  toast('✦ PDF для печати скачан');
+}
+
+/* ── режим множественного выбора (в т.ч. из разных групп; выделение сохраняется
+   при смене фильтров, т.к. хранится по ключу карты, а не по DOM) ── */
+var gaSelectMode=false, gaSelected={};
+function _cardKey(c){return (c._source||c._group||'')+'/'+c.id;}
+function gaSelMode(){return gaSelectMode;}
+function gaIsSelected(c){return !!gaSelected[_cardKey(c)];}
+function gaSelectedCards(){var a=[];for(var k in gaSelected)a.push(gaSelected[k]);return a;}
+function _gaUpdateSelBar(){var n=gaSelectedCards().length;var el=document.getElementById('sel-count');if(el)el.textContent=n;var ss=document.getElementById('sel-save'),sp=document.getElementById('sel-print');if(ss)ss.disabled=!n;if(sp)sp.disabled=!n;}
+function gaToggleSelect(card,wrap){var k=_cardKey(card);if(gaSelected[k]){delete gaSelected[k];if(wrap)wrap.classList.remove('gsel');}else{gaSelected[k]=card;if(wrap)wrap.classList.add('gsel');}_gaUpdateSelBar();}
+function gaEnterSel(){gaSelectMode=true;document.body.classList.add('ga-selmode');var sb=document.getElementById('sel-bar');if(sb)sb.classList.add('open');var b=document.getElementById('btn-select-mode');if(b){b.classList.add('active');b.querySelector('.bsm-lbl').textContent='Готово';}if(typeof renderGrid==='function')renderGrid();_gaUpdateSelBar();}
+function gaExitSel(clear){gaSelectMode=false;if(clear)gaSelected={};document.body.classList.remove('ga-selmode');var sb=document.getElementById('sel-bar');if(sb)sb.classList.remove('open');var b=document.getElementById('btn-select-mode');if(b){b.classList.remove('active');b.querySelector('.bsm-lbl').textContent='Выбрать';}if(typeof renderGrid==='function')renderGrid();}
+
+/* ── привязка кнопок ── */
+(function(){
+  var bSaveAll=document.getElementById('btn-save-all');if(bSaveAll)bSaveAll.addEventListener('click',function(){saveCards(getFiltered());});
+  var bPrintAll=document.getElementById('btn-print-all');if(bPrintAll)bPrintAll.addEventListener('click',function(){openPrintModal(getFiltered());});
+  var bPSave=document.getElementById('btn-prev-save');if(bPSave)bPSave.addEventListener('click',function(){if(previewCard)saveCards([previewCard]);});
+  var bPPrint=document.getElementById('btn-prev-print');if(bPPrint)bPPrint.addEventListener('click',function(){if(previewCard)openPrintModal([previewCard]);});
+  var grid=document.getElementById('grid-area');
+  if(grid)grid.addEventListener('click',function(e){
+    var sb=e.target.closest('.gal-grp-save'),pb=e.target.closest('.gal-grp-print');
+    if(sb){e.stopPropagation();var g=sb.getAttribute('data-group');saveCards(getFiltered().filter(function(c){return c._group===g;}));}
+    else if(pb){e.stopPropagation();var g2=pb.getAttribute('data-group');openPrintModal(getFiltered().filter(function(c){return c._group===g2;}));}
+  });
+  var gs=document.getElementById('gprint-single');if(gs)gs.addEventListener('click',function(){_startPrint('single');});
+  var gd=document.getElementById('gprint-duplex');if(gd)gd.addEventListener('click',function(){_startPrint('duplex');});
+  var gc=document.getElementById('gprint-cancel');if(gc)gc.addEventListener('click',function(){_pendingPrint=null;document.getElementById('gprint-bg').classList.remove('open');});
+  /* множественный выбор */
+  var bSel=document.getElementById('btn-select-mode');if(bSel)bSel.addEventListener('click',function(){if(gaSelectMode)gaExitSel(true);else gaEnterSel();});
+  var sSave=document.getElementById('sel-save');if(sSave)sSave.addEventListener('click',function(){saveCards(gaSelectedCards());});
+  var sPrint=document.getElementById('sel-print');if(sPrint)sPrint.addEventListener('click',function(){openPrintModal(gaSelectedCards());});
+  var sClear=document.getElementById('sel-clear');if(sClear)sClear.addEventListener('click',function(){gaSelected={};[].forEach.call(document.querySelectorAll('.g-card.gsel'),function(el){el.classList.remove('gsel');});_gaUpdateSelBar();});
+})();
 loadAll();buildTypeTabs();renderGrid();
 })();
 </script>

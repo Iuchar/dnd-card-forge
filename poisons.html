@@ -194,7 +194,6 @@ button:focus{outline:none;}
 .c-img-ph{opacity:.3;display:flex;align-items:center;justify-content:center;}
 .c-body{flex:1;min-height:0;padding:3px 14px 2px;display:flex;flex-direction:column;overflow:hidden;}
 .c-name{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:#2a1e0a;line-height:1.2;margin-bottom:0;flex-shrink:0;}
-.c-engname{font-family:'Crimson Text',Georgia,serif;font-style:italic;font-size:12px;color:#6b4c1e;margin-bottom:1px;flex-shrink:0;}
 .c-rule{height:.7px;background:#8a7860;opacity:.55;margin:2px 0;flex-shrink:0;}
 .c-costrow{display:flex;gap:25px;font-size:11px;color:#2a1e0a;margin:0 0 1px;flex-shrink:0;align-items:flex-start;}
 .c-costrow-fix{flex-shrink:0;white-space:nowrap;}
@@ -321,12 +320,6 @@ button:focus{outline:none;}
     <span class="char-counter" id="cnt-fn">0/34</span>
   </div>
 
-  <div class="lbl">Англ. название <span style="color:var(--text3);font-size:9px;font-family:'Crimson Text',serif;font-style:italic;text-transform:none;letter-spacing:0;">необязательно · макс. 42 симв.</span></div>
-  <div class="field-wrap field-mb">
-    <input class="si" type="text" id="fengname" placeholder="Oil of Taggit" maxlength="42"/>
-    <span class="char-counter" id="cnt-eng">0/42</span>
-  </div>
-
   <div class="lbl">Картинка</div>
   <div class="img-drop" id="img-drop">
     <div class="img-thumb" id="img-thumb" style="display:none;"></div>
@@ -431,7 +424,6 @@ button:focus{outline:none;}
     </div>
     <div class="c-body">
       <div class="c-name" id="pnm">Название яда</div>
-      <div class="c-engname" id="pengname" style="display:none;"></div>
       <div class="c-rule"></div>
       <div class="c-costrow">
         <span id="psb-cost" class="c-costrow-fix"><b>Спас.:</b> <span id="psb-val" style="font-size:12px;">—</span></span>
@@ -664,7 +656,7 @@ function mkCounter(inputId,countId,max){
   }
   if(!inp._cbound){inp.addEventListener('input',upd);inp._cbound=true;}upd();
 }
-mkCounter('fn','cnt-fn',34);mkCounter('fengname','cnt-eng',42);mkCounter('fdesc','cnt-desc',750);mkCounter('fdice','cnt-dice',80);mkCounter('fdur','cnt-dur',80);
+mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',750);mkCounter('fdice','cnt-dice',80);mkCounter('fdur','cnt-dur',80);
 
 /* image upload & crop */
 var fImgInput=document.getElementById('f-img');
@@ -880,8 +872,16 @@ document.getElementById('crop-apply').addEventListener('click',function(){
   if(dh>maxH){ dw=Math.round(dw*maxH/dh); dh=maxH; }
   var out = document.createElement('canvas');
   out.width=dw; out.height=dh;
-  out.getContext('2d').drawImage(cropImg, nx, ny, nw, nh, 0, 0, dw, dh);
-  imgDataUrl = out.toDataURL('image/jpeg', 0.85);
+  var octx = out.getContext('2d');
+  octx.drawImage(cropImg, nx, ny, nw, nh, 0, 0, dw, dh);
+  /* прозрачность: JPEG не хранит альфа-канал → если есть полупрозрачные
+     пиксели, сохраняем PNG (сохраняет прозрачность), иначе JPEG (компактнее) */
+  var hasAlpha=false;
+  try{
+    var px=octx.getImageData(0,0,dw,dh).data;
+    for(var ai=3;ai<px.length;ai+=4){ if(px[ai]<255){ hasAlpha=true; break; } }
+  }catch(e){ hasAlpha=false; }
+  imgDataUrl = hasAlpha ? out.toDataURL('image/png') : out.toDataURL('image/jpeg', 0.85);
   var th=document.getElementById('img-thumb');
   th.style.backgroundImage='url('+imgDataUrl+')'; th.style.display='block';
   document.getElementById('img-icon').style.display='none';
@@ -890,18 +890,19 @@ document.getElementById('crop-apply').addEventListener('click',function(){
   document.getElementById('crop-modal-bg').classList.remove('open');
   toast('✦ Картинка применена');
 });
-function readForm(){return{type:'poison',rarity:cr,poisonType:Array.from(document.querySelectorAll('#fptype-wrap input:checked')).map(function(o){return o.value;}).join(', '),name:document.getElementById('fn').value.trim(),engname:document.getElementById('fengname').value.trim(),cost:document.getElementById('fc').value.trim(),coin:document.getElementById('fcoin').value,wgt:document.getElementById('fwgt').value.trim(),savingThrow:document.getElementById('fsb').value.trim(),damageDice:document.getElementById('fdice').value.trim(),duration:document.getElementById('fdur').value.trim(),desc:document.getElementById('fdesc').value,img:imgDataUrl,rawImg:rawImgDataUrl};}
-function renderCard(data){var d=R[data.rarity||'common'];document.getElementById('p-rar').textContent=d.l;document.getElementById('pnm').textContent=data.name||'Название яда';var en=document.getElementById('pengname');if(data.engname){en.textContent=data.engname;en.style.display='';}else{en.style.display='none';}document.getElementById('pcost-meta').textContent=data.cost?data.cost+' '+(data.coin||'зм'):'—';document.getElementById('pwgt-foot').textContent=data.wgt?data.wgt+' фнт.':'';document.getElementById('psb-val').textContent=data.savingThrow||'—';document.getElementById('pdice-val').textContent=data.damageDice||'—';document.getElementById('pdur-val').textContent=data.duration||'—';document.getElementById('pdel-val').textContent=data.poisonType||'—';setCardImg(data.img||null);applyR(data.rarity||'common');splitDesc(data);}
+function readForm(){return{type:'poison',rarity:cr,poisonType:Array.from(document.querySelectorAll('#fptype-wrap input:checked')).map(function(o){return o.value;}).join(', '),name:document.getElementById('fn').value.trim(),cost:document.getElementById('fc').value.trim(),coin:document.getElementById('fcoin').value,wgt:document.getElementById('fwgt').value.trim(),savingThrow:document.getElementById('fsb').value.trim(),damageDice:document.getElementById('fdice').value.trim(),duration:document.getElementById('fdur').value.trim(),desc:document.getElementById('fdesc').value,img:imgDataUrl,rawImg:rawImgDataUrl};}
+function renderCard(data){var d=R[data.rarity||'common'];document.getElementById('p-rar').textContent=d.l;document.getElementById('pnm').textContent=data.name||'Название яда';document.getElementById('pcost-meta').textContent=data.cost?data.cost+' '+(data.coin||'зм'):'—';document.getElementById('pwgt-foot').textContent=data.wgt?data.wgt+' фнт.':'';document.getElementById('psb-val').textContent=data.savingThrow||'—';document.getElementById('pdice-val').textContent=data.damageDice||'—';document.getElementById('pdur-val').textContent=data.duration||'—';document.getElementById('pdel-val').textContent=data.poisonType||'—';setCardImg(data.img||null);applyR(data.rarity||'common');splitDesc(data);}
 function splitDesc(data){var desc=document.getElementById('pdesc');var full=data.desc||'';desc.textContent='';if(!full){renderBackCard({rarity:data.rarity,back:''});return;}requestAnimationFrame(function(){desc.textContent=full;var ch=desc.clientHeight;if(!ch||desc.scrollHeight<=ch+2){renderBackCard({rarity:data.rarity,back:''});return;}var lo=0,hi=full.length;while(lo<hi-1){var mid=Math.floor((lo+hi)/2);desc.textContent=full.slice(0,mid);if(desc.scrollHeight<=ch+2)lo=mid;else hi=mid;}var cut=lo;for(var i=cut;i>Math.max(0,cut-60);i--){if(full[i]===' '||full[i]==='\n'){cut=i;break;}}desc.textContent=full.slice(0,cut);var backStart=(full[cut]===' '||full[cut]==='\n')?cut+1:cut;renderBackCard({rarity:data.rarity,back:full.slice(backStart)});});}
 function renderBackCard(data){var hasBack=data.back&&data.back.trim();var rubashka=document.getElementById('pb-rubashka');var pbs=document.getElementById('pbs');var pbs2=document.getElementById('pbs2');var pbBody=document.getElementById('pb-body');var pbFoot=document.getElementById('pb-foot');var pbDesc=document.getElementById('pb-desc');var pbgm=document.getElementById('pbgm');if(hasBack){rubashka.style.display='none';pbs.style.display='';pbs2.style.display='';pbBody.style.display='flex';pbFoot.style.display='';pbDesc.textContent=data.back;var d=R[data.rarity||'common'];pbs.style.background=d.a;pbgm.style.background=d.a;}else{rubashka.style.display='block';pbs.style.display='none';pbs2.style.display='none';pbBody.style.display='none';pbFoot.style.display='none';}}
-function applyFormData(data){cr=data.rarity||'common';document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');});var rEl=document.querySelector('.rp[data-r="'+cr+'"]');if(rEl)rEl.classList.add('on');document.getElementById('rn').textContent=R[cr].l;var ptVals=(data.poisonType||'').split(', ');document.querySelectorAll('#fptype-wrap input[type=checkbox]').forEach(function(cb){cb.checked=ptVals.indexOf(cb.value)!==-1;});document.getElementById('fn').value=data.name||'';document.getElementById('fengname').value=data.engname||'';document.getElementById('fc').value=data.cost||'';document.getElementById('fcoin').value=data.coin||'зм';document.getElementById('fwgt').value=data.wgt||'';document.getElementById('fsb').value=data.savingThrow||'';document.getElementById('fdice').value=data.damageDice||'';document.getElementById('fdur').value=data.duration||'';document.getElementById('fdesc').value=data.desc||'';imgDataUrl=data.img||null;rawImgDataUrl=data.rawImg||data.img||null;var th=document.getElementById('img-thumb');if(imgDataUrl){th.style.backgroundImage='url('+imgDataUrl+')';th.style.display='block';document.getElementById('img-icon').style.display='none';document.getElementById('img-lbl').style.display='none';document.getElementById('btn-recrop').style.display='flex';document.getElementById('btn-del-img').style.display='flex';}else{th.style.display='none';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';}mkCounter('fn','cnt-fn',34);mkCounter('fengname','cnt-eng',42);mkCounter('fdice','cnt-dice',80);mkCounter('fdur','cnt-dur',80);mkCounter('fdesc','cnt-desc',750);}
-document.getElementById('btn-reset').addEventListener('click',function(){if(!confirm('Сбросить все поля?'))return;cr='common';document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');});document.querySelector('.rp[data-r="common"]').classList.add('on');document.getElementById('rn').textContent=R.common.l;['fn','fengname','fc','fwgt','fsb','fdice','fdur','fdesc'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('fcoin').value='зм';document.querySelectorAll('#fptype-wrap input[type=checkbox]').forEach(function(cb){cb.checked=false;});imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('f-img').value='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';setCardImg(null);applyR('common');renderCard({});toast('Поля сброшены');});
+function applyFormData(data){cr=data.rarity||'common';document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');});var rEl=document.querySelector('.rp[data-r="'+cr+'"]');if(rEl)rEl.classList.add('on');document.getElementById('rn').textContent=R[cr].l;var ptVals=(data.poisonType||'').split(', ');document.querySelectorAll('#fptype-wrap input[type=checkbox]').forEach(function(cb){cb.checked=ptVals.indexOf(cb.value)!==-1;});document.getElementById('fn').value=data.name||'';document.getElementById('fc').value=data.cost||'';document.getElementById('fcoin').value=data.coin||'зм';document.getElementById('fwgt').value=data.wgt||'';document.getElementById('fsb').value=data.savingThrow||'';document.getElementById('fdice').value=data.damageDice||'';document.getElementById('fdur').value=data.duration||'';document.getElementById('fdesc').value=data.desc||'';imgDataUrl=data.img||null;rawImgDataUrl=data.rawImg||data.img||null;var th=document.getElementById('img-thumb');if(imgDataUrl){th.style.backgroundImage='url('+imgDataUrl+')';th.style.display='block';document.getElementById('img-icon').style.display='none';document.getElementById('img-lbl').style.display='none';document.getElementById('btn-recrop').style.display='flex';document.getElementById('btn-del-img').style.display='flex';}else{th.style.display='none';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';}mkCounter('fn','cnt-fn',34);mkCounter('fdice','cnt-dice',80);mkCounter('fdur','cnt-dur',80);mkCounter('fdesc','cnt-desc',750);}
+document.getElementById('btn-reset').addEventListener('click',function(){if(!confirm('Сбросить все поля?'))return;cr='common';document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');});document.querySelector('.rp[data-r="common"]').classList.add('on');document.getElementById('rn').textContent=R.common.l;['fn','fc','fwgt','fsb','fdice','fdur','fdesc'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('fcoin').value='зм';document.querySelectorAll('#fptype-wrap input[type=checkbox]').forEach(function(cb){cb.checked=false;});imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('f-img').value='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';setCardImg(null);applyR('common');renderCard({});toast('Поля сброшены');});
 var DEFAULT_NAME='Яд';
 var JSON_NAME='dnd_poisons';
 function collItemSub(card){return card.poisonType||'Яд';}
 var editingId=null;
-function updateBuildBtn(){var g=document.getElementById('gbtn'),n=document.getElementById('gbtn-new');if(!g)return;if(editingId){g.textContent='💾 Сохранить изменения';if(n)n.style.display='';}else{g.textContent='✦ Создать карточку';if(n)n.style.display='none';}}
-function _saveCard(asNew){currentCard=readForm();renderCard(currentCard);var card=JSON.parse(JSON.stringify(currentCard));if(!asNew&&editingId){card.id=editingId;var i=collection.findIndex(function(c){return c.id===editingId;});if(i>-1){collection[i]=card;}else{collection.unshift(card);}toast('💾 Изменения сохранены');}else{card.id=Date.now();collection.unshift(card);editingId=card.id;toast('✦ Карточка создана и добавлена в коллекцию!');}updateBuildBtn();renderCollection();saveToLS();}
+function _stamp(){var d=new Date(),p=function(n){return(n<10?'0':'')+n;};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'_'+p(d.getHours())+'-'+p(d.getMinutes())+'-'+p(d.getSeconds());}
+function updateBuildBtn(){var g=document.getElementById('gbtn'),n=document.getElementById('gbtn-new');if(!g)return;if(editingId){g.textContent='✦ Сохранить изменения';if(n)n.style.display='';}else{g.textContent='✦ Создать карточку';if(n)n.style.display='none';}}
+function _saveCard(asNew){currentCard=readForm();renderCard(currentCard);var card=JSON.parse(JSON.stringify(currentCard));if(!asNew&&editingId){card.id=editingId;var i=collection.findIndex(function(c){return c.id===editingId;});if(i>-1){collection[i]=card;}else{collection.unshift(card);}toast('✦ Изменения сохранены');}else{card.id=Date.now();collection.unshift(card);editingId=card.id;toast('✦ Карточка создана и добавлена в коллекцию!');}updateBuildBtn();renderCollection();saveToLS();}
 document.getElementById('gbtn').addEventListener('click',function(){_saveCard(false);});
 document.getElementById('gbtn-new').addEventListener('click',function(){_saveCard(true);});
 
@@ -1086,7 +1087,7 @@ document.getElementById('btn-dl-sel').addEventListener('click',function(){
     if(i>=cards.length){
       zip.generateAsync({type:'blob'}).then(function(blob){
         var a=document.createElement('a');
-        a.download='dnd_cards_'+new Date().toISOString().slice(0,10)+'.zip';
+        a.download='dnd_cards_'+_stamp()+'.zip';
         a.href=URL.createObjectURL(blob);a.click();URL.revokeObjectURL(a.href);
         if(savedCard){applyFormData(savedCard);renderCard(savedCard);currentCard=savedCard;}
         toast('✦ ZIP скачан ('+cards.length+' карт.)');
@@ -1224,7 +1225,7 @@ function buildPrintWindow(mode,cards,frontImgs,backImgs){
   }
 
   var suffix=mode==='single'?'_1стор':'_2стор';
-  doc.save('dnd_print_'+new Date().toISOString().slice(0,10)+suffix+'.pdf');
+  doc.save('dnd_print_'+_stamp()+suffix+'.pdf');
   toast('✦ PDF для печати скачан');
 }
 
@@ -1276,7 +1277,7 @@ document.getElementById('btn-export-json').addEventListener('click',function(){
       var cnt=0,k;for(k in res.collections)cnt+=res.collections[k].length;
       if(!cnt){toast('⚠ Все коллекции пусты');return;}
       var a=document.createElement('a');
-      a.download='dnd_project_'+new Date().toISOString().slice(0,10)+'.json';
+      a.download='dnd_project_'+_stamp()+'.json';
       a.href=URL.createObjectURL(new Blob([JSON.stringify(res)],{type:'application/json'}));a.click();URL.revokeObjectURL(a.href);
       toast('✦ Проект сохранён ('+cnt+' карт. со всех страниц)');return;
     }
@@ -1349,6 +1350,26 @@ loadFromLS();
     });
   });
 })();
+/* Внешний рендер карточки для галерей (collection/templates).
+   Галерея грузит страницу-генератор в скрытый iframe и вызывает эту функцию,
+   переиспользуя applyFormData+renderCard страницы и html2canvas. Отдаёт PNG
+   лицевой и оборотной сторон (как в редакторе для печати/сохранения). */
+window.__dndRenderCard=function(card,cb){
+  try{applyFormData(card);renderCard(card);}catch(e){}
+  var fontsReady=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve();
+  fontsReady.then(function(){
+    setTimeout(function(){
+      var f=document.getElementById('pc'),b=document.getElementById('pb');
+      if(!f||!b||typeof html2canvas==='undefined'){if(cb)cb(null);return;}
+      html2canvas(f,{scale:3,useCORS:true,allowTaint:true,logging:false}).then(function(fc){
+        html2canvas(b,{scale:3,useCORS:true,allowTaint:true,logging:false}).then(function(bc){
+          if(cb)cb({front:fc.toDataURL('image/png'),back:bc.toDataURL('image/png')});
+        });
+      }).catch(function(){if(cb)cb(null);});
+    },70);
+  });
+};
+window.__dndReady=true;
 </script>
 </body>
 </html>

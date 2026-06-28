@@ -213,7 +213,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-attune{font-family:'Crimson Text',Georgia,serif;font-size:10px;font-style:italic;color:#6a5040;margin-bottom:1px;flex-shrink:0;}
 .c-props{font-family:'Cinzel',serif;font-size:10px;color:#5a4830;line-height:1.35;margin-bottom:1px;flex-shrink:0;}
 .c-quote{font-family:'Crimson Text',Georgia,serif;font-size:11px;font-weight:700;font-style:italic;text-align:center;color:#4a3820;line-height:1.4;margin-bottom:1px;padding:0 4px;flex-shrink:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
-.c-desc{font-family:'Crimson Text',Georgia,serif;font-size:11px;line-height:1.5;color:#2a1e0a;font-style:italic;text-indent:1.4em;flex:1;overflow:hidden;white-space:pre-wrap;}
+.c-desc{font-family:'Crimson Text',Georgia,serif;font-size:11px;line-height:1.5;color:#2a1e0a;font-style:normal;flex:1;overflow:hidden;white-space:pre-wrap;}
 .c-gem{width:14px;height:14px;border-radius:50%;opacity:.7;background:var(--ca,#a09080);transition:background .2s;}
 .dc-back{
   width:310px;height:437px;
@@ -934,8 +934,16 @@ document.getElementById('crop-apply').addEventListener('click',function(){
   if(dh>maxH){ dw=Math.round(dw*maxH/dh); dh=maxH; }
   var out = document.createElement('canvas');
   out.width=dw; out.height=dh;
-  out.getContext('2d').drawImage(cropImg, nx, ny, nw, nh, 0, 0, dw, dh);
-  imgDataUrl = out.toDataURL('image/jpeg', 0.85);
+  var octx = out.getContext('2d');
+  octx.drawImage(cropImg, nx, ny, nw, nh, 0, 0, dw, dh);
+  /* прозрачность: JPEG не хранит альфа-канал → если есть полупрозрачные
+     пиксели, сохраняем PNG (сохраняет прозрачность), иначе JPEG (компактнее) */
+  var hasAlpha=false;
+  try{
+    var px=octx.getImageData(0,0,dw,dh).data;
+    for(var ai=3;ai<px.length;ai+=4){ if(px[ai]<255){ hasAlpha=true; break; } }
+  }catch(e){ hasAlpha=false; }
+  imgDataUrl = hasAlpha ? out.toDataURL('image/png') : out.toDataURL('image/jpeg', 0.85);
   var th=document.getElementById('img-thumb');
   th.style.backgroundImage='url('+imgDataUrl+')'; th.style.display='block';
   document.getElementById('img-icon').style.display='none';
@@ -1077,8 +1085,9 @@ var DEFAULT_NAME='Оружие';
 var JSON_NAME='dnd_project_weapon2014';
 function collItemSub(card){return card.cat||'';}
 var editingId=null;
-function updateBuildBtn(){var g=document.getElementById('gbtn'),n=document.getElementById('gbtn-new');if(!g)return;if(editingId){g.textContent='💾 Сохранить изменения';if(n)n.style.display='';}else{g.textContent='✦ Создать карточку';if(n)n.style.display='none';}}
-function _saveCard(asNew){currentCard=readForm();renderCard(currentCard);var card=JSON.parse(JSON.stringify(currentCard));if(!asNew&&editingId){card.id=editingId;var i=collection.findIndex(function(c){return c.id===editingId;});if(i>-1){collection[i]=card;}else{collection.unshift(card);}toast('💾 Изменения сохранены');}else{card.id=Date.now();collection.unshift(card);editingId=card.id;toast('✦ Карточка создана и добавлена в коллекцию!');}updateBuildBtn();renderCollection();saveToLS();}
+function _stamp(){var d=new Date(),p=function(n){return(n<10?'0':'')+n;};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'_'+p(d.getHours())+'-'+p(d.getMinutes())+'-'+p(d.getSeconds());}
+function updateBuildBtn(){var g=document.getElementById('gbtn'),n=document.getElementById('gbtn-new');if(!g)return;if(editingId){g.textContent='✦ Сохранить изменения';if(n)n.style.display='';}else{g.textContent='✦ Создать карточку';if(n)n.style.display='none';}}
+function _saveCard(asNew){currentCard=readForm();renderCard(currentCard);var card=JSON.parse(JSON.stringify(currentCard));if(!asNew&&editingId){card.id=editingId;var i=collection.findIndex(function(c){return c.id===editingId;});if(i>-1){collection[i]=card;}else{collection.unshift(card);}toast('✦ Изменения сохранены');}else{card.id=Date.now();collection.unshift(card);editingId=card.id;toast('✦ Карточка создана и добавлена в коллекцию!');}updateBuildBtn();renderCollection();saveToLS();}
 document.getElementById('gbtn').addEventListener('click',function(){_saveCard(false);});
 document.getElementById('gbtn-new').addEventListener('click',function(){_saveCard(true);});
 
@@ -1263,7 +1272,7 @@ document.getElementById('btn-dl-sel').addEventListener('click',function(){
     if(i>=cards.length){
       zip.generateAsync({type:'blob'}).then(function(blob){
         var a=document.createElement('a');
-        a.download='dnd_cards_'+new Date().toISOString().slice(0,10)+'.zip';
+        a.download='dnd_cards_'+_stamp()+'.zip';
         a.href=URL.createObjectURL(blob);a.click();URL.revokeObjectURL(a.href);
         if(savedCard){applyFormData(savedCard);renderCard(savedCard);currentCard=savedCard;}
         toast('✦ ZIP скачан ('+cards.length+' карт.)');
@@ -1401,7 +1410,7 @@ function buildPrintWindow(mode,cards,frontImgs,backImgs){
   }
 
   var suffix=mode==='single'?'_1стор':'_2стор';
-  doc.save('dnd_print_'+new Date().toISOString().slice(0,10)+suffix+'.pdf');
+  doc.save('dnd_print_'+_stamp()+suffix+'.pdf');
   toast('✦ PDF для печати скачан');
 }
 
@@ -1453,7 +1462,7 @@ document.getElementById('btn-export-json').addEventListener('click',function(){
       var cnt=0,k;for(k in res.collections)cnt+=res.collections[k].length;
       if(!cnt){toast('⚠ Все коллекции пусты');return;}
       var a=document.createElement('a');
-      a.download='dnd_project_'+new Date().toISOString().slice(0,10)+'.json';
+      a.download='dnd_project_'+_stamp()+'.json';
       a.href=URL.createObjectURL(new Blob([JSON.stringify(res)],{type:'application/json'}));a.click();URL.revokeObjectURL(a.href);
       toast('✦ Проект сохранён ('+cnt+' карт. со всех страниц)');return;
     }
@@ -1526,6 +1535,26 @@ loadFromLS();
     });
   });
 })();
+/* Внешний рендер карточки для галерей (collection/templates).
+   Галерея грузит страницу-генератор в скрытый iframe и вызывает эту функцию,
+   переиспользуя applyFormData+renderCard страницы и html2canvas. Отдаёт PNG
+   лицевой и оборотной сторон (как в редакторе для печати/сохранения). */
+window.__dndRenderCard=function(card,cb){
+  try{applyFormData(card);renderCard(card);}catch(e){}
+  var fontsReady=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve();
+  fontsReady.then(function(){
+    setTimeout(function(){
+      var f=document.getElementById('pc'),b=document.getElementById('pb');
+      if(!f||!b||typeof html2canvas==='undefined'){if(cb)cb(null);return;}
+      html2canvas(f,{scale:3,useCORS:true,allowTaint:true,logging:false}).then(function(fc){
+        html2canvas(b,{scale:3,useCORS:true,allowTaint:true,logging:false}).then(function(bc){
+          if(cb)cb({front:fc.toDataURL('image/png'),back:bc.toDataURL('image/png')});
+        });
+      }).catch(function(){if(cb)cb(null);});
+    },70);
+  });
+};
+window.__dndReady=true;
 </script>
 </body>
 </html>
