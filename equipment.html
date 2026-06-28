@@ -200,7 +200,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-img-ph svg{width:48px;height:48px;}
 .c-body{flex:1;min-height:0;padding:9px 14px 6px;display:flex;flex-direction:column;overflow:hidden;}
 .c-name{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:#2a1e0a;line-height:1.2;margin-bottom:1px;flex-shrink:0;}
-.c-engname{font-family:'Crimson Text',Georgia,serif;font-style:italic;font-size:12px;color:#6b4c1e;margin-bottom:2px;flex-shrink:0;}
 .c-rule{height:.7px;background:#8a7860;opacity:.55;margin:3px 0;flex-shrink:0;}
 .c-eqtype{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:#8a7860;margin:1px 0 2px;flex-shrink:0;}
 .c-desc{font-family:'Crimson Text',Georgia,serif;font-size:11px;color:#2a1e0a;line-height:1.5;flex:1;overflow:hidden;white-space:pre-wrap;}
@@ -333,12 +332,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     <span class="char-counter" id="cnt-fn">0/34</span>
   </div>
 
-  <div class="lbl">Англ. название <span style="color:var(--text3);font-size:9px;font-family:'Crimson Text',serif;font-style:italic;text-transform:none;letter-spacing:0;">необязательно · макс. 42 симв.</span></div>
-  <div class="field-wrap field-mb">
-    <input class="si" type="text" id="fengname" placeholder="Rope, Hempen (50 feet)" maxlength="42"/>
-    <span class="char-counter" id="cnt-eng">0/42</span>
-  </div>
-
   <div class="lbl">Картинка</div>
   <div class="img-drop" id="img-drop">
     <div class="img-thumb" id="img-thumb" style="display:none;"></div>
@@ -449,7 +442,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
       </div>
       <div class="c-body">
         <div class="c-name" id="pnm">Название предмета</div>
-        <div class="c-engname" id="pengname" style="display:none;"></div>
         <div class="c-rule"></div>
         <div class="c-eqtype" id="peqtype" style="display:none;"></div>
         <div class="c-desc" id="pdesc">Описание предмета и его эффект.</div>
@@ -654,7 +646,7 @@ function mkCounter(inputId,countId,max){
   }
   if(!inp._cbound){inp.addEventListener('input',upd);inp._cbound=true;}upd();
 }
-mkCounter('fn','cnt-fn',34);mkCounter('fengname','cnt-eng',42);mkCounter('fdesc','cnt-desc',750);
+mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',750);
 
 /* image upload & crop */
 var fImgInput=document.getElementById('f-img');
@@ -870,8 +862,16 @@ document.getElementById('crop-apply').addEventListener('click',function(){
   if(dh>maxH){ dw=Math.round(dw*maxH/dh); dh=maxH; }
   var out = document.createElement('canvas');
   out.width=dw; out.height=dh;
-  out.getContext('2d').drawImage(cropImg, nx, ny, nw, nh, 0, 0, dw, dh);
-  imgDataUrl = out.toDataURL('image/jpeg', 0.85);
+  var octx = out.getContext('2d');
+  octx.drawImage(cropImg, nx, ny, nw, nh, 0, 0, dw, dh);
+  /* прозрачность: JPEG не хранит альфа-канал → если есть полупрозрачные
+     пиксели, сохраняем PNG (сохраняет прозрачность), иначе JPEG (компактнее) */
+  var hasAlpha=false;
+  try{
+    var px=octx.getImageData(0,0,dw,dh).data;
+    for(var ai=3;ai<px.length;ai+=4){ if(px[ai]<255){ hasAlpha=true; break; } }
+  }catch(e){ hasAlpha=false; }
+  imgDataUrl = hasAlpha ? out.toDataURL('image/png') : out.toDataURL('image/jpeg', 0.85);
   var th=document.getElementById('img-thumb');
   th.style.backgroundImage='url('+imgDataUrl+')'; th.style.display='block';
   document.getElementById('img-icon').style.display='none';
@@ -888,7 +888,6 @@ function readForm(){
     rarity:cr,
     category:document.getElementById('fcategory').value,
     name:document.getElementById('fn').value.trim(),
-    engname:document.getElementById('fengname').value.trim(),
     cost:document.getElementById('fc').value.trim(),coin:document.getElementById('fcoin').value,
     wgt:document.getElementById('fwgt').value.trim(),
     desc:document.getElementById('fdesc').value,
@@ -908,10 +907,6 @@ function renderCard(data){
   document.getElementById('p-type').textContent='Снаряжение';
   /* name */
   document.getElementById('pnm').textContent=data.name||'Название предмета';
-  /* engname */
-  var en=document.getElementById('pengname');
-  if(data.engname){en.textContent=data.engname;en.style.display='';}
-  else{en.style.display='none';}
   /* cost/weight */
   var cm=document.getElementById('p-cost');
   if(cm){if(data.cost){cm.textContent=data.cost+' '+(data.coin||'зм');cm.style.visibility='visible';}else{cm.style.visibility='hidden';}}
@@ -934,7 +929,6 @@ function applyFormData(data){
   document.getElementById('rn').textContent=R[cr].l;
   document.getElementById('fcategory').value=data.category||'';
   document.getElementById('fn').value=data.name||'';
-  document.getElementById('fengname').value=data.engname||'';
   document.getElementById('fc').value=data.cost||'';
   document.getElementById('fcoin').value=data.coin||'зм';
   document.getElementById('fwgt').value=data.wgt||'';
@@ -956,7 +950,7 @@ function applyFormData(data){
     document.getElementById('btn-recrop').style.display='none';
     document.getElementById('btn-del-img').style.display='none';
   }
-  mkCounter('fn','cnt-fn',34);mkCounter('fengname','cnt-eng',42);mkCounter('fdesc','cnt-desc',750);
+  mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',750);
 }
 
 /* ── reset ── */
@@ -966,7 +960,7 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');});
   document.querySelector('.rp[data-r="common"]').classList.add('on');
   document.getElementById('rn').textContent=R.common.l;
-  ['fn','fengname','fc','fwgt','fdesc'].forEach(function(id){document.getElementById(id).value='';});
+  ['fn','fc','fwgt','fdesc'].forEach(function(id){document.getElementById(id).value='';});
   document.getElementById('fcoin').value='зм';
   document.getElementById('fcategory').selectedIndex=0;
   document.getElementById('fattune').selectedIndex=0;
@@ -980,10 +974,9 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   setCardImg(null);applyR('common');
   document.getElementById('p-rar').textContent=R.common.l;document.getElementById('p-type').textContent='Снаряжение';
   document.getElementById('pnm').textContent='Название предмета';
-  document.getElementById('pengname').style.display='none';
   document.getElementById('pwgt').textContent='';
   splitDesc({desc:'',rarity:'common'});
-  mkCounter('fn','cnt-fn',34);mkCounter('fengname','cnt-eng',42);mkCounter('fdesc','cnt-desc',750);
+  mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',750);
   toast('Поля сброшены');
 });
 
@@ -992,8 +985,9 @@ var DEFAULT_NAME='Снаряжение';
 var JSON_NAME='dnd_equipment';
 function collItemSub(card){return card.category||(card.type==='equipment'?'Снаряжение':'');}
 var editingId=null;
-function updateBuildBtn(){var g=document.getElementById('gbtn'),n=document.getElementById('gbtn-new');if(!g)return;if(editingId){g.textContent='💾 Сохранить изменения';if(n)n.style.display='';}else{g.textContent='✦ Создать карточку';if(n)n.style.display='none';}}
-function _saveCard(asNew){currentCard=readForm();renderCard(currentCard);var card=JSON.parse(JSON.stringify(currentCard));if(!asNew&&editingId){card.id=editingId;var i=collection.findIndex(function(c){return c.id===editingId;});if(i>-1){collection[i]=card;}else{collection.unshift(card);}toast('💾 Изменения сохранены');}else{card.id=Date.now();collection.unshift(card);editingId=card.id;toast('✦ Карточка создана и добавлена в коллекцию!');}updateBuildBtn();renderCollection();saveToLS();}
+function _stamp(){var d=new Date(),p=function(n){return(n<10?'0':'')+n;};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'_'+p(d.getHours())+'-'+p(d.getMinutes())+'-'+p(d.getSeconds());}
+function updateBuildBtn(){var g=document.getElementById('gbtn'),n=document.getElementById('gbtn-new');if(!g)return;if(editingId){g.textContent='✦ Сохранить изменения';if(n)n.style.display='';}else{g.textContent='✦ Создать карточку';if(n)n.style.display='none';}}
+function _saveCard(asNew){currentCard=readForm();renderCard(currentCard);var card=JSON.parse(JSON.stringify(currentCard));if(!asNew&&editingId){card.id=editingId;var i=collection.findIndex(function(c){return c.id===editingId;});if(i>-1){collection[i]=card;}else{collection.unshift(card);}toast('✦ Изменения сохранены');}else{card.id=Date.now();collection.unshift(card);editingId=card.id;toast('✦ Карточка создана и добавлена в коллекцию!');}updateBuildBtn();renderCollection();saveToLS();}
 document.getElementById('gbtn').addEventListener('click',function(){_saveCard(false);});
 document.getElementById('gbtn-new').addEventListener('click',function(){_saveCard(true);});
 
@@ -1178,7 +1172,7 @@ document.getElementById('btn-dl-sel').addEventListener('click',function(){
     if(i>=cards.length){
       zip.generateAsync({type:'blob'}).then(function(blob){
         var a=document.createElement('a');
-        a.download='dnd_cards_'+new Date().toISOString().slice(0,10)+'.zip';
+        a.download='dnd_cards_'+_stamp()+'.zip';
         a.href=URL.createObjectURL(blob);a.click();URL.revokeObjectURL(a.href);
         if(savedCard){applyFormData(savedCard);renderCard(savedCard);currentCard=savedCard;}
         toast('✦ ZIP скачан ('+cards.length+' карт.)');
@@ -1316,7 +1310,7 @@ function buildPrintWindow(mode,cards,frontImgs,backImgs){
   }
 
   var suffix=mode==='single'?'_1стор':'_2стор';
-  doc.save('dnd_print_'+new Date().toISOString().slice(0,10)+suffix+'.pdf');
+  doc.save('dnd_print_'+_stamp()+suffix+'.pdf');
   toast('✦ PDF для печати скачан');
 }
 
@@ -1368,7 +1362,7 @@ document.getElementById('btn-export-json').addEventListener('click',function(){
       var cnt=0,k;for(k in res.collections)cnt+=res.collections[k].length;
       if(!cnt){toast('⚠ Все коллекции пусты');return;}
       var a=document.createElement('a');
-      a.download='dnd_project_'+new Date().toISOString().slice(0,10)+'.json';
+      a.download='dnd_project_'+_stamp()+'.json';
       a.href=URL.createObjectURL(new Blob([JSON.stringify(res)],{type:'application/json'}));a.click();URL.revokeObjectURL(a.href);
       toast('✦ Проект сохранён ('+cnt+' карт. со всех страниц)');return;
     }
@@ -1442,6 +1436,26 @@ loadFromLS();
     });
   });
 })();
+/* Внешний рендер карточки для галерей (collection/templates).
+   Галерея грузит страницу-генератор в скрытый iframe и вызывает эту функцию,
+   переиспользуя applyFormData+renderCard страницы и html2canvas. Отдаёт PNG
+   лицевой и оборотной сторон (как в редакторе для печати/сохранения). */
+window.__dndRenderCard=function(card,cb){
+  try{applyFormData(card);renderCard(card);}catch(e){}
+  var fontsReady=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve();
+  fontsReady.then(function(){
+    setTimeout(function(){
+      var f=document.getElementById('pc'),b=document.getElementById('pb');
+      if(!f||!b||typeof html2canvas==='undefined'){if(cb)cb(null);return;}
+      html2canvas(f,{scale:3,useCORS:true,allowTaint:true,logging:false}).then(function(fc){
+        html2canvas(b,{scale:3,useCORS:true,allowTaint:true,logging:false}).then(function(bc){
+          if(cb)cb({front:fc.toDataURL('image/png'),back:bc.toDataURL('image/png')});
+        });
+      }).catch(function(){if(cb)cb(null);});
+    },70);
+  });
+};
+window.__dndReady=true;
 </script>
 </body>
 </html>
