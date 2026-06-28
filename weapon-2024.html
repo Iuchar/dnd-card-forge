@@ -81,15 +81,17 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-meta{height:24px;flex-shrink:0;display:flex;align-items:center;padding:0;background:rgba(0,0,0,0.07);}
 .c-meta-orn{width:24px;height:100%;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
 .c-meta-orn svg{width:20px;height:20px;}
-.c-meta-inner{flex:1;display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;padding:0 10px;text-align:center;}
-.c-meta-inner .c-meta-item:first-child{text-align:left;}
-.c-meta-inner .c-meta-item:last-child{text-align:right;}
-.c-meta-item{font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:.09em;color:#5a4830;text-transform:uppercase;}
-.c-meta-item.cost{color:#8a6010;}
+.c-meta-inner{flex:1;position:relative;display:flex;align-items:center;justify-content:center;padding:0 10px;min-width:0;}
+.c-meta-item{font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:.09em;color:#5a4830;text-transform:uppercase;white-space:nowrap;}
+.c-meta-item.cost{color:#8a6010;position:absolute;left:10px;}
 .c-img-el{position:absolute;top:7px;left:7px;width:calc(100% - 14px);height:calc(100% - 14px);object-fit:fill;border-radius:2px;display:block;}
 .img-frame-svg{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none;}
-.c-foot{height:26px;flex-shrink:0;padding:0 14px;display:flex;align-items:center;justify-content:space-between;}
+.c-foot{height:26px;flex-shrink:0;padding:0 14px;display:flex;align-items:center;justify-content:space-between;position:relative;}
 .c-wgt{font-family:'Cinzel',serif;font-size:10px;color:#8a7860;letter-spacing:.04em;}
+/* рамка типа в подвале карточки (ромбы + линии) */
+.c-typeframe{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:150px;height:20px;pointer-events:none;}
+.c-tfsvg{width:100%;height:100%;display:block;}
+
 .crop-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:none;align-items:center;justify-content:center;}
 .crop-modal-bg.open{display:flex;}
 .crop-modal{max-height:95vh;overflow-y:auto;background:var(--bg2);border:0.5px solid var(--border2);border-radius:14px;padding:20px;width:560px;max-width:95vw;}
@@ -232,7 +234,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-props{font-family:'Cinzel',serif;font-size:10px;color:#5a4830;line-height:1.35;margin-bottom:1px;flex-shrink:0;}
 .c-quote{font-family:'Crimson Text',Georgia,serif;font-size:11px;font-weight:700;font-style:italic;text-align:center;color:#4a3820;line-height:1.4;margin-bottom:1px;padding:0 4px;flex-shrink:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
 .c-desc{font-family:'Crimson Text',Georgia,serif;font-size:11px;line-height:1.5;color:#2a1e0a;font-style:normal;flex:1;overflow:hidden;white-space:pre-wrap;}
-.c-gem{width:14px;height:14px;border-radius:50%;opacity:.7;background:var(--ca,#a09080);transition:background .2s;}
+.c-gem{width:14px;height:14px;border-radius:50%;opacity:.7;border:1px solid #3a2810;background:var(--ca,#a09080);transition:background .2s;}
 .dc-back{
   width:310px;height:437px;
   border-radius:12px;overflow:hidden;
@@ -524,7 +526,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
           <div class="c-meta-inner">
             <span class="c-meta-item cost" id="p-cost" style="visibility:hidden;">—</span>
             <span class="c-meta-item" id="p-rar">Обычный</span>
-            <span class="c-meta-item">Оружие</span>
+            
           </div>
           <div class="c-meta-orn"><svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10 L10 3 L17 10 L10 17 Z" stroke="#5a4820" stroke-width="1.2" fill="#d4c4a0" opacity="0.8"/><circle cx="10" cy="10" r="2" fill="#5a4820" opacity="0.7"/></svg></div>
         </div>
@@ -566,7 +568,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
         </div>
         <div class="c-foot">
           <span class="c-wgt" id="pwgt"></span>
-          <div class="c-gem" id="pgm"></div>
+          <span class="c-typeframe"><svg class="c-tfsvg" viewBox="0 0 210 28" xmlns="http://www.w3.org/2000/svg"><polygon points="40,14 51,3 159,3 170,14 159,25 51,25" fill="#efe6d2" stroke="#5a4820" stroke-width="1.4"/><polygon points="47,14 56,7.5 154,7.5 163,14 154,20.5 56,20.5" fill="none" stroke="#a07838" stroke-width="0.8"/><line x1="26" y1="14" x2="40" y2="14" stroke="#5a4820" stroke-width="1.3"/><line x1="170" y1="14" x2="184" y2="14" stroke="#5a4820" stroke-width="1.3"/><polygon points="15,3 27,14 15,25 3,14" fill="#d4c4a0" stroke="#5a4820" stroke-width="1.3"/><circle cx="15" cy="14" r="2.4" fill="#5a4820"/><polygon points="195,3 207,14 195,25 183,14" fill="#d4c4a0" stroke="#5a4820" stroke-width="1.3"/><circle cx="195" cy="14" r="2.4" fill="#5a4820"/><text x="105" y="18.5" text-anchor="middle" font-family="Crimson Text,Georgia,serif" font-style="italic" font-size="13" fill="#3a2810">Оружие</text></svg></span><div class="c-gem" id="pgm"></div>
         </div>
       </div>
     </div>
@@ -713,10 +715,11 @@ function _finishLoad(){
     var c=null;for(var i=0;i<collection.length;i++){if(String(collection[i].id)===String(ep)){c=collection[i];break;}}
     if(c){applyFormData(c);renderCard(c);currentCard=JSON.parse(JSON.stringify(c));editingId=c.id;if(typeof updateBuildBtn==='function')updateBuildBtn();if(window.__syncSelects)window.__syncSelects();try{history.replaceState(null,'',location.pathname);}catch(e){}return;}
   }
-  /* по умолчанию — пустая форма (создание новой) */
-  applyFormData({});renderCard({});currentCard=null;editingId=null;if(typeof updateBuildBtn==='function')updateBuildBtn();if(window.__syncSelects)window.__syncSelects();
+  /* по умолчанию — пустая форма (создание новой); рендерим от readForm,
+     чтобы дефолтная редкость (cr) попала на карточку, а не common */
+  applyFormData({});renderCard(readForm());currentCard=null;editingId=null;if(typeof updateBuildBtn==='function')updateBuildBtn();if(window.__syncSelects)window.__syncSelects();
 }
-function loadFromLS(){try{var d=localStorage.getItem(LS_KEY);if(d){var arr=JSON.parse(d);if(Array.isArray(arr)&&arr.length){collection=arr;}}}catch(e){}if(!collection.length)return;_openIDB(function(db){if(!db){_finishLoad();return;}var pending=collection.length;var tx=db.transaction(IDB_STORE,'readonly');collection.forEach(function(c){var req=tx.objectStore(IDB_STORE).get(String(c.id));req.onsuccess=function(e){if(e.target.result)c.img=e.target.result;if(--pending===0)_finishLoad();};req.onerror=function(){if(--pending===0)_finishLoad();};});});}
+function loadFromLS(){try{var d=localStorage.getItem(LS_KEY);if(d){var arr=JSON.parse(d);if(Array.isArray(arr)&&arr.length){collection=arr;}}}catch(e){}if(!collection.length){_finishLoad();return;}_openIDB(function(db){if(!db){_finishLoad();return;}var pending=collection.length;var tx=db.transaction(IDB_STORE,'readonly');collection.forEach(function(c){var req=tx.objectStore(IDB_STORE).get(String(c.id));req.onsuccess=function(e){if(e.target.result)c.img=e.target.result;if(--pending===0)_finishLoad();};req.onerror=function(){if(--pending===0)_finishLoad();};});});}
 var rawImgDataUrl=null;
 
 function applyR(r){
