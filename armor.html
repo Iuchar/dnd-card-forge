@@ -177,6 +177,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   --text:#e0d8c8;--text2:#a09070;--text3:#5a5040;
   --gold:#c8941a;--gold-l:#f0b830;
   --accent:#4a3fa0;--accent-l:#8070e0;
+  --ca:#f5f5f5;
   --r:10px;
 }
 .sb > .lbl:first-child{margin-top:0;}
@@ -216,14 +217,14 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   transition:border-color .2s,box-shadow .2s;
 }
 .c-stripe-wrap{flex-shrink:0;}
-.c-stripe{height:10px;background:var(--ca,#a09080);transition:background .2s;}
-.c-stripe-under{height:1.5px;background:#5a4820;}
+.c-stripe{height:10px;flex-shrink:0;background:var(--ca,#a09080);transition:background .2s;}
+.c-stripe-under{height:1.5px;flex-shrink:0;background:#5a4820;}
 .c-img{width:100%;height:163px;flex-shrink:0;background:#cfc0a0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .c-img-ph{opacity:.25;display:flex;align-items:center;justify-content:center;}
 .c-img-ph svg{width:48px;height:48px;}
-.c-body{flex:1;min-height:0;padding:3px 14px 2px;display:flex;flex-direction:column;overflow:hidden;}
+.c-body{flex:1;min-height:0;padding:5px 14px 3px;display:flex;flex-direction:column;overflow:hidden;}
 .c-name{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:#2a1e0a;line-height:1.2;margin-bottom:1px;flex-shrink:0;}
-.c-rule{height:.7px;background:#8a7860;opacity:.55;margin:2px 0 3px;flex-shrink:0;}
+.c-rule{height:.7px;background:#8a7860;opacity:.55;margin:3px 0;flex-shrink:0;}
 .c-info-row{display:flex;align-items:stretch;flex-shrink:0;}
 .c-infolist{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0;padding-right:10px;border-right:.5px solid rgba(0,0,0,.13);}
 .c-info-item{display:flex;align-items:baseline;gap:6px;font-size:12px;color:#2e2010;line-height:1.35;}
@@ -508,7 +509,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
           <div class="c-meta-orn"><svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10 L10 3 L17 10 L10 17 Z" stroke="#5a4820" stroke-width="1.2" fill="#d4c4a0" opacity="0.8"/><circle cx="10" cy="10" r="2" fill="#5a4820" opacity="0.7"/></svg></div>
           <div class="c-meta-inner">
             <span class="c-meta-item cost" id="p-cost" style="visibility:hidden;">—</span>
-            <span class="c-meta-item" id="p-rar">Обычный</span>
+            <span class="c-meta-item" id="p-rar">Немагический</span>
             
           </div>
           <div class="c-meta-orn"><svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10 L10 3 L17 10 L10 17 Z" stroke="#5a4820" stroke-width="1.2" fill="#d4c4a0" opacity="0.8"/><circle cx="10" cy="10" r="2" fill="#5a4820" opacity="0.7"/></svg></div>
@@ -699,9 +700,10 @@ function _finishLoad(){
     var c=null;for(var i=0;i<collection.length;i++){if(String(collection[i].id)===String(ep)){c=collection[i];break;}}
     if(c){applyFormData(c);renderCard(c);currentCard=JSON.parse(JSON.stringify(c));editingId=c.id;if(typeof updateBuildBtn==='function')updateBuildBtn();if(window.__syncSelects)window.__syncSelects();try{history.replaceState(null,'',location.pathname);}catch(e){}return;}
   }
-  /* по умолчанию — пустая форма (создание новой); рендерим от readForm,
-     чтобы дефолтная редкость (cr) попала на карточку, а не common */
-  applyFormData({});renderCard(readForm());currentCard=null;editingId=null;if(typeof updateBuildBtn==='function')updateBuildBtn();if(window.__syncSelects)window.__syncSelects();
+  /* по умолчанию — базовое состояние (как «Сбросить все поля»): пустая форма,
+     редкость cr (nonmagic) на карточку через applyR, БЕЗ renderCard —
+     чтобы сохранить статические плейсхолдеры и не было прыжка */
+  applyFormData({});applyR(cr);currentCard=null;editingId=null;if(typeof updateBuildBtn==='function')updateBuildBtn();if(window.__syncSelects)window.__syncSelects();
 }
 function loadFromLS(){try{var d=localStorage.getItem(LS_KEY);if(d){var arr=JSON.parse(d);if(Array.isArray(arr)&&arr.length){collection=arr;}}}catch(e){}if(!collection.length){_finishLoad();return;}_openIDB(function(db){if(!db){_finishLoad();return;}var pending=collection.length;var tx=db.transaction(IDB_STORE,'readonly');collection.forEach(function(c){var req=tx.objectStore(IDB_STORE).get(String(c.id));req.onsuccess=function(e){if(e.target.result)c.img=e.target.result;if(--pending===0)_finishLoad();};req.onerror=function(){if(--pending===0)_finishLoad();};});});}
 var rawImgDataUrl=null;
@@ -1100,10 +1102,10 @@ function applyFormData(data){
 /* reset */
 document.getElementById('btn-reset').addEventListener('click',function(){
   if(!confirm('Сбросить все поля и предпросмотр?'))return;
-  cr='common';
+  cr='nonmagic';
   document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');});
-  document.querySelector('.rp[data-r="common"]').classList.add('on');
-  document.getElementById('rn').textContent=R.common.l;
+  document.querySelector('.rp[data-r="nonmagic"]').classList.add('on');
+  document.getElementById('rn').textContent=R.nonmagic.l;
   ['fn','fc','fmaterial','fstrreq','fwgt','fbk','fprops','facbase'].forEach(function(id){document.getElementById(id).value='';});
   document.getElementById('fcoin').value='зм';
   document.getElementById('farmortype').selectedIndex=0;
@@ -1125,7 +1127,7 @@ document.getElementById('btn-reset').addEventListener('click',function(){
 
   document.getElementById('pwgt').textContent='';
   document.getElementById('pbk').textContent='Заполните поле «Оборотная сторона».';
-  setCardImg(null);applyR('common');
+  setCardImg(null);applyR('nonmagic');
   mkCounter('fn','cnt-fn',30);mkCounter('fmaterial','cnt-material',26);mkCounter('fprops','cnt-props',130);mkCounter('fbk','cnt-bk',750);
   toast('Поля сброшены');
 });
