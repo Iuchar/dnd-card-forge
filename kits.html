@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>D&amp;D — Наборы снаряжения</title>
+<title>D&amp;D Card Forge — Наборы снаряжения</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,700&display=swap" rel="stylesheet"/>
 <script src="lib/html2canvas.min.js"></script>
 <script src="lib/jszip.min.js"></script>
@@ -32,7 +32,7 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .lbl{font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--text3);margin:13px 0 5px;}
 .si{width:100%;background:rgba(255,255,255,.05);border:0.5px solid var(--border2);border-radius:7px;color:var(--text);font-family:'Crimson Text',Georgia,serif;font-size:13px;padding:6px 9px;accent-color:var(--gold);outline:none;transition:border-color .15s;}
 .si:focus{border-color:var(--gold);}
-.si::placeholder{color:var(--text3);}
+.si::placeholder{color:#5a5040;}
 input[type=checkbox]{accent-color:var(--gold);}
 select.si{cursor:pointer;}
 select.si option{background:var(--bg2);color:var(--text);}
@@ -114,7 +114,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .coll-search-icon{position:absolute;left:19px;top:50%;transform:translateY(-50%);color:var(--text3);pointer-events:none;width:13px;height:13px;}
 .coll-search{width:100%;background:rgba(255,255,255,.05);border:0.5px solid var(--border2);border-radius:7px;color:var(--text);font-family:'Crimson Text',Georgia,serif;font-size:12px;padding:5px 9px 5px 28px;outline:none;transition:border-color .15s;box-sizing:border-box;}
 .coll-search:focus{border-color:var(--accent-l);}
-.coll-search::placeholder{color:var(--text3);}
+.coll-search::placeholder{color:#5a5040;}
 .coll-search-clear{position:absolute;right:18px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;line-height:1;padding:0;display:none;}
 .coll-title{font-family:'Cinzel',serif;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);}
 .coll-count{font-family:'Cinzel',serif;font-size:10px;color:var(--text3);background:var(--bg3);border:0.5px solid var(--border2);border-radius:20px;padding:2px 9px;}
@@ -160,7 +160,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.07em;color:var(--text2);cursor:pointer;transition:all .13s;text-decoration:none;}
 .nav-item:hover{background:rgba(255,255,255,.06);color:var(--text);}
 .nav-item.nav-active{background:rgba(200,148,26,.12);color:var(--gold-l);border:0.5px solid rgba(200,148,26,.2);}
-.nav-item.nav-disabled{color:var(--text3);cursor:default;pointer-events:none;font-size:9.5px;padding:5px 10px;}
+.nav-item.nav-disabled{color:#5a5040;cursor:default;pointer-events:none;font-size:9.5px;padding:5px 10px;}
 .nav-group-head{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:6px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.07em;color:var(--text2);cursor:pointer;transition:all .13s;user-select:none;}
 .nav-group-head:hover{background:rgba(255,255,255,.06);color:var(--text);}
 .nav-group-chev{width:12px;height:12px;transition:transform .15s;flex-shrink:0;opacity:.5;}
@@ -171,9 +171,14 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .nav-group-head-inner{display:flex;align-items:center;gap:8px;}
 .coll-full-link{display:flex;align-items:center;gap:5px;padding:5px 14px 8px;font-family:'Cinzel',serif;font-size:9px;letter-spacing:.07em;color:var(--text3);text-decoration:none;flex-shrink:0;transition:color .13s;border-bottom:0.5px solid var(--border);}
 .coll-full-link:hover{color:var(--gold-l);}
+
+/* Доступность: отключение анимаций по системной настройке */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important;}
+}
 html:focus,body:focus{outline:none;}
 button:focus{outline:none;}
-:root{--bg:#111009;--bg2:#1a1814;--bg3:#252018;--bg4:#2e2a20;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.13);--text:#e0d8c8;--text2:#a09070;--text3:#5a5040;--gold:#c8941a;--gold-l:#f0b830;--accent:#4a3fa0;--accent-l:#8070e0;--r:10px;}
+:root{--bg:#111009;--bg2:#1a1814;--bg3:#252018;--bg4:#2e2a20;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.13);--text:#e0d8c8;--text2:#a09070;--text3:#968769;--gold:#c8941a;--gold-l:#f0b830;--accent:#4a3fa0;--accent-l:#8070e0;--r:10px;}
 .sb>.lbl:first-child{margin-top:0;}
 .cv{flex:1;background:#f0ece2;display:flex;flex-direction:column;align-items:center;padding:20px 16px 16px;overflow:auto;}
 .cb-rubashka{position:absolute;inset:0;z-index:2;}
@@ -285,7 +290,7 @@ button:focus{outline:none;}
       </span>
     </div>
     </div>
-    <span style="font-size:12px;color:var(--text2);font-family:'Crimson Text',serif;font-style:italic;font-weight:400;">— Наборы снаряжения</span>
+    <h1 style="font-size:12px;color:var(--text2);font-family:'Crimson Text',serif;font-style:italic;font-weight:400;margin:0;">— Наборы снаряжения</h1>
   </div>
   <div class="header-btns">
     <button class="hbtn" id="btn-png"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Сохранить PNG</button>
@@ -308,7 +313,7 @@ button:focus{outline:none;}
     <div class="rp on" data-r="nonmagic" title="Немагический"></div>
     <span class="rname" id="rn">Немагический</span>
   </div>
-  <div class="lbl">Название <span style="color:var(--text3);font-size:9px;font-family:'Crimson Text',serif;font-style:italic;text-transform:none;letter-spacing:0;">макс. 34 симв.</span></div>
+  <div class="lbl">Название</div>
   <div class="field-wrap field-mb">
     <input class="si" type="text" id="fn" placeholder="Набор путешественника" maxlength="34"/>
     <span class="char-counter" id="cnt-fn">0/34</span>
@@ -349,10 +354,9 @@ button:focus{outline:none;}
   <div class="field-wrap field-mb">
     <textarea class="si" id="fcomposition" placeholder="Рюкзак&#10;Ломик&#10;Молоток&#10;Факелы (10 шт.)&#10;Трут и кремень&#10;Рацион на 10 дней&#10;Бурдюк с водой" style="height:170px;"></textarea>
   </div>
-  <div class="field-hint">Каждый предмет — отдельная строка</div>
 
   <div class="divider"></div>
-  <div class="lbl">Описание / Эффект <span style="color:var(--text3);font-size:9px;font-family:'Crimson Text',serif;font-style:italic;text-transform:none;letter-spacing:0;">макс. 900 симв.</span></div>
+  <div class="lbl">Описание / Эффект</div>
   <div class="field-wrap field-mb">
     <textarea class="si" id="fback" maxlength="900" placeholder="История, дополнительное описание, легенда набора…" style="height:350px;"></textarea>
     <span class="char-counter" id="cnt-back">0/750</span>
@@ -1339,23 +1343,27 @@ window.__dndReady=true;
     sel.parentNode.insertBefore(wrap,sel);
     sel.style.display='none';wrap.appendChild(sel);
     var btn=document.createElement('button');btn.type='button';btn.className='cs-btn';
+    btn.setAttribute('aria-haspopup','listbox');btn.setAttribute('aria-expanded','false');
     var lbl=document.createElement('span');lbl.className='cs-lbl';
     btn.appendChild(lbl);btn.insertAdjacentHTML('beforeend',chev());
-    var panel=document.createElement('div');panel.className='cs-panel';
+    var panel=document.createElement('div');panel.className='cs-panel';panel.setAttribute('role','listbox');
     var opts=[];
     [].forEach.call(sel.options,function(o){
       var it=document.createElement('div');it.className='cs-opt';it.textContent=o.textContent;it.setAttribute('data-v',o.value);
+      it.setAttribute('tabindex','0');it.setAttribute('role','option');
       it.addEventListener('click',function(e){e.stopPropagation();sel.value=o.value;upd();_close();sel.dispatchEvent(new Event('input',{bubbles:true}));sel.dispatchEvent(new Event('change',{bubbles:true}));});
+      it.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();it.click();btn.focus();}});
       panel.appendChild(it);opts.push(it);
     });
-    function upd(){var o=sel.options[sel.selectedIndex];lbl.textContent=o?o.textContent:'';opts.forEach(function(it){it.classList.toggle('on',it.getAttribute('data-v')===sel.value);});}
-    function _close(){panel.classList.remove('open');btn.classList.remove('open');}
-    btn.addEventListener('click',function(e){e.stopPropagation();var open=panel.classList.contains('open');_closeAll();if(!open){panel.classList.add('open');btn.classList.add('open');upd();}});
+    function upd(){var o=sel.options[sel.selectedIndex];lbl.textContent=o?o.textContent:'';opts.forEach(function(it){var on=it.getAttribute('data-v')===sel.value;it.classList.toggle('on',on);it.setAttribute('aria-selected',on?'true':'false');});}
+    function _close(){panel.classList.remove('open');btn.classList.remove('open');btn.setAttribute('aria-expanded','false');}
+    btn.addEventListener('click',function(e){e.stopPropagation();var open=panel.classList.contains('open');_closeAll();if(!open){panel.classList.add('open');btn.classList.add('open');btn.setAttribute('aria-expanded','true');upd();}});
+    wrap.addEventListener('keydown',function(e){if(e.key==='Escape'&&panel.classList.contains('open')){e.stopPropagation();_close();btn.focus();}});
     panel.addEventListener('click',function(e){e.stopPropagation();});
     wrap.appendChild(btn);wrap.appendChild(panel);
     sel._csUpd=upd;upd();
   }
-  function _closeAll(){[].forEach.call(document.querySelectorAll('.cs-panel.open'),function(p){p.classList.remove('open');});[].forEach.call(document.querySelectorAll('.cs-btn.open'),function(b){b.classList.remove('open');});}
+  function _closeAll(){[].forEach.call(document.querySelectorAll('.cs-panel.open'),function(p){p.classList.remove('open');});[].forEach.call(document.querySelectorAll('.cs-btn.open'),function(b){b.classList.remove('open');b.setAttribute('aria-expanded','false');});}
   document.addEventListener('click',_closeAll);
   window.__syncSelects=function(){[].forEach.call(document.querySelectorAll('select.si'),function(s){if(s._csUpd)s._csUpd();});};
   [].forEach.call(document.querySelectorAll('select.si'),enhance);

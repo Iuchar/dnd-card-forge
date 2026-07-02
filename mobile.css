@@ -78,3 +78,22 @@
   .cards-row { gap: 14px; }
   .cv { padding: 12px 8px 20px; }
 }
+
+/* --- Touch-таргеты (аудит 2026-07-02): интерактив ~40-44px на мобильных --- */
+@media (max-width: 820px) {
+  .hbtn { min-height: 40px; }
+  .nav-toggle { min-height: 40px; }
+  .btn-reset, .coll-sel-btn, .coll-act-btn { min-height: 44px; }
+  .cs-btn { min-height: 44px; }
+  .cs-opt { min-height: 40px; display: flex; align-items: center; }
+  .fdd { min-height: 40px; }
+  .fdd-opt { min-height: 40px; }
+  .fdd-pedal { min-height: 36px; }
+  input.si { min-height: 44px; }
+  .pcb { padding: 8px 0; }
+  .pcb input[type=checkbox] { width: 18px; height: 18px; }
+  .rprow { gap: 12px; }
+  .rp { width: 30px; height: 30px; position: relative; }
+  /* невидимая зона нажатия до ~44px */
+  .rp::after { content: ''; position: absolute; inset: -7px; border-radius: 50%; }
+}
