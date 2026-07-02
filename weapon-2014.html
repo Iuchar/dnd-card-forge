@@ -477,23 +477,18 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 
   <div class="divider"></div>
 
-  <div class="lbl">Цитата <span style="color:var(--text3);font-size:9px;font-family:'Crimson Text',serif;font-style:italic;text-transform:none;letter-spacing:0;">макс. 70 симв.</span></div>
+  <div class="lbl">Атмосферная фраза <span style="color:var(--text3);font-size:9px;font-family:'Crimson Text',serif;font-style:italic;text-transform:none;letter-spacing:0;">макс. 70 симв.</span></div>
   <div class="field-wrap field-mb">
     <textarea class="si" id="fflv" maxlength="70" placeholder="Сталь не знает усталости…" style="height:80px;"></textarea>
     <span class="char-counter" id="cnt-flv">0/70</span>
   </div>
 
-  <div class="lbl">Описание — лицевая <span style="color:var(--text3);font-size:9px;font-family:'Crimson Text',serif;font-style:italic;text-transform:none;letter-spacing:0;">макс. 130 симв.</span></div>
+  <div class="lbl">Описание / Эффект <span style="color:var(--text3);font-size:9px;font-family:'Crimson Text',serif;font-style:italic;text-transform:none;letter-spacing:0;">макс. 900 симв.</span></div>
   <div class="field-wrap field-mb">
-    <textarea class="si" id="fdesc" maxlength="130" placeholder="Особые свойства, магические эффекты…" style="height:120px;"></textarea>
-    <span class="char-counter" id="cnt-desc">0/130</span>
+    <textarea class="si" id="fdesc" maxlength="900" placeholder="Описание, эффекты, лор… (перенос на оборот — автоматически)" style="height:350px;"></textarea>
+    <span class="char-counter" id="cnt-desc">0/900</span>
   </div>
 
-  <div class="lbl">Описание — оборотная <span style="color:var(--text3);font-size:9px;font-family:'Crimson Text',serif;font-style:italic;text-transform:none;letter-spacing:0;">макс. 750 симв.</span></div>
-  <div class="field-wrap field-mb">
-    <textarea class="si" id="fbk" maxlength="750" placeholder="История, лор, заметки мастера…" style="height:149px;"></textarea>
-    <span class="char-counter" id="cnt-bk">0/750</span>
-  </div>
 
   <button class="btn-build" id="gbtn">✦ Создать карточку</button>
   <button class="btn-build-alt" id="gbtn-new" style="display:none;">+ Создать как новую</button>
@@ -567,7 +562,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
         <div class="c-stripe-wrap"><div class="c-stripe" id="pbs"></div><div class="c-stripe-under"></div></div>
         <div class="cb-body">
           <div class="cb-lbl">Описание</div>
-          <div class="cb-desc" id="pbk">Заполните поле «Оборотная сторона».</div>
+          <div class="cb-desc" id="pbk"></div>
         </div>
         <div class="c-foot"><div class="c-gem" id="pbgm"></div></div>
       </div>
@@ -749,7 +744,7 @@ function mkCounter(inputId,countId,max){
 }
 ['fr1','fr2'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9]/g,'').slice(0,4);this.setSelectionRange(p,p);});});
 ['fstr','fpr'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;var v=this.value.replace(/[^0-9-]/g,'');v=v.charAt(0)+v.slice(1).replace(/-/g,'');this.value=v.slice(0,2);this.setSelectionRange(p,p);});});
-mkCounter('fn','cnt-fn',30);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',130);mkCounter('fbk','cnt-bk',750);
+mkCounter('fn','cnt-fn',30);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',900);
 
 /* image upload & crop */
 var fImgInput=document.getElementById('f-img');
@@ -1003,7 +998,6 @@ function readForm(){
     r1:document.getElementById('fr1').value.trim(),r2:document.getElementById('fr2').value.trim(),
     desc:document.getElementById('fdesc').value,
     flv:document.getElementById('fflv').value.trim(),
-    back:document.getElementById('fbk').value,
     props:props,ammo:document.getElementById('fammo').value,
     attune:document.getElementById('fattune').value,
     img:imgDataUrl,rawImg:rawImgDataUrl
@@ -1011,6 +1005,7 @@ function readForm(){
 }
 
 /* renderCard */
+function splitDesc(data){var desc=document.getElementById('pds'),back=document.getElementById('pbk'),full=data.desc||'';desc.textContent='';back.textContent='';if(!full)return;requestAnimationFrame(function(){desc.textContent=full;var ch=desc.clientHeight;if(!ch||desc.scrollHeight<=ch+2)return;var lo=0,hi=full.length;while(lo<hi-1){var mid=Math.floor((lo+hi)/2);desc.textContent=full.slice(0,mid);if(desc.scrollHeight<=ch+2)lo=mid;else hi=mid;}var cut=lo;for(var i=cut;i>Math.max(0,cut-60);i--){if(full[i]===' '||full[i]==='\n'){cut=i;break;}}desc.textContent=full.slice(0,cut);var bs=(full[cut]===' '||full[cut]==='\n')?cut+1:cut;back.textContent=full.slice(bs);});}
 function renderCard(data){
   var d=R[data.rarity||'common'];
   var sb=fmtB(data.strBonus),pb2=fmtB(data.profBonus);
@@ -1037,9 +1032,8 @@ function renderCard(data){
   if(prParts.length){prEl.textContent=prParts.join(' · ');prEl.style.display='block';}else{prEl.style.display='none';}
   var qEl=document.getElementById('pquote');
   if(data.flv){qEl.textContent='«'+data.flv.replace(/^[«"]/,'').replace(/[»"]$/,'')+'»';qEl.style.display='block';}else{qEl.style.display='none';}
-  document.getElementById('pds').textContent=data.desc||'';
+  splitDesc(data);
   document.getElementById('pwgt').textContent=data.wgt?data.wgt+' фнт.':'';
-  document.getElementById('pbk').textContent=data.back||'(оборот не заполнен)';
   setCardImg(data.img||null);
   applyR(data.rarity||'common');
 }
@@ -1067,7 +1061,6 @@ function applyFormData(data){
   document.getElementById('fattune').value=data.attune||'';
   document.getElementById('fdesc').value=data.desc||'';
   document.getElementById('fflv').value=data.flv||'';
-  document.getElementById('fbk').value=data.back||'';
   document.querySelectorAll('#pg input[type=checkbox]').forEach(function(cb){cb.checked=(data.props||[]).indexOf(cb.value)>-1;});
   updateAmmoWrap();
   updateAttuneWrap();
@@ -1075,7 +1068,7 @@ function applyFormData(data){
   var th=document.getElementById('img-thumb');
   if(imgDataUrl){th.style.backgroundImage='url('+imgDataUrl+')';th.style.display='block';document.getElementById('img-icon').style.display='none';document.getElementById('img-lbl').style.display='none';document.getElementById('btn-recrop').style.display='flex';document.getElementById('btn-del-img').style.display='flex';}
   else{th.style.display='none';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';}
-  mkCounter('fn','cnt-fn',30);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',130);mkCounter('fbk','cnt-bk',750);
+  mkCounter('fn','cnt-fn',30);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',900);
 }
 
 /* reset */
@@ -1085,7 +1078,7 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');});
   document.querySelector('.rp[data-r="nonmagic"]').classList.add('on');
   document.getElementById('rn').textContent=R.nonmagic.l;
-  ['fn','fc','fstr','fpr','fwgt','fr1','fr2','fdesc','fflv','fbk'].forEach(function(id){document.getElementById(id).value='';});
+  ['fn','fc','fstr','fpr','fwgt','fr1','fr2','fdesc','fflv'].forEach(function(id){document.getElementById(id).value='';});
   document.getElementById('fcoin').value='зм';
   ['fk','fcat','fdt','fd1','fd2','fammo','fattune'].forEach(function(id){document.getElementById(id).selectedIndex=0;});
   document.getElementById('ammo-wrap').style.display='none';
@@ -1106,9 +1099,9 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   document.getElementById('pquote').style.display='none';
   document.getElementById('pds').textContent='Заполните форму и нажмите «Создать карточку»';
   document.getElementById('pwgt').textContent='';
-  document.getElementById('pbk').textContent='Заполните поле «Оборотная сторона».';
+  document.getElementById('pbk').textContent='';
   setCardImg(null);applyR('nonmagic');
-  mkCounter('fn','cnt-fn',30);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',130);mkCounter('fbk','cnt-bk',750);
+  mkCounter('fn','cnt-fn',30);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',900);
   toast('Поля сброшены');
 });
 
