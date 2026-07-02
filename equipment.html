@@ -407,9 +407,9 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     <option>Прочее</option>
   </select>
 
-  <div class="lbl">Описание / Эффект <span style="color:var(--text3);font-size:9px;font-family:'Crimson Text',serif;font-style:italic;text-transform:none;letter-spacing:0;">макс. 750 симв. · переполнение — на оборот</span></div>
+  <div class="lbl">Описание / Эффект <span style="color:var(--text3);font-size:9px;font-family:'Crimson Text',serif;font-style:italic;text-transform:none;letter-spacing:0;">макс. 900 симв.</span></div>
   <div class="field-wrap field-mb">
-    <textarea class="si" id="fdesc" maxlength="750" placeholder="Описание предмета и его эффект…" style="height:350px;"></textarea>
+    <textarea class="si" id="fdesc" maxlength="900" placeholder="Описание предмета и его эффект… (перенос на оборот — автоматически)" style="height:350px;"></textarea>
     <span class="char-counter" id="cnt-desc">0/750</span>
   </div>
 
@@ -677,7 +677,7 @@ function mkCounter(inputId,countId,max){
   }
   if(!inp._cbound){inp.addEventListener('input',upd);inp._cbound=true;}upd();
 }
-mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',750);
+mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',900);
 
 /* image upload & crop */
 var fImgInput=document.getElementById('f-img');
@@ -981,7 +981,7 @@ function applyFormData(data){
     document.getElementById('btn-recrop').style.display='none';
     document.getElementById('btn-del-img').style.display='none';
   }
-  mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',750);
+  mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',900);
 }
 
 /* ── reset ── */
@@ -1007,7 +1007,7 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   document.getElementById('pnm').textContent='Название предмета';
   document.getElementById('pwgt').textContent='';
   splitDesc({desc:'',rarity:'common'});
-  mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',750);
+  mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',900);
   toast('Поля сброшены');
 });
 
