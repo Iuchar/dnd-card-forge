@@ -4,112 +4,335 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>D&D Card Forge — генераторы карточек</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#111009;--bg2:#1a1814;--bg3:#252018;--bg4:#2e2a20;
-  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.13);
-  --text:#e0d8c8;--text2:#a09070;--text3:#968769;
-  --gold:#c8941a;--gold-l:#f0b830;--accent-l:#8070e0;
+  --bg:#14100a;
+  --gold:#c9a227;--gold-l:#e8c766;--gold-xl:#eecb62;
+  --text:#e6dcc4;--text2:#a89673;--text3:#9b8a66;--text4:#7d6f52;
+  --accent:#8b7ce8;--accent-l:#a99cf0;
 }
-body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,serif;min-height:100vh;
-  background-image:radial-gradient(circle at 50% -20%,rgba(200,148,26,.07),transparent 60%);}
-.wrap{max-width:1080px;margin:0 auto;padding:48px 20px 64px;}
-.hero{text-align:center;margin-bottom:44px;}
-.logo{margin:0;font-family:'Cinzel',serif;font-size:34px;font-weight:700;letter-spacing:.14em;color:var(--gold-l);line-height:1.1;}
-.logo span{color:var(--text2);font-weight:400;}
-.tagline{font-style:italic;font-size:15px;color:var(--text2);margin-top:10px;}
-.sect-lbl{font-family:'Cinzel',serif;font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--text3);
-  margin:34px 0 14px;display:flex;align-items:center;gap:12px;}
-.sect-lbl::after{content:'';flex:1;height:.5px;background:var(--border);}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
-.card{display:flex;align-items:center;gap:14px;padding:16px 16px;background:var(--bg2);border:0.5px solid var(--border);
-  border-radius:12px;text-decoration:none;color:inherit;transition:all .15s;}
-.card:hover{background:var(--bg3);border-color:rgba(200,148,26,.35);transform:translateY(-2px);
-  box-shadow:0 6px 20px rgba(0,0,0,.35);}
-.ic{width:42px;height:42px;flex-shrink:0;border-radius:10px;display:flex;align-items:center;justify-content:center;
-  background:rgba(200,148,26,.1);border:0.5px solid rgba(200,148,26,.25);color:var(--gold-l);}
-.ic svg{width:22px;height:22px;}
-.card.alt .ic{background:rgba(128,112,224,.1);border-color:rgba(128,112,224,.3);color:var(--accent-l);}
-.ct{min-width:0;}
-.ct-name{font-family:'Cinzel',serif;font-size:13px;font-weight:600;letter-spacing:.04em;color:var(--text);margin-bottom:3px;}
-.ct-desc{font-size:12.5px;color:var(--text2);line-height:1.35;}
-.foot{margin-top:48px;text-align:center;font-size:12px;color:var(--text3);line-height:1.7;}
-.foot a{color:var(--text2);}
-@media(max-width:520px){
-  .wrap{padding:32px 14px 48px;}
-  .logo{font-size:26px;}
-  .grid{grid-template-columns:1fr;}
-}
+body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,serif;min-height:100vh;padding:14px;}
+a{color:inherit;}
 
-/* Доступность: отключение анимаций по системной настройке */
+.frame-outer{border:1px solid rgba(201,162,39,.45);padding:3px;min-height:calc(100vh - 28px);}
+.frame-inner{border:1px solid rgba(201,162,39,.2);min-height:calc(100vh - 36px);max-width:1240px;margin:0 auto;
+  padding:clamp(24px,4vw,48px) clamp(18px,4.5vw,56px) 40px;
+  background:radial-gradient(ellipse at 50% -10%,rgba(201,162,39,.08),transparent 55%);}
+
+/* ---- hero ---- */
+.hero{display:flex;flex-wrap:wrap;gap:44px 56px;align-items:center;margin-bottom:clamp(36px,5vw,56px);}
+.hero-text{flex:1 1 400px;min-width:0;}
+.kicker{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+.diamond{width:7px;height:7px;background:var(--gold);transform:rotate(45deg);flex-shrink:0;}
+.kicker-lbl{font-family:Cinzel,serif;font-size:11px;letter-spacing:.28em;color:var(--text3);}
+h1{font-family:Cinzel,serif;font-weight:900;font-size:clamp(36px,4.7vw,56px);line-height:1.04;color:var(--gold-xl);}
+h1 span{font-weight:400;color:#cbb98f;}
+.tagline{margin-top:20px;font-style:italic;font-size:19px;line-height:1.5;color:var(--text2);max-width:420px;}
+.cta-row{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px;}
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:Cinzel,serif;font-size:14px;letter-spacing:.08em;
+  padding:14px 26px;text-decoration:none;transition:all .15s;}
+.btn-gold{background:linear-gradient(180deg,#d9ad2e,#b8891a);color:#1c1608;font-weight:700;border:1px solid var(--gold-l);}
+.btn-gold:hover{filter:brightness(1.12);}
+.btn-ghost{color:#cbb98f;font-weight:600;border:1px solid rgba(201,162,39,.4);}
+.btn-ghost:hover{border-color:rgba(232,199,102,.8);color:var(--gold-l);}
+.hero-note{margin-top:22px;font-size:14px;color:var(--text4);font-style:italic;}
+
+/* ---- card fan ---- */
+.fan{position:relative;width:400px;max-width:100%;height:300px;flex:0 1 auto;margin:0 auto;}
+.fan img{position:absolute;border-radius:8px;
+  transition:left .9s cubic-bezier(.45,0,.2,1),top .9s cubic-bezier(.45,0,.2,1),
+  width .9s cubic-bezier(.45,0,.2,1),transform .9s cubic-bezier(.45,0,.2,1),filter .9s,box-shadow .9s;}
+.fan img.slot-left{left:0;top:28px;width:164px;transform:rotate(-9deg);z-index:1;
+  filter:brightness(.82) saturate(.92);box-shadow:0 20px 44px rgba(0,0,0,.55);}
+.fan img.slot-center{left:107px;top:0;width:186px;transform:rotate(-1deg);z-index:2;
+  filter:brightness(.88) saturate(.95);box-shadow:0 26px 56px rgba(0,0,0,.65),0 0 46px rgba(201,162,39,.14);}
+.fan img.slot-right{left:236px;top:34px;width:164px;transform:rotate(8deg);z-index:1;
+  filter:brightness(.82) saturate(.92);box-shadow:0 20px 44px rgba(0,0,0,.55);}
+
+/* ---- sections ---- */
+.sect{margin-bottom:34px;}
+.sect-lbl{display:flex;align-items:center;gap:14px;margin:0 0 16px;}
+.sect-lbl .diamond{width:6px;height:6px;}
+.sect-lbl .diamond.violet{background:var(--accent);}
+.sect-name{font-family:Cinzel,serif;font-size:12px;font-weight:600;letter-spacing:.24em;color:var(--text3);}
+.sect-rule{flex:1;height:1px;background:linear-gradient(90deg,rgba(201,162,39,.35),transparent);}
+.sect-rule.violet{background:linear-gradient(90deg,rgba(139,124,232,.35),transparent);}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;}
+.grid.wide{grid-template-columns:repeat(auto-fit,minmax(280px,1fr));}
+
+.tile{display:flex;align-items:center;gap:14px;padding:17px 18px;background:rgba(255,255,255,.025);
+  border:1px solid rgba(201,162,39,.22);text-decoration:none;color:inherit;transition:all .15s;}
+.tile:hover{background:rgba(201,162,39,.07);border-color:rgba(201,162,39,.55);}
+.tile .ic{width:44px;height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  border:1px solid rgba(201,162,39,.4);color:var(--gold-l);transform:rotate(45deg);}
+.tile .ic svg{width:22px;height:22px;transform:rotate(-45deg);}
+.tile-name{font-family:Cinzel,serif;font-size:13.5px;font-weight:600;color:var(--text);}
+.tile-desc{font-size:13px;font-style:italic;color:var(--text3);margin-top:2px;}
+.tile.alt{background:rgba(139,124,232,.05);border-color:rgba(139,124,232,.3);}
+.tile.alt:hover{background:rgba(139,124,232,.1);border-color:rgba(139,124,232,.6);}
+.tile.alt .ic{border-color:rgba(139,124,232,.45);color:var(--accent-l);}
+
+/* ---- how it works ---- */
+.steps{border-top:1px solid rgba(201,162,39,.2);padding-top:34px;margin-bottom:40px;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:28px 32px;}
+.step{display:flex;gap:16px;align-items:baseline;}
+.step-num{font-family:Cinzel,serif;font-size:30px;color:rgba(201,162,39,.65);}
+.step-name{font-family:Cinzel,serif;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--text);}
+.step-desc{font-size:14px;font-style:italic;color:var(--text3);margin-top:4px;line-height:1.4;}
+
+.foot{text-align:center;font-size:13px;font-style:italic;color:var(--text4);line-height:1.7;}
+
+/* ---- feedback ---- */
+.fb{border:1px solid rgba(201,162,39,.28);background:rgba(255,255,255,.02);padding:clamp(20px,3.5vw,34px);}
+.fb-row{margin-bottom:18px;}
+.fb-lbl{display:block;font-family:Cinzel,serif;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);margin-bottom:9px;}
+.fb-field{width:100%;background:rgba(0,0,0,.28);border:1px solid rgba(201,162,39,.3);color:var(--text);font-family:'Crimson Text',Georgia,serif;font-size:15px;padding:12px 14px;outline:none;transition:border-color .15s;}
+.fb-field:focus{border-color:var(--gold-l);}
+.fb-field::placeholder{color:var(--text4);font-style:italic;}
+textarea.fb-field{min-height:140px;resize:vertical;line-height:1.5;}
+.fb-cs{position:relative;}
+.fb-cs-btn{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;background:rgba(0,0,0,.28);border:1px solid rgba(201,162,39,.3);color:var(--text);font-family:'Crimson Text',Georgia,serif;font-size:15px;padding:12px 14px;cursor:pointer;text-align:left;transition:border-color .15s;}
+.fb-cs-btn:hover,.fb-cs-btn.open{border-color:var(--gold-l);}
+.fb-cs-chev{width:8px;height:8px;border-right:2px solid var(--gold-l);border-bottom:2px solid var(--gold-l);transform:translateY(-2px) rotate(45deg);transition:transform .15s;flex-shrink:0;}
+.fb-cs-btn.open .fb-cs-chev{transform:translateY(2px) rotate(-135deg);}
+.fb-cs-panel{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:30;background:#1c1610;border:1px solid rgba(201,162,39,.4);box-shadow:0 14px 32px rgba(0,0,0,.55);display:none;}
+.fb-cs-panel.open{display:block;}
+.fb-cs-opt{padding:11px 14px;font-family:'Crimson Text',Georgia,serif;font-size:15px;color:var(--text2);cursor:pointer;outline:none;transition:background .12s,color .12s;}
+.fb-cs-opt:hover,.fb-cs-opt:focus{background:rgba(201,162,39,.12);color:var(--gold-l);}
+.fb-cs-opt.on{color:var(--gold-l);}
+.fb-other{margin-top:10px;display:none;}
+.fb-other.show{display:block;}
+.fb-hp{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0;opacity:0;}
+.fb-actions{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:6px;}
+button.btn{cursor:pointer;}
+.fb-err{color:#d98c8c;font-size:13px;font-style:italic;display:none;}
+.fb-note{margin-top:18px;font-size:13px;font-style:italic;color:var(--text4);line-height:1.5;}
+.fb-thanks{text-align:center;padding:34px 16px;}
+.fb-thanks-i{font-size:30px;color:var(--gold-l);line-height:1;}
+.fb-thanks-t{font-family:Cinzel,serif;font-size:22px;color:var(--gold-xl);margin-top:12px;}
+.fb-thanks-s{font-style:italic;font-size:15px;color:var(--text2);margin-top:8px;}
+.fb-thanks-timer{margin-top:16px;font-family:Cinzel,serif;font-size:11px;letter-spacing:.1em;color:var(--text4);}
+.fb-thanks-timer b{color:var(--gold-l);font-weight:600;}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important;}
 }
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="frame-outer"><div class="frame-inner">
 
+  <!-- hero -->
   <div class="hero">
-    <h1 class="logo">D&D <span>CARD</span> FORGE</h1>
-    <div class="tagline">Генераторы карточек для D&amp;D 5e — оружие, доспехи, снаряжение и не только</div>
+    <div class="hero-text">
+      <div class="kicker"><div class="diamond"></div><div class="kicker-lbl">ГЕНЕРАТОР КАРТОЧЕК · D&amp;D 5E</div></div>
+      <h1>D&amp;D CARD<br/><span>FORGE</span></h1>
+      <p class="tagline">Куйте карточки оружия, доспехов и снаряжения — заполните параметры, и карточка готова к печати.</p>
+      <div class="cta-row">
+        <a class="btn btn-gold" href="weapon-2024.html">СОЗДАТЬ КАРТОЧКУ</a>
+        <a class="btn btn-ghost" href="templates.html">ГОТОВЫЕ ШАБЛОНЫ</a>
+      </div>
+      <div class="hero-note">Бесплатно · без регистрации · всё хранится у вас в браузере</div>
+    </div>
+    <div class="fan" id="cardFan">
+      <img class="slot-left"   src="cards/card-armor.png"  alt="Карточка: Кольчужный доспех +1"/>
+      <img class="slot-center" src="cards/card-dagger.png" alt="Карточка: Кинжал яда +1"/>
+      <img class="slot-right"  src="cards/card-fire.png"   alt="Карточка: Алхимический огонь"/>
+    </div>
   </div>
 
-  <div class="sect-lbl">Оружие и доспехи</div>
-  <div class="grid">
-    <a class="card" href="weapon-2014.html">
-      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M2 22l7.5-7.5"/></svg></div>
-      <div class="ct"><div class="ct-name">Оружие — 5e (2014)</div><div class="ct-desc">Классические правила</div></div>
-    </a>
-    <a class="card" href="weapon-2024.html">
-      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M2 22l7.5-7.5"/></svg></div>
-      <div class="ct"><div class="ct-name">Оружие — 5e (2024)</div><div class="ct-desc">Новая редакция с «Мастерством»</div></div>
-    </a>
-    <a class="card" href="armor.html">
-      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-      <div class="ct"><div class="ct-name">Доспехи</div><div class="ct-desc">Лёгкие, средние, тяжёлые, щиты</div></div>
-    </a>
+  <!-- weapons & armor -->
+  <div class="sect">
+    <div class="sect-lbl"><div class="diamond"></div><div class="sect-name">ОРУЖИЕ И ДОСПЕХИ</div><div class="sect-rule"></div></div>
+    <div class="grid">
+      <a class="tile" href="weapon-2014.html">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M2 22l7.5-7.5"/></svg></div>
+        <div><div class="tile-name">Оружие — 5e (2014)</div><div class="tile-desc">Классические правила</div></div>
+      </a>
+      <a class="tile" href="weapon-2024.html">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M2 22l7.5-7.5"/></svg></div>
+        <div><div class="tile-name">Оружие — 5e (2024)</div><div class="tile-desc">Новая редакция с «Мастерством»</div></div>
+      </a>
+      <a class="tile" href="armor.html">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <div><div class="tile-name">Доспехи</div><div class="tile-desc">Лёгкие, средние, тяжёлые, щиты</div></div>
+      </a>
+    </div>
   </div>
 
-  <div class="sect-lbl">Снаряжение</div>
-  <div class="grid">
-    <a class="card" href="equipment.html">
-      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
-      <div class="ct"><div class="ct-name">Снаряжение</div><div class="ct-desc">Авантюрное снаряжение и предметы</div></div>
-    </a>
-    <a class="card" href="tools.html">
-      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
-      <div class="ct"><div class="ct-name">Инструменты</div><div class="ct-desc">Ремесло, музыка, воровские наборы</div></div>
-    </a>
-    <a class="card" href="kits.html">
-      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="16" y1="10" x2="8" y2="10"/></svg></div>
-      <div class="ct"><div class="ct-name">Наборы снаряжения</div><div class="ct-desc">Готовые комплекты предметов</div></div>
-    </a>
-    <a class="card" href="poisons.html">
-      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><line x1="8.5" y1="2" x2="15.5" y2="2"/></svg></div>
-      <div class="ct"><div class="ct-name">Яды</div><div class="ct-desc">Контактные, инъекционные и др.</div></div>
-    </a>
+  <!-- equipment -->
+  <div class="sect">
+    <div class="sect-lbl"><div class="diamond"></div><div class="sect-name">СНАРЯЖЕНИЕ</div><div class="sect-rule"></div></div>
+    <div class="grid">
+      <a class="tile" href="equipment.html">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+        <div><div class="tile-name">Снаряжение</div><div class="tile-desc">Предметы авантюриста</div></div>
+      </a>
+      <a class="tile" href="tools.html">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+        <div><div class="tile-name">Инструменты</div><div class="tile-desc">Ремесло, музыка, взлом</div></div>
+      </a>
+      <a class="tile" href="kits.html">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="16" y1="10" x2="8" y2="10"/></svg></div>
+        <div><div class="tile-name">Наборы снаряжения</div><div class="tile-desc">Готовые комплекты</div></div>
+      </a>
+      <a class="tile" href="poisons.html">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><line x1="8.5" y1="2" x2="15.5" y2="2"/></svg></div>
+        <div><div class="tile-name">Яды</div><div class="tile-desc">Контактные, инъекционные</div></div>
+      </a>
+    </div>
   </div>
 
-  <div class="sect-lbl">Библиотека</div>
-  <div class="grid">
-    <a class="card alt" href="collection.html">
-      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
-      <div class="ct"><div class="ct-name">Моя коллекция</div><div class="ct-desc">Все созданные карточки в одном месте</div></div>
-    </a>
-    <a class="card alt" href="templates.html">
-      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-      <div class="ct"><div class="ct-name">Готовые шаблоны</div><div class="ct-desc">Примеры карточек для быстрого старта</div></div>
-    </a>
+  <!-- library -->
+  <div class="sect" style="margin-bottom:44px;">
+    <div class="sect-lbl"><div class="diamond violet"></div><div class="sect-name">БИБЛИОТЕКА</div><div class="sect-rule violet"></div></div>
+    <div class="grid wide">
+      <a class="tile alt" href="collection.html">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></div>
+        <div><div class="tile-name">Моя коллекция</div><div class="tile-desc">Все созданные карточки в одном месте</div></div>
+      </a>
+      <a class="tile alt" href="templates.html">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        <div><div class="tile-name">Готовые шаблоны</div><div class="tile-desc">Примеры карточек для быстрого старта</div></div>
+      </a>
+    </div>
+  </div>
+
+  <!-- how it works -->
+  <div class="steps">
+    <div class="step"><div class="step-num">I</div><div><div class="step-name">Выберите генератор</div><div class="step-desc">Оружие, доспех, яд — любой раздел выше</div></div></div>
+    <div class="step"><div class="step-num">II</div><div><div class="step-name">Заполните параметры</div><div class="step-desc">Урон, свойства, цена — карточка собирается сама</div></div></div>
+    <div class="step"><div class="step-num">III</div><div><div class="step-name">Печатайте и играйте</div><div class="step-desc">Сохраните в коллекцию или выведите на печать</div></div></div>
+  </div>
+
+  <!-- feedback -->
+  <div class="sect" id="feedback" style="margin-bottom:40px;">
+    <div class="sect-lbl"><div class="diamond violet"></div><div class="sect-name">ОБРАТНАЯ СВЯЗЬ</div><div class="sect-rule violet"></div></div>
+    <div class="fb">
+      <iframe name="fb-target" id="fb-target" style="display:none" title="Отправка формы"></iframe>
+      <form id="fb-form" action="https://docs.google.com/forms/d/e/1FAIpQLSeGg21Ed5wm-CiQkdRIGK_ZjVesQP3U2_CXyL6CTlXhVoMiyA/formResponse" method="POST" target="fb-target">
+        <div class="fb-row">
+          <label class="fb-lbl" id="fb-type-lbl">Тип обращения</label>
+          <div class="fb-cs" id="fb-cs">
+            <button type="button" class="fb-cs-btn" id="fb-cs-btn" aria-haspopup="listbox" aria-expanded="false">
+              <span id="fb-cs-lbl">Ошибка</span><span class="fb-cs-chev"></span>
+            </button>
+            <div class="fb-cs-panel" id="fb-cs-panel" role="listbox" aria-labelledby="fb-type-lbl">
+              <div class="fb-cs-opt on" role="option" tabindex="0" data-v="Ошибка">Ошибка</div>
+              <div class="fb-cs-opt" role="option" tabindex="0" data-v="Идея">Идея</div>
+              <div class="fb-cs-opt" role="option" tabindex="0" data-v="__other_option__">Другое — своя тема</div>
+            </div>
+          </div>
+          <input type="hidden" name="entry.1049923821" id="fb-type-val" value="Ошибка"/>
+          <input class="fb-field fb-other" type="text" id="fb-other" name="entry.1049923821.other_option_response" placeholder="Ваша тема сообщения…" maxlength="100" disabled/>
+        </div>
+        <div class="fb-row">
+          <label class="fb-lbl" for="fb-msg">Сообщение</label>
+          <textarea class="fb-field" id="fb-msg" name="entry.227853107" required maxlength="3000" placeholder="Опишите ошибку или идею…"></textarea>
+        </div>
+        <input class="fb-hp" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true"/>
+        <div class="fb-actions">
+          <button class="btn btn-gold" type="submit">ОТПРАВИТЬ</button>
+          <span class="fb-err" id="fb-err">Напишите сообщение перед отправкой.</span>
+        </div>
+        <div class="fb-note">Это единственное место на сайте, где данные покидают ваш браузер — они уходят в форму обратной связи. Всё остальное (карточки, коллекция) хранится только у вас локально.</div>
+      </form>
+      <div class="fb-thanks" id="fb-thanks" style="display:none">
+        <div class="fb-thanks-i">✦</div>
+        <div class="fb-thanks-t">Спасибо!</div>
+        <div class="fb-thanks-s">Сообщение отправлено — мы учтём его в развитии проекта.</div>
+        <div class="fb-thanks-timer">Возврат к форме через <b id="fb-count">10</b> с…</div>
+      </div>
+    </div>
   </div>
 
   <div class="foot">
     Карточки сохраняются локально в вашем браузере.<br/>
-    Делайте резервную копию через «Сохранить проект» — это же позволяет перенести коллекцию на другое устройство.
+    Резервная копия — через «Сохранить проект»; так же коллекция переносится на другое устройство.
   </div>
 
-</div>
+</div></div>
+
+<script>
+/* Ротация карточек в hero: поставьте true, чтобы включить */
+var ROTATE_CARDS = false;
+var ROTATE_INTERVAL_MS = 3200;
+
+(function () {
+  if (!ROTATE_CARDS) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var slots = ['slot-left', 'slot-center', 'slot-right'];
+  var imgs = document.querySelectorAll('#cardFan img');
+  var offset = 0;
+  setInterval(function () {
+    offset = (offset + 1) % 3;
+    imgs.forEach(function (img, i) {
+      img.className = slots[(i + offset) % 3];
+    });
+  }, ROTATE_INTERVAL_MS);
+})();
+
+/* Форма обратной связи → Google Forms (POST в скрытый iframe, без перезагрузки) */
+(function(){
+  var form=document.getElementById('fb-form');
+  if(!form)return;
+  var frame=document.getElementById('fb-target'),thanks=document.getElementById('fb-thanks'),
+      msg=document.getElementById('fb-msg'),err=document.getElementById('fb-err'),cnt=document.getElementById('fb-count'),
+      csBtn=document.getElementById('fb-cs-btn'),csPanel=document.getElementById('fb-cs-panel'),csLbl=document.getElementById('fb-cs-lbl'),
+      typeVal=document.getElementById('fb-type-val'),other=document.getElementById('fb-other'),
+      opts=csPanel.querySelectorAll('.fb-cs-opt'),timer=null,sent=false;
+
+  /* --- кастомный список в стиле сайта --- */
+  function csOpen(o){csPanel.classList.toggle('open',o);csBtn.classList.toggle('open',o);csBtn.setAttribute('aria-expanded',o?'true':'false');}
+  function selectType(v,label){
+    typeVal.value=v;
+    csLbl.textContent=(v==='__other_option__')?'Другое':label;
+    [].forEach.call(opts,function(op){op.classList.toggle('on',op.getAttribute('data-v')===v);});
+    var isOther=(v==='__other_option__');
+    other.classList.toggle('show',isOther);
+    other.disabled=!isOther;
+    if(isOther){setTimeout(function(){other.focus();},30);}else{other.value='';}
+  }
+  csBtn.addEventListener('click',function(e){e.stopPropagation();csOpen(!csPanel.classList.contains('open'));});
+  csPanel.addEventListener('click',function(e){e.stopPropagation();});
+  [].forEach.call(opts,function(op){
+    function pick(){selectType(op.getAttribute('data-v'),op.textContent);csOpen(false);csBtn.focus();}
+    op.addEventListener('click',function(e){e.stopPropagation();pick();});
+    op.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick();}});
+  });
+  document.addEventListener('click',function(){csOpen(false);});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&csPanel.classList.contains('open')){csOpen(false);csBtn.focus();}});
+
+  /* --- отправка / «спасибо» / авто-возврат --- */
+  function showErr(t){err.textContent=t;err.style.display='inline';}
+  function backToForm(){
+    if(timer){clearInterval(timer);timer=null;}
+    thanks.style.display='none';
+    form.style.display='';
+    form.reset();
+    selectType('Ошибка','Ошибка');
+    err.style.display='none';
+    sent=false;
+  }
+  form.addEventListener('submit',function(e){
+    var hp=form.querySelector('.fb-hp');
+    if(hp&&hp.value){e.preventDefault();return;}          /* honeypot */
+    if(!msg.value.trim()){e.preventDefault();showErr('Напишите сообщение перед отправкой.');msg.focus();return;}
+    if(typeVal.value==='__other_option__'&&!other.value.trim()){e.preventDefault();showErr('Укажите свою тему для варианта «Другое».');other.focus();return;}
+    err.style.display='none';
+    sent=true;                                            /* дальше форма уходит в скрытый iframe */
+  });
+  frame.addEventListener('load',function(){
+    if(!sent)return;                                      /* первая (пустая) загрузка iframe — игнор */
+    form.style.display='none';
+    thanks.style.display='';
+    var n=10;cnt.textContent=n;
+    if(timer)clearInterval(timer);
+    timer=setInterval(function(){n--;if(n<=0){backToForm();return;}cnt.textContent=n;},1000);
+  });
+})();
+</script>
 </body>
 </html>
