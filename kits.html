@@ -572,6 +572,12 @@ function _finishLoad(){
     var c=null;for(var i=0;i<collection.length;i++){if(String(collection[i].id)===String(ep)){c=collection[i];break;}}
     if(c){applyFormData(c);renderCard(c);currentCard=JSON.parse(JSON.stringify(c));editingId=c.id;if(typeof updateBuildBtn==='function')updateBuildBtn();if(window.__syncSelects)window.__syncSelects();try{history.replaceState(null,'',location.pathname);}catch(e){}return;}
   }
+  /* префилл из шаблона: карта передана через sessionStorage (?prefill=1),
+     грузим в форму как НОВУЮ (editingId=null) — пользователь правит и сохраняет к себе */
+  var pf=null;try{if(new URLSearchParams(location.search).get('prefill'))pf=sessionStorage.getItem('dnd_prefill');}catch(e){}
+  if(pf){
+    try{var pc=JSON.parse(pf);sessionStorage.removeItem('dnd_prefill');applyFormData(pc);renderCard(readForm());currentCard=null;editingId=null;if(typeof updateBuildBtn==='function')updateBuildBtn();if(window.__syncSelects)window.__syncSelects();try{history.replaceState(null,'',location.pathname);}catch(e){}return;}catch(e){}
+  }
   /* по умолчанию — базовое состояние (как «Сбросить все поля»): пустая форма,
      редкость cr (nonmagic) на карточку через applyR, БЕЗ renderCard —
      чтобы сохранить статические плейсхолдеры и не было прыжка */
@@ -1280,6 +1286,26 @@ function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.c
 
 applyR('common');
 loadFromLS();
+/* Внешний рендер карточки для галерей (collection/templates).
+   Галерея грузит страницу-генератор в скрытый iframe и вызывает эту функцию,
+   переиспользуя applyFormData+renderCard страницы и html2canvas. Отдаёт PNG
+   лицевой и оборотной сторон (как в редакторе для печати/сохранения). */
+window.__dndRenderCard=function(card,cb){
+  try{applyFormData(card);renderCard(card);}catch(e){if(window.console)console.warn('__dndRenderCard render error:',e);}
+  var fontsReady=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve();
+  fontsReady.then(function(){
+    setTimeout(function(){
+      var f=document.getElementById('pc'),b=document.getElementById('pb');
+      if(!f||!b||typeof html2canvas==='undefined'){if(cb)cb(null);return;}
+      html2canvas(f,{scale:3,useCORS:true,allowTaint:true,logging:false}).then(function(fc){
+        html2canvas(b,{scale:3,useCORS:true,allowTaint:true,logging:false}).then(function(bc){
+          if(cb)cb({front:fc.toDataURL('image/png'),back:bc.toDataURL('image/png')});
+        });
+      }).catch(function(){if(cb)cb(null);});
+    },70);
+  });
+};
+window.__dndReady=true;
 })();
 </script>
 <script>
@@ -1310,26 +1336,6 @@ loadFromLS();
     });
   });
 })();
-/* Внешний рендер карточки для галерей (collection/templates).
-   Галерея грузит страницу-генератор в скрытый iframe и вызывает эту функцию,
-   переиспользуя applyFormData+renderCard страницы и html2canvas. Отдаёт PNG
-   лицевой и оборотной сторон (как в редакторе для печати/сохранения). */
-window.__dndRenderCard=function(card,cb){
-  try{applyFormData(card);renderCard(card);}catch(e){}
-  var fontsReady=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve();
-  fontsReady.then(function(){
-    setTimeout(function(){
-      var f=document.getElementById('pc'),b=document.getElementById('pb');
-      if(!f||!b||typeof html2canvas==='undefined'){if(cb)cb(null);return;}
-      html2canvas(f,{scale:3,useCORS:true,allowTaint:true,logging:false}).then(function(fc){
-        html2canvas(b,{scale:3,useCORS:true,allowTaint:true,logging:false}).then(function(bc){
-          if(cb)cb({front:fc.toDataURL('image/png'),back:bc.toDataURL('image/png')});
-        });
-      }).catch(function(){if(cb)cb(null);});
-    },70);
-  });
-};
-window.__dndReady=true;
 /* Кастомные выпадашки вместо нативного <select> (чтобы убрать синюю
    подсветку ОС и держать единый золотой стиль). Нативный select прячется,
    но остаётся в DOM — readForm/applyFormData по-прежнему читают/пишут .value.
