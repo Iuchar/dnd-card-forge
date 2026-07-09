@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>D&amp;D Card Forge — Оружие 5e (2024)</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,700&display=swap" rel="stylesheet"/>
-<script src="lib/html2canvas.min.js"></script>
-<script src="lib/jszip.min.js"></script>
-<script src="lib/jspdf.umd.min.js"></script>
+<script src="lib/html2canvas.min.js" defer></script>
+<script src="lib/jszip.min.js" defer></script>
+<script src="lib/jspdf.umd.min.js" defer></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{font-size:15px;height:100%;overflow:hidden;}
@@ -192,23 +192,35 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .pcb input[type=checkbox]{accent-color:var(--gold);width:12px;height:12px;cursor:pointer;flex-shrink:0;}
 .pcb span{font-size:12px;color:var(--text2);}
 .pcb:hover span{color:var(--text);}
+/* Общие стили карточки и пикера редкости (7 генераторов).
+   Байт-идентичные правила, вынесены из страниц 2026-07-04. */
+.c-body{flex:1;min-height:0;padding:5px 14px 3px;display:flex;flex-direction:column;overflow:hidden;}
+.c-img{width:100%;height:163px;flex-shrink:0;background:#cfc0a0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.c-img-ph{opacity:.25;display:flex;align-items:center;justify-content:center;}
+.c-img-ph svg{width:48px;height:48px;}
+.c-name{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:#2a1e0a;line-height:1.2;margin-bottom:1px;flex-shrink:0;}
+.c-rule{height:.7px;background:#8a7860;opacity:.55;margin:3px 0;flex-shrink:0;}
+.c-stripe{height:10px;flex-shrink:0;background:var(--ca,#a09080);transition:background .2s;}
+.c-stripe-under{height:1.5px;flex-shrink:0;background:#5a4820;}
+.c-gem{width:14px;height:14px;border-radius:50%;opacity:.7;border:1px solid #3a2810;background:var(--ca,#888077);transition:background .2s;}
+.rname{font-family:'Cinzel',serif;font-size:11px;color:var(--text2);margin-left:3px;}
 .rprow{display:flex;gap:6px;align-items:center;padding:3px 0;}
 .rp{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .12s;flex-shrink:0;}
 .rp:hover{transform:scale(1.15);}
 .rp.on{transform:scale(1.1);}
 .rp[data-r=nonmagic]{background:#f5f5f5;}
-.rp[data-r=common]   {background:#888077;}
-.rp[data-r=uncommon] {background:#52aa40;}
-.rp[data-r=rare]     {background:#4a8ccc;}
-.rp[data-r=veryrare] {background:#9870cc;}
+.rp[data-r=common]{background:#888077;}
+.rp[data-r=uncommon]{background:#52aa40;}
+.rp[data-r=rare]{background:#4a8ccc;}
+.rp[data-r=veryrare]{background:#9870cc;}
 .rp[data-r=legendary]{background:#e09820;}
 .rp[data-r=nonmagic].on{box-shadow:0 0 0 3px rgba(245,245,245,.4);}
-.rp[data-r=common].on   {box-shadow:0 0 0 3px rgba(136,128,119,.4);}
-.rp[data-r=uncommon].on {box-shadow:0 0 0 3px rgba(82,170,64,.4);}
-.rp[data-r=rare].on     {box-shadow:0 0 0 3px rgba(74,140,204,.4);}
-.rp[data-r=veryrare].on {box-shadow:0 0 0 3px rgba(152,112,204,.4);}
+.rp[data-r=common].on{box-shadow:0 0 0 3px rgba(136,128,119,.4);}
+.rp[data-r=uncommon].on{box-shadow:0 0 0 3px rgba(82,170,64,.4);}
+.rp[data-r=rare].on{box-shadow:0 0 0 3px rgba(74,140,204,.4);}
+.rp[data-r=veryrare].on{box-shadow:0 0 0 3px rgba(152,112,204,.4);}
 .rp[data-r=legendary].on{box-shadow:0 0 0 3px rgba(224,152,32,.45);}
-.rname{font-family:'Cinzel',serif;font-size:11px;color:var(--text2);margin-left:3px;}
+
 .btn-recrop svg{flex-shrink:0;}
 .btn-del-img svg{flex-shrink:0;}
 .cv{flex:1;background:#f0ece2;display:flex;flex-direction:column;align-items:center;padding:20px 16px 16px;overflow-y:auto;}
@@ -223,15 +235,8 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   transition:border-color .2s,box-shadow .2s;
 }
 .c-stripe-wrap{flex-shrink:0;}
-.c-stripe{height:10px;flex-shrink:0;background:var(--ca,#a09080);transition:background .2s;}
-.c-stripe-under{height:1.5px;flex-shrink:0;background:#5a4820;}
-.c-img{width:100%;height:163px;flex-shrink:0;background:#cfc0a0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.c-img-ph{opacity:.25;display:flex;align-items:center;justify-content:center;}
-.c-img-ph svg{width:48px;height:48px;}
-.c-body{flex:1;min-height:0;padding:5px 14px 3px;display:flex;flex-direction:column;overflow:hidden;}
-.c-name{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:#2a1e0a;line-height:1.2;margin-bottom:1px;flex-shrink:0;}
+.c-stripe{height:10px;flex-shrink:0;background:var(--ca,#888077);transition:background .2s;}
 .c-dmgline{font-family:'Cinzel',serif;font-size:10px;color:#7a6850;margin-bottom:1px;letter-spacing:.04em;flex-shrink:0;}
-.c-rule{height:.7px;background:#8a7860;opacity:.55;margin:3px 0;flex-shrink:0;}
 .c-stats{display:flex;flex-wrap:wrap;gap:2px;margin-bottom:1px;justify-content:center;flex-shrink:0;}
 .cst{background:rgba(0,0,0,.07);border:.5px solid rgba(0,0,0,.12);border-radius:4px;padding:2px 6px;display:flex;flex-direction:column;align-items:center;min-width:40px;}
 .cst-l{font-family:'Cinzel',serif;font-size:7.5px;color:#8a7860;letter-spacing:.05em;text-transform:uppercase;margin-bottom:1px;}
@@ -240,7 +245,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-props{font-family:'Cinzel',serif;font-size:10px;color:#5a4830;line-height:1.35;margin-bottom:1px;flex-shrink:0;}
 .c-quote{font-family:'Crimson Text',Georgia,serif;font-size:11px;font-weight:700;font-style:italic;text-align:center;color:#4a3820;line-height:1.4;margin-bottom:1px;padding:0 4px;flex-shrink:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
 .c-desc{font-family:'Crimson Text',Georgia,serif;font-size:11px;line-height:1.5;color:#2a1e0a;font-style:normal;flex:1;overflow:hidden;white-space:pre-wrap;}
-.c-gem{width:14px;height:14px;border-radius:50%;opacity:.7;border:1px solid #3a2810;background:var(--ca,#a09080);transition:background .2s;}
 .dc-back{
   width:310px;height:437px;
   border-radius:12px;overflow:hidden;
@@ -251,7 +255,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   box-shadow:3px 3px 0 var(--cs,#6a5838);
   transition:border-color .2s,box-shadow .2s;
 }
-.cb-stripe{height:8px;flex-shrink:0;background:var(--ca,#a09080);transition:background .2s;}
+.cb-stripe{height:8px;flex-shrink:0;background:var(--ca,#888077);transition:background .2s;}
 .cb-body{flex:1;min-height:0;padding:11px 11px 6px;display:flex;flex-direction:column;overflow:hidden;}
 .cb-lbl{font-family:'Cinzel',serif;font-size:8px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:#8a7860;margin-bottom:6px;display:flex;align-items:center;gap:6px;flex-shrink:0;}
 .cb-lbl::after{content:'';flex:1;height:.5px;background:rgba(0,0,0,.15);}
@@ -281,8 +285,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .conf-modal-btns button{padding:7px 20px;font-family:'Cinzel',serif;font-size:11px;cursor:pointer;border-radius:6px;border:0.5px solid var(--border2);background:transparent;color:var(--text2);transition:all .14s;letter-spacing:.06em;}
 .nav-toggle{padding:7px 13px;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);transition:all .14s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
 .nav-section-lbl{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);padding:5px 10px 3px;pointer-events:none;user-select:none;}
-.nav-group-head-inner svg{width:11px;height:11px;flex-shrink:0;}
-.nav-group.has-active>.nav-group-head{color:var(--gold-l);}
 .nav-sub .nav-item{padding-left:26px;font-size:9.5px;letter-spacing:.05em;}
 .coll-full-link svg{flex-shrink:0;}
 </style>
@@ -506,7 +508,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     <span class="char-counter" id="cnt-desc">0/900</span>
   </div>
 
-
   <button class="btn-build" id="gbtn">✦ Создать карточку</button>
   <button class="btn-build-alt" id="gbtn-new" style="display:none;">+ Создать как новую</button>
   <button class="btn-reset" id="btn-reset">
@@ -689,11 +690,11 @@ function updateAmmoWrap(){
 }
 document.querySelector('#pg input[value="Боеприпас"]').addEventListener('change',updateAmmoWrap);
 
-function updateAttuneWrap(){
-  document.getElementById('attune-wrap').style.display=cr==='nonmagic'?'none':'block';
-  if(cr==='nonmagic')document.getElementById('fattune').value='';
-}
+/* Настройка (attunement): у «Немагический» блок скрыт и значение очищается. */
+function updateAttuneWrap(){document.getElementById('attune-wrap').style.display=cr==='nonmagic'?'none':'block';if(cr==='nonmagic')document.getElementById('fattune').value='';}
 
+/* Палитра редкостей (общая для генераторов, кроме kits — у него своя
+   единственная «Немагический»). Порядок секций RARITY_ORDER — в collection.js. */
 var R={nonmagic:{l:'Немагический',a:'#f5f5f5',cb:'#f5f5f5',cs:'#cdc8be'},
   common:   {l:'Обычный',     a:'#888077',cb:'#888077',cs:'#5a5030'},
   uncommon: {l:'Необычный',   a:'#52aa40',cb:'#52aa40',cs:'#286820'},
@@ -1029,7 +1030,13 @@ function readForm(){
 }
 
 /* renderCard */
-function splitDesc(data){var desc=document.getElementById('pds'),back=document.getElementById('pbk'),full=data.desc||'';desc.textContent='';back.textContent='';if(!full)return;requestAnimationFrame(function(){desc.textContent=full;var ch=desc.clientHeight;if(!ch||desc.scrollHeight<=ch+2)return;var lo=0,hi=full.length;while(lo<hi-1){var mid=Math.floor((lo+hi)/2);desc.textContent=full.slice(0,mid);if(desc.scrollHeight<=ch+2)lo=mid;else hi=mid;}var cut=lo;for(var i=cut;i>Math.max(0,cut-60);i--){if(full[i]===' '||full[i]==='\n'){cut=i;break;}}desc.textContent=full.slice(0,cut);var bs=(full[cut]===' '||full[cut]==='\n')?cut+1:cut;back.textContent=full.slice(bs);});}
+/* Единое описание: лицевая заполняется, излишек автоматически уходит на оборот.
+   Лицевой блок: #pds (weapon/armor) или #pdesc (equipment/tools/poisons).
+   Оборот: renderBackCard({rarity,back}) если определён на странице, иначе #pbk напрямую.
+   _rafSoon: rAF с таймаут-фолбэком — в ФОНОВОЙ вкладке rAF заморожен браузером,
+   без фолбэка экспорт из галерей в фоне давал бы карточки без описания. */
+function _rafSoon(cb){var done=false;function run(){if(!done){done=true;cb();}}requestAnimationFrame(run);setTimeout(run,60);}
+function splitDesc(data){var desc=document.getElementById('pds')||document.getElementById('pdesc'),full=data.desc||'';function setBack(t){if(typeof renderBackCard==='function')renderBackCard({rarity:data.rarity,back:t});else document.getElementById('pbk').textContent=t;}desc.textContent='';if(!full){setBack('');return;}_rafSoon(function(){desc.textContent=full;var ch=desc.clientHeight;if(!ch||desc.scrollHeight<=ch+2){setBack('');return;}var lo=0,hi=full.length;while(lo<hi-1){var mid=Math.floor((lo+hi)/2);desc.textContent=full.slice(0,mid);if(desc.scrollHeight<=ch+2)lo=mid;else hi=mid;}var cut=lo;for(var i=cut;i>Math.max(0,cut-60);i--){if(full[i]===' '||full[i]==='\n'){cut=i;break;}}desc.textContent=full.slice(0,cut);var bs=(full[cut]===' '||full[cut]==='\n')?cut+1:cut;setBack(full.slice(bs));});}
 function renderCard(data){
   var d=R[data.rarity||'common'];
   var sb=fmtB(data.strBonus),pb2=fmtB(data.profBonus);
@@ -1133,7 +1140,6 @@ document.getElementById('btn-reset').addEventListener('click',function(){
 });
 
 var DEFAULT_NAME='Оружие';
-var JSON_NAME='dnd_project_weapon2024';
 function collItemSub(card){return card.cat||'';}
 var editingId=null;
 function _stamp(){var d=new Date(),p=function(n){return(n<10?'0':'')+n;};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'_'+p(d.getHours())+'-'+p(d.getMinutes())+'-'+p(d.getSeconds());}
@@ -1563,16 +1569,19 @@ loadFromLS();
 window.__dndRenderCard=function(card,cb){
   try{applyFormData(card);renderCard(card);}catch(e){if(window.console)console.warn('__dndRenderCard render error:',e);}
   var fontsReady=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve();
+  function _waitLib(fn,n){n=n||0;if(typeof html2canvas!=='undefined')return fn(true);if(n>100)return fn(false);setTimeout(function(){_waitLib(fn,n+1);},100);}
   fontsReady.then(function(){
+    _waitLib(function(libOk){
     setTimeout(function(){
       var f=document.getElementById('pc'),b=document.getElementById('pb');
-      if(!f||!b||typeof html2canvas==='undefined'){if(cb)cb(null);return;}
+      if(!f||!b||!libOk){if(cb)cb(null);return;}
       html2canvas(f,{scale:3,useCORS:true,allowTaint:true,logging:false}).then(function(fc){
         html2canvas(b,{scale:3,useCORS:true,allowTaint:true,logging:false}).then(function(bc){
           if(cb)cb({front:fc.toDataURL('image/png'),back:bc.toDataURL('image/png')});
         });
       }).catch(function(){if(cb)cb(null);});
     },70);
+    });
   });
 };
 window.__dndReady=true;

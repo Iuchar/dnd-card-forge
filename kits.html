@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>D&amp;D Card Forge — Наборы снаряжения</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,700&display=swap" rel="stylesheet"/>
-<script src="lib/html2canvas.min.js"></script>
-<script src="lib/jszip.min.js"></script>
-<script src="lib/jspdf.umd.min.js"></script>
+<script src="lib/html2canvas.min.js" defer></script>
+<script src="lib/jszip.min.js" defer></script>
+<script src="lib/jspdf.umd.min.js" defer></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{font-size:15px;height:100%;overflow:hidden;}
@@ -186,19 +186,39 @@ button:focus{outline:none;}
 .cb-lbl{font-family:'Cinzel',serif;font-size:12px;font-weight:700;color:#3a2200;margin-bottom:5px;text-align:center;letter-spacing:.1em;border-bottom:.5px solid rgba(90,72,32,.3);padding:2px 0;}
 .cb-desc{font-family:'Crimson Text',Georgia,serif;font-size:11px;color:#2a1e0a;line-height:1.5;flex:1;overflow:hidden;white-space:pre-wrap;}
 .dc{width:310px;height:437px;border-radius:12px;overflow:hidden;border:3px solid var(--cb,#a09080);background:#e8dcc8;display:flex;flex-direction:column;font-family:'Crimson Text',Georgia,serif;box-shadow:3px 3px 0 var(--cs,#6a5838);transition:border-color .2s,box-shadow .2s;position:relative;}
-.c-stripe{height:10px;flex-shrink:0;background:var(--ca,#a09080);transition:background .2s;}
-.c-stripe-under{height:1.5px;flex-shrink:0;background:#5a4820;}
+/* Общие стили карточки и пикера редкости (7 генераторов).
+   Байт-идентичные правила, вынесены из страниц 2026-07-04. */
+.c-body{flex:1;min-height:0;padding:5px 14px 3px;display:flex;flex-direction:column;overflow:hidden;}
 .c-img{width:100%;height:163px;flex-shrink:0;background:#cfc0a0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .c-img-ph{opacity:.25;display:flex;align-items:center;justify-content:center;}
 .c-img-ph svg{width:48px;height:48px;}
-.c-body{flex:1;min-height:0;padding:5px 14px 3px;display:flex;flex-direction:column;overflow:hidden;}
 .c-name{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:#2a1e0a;line-height:1.2;margin-bottom:1px;flex-shrink:0;}
 .c-rule{height:.7px;background:#8a7860;opacity:.55;margin:3px 0;flex-shrink:0;}
+.c-stripe{height:10px;flex-shrink:0;background:var(--ca,#a09080);transition:background .2s;}
+.c-stripe-under{height:1.5px;flex-shrink:0;background:#5a4820;}
+.c-gem{width:14px;height:14px;border-radius:50%;opacity:.7;border:1px solid #3a2810;background:var(--ca,#888077);transition:background .2s;}
+.rname{font-family:'Cinzel',serif;font-size:11px;color:var(--text2);margin-left:3px;}
+.rprow{display:flex;gap:6px;align-items:center;padding:3px 0;}
+.rp{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .12s;flex-shrink:0;}
+.rp:hover{transform:scale(1.15);}
+.rp.on{transform:scale(1.1);}
+.rp[data-r=nonmagic]{background:#f5f5f5;}
+.rp[data-r=common]{background:#888077;}
+.rp[data-r=uncommon]{background:#52aa40;}
+.rp[data-r=rare]{background:#4a8ccc;}
+.rp[data-r=veryrare]{background:#9870cc;}
+.rp[data-r=legendary]{background:#e09820;}
+.rp[data-r=nonmagic].on{box-shadow:0 0 0 3px rgba(245,245,245,.4);}
+.rp[data-r=common].on{box-shadow:0 0 0 3px rgba(136,128,119,.4);}
+.rp[data-r=uncommon].on{box-shadow:0 0 0 3px rgba(82,170,64,.4);}
+.rp[data-r=rare].on{box-shadow:0 0 0 3px rgba(74,140,204,.4);}
+.rp[data-r=veryrare].on{box-shadow:0 0 0 3px rgba(152,112,204,.4);}
+.rp[data-r=legendary].on{box-shadow:0 0 0 3px rgba(224,152,32,.45);}
+
 .c-kitlist{font-size:12px;color:#2a1e0a;line-height:1.55;flex:1;overflow:hidden;}
 .c-kitlist.two-col{column-count:2;column-gap:8px;font-size:10.5px;line-height:1.4;}
 .c-kit-item{display:flex;gap:4px;align-items:baseline;break-inside:avoid;}
 .c-kit-dot{color:#8b6914;flex-shrink:0;font-size:11px;}
-.c-gem{width:14px;height:14px;border-radius:50%;opacity:.7;border:1px solid #3a2810;background:var(--ca,#888077);transition:background .2s;}
 .coll-item-thumb{width:30px;height:42px;border-radius:4px;flex-shrink:0;background:var(--bg4);overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.08);}
 .coll-sect-count{font-family:'Cinzel',serif;font-size:9px;color:var(--text3);opacity:.55;}
 .coll-sect-body{display:flex;flex-direction:column;gap:7px;max-height:304px;overflow-y:auto;padding-bottom:4px;}
@@ -211,14 +231,6 @@ button:focus{outline:none;}
 .nav-section-lbl{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);padding:5px 10px 3px;pointer-events:none;}
 .nav-sub .nav-item{padding-left:26px;font-size:9.5px;}
 .field-hint{font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.05em;color:var(--text3);margin-top:5px;line-height:1.5;}
-
-.rprow{display:flex;gap:6px;align-items:center;padding:3px 0;}
-.rp{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .12s;flex-shrink:0;}
-.rp:hover{transform:scale(1.15);}
-.rp.on{transform:scale(1.1);}
-.rp[data-r=nonmagic]{background:#f5f5f5;}
-.rp[data-r=nonmagic].on{box-shadow:0 0 0 3px rgba(245,245,245,.4);}
-.rname{font-family:'Cinzel',serif;font-size:11px;color:var(--text2);margin-left:3px;}
 </style>
 <link rel="stylesheet" href="mobile.css"/>
 </head>
@@ -556,7 +568,6 @@ button:focus{outline:none;}
 <script>
 (function(){
 var R={nonmagic:{l:'Немагический',a:'#f5f5f5',cb:'#f5f5f5',cs:'#cdc8be'}};
-var RARITY_ORDER=['common'];
 var LS_KEY='dnd_cardforge_kits';
 var IDB_NAME='dnd_kits_imgs';
 var cr='nonmagic', imgDataUrl=null, collection=[], currentCard=null;
@@ -858,12 +869,12 @@ document.getElementById('crop-apply').addEventListener('click',function(){
 });
 function parseComposition(text){return(text||'').split('\n').map(function(s){return s.trim();}).filter(function(s){return s.length>0;});}
 function readForm(){return{type:'kit',rarity:cr,name:document.getElementById('fn').value.trim(),cost:document.getElementById('fc').value.trim(),coin:document.getElementById('fcoin').value,wgt:document.getElementById('fwgt').value.trim(),composition:document.getElementById('fcomposition').value,back:document.getElementById('fback').value,img:imgDataUrl,rawImg:rawImgDataUrl};}
+/* Оборотная сторона с «рубашкой» (equipment/tools/kits/poisons). */
 function renderBackCard(data){var hasBack=data.back&&data.back.trim();var rubashka=document.getElementById('pb-rubashka');var pbs=document.getElementById('pbs');var pbs2=document.getElementById('pbs2');var pbBody=document.getElementById('pb-body');var pbFoot=document.getElementById('pb-foot');var pbDesc=document.getElementById('pb-desc');var pbgm=document.getElementById('pbgm');if(hasBack){rubashka.style.display='none';pbs.style.display='';pbs2.style.display='';pbBody.style.display='flex';pbFoot.style.display='';pbDesc.textContent=data.back;var d=R[data.rarity||'common'];pbs.style.background=d.a;pbgm.style.background=d.a;}else{rubashka.style.display='block';pbs.style.display='none';pbs2.style.display='none';pbBody.style.display='none';pbFoot.style.display='none';}}
 function renderCard(data){var d=R[data.rarity||'common'];document.getElementById('p-rar').textContent=d.l;document.getElementById('p-type').textContent='Набор';document.getElementById('pnm').textContent=data.name||'Название набора';var cm=document.getElementById('p-cost');if(cm){if(data.cost){cm.textContent=data.cost+' '+(data.coin||'зм');cm.style.visibility='visible';}else{cm.style.visibility='hidden';}}document.getElementById('pwgt').textContent=data.wgt?data.wgt+' фнт.':'';var kl=document.getElementById('pkitlist');kl.innerHTML='';var items=parseComposition(data.composition);kl.classList.toggle('two-col',items.length>8);if(items.length){items.forEach(function(item){var row=document.createElement('div');row.className='c-kit-item';row.innerHTML='<span class="c-kit-dot">•</span><span>'+item+'</span>';kl.appendChild(row);});}else{kl.innerHTML='<div class="c-kit-item"><span class="c-kit-dot">•</span><span>Заполните состав набора</span></div>';}setCardImg(data.img||null);applyR(data.rarity||'common');renderBackCard(data);}
 function applyFormData(data){cr='nonmagic';document.getElementById('fn').value=data.name||'';document.getElementById('fc').value=data.cost||'';document.getElementById('fcoin').value=data.coin||'зм';document.getElementById('fwgt').value=data.wgt||'';document.getElementById('fcomposition').value=data.composition||'';document.getElementById('fback').value=data.back||'';imgDataUrl=data.img||null;rawImgDataUrl=data.rawImg||data.img||null;var th=document.getElementById('img-thumb');if(imgDataUrl){th.style.backgroundImage='url('+imgDataUrl+')';th.style.display='block';document.getElementById('img-icon').style.display='none';document.getElementById('img-lbl').style.display='none';document.getElementById('btn-recrop').style.display='flex';document.getElementById('btn-del-img').style.display='flex';}else{th.style.display='none';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';}mkCounter('fn','cnt-fn',34);mkCounter('fback','cnt-back',900);}
 document.getElementById('btn-reset').addEventListener('click',function(){if(!confirm('Сбросить все поля?'))return;cr='nonmagic';['fn','fc','fwgt','fcomposition','fback'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('fcoin').value='зм';imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('f-img').value='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';setCardImg(null);applyR('nonmagic');renderCard({});toast('Поля сброшены');});
 var DEFAULT_NAME='Набор';
-var JSON_NAME='dnd_kits';
 function collItemSub(card){return parseComposition(card.composition).length+' предметов';}
 var editingId=null;
 function _stamp(){var d=new Date(),p=function(n){return(n<10?'0':'')+n;};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'_'+p(d.getHours())+'-'+p(d.getMinutes())+'-'+p(d.getSeconds());}
@@ -1293,16 +1304,19 @@ loadFromLS();
 window.__dndRenderCard=function(card,cb){
   try{applyFormData(card);renderCard(card);}catch(e){if(window.console)console.warn('__dndRenderCard render error:',e);}
   var fontsReady=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve();
+  function _waitLib(fn,n){n=n||0;if(typeof html2canvas!=='undefined')return fn(true);if(n>100)return fn(false);setTimeout(function(){_waitLib(fn,n+1);},100);}
   fontsReady.then(function(){
+    _waitLib(function(libOk){
     setTimeout(function(){
       var f=document.getElementById('pc'),b=document.getElementById('pb');
-      if(!f||!b||typeof html2canvas==='undefined'){if(cb)cb(null);return;}
+      if(!f||!b||!libOk){if(cb)cb(null);return;}
       html2canvas(f,{scale:3,useCORS:true,allowTaint:true,logging:false}).then(function(fc){
         html2canvas(b,{scale:3,useCORS:true,allowTaint:true,logging:false}).then(function(bc){
           if(cb)cb({front:fc.toDataURL('image/png'),back:bc.toDataURL('image/png')});
         });
       }).catch(function(){if(cb)cb(null);});
     },70);
+    });
   });
 };
 window.__dndReady=true;
