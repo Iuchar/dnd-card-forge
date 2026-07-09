@@ -5,10 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>D&amp;D Card Forge — Готовые шаблоны</title>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,700&display=swap" rel="stylesheet"/>
-<script src="lib/jszip.min.js"></script>
-<script src="lib/jspdf.umd.min.js"></script>
-<script src="templates-data.js"></script>
+<script src="lib/jszip.min.js" defer></script>
+<script src="lib/jspdf.umd.min.js" defer></script>
 <style>
+/* Общие стили галерей (collection + templates): фильтр-бар, сетка,
+   карточки-миниатюры, превью-модалка, шапки групп, тосты. */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
   --bg:#111009;--bg2:#1a1814;--bg3:#252018;--bg4:#2e2a20;
@@ -20,16 +21,13 @@
 }
 html{font-size:15px;height:100%;overflow:hidden;}
 body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,serif;height:100%;display:flex;flex-direction:column;overflow:hidden;}
-
 /* HEADER */
 .header{padding:13px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--border);background:linear-gradient(to bottom,rgba(200,148,26,.06),transparent);gap:12px;flex-wrap:wrap;flex-shrink:0;}
 .logo{font-family:'Cinzel',serif;font-size:17px;font-weight:700;letter-spacing:.12em;color:var(--gold-l);white-space:nowrap;}
 .logo span{color:var(--text2);font-weight:400;}
 .header-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-.hbtn{padding:7px 13px;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);transition:all .14s;display:flex;align-items:center;gap:6px;white-space:nowrap;text-decoration:none;}
 .hbtn:hover{background:rgba(255,255,255,.09);color:var(--text);}
 .hbtn svg{width:13px;height:13px;flex-shrink:0;}
-
 /* NAV */
 .nav-wrap{position:relative;flex-shrink:0;}
 .nav-toggle{padding:7px 13px;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);transition:all .14s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
@@ -41,22 +39,12 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .nav-item:hover{background:rgba(255,255,255,.06);color:var(--text);}
 .nav-item.nav-active{background:rgba(200,148,26,.12);color:var(--gold-l);border:0.5px solid rgba(200,148,26,.2);}
 .nav-item.nav-disabled{color:#5a5040;cursor:default;pointer-events:none;font-size:9.5px;padding:5px 10px;}
-.nav-group-head{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:6px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.07em;color:var(--text2);cursor:pointer;transition:all .13s;user-select:none;}
-.nav-group-head:hover{background:rgba(255,255,255,.06);color:var(--text);}
-.nav-group-chev{width:12px;height:12px;transition:transform .15s;flex-shrink:0;opacity:.5;}
-.nav-group.open .nav-group-chev{transform:rotate(90deg);}
 .nav-sub{display:none;padding-left:8px;}
-.nav-group.open .nav-sub{display:block;}
 .nav-sep{height:0.5px;background:var(--border);margin:5px 4px;}
 .nav-section-lbl{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);padding:5px 10px 3px;pointer-events:none;user-select:none;}
-.nav-group-head-inner{display:flex;align-items:center;gap:8px;}
-.nav-group-head-inner svg{width:11px;height:11px;flex-shrink:0;}
-.nav-group.has-active>.nav-group-head{color:var(--gold-l);}
 .nav-sub .nav-item{padding-left:26px;font-size:9.5px;letter-spacing:.05em;}
-
 /* PAGE LAYOUT */
 .pg-layout{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;}
-
 /* FILTER BAR */
 .filter-bar{padding:12px 20px;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;background:var(--bg2);flex-wrap:wrap;}
 .filter-search-wrap{position:relative;flex:1;min-width:160px;max-width:320px;}
@@ -82,38 +70,39 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .filter-sep{width:0.5px;height:20px;background:var(--border);}
 .filter-stats{font-family:'Cinzel',serif;font-size:10px;color:var(--text3);white-space:nowrap;margin-left:auto;}
 .filter-stats b{color:var(--text2);}
-
-/* GRID */
-.grid-wrap{flex:1;min-height:0;overflow-y:auto;background:#1a1814;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
-.grid-wrap::-webkit-scrollbar{width:5px;}.grid-wrap::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px;}
+.grid-wrap::-webkit-scrollbar{width:5px;}
+.grid-wrap::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px;}
 .grid-area{display:grid;grid-template-columns:repeat(auto-fill,155px);gap:16px;padding:20px;justify-content:center;align-content:start;min-height:100%;}
-
 /* GRID CARD */
-.g-card{width:155px;height:218px;border-radius:6px;border:2px solid var(--gc-border,#888077);background:#e8dcc8;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;position:relative;box-shadow:2px 2px 0 var(--gc-shadow,#5a5030);transition:transform .15s,box-shadow .15s;}
+.g-card{
+  width:155px;height:218px;
+  border-radius:6px;
+  border:2px solid var(--gc-border,#888077);
+  background:#e8dcc8;
+  overflow:hidden;
+  cursor:pointer;
+  display:flex;flex-direction:column;
+  position:relative;
+  box-shadow:2px 2px 0 var(--gc-shadow,#5a5030);
+  transition:transform .15s,box-shadow .15s;
+}
 .g-card:hover{transform:translateY(-3px);box-shadow:2px 5px 0 var(--gc-shadow,#5a5030);}
 .g-card-stripe{height:5px;flex-shrink:0;}
 .g-card-img{flex:1;overflow:hidden;position:relative;background:#cfc0a0;display:flex;align-items:center;justify-content:center;}
 .g-card-img img{width:100%;height:100%;object-fit:cover;display:block;}
 .g-card-img-ph{opacity:.2;}
-.g-card-foot{padding:5px 7px;background:rgba(0,0,0,.06);border-top:0.5px solid rgba(0,0,0,.12);flex-shrink:0;display:flex;flex-direction:column;gap:2px;}
 .g-card-nrow{display:flex;align-items:center;gap:5px;}
 .g-card-nrow .g-card-badge{flex-shrink:0;}
 .g-card-name{font-family:'Cinzel',serif;font-size:8.5px;font-weight:700;color:#2a1e0a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.3;flex:1;min-width:0;}
 .g-card-sub{font-family:'Crimson Text',serif;font-size:9px;color:#7a6850;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.2;}
-.g-card-badge{font-family:'Cinzel',serif;font-size:7px;border-radius:3px;padding:1px 4px;flex-shrink:0;letter-spacing:.05em;}
-.g-card-badge.ed14{background:rgba(200,148,26,.15);color:var(--gold);border:0.5px solid rgba(200,148,26,.3);}
-.g-card-badge.ed24{background:rgba(74,63,160,.18);color:var(--accent-l);border:0.5px solid rgba(74,63,160,.35);}
 .g-card-ov{position:absolute;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;border-radius:4px;}
 .g-card:hover .g-card-ov{opacity:1;}
 .g-card-ov svg{width:28px;height:28px;color:rgba(255,255,255,.8);}
-
 /* EMPTY STATE */
 .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:40px 20px;gap:16px;background:#efe9db;margin:16px;border-radius:12px;}
 .empty-state svg{opacity:.15;}
 .empty-state-title{font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--text3);letter-spacing:.1em;}
 .empty-state-sub{font-family:'Crimson Text',Georgia,serif;font-size:13px;color:var(--text3);text-align:center;line-height:1.7;max-width:320px;}
-.empty-hint{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;color:var(--text3);background:var(--bg3);border:0.5px solid var(--border);border-radius:6px;padding:8px 16px;display:inline-block;}
-
 /* PREVIEW MODAL */
 .prev-bg{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;display:none;align-items:center;justify-content:center;padding:16px;}
 .prev-bg.open{display:flex;}
@@ -121,67 +110,20 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .prev-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;}
 .prev-title{font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:var(--gold-l);letter-spacing:.07em;}
 .prev-close{width:28px;height:28px;background:rgba(255,255,255,.05);border:0.5px solid var(--border2);border-radius:50%;color:var(--text2);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .13s;flex-shrink:0;}
-.prev-close:hover{background:rgba(255,255,255,.09);color:var(--text);}
 .prev-cards{display:flex;gap:20px;align-items:flex-start;justify-content:center;flex-wrap:wrap;}
 .prev-card-col{display:flex;flex-direction:column;align-items:center;gap:6px;}
 .side-lbl{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#b0a890;}
 .prev-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;flex-shrink:0;}
-.prev-note{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.08em;color:var(--text3);text-align:center;}
-
-/* CARD CSS */
-.dc{width:310px;height:437px;border-radius:12px;overflow:hidden;border:4px solid var(--cb,#a09080);background:#e8dcc8;display:flex;flex-direction:column;font-family:'Crimson Text',Georgia,serif;box-shadow:4px 4px 0 var(--cs,#6a5838);}
-.c-stripe-wrap{flex-shrink:0;}
-.c-stripe{height:10px;background:var(--ca,#a09080);}
-.c-stripe-under{height:2px;background:#5a4820;}
-.c-meta{height:24px;flex-shrink:0;display:flex;align-items:center;padding:0;background:rgba(0,0,0,0.07);}
-.c-meta-orn{width:24px;height:100%;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
-.c-meta-orn svg{width:20px;height:20px;}
-.c-meta-inner{flex:1;display:flex;justify-content:space-between;align-items:center;padding:0 10px;}
-.c-meta-item{font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:.09em;color:#5a4830;text-transform:uppercase;}
 .c-meta-item.cost{color:#8a6010;}
-.c-img{width:100%;height:163px;flex-shrink:0;background:#cfc0a0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.c-img-el{position:absolute;top:7px;left:7px;width:calc(100% - 14px);height:calc(100% - 14px);object-fit:fill;border-radius:2px;display:block;}
 .img-frame-svg{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none;}
-.c-img-ph{opacity:.25;display:flex;align-items:center;justify-content:center;}
-.c-img-ph svg{width:48px;height:48px;}
-.c-body{flex:1;min-height:0;padding:3px 14px 2px;display:flex;flex-direction:column;overflow:hidden;}
-.c-name{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:#2a1e0a;line-height:1.2;margin-bottom:0;flex-shrink:0;}
-.c-dmgline{font-family:'Cinzel',serif;font-size:10px;color:#7a6850;margin-bottom:1px;letter-spacing:.04em;flex-shrink:0;}
-.c-rule{height:.5px;background:#8a7860;opacity:.5;margin:1px 0 2px;flex-shrink:0;}
-.c-stats{display:flex;flex-wrap:wrap;gap:2px;margin-bottom:1px;justify-content:center;flex-shrink:0;}
 .cst{background:rgba(0,0,0,.07);border:.5px solid rgba(0,0,0,.12);border-radius:4px;padding:2px 6px;display:flex;flex-direction:column;align-items:center;min-width:40px;}
 .cst-l{font-family:'Cinzel',serif;font-size:7.5px;color:#8a7860;letter-spacing:.05em;text-transform:uppercase;margin-bottom:1px;}
 .cst-v{font-size:13px;font-weight:700;color:#2a1e0a;}
-.c-attune{font-family:'Crimson Text',Georgia,serif;font-size:10px;font-style:italic;color:#6a5040;margin-bottom:1px;flex-shrink:0;}
-.c-props{font-family:'Cinzel',serif;font-size:10px;color:#5a4830;line-height:1.35;margin-bottom:1px;flex-shrink:0;}
-.c-quote{font-family:'Crimson Text',Georgia,serif;font-size:11px;font-weight:700;font-style:italic;text-align:center;color:#4a3820;line-height:1.4;margin-bottom:1px;padding:0 4px;flex-shrink:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
-.c-desc{font-family:'Crimson Text',Georgia,serif;font-size:11px;line-height:1.5;color:#2a2010;font-style:italic;text-indent:1.4em;flex:1;overflow:hidden;white-space:pre-wrap;}
 /* armor info-row */
 .c-info-row{display:flex;align-items:stretch;flex-shrink:0;}
-.c-infolist{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0;padding-right:10px;border-right:.5px solid rgba(0,0,0,.13);}
-.c-info-item{display:flex;align-items:baseline;gap:6px;font-size:12px;color:#2e2010;line-height:1.35;}
-.c-info-icon{width:13px;text-align:center;font-size:11px;color:#8a7a60;flex-shrink:0;line-height:1.35;}
-.c-timing-line{display:flex;gap:0;font-size:11px;color:#6a5838;padding-left:19px;}
-.c-timing-line span+span::before{content:' · ';}
-.c-ac-col{width:68px;flex-shrink:0;padding-left:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;}
-.c-ac-lbl{font-family:'Cinzel',serif;font-size:7px;letter-spacing:.12em;color:#a09070;text-transform:uppercase;text-align:center;}
-.c-ac-num{font-family:'Cinzel',serif;font-size:32px;font-weight:700;color:#2a1e0a;line-height:1;}
-.c-ac-mod{font-size:10px;color:#5a4828;text-align:center;line-height:1.25;}
-.c-aprops{font-family:'Crimson Text',Georgia,serif;font-size:11.5px;color:#2a1e0a;line-height:1.35;flex-shrink:0;}
-.c-foot{height:26px;flex-shrink:0;padding:0 14px;display:flex;align-items:center;justify-content:space-between;}
-.c-wgt{font-family:'Cinzel',serif;font-size:10px;color:#8a7860;letter-spacing:.04em;}
-.c-gem{width:14px;height:14px;border-radius:50%;opacity:.7;border:1px solid #3a2810;}
-.dc-back{width:310px;height:437px;border-radius:12px;overflow:hidden;border:4px solid var(--cb,#a09080);background:#e8dcc8;display:flex;flex-direction:column;font-family:'Crimson Text',Georgia,serif;box-shadow:4px 4px 0 var(--cs,#6a5838);}
-.cb-body{flex:1;min-height:0;padding:11px 11px 6px;display:flex;flex-direction:column;overflow:hidden;}
-.cb-lbl{font-family:'Cinzel',serif;font-size:8px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:#8a7860;margin-bottom:6px;display:flex;align-items:center;gap:6px;flex-shrink:0;}
-.cb-lbl::after{content:'';flex:1;height:.5px;background:rgba(0,0,0,.15);}
-.cb-desc{font-family:'Crimson Text',Georgia,serif;font-size:11px;line-height:1.6;color:#2a2010;font-style:italic;flex:1;overflow:hidden;white-space:pre-wrap;}
-.cb-foot{height:22px;flex-shrink:0;padding:0 10px;display:flex;align-items:center;justify-content:flex-end;}
-
 /* TOAST */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:9px 18px;font-family:'Cinzel',serif;font-size:11px;color:var(--text);letter-spacing:.06em;z-index:500;transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
 .toast.show{transform:translateX(-50%) translateY(0);}
-
 /* группы галереи */
 #grid-area{display:block;padding:0;background:#efe9db;margin:16px;border-radius:12px;overflow:hidden;min-height:calc(100% - 32px);}
 .gal-section{padding-bottom:14px;}
@@ -212,7 +154,6 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .cf-block-h{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--gold);margin-bottom:2px;}
 .cf-block-t{font-size:13px;color:var(--text2);line-height:1.5;white-space:pre-wrap;overflow-wrap:break-word;word-break:break-word;}
 .cf-empty{font-size:13px;color:var(--text3);opacity:.7;}
-
 /* действия галереи: печать/сохранение */
 .gp-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;display:none;align-items:center;justify-content:center;}
 .gp-bg.open{display:flex;}
@@ -224,7 +165,6 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .gal-grp-acts{display:inline-flex;gap:5px;margin-left:auto;}
 .gal-grp-save,.gal-grp-print{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;border:0.5px solid rgba(90,72,32,.3);background:rgba(90,72,32,.07);color:#5a4820;cursor:pointer;padding:0;}
 .gal-grp-save:hover,.gal-grp-print:hover{color:#2a1e0a;background:rgba(90,72,32,.14);border-color:rgba(90,72,32,.5);}
-
 /* множественный выбор */
 .hbtn.active{background:rgba(200,148,26,.15);color:var(--gold-l);border-color:rgba(200,148,26,.3);}
 .sel-bar{display:none;align-items:center;gap:8px;padding:8px 20px;border-bottom:0.5px solid var(--border);background:rgba(200,148,26,.06);flex-wrap:wrap;}
@@ -238,7 +178,6 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .g-card.gsel{outline:3px solid var(--gold-l);outline-offset:-2px;}
 .g-card.gsel .g-card-cbx{background:var(--gold-l);border-color:var(--gold-l);}
 .g-card.gsel .g-card-cbx::after{content:"¹3";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#1a1208;font-size:13px;font-weight:bold;}
-
 /* выпадающие фильтры */
 .fdd-host{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
 .fdd-wrap{position:relative;}
@@ -258,6 +197,20 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .fdd-cbx{width:15px;height:15px;border-radius:4px;border:1.5px solid var(--text3);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#1a1208;}
 .fdd-cbx.ck{background:var(--gold);border-color:var(--gold);}
 .fdd-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
+.hbtn{padding:7px 13px;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);transition:all .14s;display:flex;align-items:center;gap:6px;white-space:nowrap;text-decoration:none;}
+
+/* GRID */
+.grid-wrap{flex:1;min-height:0;overflow-y:auto;background:#1a1814;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
+.g-card-foot{padding:5px 7px;background:rgba(0,0,0,.06);border-top:0.5px solid rgba(0,0,0,.12);flex-shrink:0;display:flex;flex-direction:column;gap:2px;}
+.g-card-badge{font-family:'Cinzel',serif;font-size:7px;border-radius:3px;padding:1px 4px;flex-shrink:0;letter-spacing:.05em;}
+.g-card-badge.ed14{background:rgba(200,148,26,.15);color:var(--gold);border:0.5px solid rgba(200,148,26,.3);}
+.g-card-badge.ed24{background:rgba(74,63,160,.18);color:var(--accent-l);border:0.5px solid rgba(74,63,160,.35);}
+.empty-hint{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;color:var(--text3);background:var(--bg3);border:0.5px solid var(--border);border-radius:6px;padding:8px 16px;display:inline-block;}
+.prev-close:hover{background:rgba(255,255,255,.09);color:var(--text);}
+.prev-note{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.08em;color:var(--text3);text-align:center;}
+
+/* CARD CSS */
+.dc{width:310px;height:437px;border-radius:12px;overflow:hidden;border:4px solid var(--cb,#a09080);background:#e8dcc8;display:flex;flex-direction:column;font-family:'Crimson Text',Georgia,serif;box-shadow:4px 4px 0 var(--cs,#6a5838);}
 </style>
 <link rel="stylesheet" href="mobile.css"/>
 </head>
@@ -452,23 +405,30 @@ function describeCard(card){
 }
 var R={nonmagic:{l:'Немагический',a:'#f5f5f5'},common:{l:'Обычный',a:'#888077'},uncommon:{l:'Необычный',a:'#52aa40'},rare:{l:'Редкий',a:'#4a8ccc'},veryrare:{l:'Очень редкий',a:'#9870cc'},legendary:{l:'Легендарный',a:'#e09820'}};
 var LS_KEY='dnd_cardforge_templates';
+/* Общее ядро галерей (collection + templates). Включать ВНУТРИ IIFE страницы
+   (замыкание: badgeText/openPreview/gaSelMode/... определяются страницей).
+   Хук galCardExtras(card,wrap) — опционален (collection добавляет кнопку удаления). */
 var GROUPS=[{id:'weapon',label:'Оружие'},{id:'armor',label:'Доспехи'},{id:'equipment',label:'Снаряжение'},{id:'tools',label:'Инструменты'},{id:'kits',label:'Наборы'},{id:'poisons',label:'Яды'}];
+function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){el.classList.remove('show');},2200);}
+function closePreview(){document.getElementById('prev-bg').classList.remove('open');previewCard=null;}
+function subLabel(c){switch(c._group){case 'armor':return (c.armorType||'Доспех')+(c.acDisplay?' · КБ '+c.acDisplay:'');case 'equipment':return c.category||'';case 'tools':return c.toolType||'';case 'kits':return (c.composition||'').split('\n').filter(function(x){return x.trim();}).length+' предм.';case 'poisons':return c.poisonType||'';default:return [c.kind,c.cat,c.dt].filter(Boolean).join(' · ');}}
+function makeGridCard(card){var d=R[card.rarity||'common']||R.common;var wrap=document.createElement('div');wrap.className='g-card';var stripe=document.createElement('div');stripe.className='g-card-stripe';stripe.style.background=d.a;var imgWrap=document.createElement('div');imgWrap.className='g-card-img';if(card.img){var img=document.createElement('img');img.src=card.img;img.alt='';imgWrap.appendChild(img);}else{imgWrap.innerHTML='<div class="g-card-img-ph"><svg viewBox="0 0 24 24" fill="none" stroke="#8a7860" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>';}var foot=document.createElement('div');foot.className='g-card-foot';var badgeCls='g-card-badge'+(card._source==='weapon2014'?' ed14':card._source==='weapon2024'?' ed24':'');foot.innerHTML='<div class="g-card-nrow"><span class="g-card-name">'+(card.name||'Без названия')+'</span><span class="'+badgeCls+'">'+badgeText(card)+'</span></div><span class="g-card-sub">'+subLabel(card)+'</span>';var ov=document.createElement('div');ov.className='g-card-ov';ov.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';wrap.appendChild(stripe);wrap.appendChild(imgWrap);wrap.appendChild(foot);if(typeof galCardExtras==='function')galCardExtras(card,wrap);wrap.appendChild(ov);wrap.addEventListener('click',function(){if(typeof gaSelMode==='function'&&gaSelMode()){gaToggleSelect(card,wrap);}else{openPreview(card);}});if(typeof gaIsSelected==='function'&&gaIsSelected(card))wrap.classList.add('gsel');var _cbx=document.createElement('div');_cbx.className='g-card-cbx';wrap.appendChild(_cbx);return wrap;}
 var GENPAGE={weapon:'weapon-2014.html',armor:'armor.html',equipment:'equipment.html',tools:'tools.html',kits:'kits.html',poisons:'poisons.html'};
 function grpLabel(id){for(var i=0;i<GROUPS.length;i++)if(GROUPS[i].id===id)return GROUPS[i].label;return id;}
 function grpOf(t){var e=t._group||t._edition||'2014';if(e==='2014'||e==='2024')return 'weapon';return e;}
 function srcOf(t){var e=t._edition||'2014';if(e==='2014')return 'weapon2014';if(e==='2024')return 'weapon2024';return e;}
 var allCards=[],previewCard=null;
 function loadAll(){allCards=[];var src=[];try{var d=localStorage.getItem(LS_KEY);if(d){var arr=JSON.parse(d);if(Array.isArray(arr)&&arr.length)src=arr;}}catch(e){}if(!src.length&&window.SEED_TEMPLATES)src=window.SEED_TEMPLATES;src.forEach(function(t){allCards.push(Object.assign({},t,{_group:grpOf(t),_source:srcOf(t)}));});}
-function subLabel(c){switch(c._group){case 'armor':return (c.armorType||'Доспех')+(c.acDisplay?' · КБ '+c.acDisplay:'');case 'equipment':return c.category||'';case 'tools':return c.toolType||'';case 'kits':return (c.composition||'').split('\n').filter(function(x){return x.trim();}).length+' предм.';case 'poisons':return c.poisonType||'';default:return [c.kind,c.cat,c.dt].filter(Boolean).join(' · ');}}
+
 function badgeText(c){if(c._source==='weapon2014')return '2014';if(c._source==='weapon2024')return '2024';return grpLabel(c._group);}
-function makeGridCard(card){var d=R[card.rarity||'common']||R.common;var wrap=document.createElement('div');wrap.className='g-card';var stripe=document.createElement('div');stripe.className='g-card-stripe';stripe.style.background=d.a;var imgWrap=document.createElement('div');imgWrap.className='g-card-img';if(card.img){var img=document.createElement('img');img.src=card.img;img.alt='';imgWrap.appendChild(img);}else{imgWrap.innerHTML='<div class="g-card-img-ph"><svg viewBox="0 0 24 24" fill="none" stroke="#8a7860" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>';}var foot=document.createElement('div');foot.className='g-card-foot';var badgeCls='g-card-badge'+(card._source==='weapon2014'?' ed14':card._source==='weapon2024'?' ed24':'');foot.innerHTML='<div class="g-card-nrow"><span class="g-card-name">'+(card.name||'Без названия')+'</span><span class="'+badgeCls+'">'+badgeText(card)+'</span></div><span class="g-card-sub">'+subLabel(card)+'</span>';var ov=document.createElement('div');ov.className='g-card-ov';ov.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';wrap.appendChild(stripe);wrap.appendChild(imgWrap);wrap.appendChild(foot);wrap.appendChild(ov);wrap.addEventListener('click',function(){if(typeof gaSelMode==='function'&&gaSelMode()){gaToggleSelect(card,wrap);}else{openPreview(card);}});if(typeof gaIsSelected==='function'&&gaIsSelected(card))wrap.classList.add('gsel');var _cbx=document.createElement('div');_cbx.className='g-card-cbx';wrap.appendChild(_cbx);return wrap;}
+
 function renderGrid(){var cards=getFiltered();var area=document.getElementById('grid-area');var empty=document.getElementById('empty-state');area.innerHTML='';var total=allCards.length,vis=cards.length;var statsEl=document.getElementById('filter-stats');if(total===0){statsEl.textContent='Шаблонов нет';}else{var parts=['<b>'+vis+'</b> из <b>'+total+'</b>'];GROUPS.forEach(function(g){var n=allCards.filter(function(c){return c._group===g.id;}).length;if(n)parts.push(g.label+': <b>'+n+'</b>');});statsEl.innerHTML=parts.join(' &nbsp;·&nbsp; ');}if(vis===0){empty.style.display='';area.style.display='none';if(total>0){document.getElementById('empty-title').textContent='Ничего не найдено';document.getElementById('empty-sub').textContent='Измените фильтры или поиск.';}else{document.getElementById('empty-title').textContent='Шаблонов пока нет';document.getElementById('empty-sub').innerHTML='Готовые шаблоны появятся здесь,<br/>когда будут добавлены.';}return;}empty.style.display='none';area.style.display='';GROUPS.forEach(function(g){var gc=cards.filter(function(c){return c._group===g.id;});if(!gc.length)return;var sect=document.createElement('div');sect.className='gal-section';var head=document.createElement('div');head.className='gal-section-head';head.innerHTML='<span class="gal-section-title">'+g.label+'</span><span class="gal-section-count">'+gc.length+'</span><span class="gal-grp-acts"><button class="gal-grp-save" data-group="'+g.id+'" title="Сохранить группу"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button><button class="gal-grp-print" data-group="'+g.id+'" title="Печать группы"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button></span>';var grid=document.createElement('div');grid.className='gal-grid';gc.forEach(function(c){grid.appendChild(makeGridCard(c));});sect.appendChild(head);sect.appendChild(grid);area.appendChild(sect);});}
 function openPreview(card){previewCard=card;var d=R[card.rarity||'common']||R.common;var grp=card._group;document.getElementById('prev-title').textContent=(card.name||'Без названия')+' · '+grpLabel(grp);var imgEl=document.getElementById('m-img');imgEl.innerHTML=card.img?'<img src="'+card.img+'" alt=""/>':'<div class="m-img-ph">нет картинки</div>';imgEl.style.borderColor=d.a;document.getElementById('m-name').textContent=card.name||'Без названия';var meta=['<span class="m-tag" style="background:'+d.a+'">'+d.l+'</span>','<span class="m-tag2">'+grpLabel(grp)+'</span>'];if(card.cost)meta.push('<span class="m-tag2">'+card.cost+' '+(card.coin||'зм')+'</span>');if(card.wgt)meta.push('<span class="m-tag2">'+card.wgt+' фнт.</span>');document.getElementById('m-meta').innerHTML=meta.join('');document.getElementById('m-fields').innerHTML=describeCard(card);var _me=document.getElementById('m-edit');var _pg=card._source==='weapon2024'?'weapon-2024.html':card._source==='weapon2014'?'weapon-2014.html':(GENPAGE[grp]||'weapon-2014.html');_me.href=_pg+'?prefill=1';_me.onclick=function(){try{var cc=Object.assign({},card);delete cc._group;delete cc._source;delete cc._edition;delete cc.id;sessionStorage.setItem('dnd_prefill',JSON.stringify(cc));}catch(e){}};document.getElementById('prev-bg').classList.add('open');}
-function closePreview(){document.getElementById('prev-bg').classList.remove('open');previewCard=null;}
+
 document.getElementById('prev-close').addEventListener('click',closePreview);
 document.getElementById('prev-bg').addEventListener('click',function(e){if(e.target===this)closePreview();});
 var toastTimer=null;
-function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){el.classList.remove('show');},2200);}
+
 /* Выпадающие фильтры галерей (collection/templates).
    Множественный выбор: пусто = без ограничения; ИЛИ внутри категории, И между категориями.
    Узкоспециальные (оружие/доспех) показываются, только если такие карты есть.
@@ -709,6 +669,15 @@ function gaExitSel(clear){gaSelectMode=false;if(clear)gaSelected={};document.bod
   var sClear=document.getElementById('sel-clear');if(sClear)sClear.addEventListener('click',function(){gaSelected={};[].forEach.call(document.querySelectorAll('.g-card.gsel'),function(el){el.classList.remove('gsel');});_gaUpdateSelBar();});
 })();
 loadAll();buildFilters();renderGrid();
+/* сид-примеры: лениво (1.3МБ не блокирует рендер страницы) */
+if(!allCards.length){
+  document.getElementById('empty-title').textContent='Загружаем примеры…';
+  document.getElementById('empty-sub').textContent='';
+  fetch('templates-data.json').then(function(r){return r.json();}).then(function(seed){
+    window.SEED_TEMPLATES=seed;
+    if(!allCards.length){loadAll();buildFilters();renderGrid();}
+  }).catch(function(){document.getElementById('empty-title').textContent='Шаблонов пока нет';});
+}
 })();
 </script>
 <script>
