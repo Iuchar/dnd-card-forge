@@ -50,6 +50,13 @@ h1 span{font-weight:400;color:#cbb98f;}
   filter:brightness(.88) saturate(.95);box-shadow:0 26px 56px rgba(0,0,0,.65),0 0 46px rgba(201,162,39,.14);}
 .fan img.slot-right{left:236px;top:34px;width:164px;transform:rotate(8deg);z-index:1;
   filter:brightness(.82) saturate(.92);box-shadow:0 20px 44px rgba(0,0,0,.55);}
+/* узкие экраны: веер сжимается внутрь контейнера (карты позиционированы от краёв) */
+@media (max-width:460px){
+  .fan{height:232px;}
+  .fan img.slot-left{left:0;top:22px;width:118px;}
+  .fan img.slot-center{left:50%;margin-left:-66px;width:132px;top:0;}
+  .fan img.slot-right{left:auto;right:0;top:26px;width:118px;}
+}
 
 /* ---- sections ---- */
 .sect{margin-bottom:34px;}
