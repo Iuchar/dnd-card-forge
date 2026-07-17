@@ -66,6 +66,9 @@ select.si option:hover{background:var(--gold);color:#1a1208;}
 textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
 .sf{display:flex;flex-direction:column;gap:3px;}
+/* Галка «Без картинки» стоит над зоной загрузки; при включении зона прячется. */
+.noimg-toggle{display:flex;align-items:center;gap:7px;margin-bottom:8px;cursor:pointer;font-size:12.5px;color:#c9b78e;user-select:none;}
+.noimg-toggle input{width:15px;height:15px;accent-color:#a9722c;cursor:pointer;flex-shrink:0;margin:0;}
 .img-drop{width:100%;height:56px;border:1.5px dashed var(--border2);border-radius:7px;display:flex;align-items:center;justify-content:center;gap:7px;color:var(--text3);font-family:'Cinzel',serif;font-size:11px;letter-spacing:.07em;cursor:pointer;transition:all .14s;position:relative;overflow:hidden;}
 .img-drop:hover{border-color:var(--accent-l);color:var(--text2);background:rgba(255,255,255,.03);}
 .img-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
@@ -191,6 +194,12 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important;}
 }
+
+/* Разметка описания: панель кнопок Ж/К/П над полем + предупреждение о непомещении. */
+.fmt-bar{display:flex;gap:5px;margin:0 0 6px;}
+.fmt-btn{min-width:34px;height:32px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:0.5px solid var(--border2);border-radius:6px;color:var(--text);font-family:'Crimson Text',Georgia,serif;font-size:15px;line-height:1;cursor:pointer;transition:border-color .15s,background .15s;}
+.fmt-btn:hover{border-color:var(--gold);background:rgba(255,255,255,.09);}
+.fmt-warn{font-family:'Crimson Text',Georgia,serif;font-style:italic;font-size:11.5px;color:#e08070;line-height:1.4;margin:2px 0 8px;}
 html:focus,body:focus{outline:none;}
 button:focus{outline:none;}
 :root{
@@ -206,7 +215,10 @@ button:focus{outline:none;}
 .c-img{width:100%;height:163px;flex-shrink:0;background:#cfc0a0;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .c-img-ph{opacity:.25;display:flex;align-items:center;justify-content:center;}
 .c-img-ph svg{width:48px;height:48px;}
-.c-name{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:#2a1e0a;line-height:1.2;margin-bottom:1px;flex-shrink:0;}
+.c-name{font-family:'Cinzel',serif;font-size:var(--name-fs,16px);font-weight:700;color:#2a1e0a;line-height:1.2;margin-bottom:1px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* «Без картинки»: слот изображения убран, тело карты (flex:1) само забирает
+   его высоту, splitDesc дольёт текст — досчитывать ничего не нужно. */
+.dc.no-img .c-img{display:none;}
 .c-rule{height:.7px;background:#8a7860;opacity:.55;margin:3px 0;flex-shrink:0;}
 .c-stripe{height:10px;flex-shrink:0;background:var(--ca,#a09080);transition:background .2s;}
 .c-stripe-under{height:1.5px;flex-shrink:0;background:#5a4820;}
@@ -233,13 +245,13 @@ button:focus{outline:none;}
 .cb-rubashka{position:absolute;inset:0;z-index:2;}
 .cb-body{flex:1;min-height:0;padding:2px 16px 5px;display:flex;flex-direction:column;overflow:hidden;}
 .cb-lbl{font-family:'Cinzel',serif;font-size:12px;font-weight:700;color:#3a2200;margin-bottom:5px;text-align:center;letter-spacing:.1em;border-bottom:.5px solid rgba(90,72,32,.3);padding:2px 0;}
-.cb-desc{font-family:'Crimson Text',Georgia,serif;font-size:11px;color:#2a1e0a;line-height:1.5;flex:1;overflow:hidden;white-space:pre-wrap;}
-.dc{width:310px;height:437px;border-radius:12px;overflow:hidden;border:3px solid var(--cb,#a09080);background:#e8dcc8;display:flex;flex-direction:column;font-family:'Crimson Text',Georgia,serif;box-shadow:3px 3px 0 var(--cs,#6a5838);transition:border-color .2s,box-shadow .2s;position:relative;}
+.cb-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);color:#2a1e0a;line-height:1.5;flex:1;overflow:hidden;white-space:pre-wrap;}
+.dc{width:310px;height:437px;border-radius:12px;overflow:hidden;border:3px solid var(--cb,#a09080);background:#e8dcc8;display:flex;flex-direction:column;font-family:'Crimson Text',Georgia,serif;transition:border-color .2s;position:relative;}
 .c-ttype{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:#8a7860;margin:1px 0 2px;flex-shrink:0;}
 .c-stat-wrap{display:flex;align-items:center;gap:7px;margin:2px 0 1px;flex-shrink:0;}
 .c-stat-label{font-family:'Cinzel',serif;font-size:7.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8b6914;border:0.7px solid rgba(139,105,20,.45);border-radius:3px;padding:1.5px 5px;background:rgba(139,105,20,.09);flex-shrink:0;}
 .c-stat-value{font-family:'Cinzel',serif;font-size:11px;font-weight:700;color:#2a1e0a;}
-.c-desc{font-family:'Crimson Text',Georgia,serif;font-size:11px;color:#2a1e0a;line-height:1.5;flex:1;overflow:hidden;white-space:pre-wrap;}
+.c-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);color:#2a1e0a;line-height:1.5;flex:1;overflow:hidden;white-space:pre-wrap;}
 .coll-item-thumb{width:30px;height:42px;border-radius:4px;flex-shrink:0;background:var(--bg4);overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.08);}
 .coll-sect-count{font-family:'Cinzel',serif;font-size:9px;color:var(--text3);opacity:.55;}
 .coll-sect-body{display:flex;flex-direction:column;gap:7px;max-height:304px;overflow-y:auto;padding-bottom:4px;}
@@ -273,6 +285,10 @@ button:focus{outline:none;}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         Готовые шаблоны
       </a>
+      <a class="nav-item" href="spellbook.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Книга заклинаний
+      </a>
       <div class="nav-sep"></div>
       <div class="nav-section-lbl">Генераторы</div>
       <a class="nav-item" href="weapon-2014.html">
@@ -303,12 +319,12 @@ button:focus{outline:none;}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><line x1="8.5" y1="2" x2="15.5" y2="2"/></svg>
         Яды
       </a>
+      <a class="nav-item" href="spells.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M12 3l1.9 5.3L19 10l-5.1 1.7L12 17l-1.9-5.3L5 10l5.1-1.7z"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z"/></svg>
+        Заклинания
+      </a>
       <div class="nav-sep"></div>
       <div class="nav-section-lbl">Скоро</div>
-      <span class="nav-item nav-disabled">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-        Заклинания
-      </span>
       <span class="nav-item nav-disabled">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>
         Огнестрел и взрывчатка
@@ -358,6 +374,7 @@ button:focus{outline:none;}
   </div>
 
   <div class="lbl">Картинка</div>
+  <label class="noimg-toggle"><input type="checkbox" id="f-noimg"/><span>Без картинки</span></label>
   <div class="img-drop" id="img-drop">
     <div class="img-thumb" id="img-thumb" style="display:none;"></div>
     <svg id="img-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
@@ -417,9 +434,15 @@ button:focus{outline:none;}
   </select>
 
   <div class="lbl">Что даёт владение</div>
+  <div class="fmt-bar" role="group" aria-label="Форматирование описания">
+    <button type="button" class="fmt-btn" data-fmt="**" title="Полужирный (Ctrl+B)" aria-label="Полужирный"><b>Ж</b></button>
+    <button type="button" class="fmt-btn" data-fmt="*" title="Курсив (Ctrl+I)" aria-label="Курсив"><i>К</i></button>
+    <button type="button" class="fmt-btn" data-fmt="__" title="Подчёркнутый (Ctrl+U)" aria-label="Подчёркнутый"><u>П</u></button>
+  </div>
   <div class="field-wrap field-mb">
-    <textarea class="si" id="fdesc" maxlength="900" placeholder="Владение этим инструментом позволяет… (перенос на оборот — автоматически)" style="height:350px;"></textarea>
-    <span class="char-counter" id="cnt-desc">0/750</span>
+    <textarea class="si" id="fdesc" maxlength="2400" placeholder="Владение этим инструментом позволяет… (перенос на оборот — автоматически)" style="height:350px;"></textarea>
+    <span class="char-counter" id="cnt-desc">0/2000</span>
+    <div class="fmt-warn" id="desc-warn" role="status" aria-live="polite" style="display:none;"></div>
   </div>
 
   <button class="btn-build" id="gbtn">✦ Создать карточку</button>
@@ -669,22 +692,47 @@ document.querySelectorAll('.rp').forEach(function(el){
 
 /* живой предпросмотр + фильтры цены/веса (общие для всех страниц) */
 document.querySelector('.sb').addEventListener('input',function(){renderCard(readForm());});
-document.getElementById('fc').addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9.,\/]/g,'');this.setSelectionRange(p,p);});
-document.getElementById('fwgt').addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9.,\/]/g,'');this.setSelectionRange(p,p);});
+/* fc/fwgt есть не на всех страницах (у заклинаний нет цены/веса) */
+var _fcEl=document.getElementById('fc');if(_fcEl)_fcEl.addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9.,\/]/g,'');this.setSelectionRange(p,p);});
+var _fwEl=document.getElementById('fwgt');if(_fwEl)_fwEl.addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9.,\/]/g,'');this.setSelectionRange(p,p);});
 document.querySelector('.sb').addEventListener('change',function(){renderCard(readForm());});
 
 /* счётчик символов */
-function mkCounter(inputId,countId,max){
+/* lenFn — необязательная мера длины (например, без учёта маркеров разметки) */
+function mkCounter(inputId,countId,max,lenFn){
   var inp=document.getElementById(inputId),cnt=document.getElementById(countId);
   if(!inp||!cnt)return;
   function upd(){
-    var n=inp.value.length;
+    var n=lenFn?lenFn(inp.value):inp.value.length;
     cnt.textContent=n+'/'+max;
     cnt.className='char-counter'+(n>=max?' over':n>max*.88?' warn':'');
   }
   if(!inp._cbound){inp.addEventListener('input',upd);inp._cbound=true;}upd();
 }
-mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',900);
+mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);
+
+/* Автошрифт названия: одна строка, лестница кеглей 16→10, дальше многоточие
+   (по образцу заклинаний). Общий для всех семи генераторов — spells crop.js
+   не включает, конфликта с его собственным _fitName нет. */
+var NAME_FS=[16,15,14,13,12,11,10];
+function _fitName(){
+  var el=document.getElementById('pnm');if(!el)return;
+  for(var i=0;i<NAME_FS.length;i++){
+    el.style.setProperty('--name-fs',NAME_FS[i]+'px');
+    if(el.scrollWidth<=el.clientWidth+1)return;
+  }
+}
+
+/* Флаг «Без картинки». Зону загрузки прячем здесь; превью перерисует
+   делегированный change на .sb из core.js — отдельный ререндер не нужен. */
+function _applyNoImgForm(on){
+  var drop=document.getElementById('img-drop');if(drop)drop.style.display=on?'none':'';
+  var rc=document.getElementById('btn-recrop'),dl=document.getElementById('btn-del-img');
+  if(on){if(rc)rc.style.display='none';if(dl)dl.style.display='none';}
+  else{var has=!!imgDataUrl;if(rc)rc.style.display=has?'flex':'none';if(dl)dl.style.display=has?'flex':'none';}
+}
+var _noImgCb=document.getElementById('f-noimg');
+if(_noImgCb)_noImgCb.addEventListener('change',function(){_applyNoImgForm(_noImgCb.checked);});
 
 /* image upload & crop */
 var fImgInput=document.getElementById('f-img');
@@ -918,18 +966,213 @@ document.getElementById('crop-apply').addEventListener('click',function(){
   document.getElementById('crop-modal-bg').classList.remove('open');
   toast('✦ Картинка применена');
 });
-/* Единое описание: лицевая заполняется, излишек автоматически уходит на оборот.
-   Лицевой блок: #pds (weapon/armor) или #pdesc (equipment/tools/poisons).
-   Оборот: renderBackCard({rarity,back}) если определён на странице, иначе #pbk напрямую.
-   _rafSoon: rAF с таймаут-фолбэком — в ФОНОВОЙ вкладке rAF заморожен браузером,
-   без фолбэка экспорт из галерей в фоне давал бы карточки без описания. */
+/* ── Разметка описания: **полужирный** *курсив* __подчёркнутый__ ──
+   Текст без маркеров даёт один ран, поэтому старые карточки, импорт и шаблоны
+   рендерятся ровно как прежде — миграция не нужна.
+
+   Маркер открывает стиль только при наличии парного дальше по строке, иначе это
+   обычный символ: "2*3" остаётся умножением, незакрытый "**жирный" — текстом.
+
+   Текст попадает в DOM только через createTextNode, теги берутся из белого
+   списка из трёх штук. innerHTML здесь не используется намеренно: описание
+   приходит из localStorage и из импортированного JSON, то есть является
+   недоверенным вводом. */
+var FMT_MARKS=[{m:'**',k:'b'},{m:'__',k:'u'},{m:'*',k:'i'}];
+
+/* текст -> плоский список ранов [{t,b,i,u}] */
+function parseFmt(text){
+  var s=String(text==null?'':text),runs=[],buf='',st={b:false,i:false,u:false},i=0;
+  function flush(){if(buf){runs.push({t:buf,b:st.b,i:st.i,u:st.u});buf='';}}
+  while(i<s.length){
+    var hit=null,lit=null;
+    for(var j=0;j<FMT_MARKS.length;j++){
+      var f=FMT_MARKS[j];
+      if(s.substr(i,f.m.length)!==f.m)continue;
+      /* закрывающий — всегда; открывающий — только если есть парный */
+      if(st[f.k]||s.indexOf(f.m,i+f.m.length)!==-1)hit=f;
+      else lit=f;
+      /* первое текстовое совпадение решает: иначе непарный "**" откатился бы на
+         одиночный "*" и нашёл "пару" в собственной второй звёздочке */
+      break;
+    }
+    if(hit){flush();st[hit.k]=!st[hit.k];i+=hit.m.length;}
+    else if(lit){buf+=lit.m;i+=lit.m.length;}
+    else{buf+=s.charAt(i);i++;}
+  }
+  flush();
+  return runs;
+}
+
+function runsText(runs){var o='',i=0;for(;i<runs.length;i++)o+=runs[i].t;return o;}
+/* видимый текст без маркеров — для счётчика и текстовых превью галерей */
+function stripFmt(text){return runsText(parseFmt(text));}
+function visLen(text){return stripFmt(text).length;}
+
+/* срез по ВИДИМОМУ смещению [from,to): теги на границе закрываются сами,
+   потому что каждая сторона карточки рендерит свой список ранов независимо */
+function sliceRuns(runs,from,to){
+  var out=[],pos=0;
+  for(var i=0;i<runs.length;i++){
+    var r=runs[i],a=pos,b=pos+r.t.length;pos=b;
+    if(b<=from||a>=to)continue;
+    var s=Math.max(from,a)-a,e=Math.min(to,b)-a;
+    if(e>s)out.push({t:r.t.slice(s,e),b:r.b,i:r.i,u:r.u});
+  }
+  return out;
+}
+
+function renderRuns(el,runs){
+  el.textContent='';
+  for(var i=0;i<runs.length;i++){
+    var r=runs[i],node=document.createTextNode(r.t);
+    if(r.u){var u=document.createElement('u');u.appendChild(node);node=u;}
+    if(r.i){var it=document.createElement('i');it.appendChild(node);node=it;}
+    if(r.b){var bo=document.createElement('b');bo.appendChild(node);node=bo;}
+    el.appendChild(node);
+  }
+}
+/* Разметка описания для генераторов: кнопки Ж/К/П, Ctrl+B/I/U и жёсткий предел
+   по ВИДИМЫМ символам. Автономный — поле находит сам (fdesc у большинства,
+   fprops у доспехов), поэтому один include обслуживает все шесть страниц.
+   Зависит от fmt.js (visLen); подключать после него, до splitdesc.js. */
+(function(){
+  var ta=document.getElementById('fdesc')||document.getElementById('fprops');
+  if(!ta)return;
+  /* Видимый предел: маркеры **__ __** в счёт не идут. Сырой maxlength поля выше —
+     это лишь потолок на случай, если поле забьют одними маркерами. */
+  var LIMIT=2000;
+
+  /* Замена куска поля с сохранением нативной отмены: присваивание ta.value стирает
+     стек undo браузера, поэтому пишем через execCommand, с откатом для старых. */
+  function taReplace(from,to,text){
+    ta.focus();ta.setSelectionRange(from,to);
+    var ok=false;try{ok=document.execCommand('insertText',false,text);}catch(e){ok=false;}
+    if(ok)return;
+    var v=ta.value;ta.value=v.slice(0,from)+text+v.slice(to);
+    ta.dispatchEvent(new Event('input',{bubbles:true}));
+  }
+
+  /* Обернуть выделение маркерами; повторный вызов на уже обёрнутом — снимает. */
+  function fmtWrap(mark){
+    var ml=mark.length,st=ta.selectionStart,en=ta.selectionEnd,v=ta.value,inner=v.slice(st,en);
+    if(st>=ml&&v.slice(st-ml,st)===mark&&v.slice(en,en+ml)===mark){
+      taReplace(st-ml,en+ml,inner);ta.setSelectionRange(st-ml,st-ml+inner.length);
+    }else if(inner.length>=ml*2&&inner.slice(0,ml)===mark&&inner.slice(inner.length-ml)===mark){
+      var bare=inner.slice(ml,inner.length-ml);
+      taReplace(st,en,bare);ta.setSelectionRange(st,st+bare.length);
+    }else{
+      taReplace(st,en,mark+inner+mark);ta.setSelectionRange(st+ml,st+ml+inner.length);
+    }
+    ta.focus();
+  }
+
+  [].forEach.call(document.querySelectorAll('.fmt-btn'),function(b){
+    b.addEventListener('click',function(){fmtWrap(b.getAttribute('data-fmt'));});
+  });
+
+  ta.addEventListener('keydown',function(e){
+    if(!(e.ctrlKey||e.metaKey)||e.altKey)return;
+    var k=(e.key||'').toLowerCase();
+    var m=k==='b'?'**':k==='i'?'*':k==='u'?'__':null;
+    if(!m)return;
+    e.preventDefault();fmtWrap(m);
+  });
+
+  /* Жёсткий предел по видимым символам. Работаем через beforeinput +
+     preventDefault (а не обрезкой value — та ломает Ctrl+Z). */
+  ta.addEventListener('beforeinput',function(e){
+    var t=e.inputType||'';
+    if(t.indexOf('delete')===0||t.indexOf('history')===0)return;
+    var data=e.data;
+    /* Enter даёт insertLineBreak/insertParagraph с data===null — без этой строки
+       перевод строки проскакивал бы мимо предела. */
+    if(data==null&&(t==='insertLineBreak'||t==='insertParagraph'))data='\n';
+    if(data==null&&e.dataTransfer)data=e.dataTransfer.getData('text/plain');
+    if(data==null)return;
+    var v=ta.value,head=v.slice(0,ta.selectionStart),tail=v.slice(ta.selectionEnd);
+    if(visLen(head+data+tail)<=LIMIT)return;
+    e.preventDefault();
+    /* кладём столько, сколько влезает */
+    var lo=0,hi=data.length;
+    while(lo<hi-1){var mid=(lo+hi)>>1;if(visLen(head+data.slice(0,mid)+tail)<=LIMIT)lo=mid;else hi=mid;}
+    if(lo>0)document.execCommand('insertText',false,data.slice(0,lo));
+  });
+})();
+/* Единое описание с разметкой и автокеглем. Лицевая заполняется, излишек уходит
+   на оборот. Кегль 12→10 общий для обеих сторон (--desc-fs). Разметка **__ __**
+   рендерится ранами, поэтому режем по ВИДИМОМУ смещению, а не по строке — иначе
+   срез разорвал бы тег пополам; sliceRuns закрывает и переоткрывает теги сам.
+   Оборот двух видов: renderBackCard (equipment/tools/poisons — прячет пустую
+   сторону в рубашку) или прямой #pbk (armor/weapon — оборот виден всегда).
+   _rafSoon: rAF с таймаут-фолбэком — в фоновой вкладке rAF заморожен, без него
+   экспорт из галерей давал бы карточки без описания. */
+var DESC_FS=[12,11.5,11,10.5,10];
 function _rafSoon(cb){var done=false;function run(){if(!done){done=true;cb();}}requestAnimationFrame(run);setTimeout(run,60);}
-function splitDesc(data){var desc=document.getElementById('pds')||document.getElementById('pdesc'),full=data.desc||'';function setBack(t){if(typeof renderBackCard==='function')renderBackCard({rarity:data.rarity,back:t});else document.getElementById('pbk').textContent=t;}desc.textContent='';if(!full){setBack('');return;}_rafSoon(function(){desc.textContent=full;var ch=desc.clientHeight;if(!ch||desc.scrollHeight<=ch+2){setBack('');return;}var lo=0,hi=full.length;while(lo<hi-1){var mid=Math.floor((lo+hi)/2);desc.textContent=full.slice(0,mid);if(desc.scrollHeight<=ch+2)lo=mid;else hi=mid;}var cut=lo;for(var i=cut;i>Math.max(0,cut-60);i--){if(full[i]===' '||full[i]==='\n'){cut=i;break;}}desc.textContent=full.slice(0,cut);var bs=(full[cut]===' '||full[cut]==='\n')?cut+1:cut;setBack(full.slice(bs));});}
-function readForm(){return{type:'tool',rarity:cr,toolType:document.getElementById('ftooltype').value,name:document.getElementById('fn').value.trim(),cost:document.getElementById('fc').value.trim(),coin:document.getElementById('fcoin').value,wgt:document.getElementById('fwgt').value.trim(),stat:document.getElementById('fstat').value,desc:document.getElementById('fdesc').value,attune:document.getElementById('fattune').value,img:imgDataUrl,rawImg:rawImgDataUrl};}
-function renderCard(data){var d=R[data.rarity||'common'];document.getElementById('p-rar').textContent=d.l;document.getElementById('p-type').textContent='Инструмент';document.getElementById('pnm').textContent=data.name||'Название инструмента';var cm=document.getElementById('p-cost');if(cm){if(data.cost){cm.textContent=data.cost+' '+(data.coin||'зм');cm.style.visibility='visible';}else{cm.style.visibility='hidden';}}document.getElementById('pwgt').textContent=data.wgt?data.wgt+' фнт.':'';var tt=document.getElementById('ptooltype');if(data.toolType){tt.textContent=data.toolType;tt.style.display='';}else{tt.style.display='none';}var st=document.getElementById('pstat');if(data.stat){document.getElementById('pstat-val').textContent=data.stat;st.style.display='';}else{st.style.display='none';}document.getElementById('prule-desc').style.display=(data.toolType||data.stat)?'':'none';setCardImg(data.img||null);applyR(data.rarity||'common');splitDesc(data);}
+function _descWarn(n){
+  var el=document.getElementById('desc-warn');if(!el)return;
+  if(n>0){var ni=document.getElementById('f-noimg');
+    el.textContent='⚠ Текст не помещается на карточку — обрезано '+n+' симв. Сократите описание'
+      +(ni&&!ni.checked?' или уберите картинку.':'.');
+    el.style.display='';}
+  else{el.style.display='none';}
+}
+/* наибольший видимый префикс с from, влезающий в el по высоте, с откатом до слова */
+function _cutRuns(el,runs,vis,from){
+  var ch=el.clientHeight,lo=from,hi=vis.length;
+  while(lo<hi-1){var mid=(lo+hi)>>1;renderRuns(el,sliceRuns(runs,from,mid));
+    if(el.scrollHeight<=ch+2)lo=mid;else hi=mid;}
+  var cut=lo;
+  for(var i=cut;i>Math.max(from,cut-60);i--){if(vis.charAt(i)===' '||vis.charAt(i)==='\n'){cut=i;break;}}
+  return cut;
+}
+function splitDesc(data){
+  var faceEl=document.getElementById('pds')||document.getElementById('pdesc');
+  var backEl=document.getElementById('pbk')||document.getElementById('pb-desc');
+  var hasRB=(typeof renderBackCard==='function');
+  var runs=parseFmt(data.desc||''),vis=runsText(runs);
+  function showBack(on){if(hasRB)renderBackCard({rarity:data.rarity,back:on?'x':''});}
+  function fillBack(from,to){showBack(true);renderRuns(backEl,sliceRuns(runs,from,to));}
+  function emptyBack(){showBack(false);if(!hasRB)renderRuns(backEl,[]);}
+
+  renderRuns(faceEl,[]);
+  if(!vis){emptyBack();_descWarn(0);return;}
+  _rafSoon(function(){
+    for(var i=0;i<DESC_FS.length;i++){
+      document.documentElement.style.setProperty('--desc-fs',DESC_FS[i]+'px');
+      renderRuns(faceEl,sliceRuns(runs,0,vis.length));
+      var ch=faceEl.clientHeight;
+      if(!ch)continue;
+      /* всё уместилось на лице — оборот в рубашку */
+      if(faceEl.scrollHeight<=ch+2){emptyBack();_descWarn(0);return;}
+      /* режем лицо, остаток — на оборот */
+      var cut=_cutRuns(faceEl,runs,vis,0);
+      renderRuns(faceEl,sliceRuns(runs,0,cut));
+      var bs=(vis.charAt(cut)===' '||vis.charAt(cut)==='\n')?cut+1:cut;
+      fillBack(bs,vis.length);
+      if(backEl.scrollHeight<=backEl.clientHeight+2){_descWarn(0);return;}
+      /* оборот переполнен — следующая ступень кегля */
+    }
+    /* не влезло даже на 10px — обрезаем оборот, считаем остаток для предупреждения */
+    var last=DESC_FS[DESC_FS.length-1];
+    document.documentElement.style.setProperty('--desc-fs',last+'px');
+    renderRuns(faceEl,sliceRuns(runs,0,vis.length));
+    var cut=_cutRuns(faceEl,runs,vis,0);
+    renderRuns(faceEl,sliceRuns(runs,0,cut));
+    var bs=(vis.charAt(cut)===' '||vis.charAt(cut)==='\n')?cut+1:cut;
+    showBack(true);
+    var bcut=_cutRuns(backEl,runs,vis,bs);
+    renderRuns(backEl,sliceRuns(runs,bs,bcut));
+    _descWarn(vis.length-bcut);
+  });
+}
+function readForm(){return{type:'tool',rarity:cr,toolType:document.getElementById('ftooltype').value,name:document.getElementById('fn').value.trim(),cost:document.getElementById('fc').value.trim(),coin:document.getElementById('fcoin').value,wgt:document.getElementById('fwgt').value.trim(),stat:document.getElementById('fstat').value,desc:document.getElementById('fdesc').value,attune:document.getElementById('fattune').value,noImg:document.getElementById('f-noimg').checked,
+    img:imgDataUrl,rawImg:rawImgDataUrl};}
+function renderCard(data){var d=R[data.rarity||'common'];document.getElementById('p-rar').textContent=d.l;document.getElementById('p-type').textContent='Инструмент';document.getElementById('pnm').textContent=data.name||'Название инструмента';
+  _fitName();document.getElementById('pc').classList.toggle('no-img',!!data.noImg);var cm=document.getElementById('p-cost');if(cm){if(data.cost){cm.textContent=data.cost+' '+(data.coin||'зм');cm.style.visibility='visible';}else{cm.style.visibility='hidden';}}document.getElementById('pwgt').textContent=data.wgt?data.wgt+' фнт.':'';var tt=document.getElementById('ptooltype');if(data.toolType){tt.textContent=data.toolType;tt.style.display='';}else{tt.style.display='none';}var st=document.getElementById('pstat');if(data.stat){document.getElementById('pstat-val').textContent=data.stat;st.style.display='';}else{st.style.display='none';}document.getElementById('prule-desc').style.display=(data.toolType||data.stat)?'':'none';setCardImg(data.img||null);applyR(data.rarity||'common');splitDesc(data);}
 /* Оборотная сторона с «рубашкой» (equipment/tools/kits/poisons). */
 function renderBackCard(data){var hasBack=data.back&&data.back.trim();var rubashka=document.getElementById('pb-rubashka');var pbs=document.getElementById('pbs');var pbs2=document.getElementById('pbs2');var pbBody=document.getElementById('pb-body');var pbFoot=document.getElementById('pb-foot');var pbDesc=document.getElementById('pb-desc');var pbgm=document.getElementById('pbgm');if(hasBack){rubashka.style.display='none';pbs.style.display='';pbs2.style.display='';pbBody.style.display='flex';pbFoot.style.display='';pbDesc.textContent=data.back;var d=R[data.rarity||'common'];pbs.style.background=d.a;pbgm.style.background=d.a;}else{rubashka.style.display='block';pbs.style.display='none';pbs2.style.display='none';pbBody.style.display='none';pbFoot.style.display='none';}}
-function applyFormData(data){cr=data.rarity||'nonmagic';document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');});var rEl=document.querySelector('.rp[data-r="'+cr+'"]');if(rEl)rEl.classList.add('on');document.getElementById('rn').textContent=R[cr].l;document.getElementById('ftooltype').value=data.toolType||'';document.getElementById('fn').value=data.name||'';document.getElementById('fc').value=data.cost||'';document.getElementById('fcoin').value=data.coin||'зм';document.getElementById('fwgt').value=data.wgt||'';document.getElementById('fstat').value=data.stat||'';document.getElementById('fdesc').value=data.desc||'';document.getElementById('fattune').value=data.attune||'';updateAttuneWrap();imgDataUrl=data.img||null;rawImgDataUrl=data.rawImg||data.img||null;var th=document.getElementById('img-thumb');if(imgDataUrl){th.style.backgroundImage='url('+imgDataUrl+')';th.style.display='block';document.getElementById('img-icon').style.display='none';document.getElementById('img-lbl').style.display='none';document.getElementById('btn-recrop').style.display='flex';document.getElementById('btn-del-img').style.display='flex';}else{th.style.display='none';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';}mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',900);}
+function applyFormData(data){cr=data.rarity||'nonmagic';document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');});var rEl=document.querySelector('.rp[data-r="'+cr+'"]');if(rEl)rEl.classList.add('on');document.getElementById('rn').textContent=R[cr].l;document.getElementById('ftooltype').value=data.toolType||'';document.getElementById('fn').value=data.name||'';document.getElementById('fc').value=data.cost||'';document.getElementById('fcoin').value=data.coin||'зм';document.getElementById('fwgt').value=data.wgt||'';document.getElementById('fstat').value=data.stat||'';document.getElementById('fdesc').value=data.desc||'';document.getElementById('fattune').value=data.attune||'';updateAttuneWrap();imgDataUrl=data.img||null;rawImgDataUrl=data.rawImg||data.img||null;
+  var _ni=document.getElementById('f-noimg');if(_ni)_ni.checked=!!data.noImg;if(typeof _applyNoImgForm==='function')_applyNoImgForm(!!data.noImg);var th=document.getElementById('img-thumb');if(imgDataUrl){th.style.backgroundImage='url('+imgDataUrl+')';th.style.display='block';document.getElementById('img-icon').style.display='none';document.getElementById('img-lbl').style.display='none';document.getElementById('btn-recrop').style.display='flex';document.getElementById('btn-del-img').style.display='flex';}else{th.style.display='none';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';}mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);}
 document.getElementById('btn-reset').addEventListener('click',function(){if(!confirm('Сбросить все поля?'))return;cr='nonmagic';document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');});document.querySelector('.rp[data-r="nonmagic"]').classList.add('on');document.getElementById('rn').textContent=R.nonmagic.l;['fn','fc','fwgt','fdesc'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('fcoin').value='зм';document.getElementById('ftooltype').selectedIndex=0;document.getElementById('fstat').selectedIndex=0;document.getElementById('fattune').selectedIndex=0;document.getElementById('attune-wrap').style.display='none';imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('f-img').value='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';setCardImg(null);applyR('nonmagic');renderCard({});toast('Поля сброшены');});
 var DEFAULT_NAME='Инструмент';
 function collItemSub(card){return card.toolType||'Инструмент';}
@@ -1182,27 +1425,45 @@ document.getElementById('btn-print-cancel').addEventListener('click',function(){
 });
 
 function startPrintCapture(mode,cards){
-  var frontImgs=[],backImgs=[];
+  var frontImgs=[],backImgs=[],printCards=[];
   var savedCard=currentCard?JSON.parse(JSON.stringify(currentCard)):null;
-  var elFront=document.getElementById('pc'),elBack=document.getElementById('pb');
   var i=0;
   toast('Подготовка к печати ('+cards.length+' карт.)...');
+  /* Стороны берём у страницы, если она их объявила: у заклинаний с продолжением
+     их больше двух. Остальные генераторы хука не имеют — там ровно #pc и #pb. */
+  function sidesOf(){
+    if(typeof _cardSides==='function'){
+      var a=_cardSides();
+      if(a&&a.length)return a;
+    }
+    var f=document.getElementById('pc'),b=document.getElementById('pb');
+    return (f&&b)?[f,b]:[];
+  }
   function captureNext(){
     if(i>=cards.length){
       if(savedCard){applyFormData(savedCard);renderCard(savedCard);currentCard=savedCard;}
-      buildPrintWindow(mode,cards,frontImgs,backImgs);
+      buildPrintWindow(mode,printCards,frontImgs,backImgs);
       return;
     }
     var card=cards[i];i++;
     applyFormData(card);renderCard(card);
     setTimeout(function(){
-      html2canvas(elFront,{scale:3,useCORS:true,allowTaint:true,logging:false}).then(function(fc){
-        return html2canvas(elBack,{scale:3,useCORS:true,allowTaint:true,logging:false}).then(function(bc){
-          frontImgs.push(fc.toDataURL('image/png'));
-          backImgs.push(bc.toDataURL('image/png'));
-          captureNext();
-        });
-      }).catch(function(){captureNext();});
+      var els=sidesOf();
+      var shots=[],k=0;
+      (function shot(){
+        if(k>=els.length){
+          /* пара сторон = одна физическая карта: продолжение даёт ещё одну */
+          for(var j=0;j<shots.length;j+=2){
+            frontImgs.push(shots[j]);
+            backImgs.push(shots[j+1]||shots[j]);
+            printCards.push(card);
+          }
+          captureNext();return;
+        }
+        html2canvas(els[k++],{scale:3,useCORS:true,allowTaint:true,logging:false})
+          .then(function(cv){shots.push(cv.toDataURL('image/png'));shot();})
+          .catch(function(){captureNext();});
+      })();
     },80);
   }
   captureNext();
@@ -1299,7 +1560,8 @@ var ALL_COLLECTIONS=[
   {key:'dnd_cardforge_equipment',idb:'dnd_equipment_imgs'},
   {key:'dnd_cardforge_tools',idb:'dnd_tools_imgs'},
   {key:'dnd_cardforge_kits',idb:'dnd_kits_imgs'},
-  {key:'dnd_cardforge_poisons',idb:'dnd_poisons_imgs'}
+  {key:'dnd_cardforge_poisons',idb:'dnd_poisons_imgs'},
+  {key:'dnd_cardforge_spells',idb:'dnd_spells_imgs'}
 ];
 function _idbReadAll(name,cb){
   var req=indexedDB.open(name,1);
@@ -1377,13 +1639,25 @@ window.__dndRenderCard=function(card,cb){
   fontsReady.then(function(){
     _waitLib(function(libOk){
     setTimeout(function(){
-      var f=document.getElementById('pc'),b=document.getElementById('pb');
-      if(!f||!b||!libOk){if(cb)cb(null);return;}
-      html2canvas(f,{scale:3,useCORS:true,allowTaint:true,logging:false}).then(function(fc){
-        html2canvas(b,{scale:3,useCORS:true,allowTaint:true,logging:false}).then(function(bc){
-          if(cb)cb({front:fc.toDataURL('image/png'),back:bc.toDataURL('image/png')});
-        });
-      }).catch(function(){if(cb)cb(null);});
+      /* Страница может объявить _cardSides() и отдать больше двух сторон
+         (заклинания с карточкой-продолжением). Остальные генераторы хука не
+         имеют — для них это по-прежнему ровно лицо и оборот. */
+      var els=(typeof _cardSides==='function')?_cardSides():null;
+      if(!els||!els.length){
+        var f=document.getElementById('pc'),b=document.getElementById('pb');
+        els=(f&&b)?[f,b]:null;
+      }
+      if(!els||!libOk){if(cb)cb(null);return;}
+      var pngs=[],k=0;
+      (function shot(){
+        if(k>=els.length){
+          if(cb)cb({front:pngs[0]||null,back:pngs[1]||null,sides:pngs});
+          return;
+        }
+        html2canvas(els[k++],{scale:3,useCORS:true,allowTaint:true,logging:false})
+          .then(function(cv){pngs.push(cv.toDataURL('image/png'));shot();})
+          .catch(function(){if(cb)cb(null);});
+      })();
     },70);
     });
   });

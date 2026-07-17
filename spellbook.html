@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>D&amp;D Card Forge — Моя коллекция</title>
-<meta name="description" content="Ваша коллекция карточек D&D 5e: все созданные предметы в одном месте — печать, экспорт, редактирование."/>
+<title>D&amp;D Card Forge — Книга заклинаний</title>
+<meta name="description" content="Ваша коллекция карточек заклинаний D&D 5e: фильтры по уровню, школе и компонентам, сортировка, печать и экспорт."/>
 <meta name="theme-color" content="#111009"/>
 <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"/>
 <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
 <meta property="og:type" content="website"/>
-<meta property="og:url" content="https://iuchar.github.io/dnd-card-forge/collection.html"/>
-<meta property="og:title" content="D&D Card Forge — Моя коллекция"/>
-<meta property="og:description" content="Ваша коллекция карточек D&D 5e: все созданные предметы в одном месте — печать, экспорт, редактирование."/>
+<meta property="og:url" content="https://iuchar.github.io/dnd-card-forge/spellbook.html"/>
+<meta property="og:title" content="D&D Card Forge — Книга заклинаний"/>
+<meta property="og:description" content="Ваша коллекция карточек заклинаний D&D 5e: фильтры по уровню, школе и компонентам, сортировка, печать и экспорт."/>
 <meta property="og:image" content="https://iuchar.github.io/dnd-card-forge/og-image.jpg"/>
 <meta property="og:image:width" content="1200"/>
 <meta property="og:image:height" content="630"/>
@@ -219,28 +219,109 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .hbtn.danger:not(:disabled):hover{background:rgba(220,60,60,.1);color:#e08070;border-color:rgba(220,60,60,.4);}
 .hbtn:disabled{opacity:.3;cursor:default;pointer-events:none;}
 .hbtn-sep{width:0.5px;height:20px;background:var(--border);margin:0 2px;flex-shrink:0;}
-
-/* GRID WRAP */
 .grid-wrap{flex:1;min-height:0;overflow-y:auto;background:#1a1814;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
-.g-card-img-ph svg{width:32px;height:32px;}
-.g-card-foot{padding:5px 7px 5px;background:rgba(0,0,0,.06);border-top:0.5px solid rgba(0,0,0,.12);flex-shrink:0;display:flex;flex-direction:column;gap:2px;}
-.g-card-badge{font-family:'Cinzel',serif;font-size:7px;color:#888077;border:0.5px solid rgba(0,0,0,.15);border-radius:3px;padding:1px 4px;background:rgba(0,0,0,.05);flex-shrink:0;letter-spacing:.05em;}
-.g-card-del{position:absolute;top:8px;right:8px;width:20px;height:20px;background:rgba(160,30,30,.85);border:none;border-radius:50%;color:#fff;font-size:10px;cursor:pointer;opacity:0;transition:opacity .13s;display:flex;align-items:center;justify-content:center;z-index:2;}
-.g-card:hover .g-card-del{opacity:1;}
+.prev-close:hover{background:rgba(220,60,60,.15);color:#e08070;border-color:rgba(220,60,60,.3);}
 .empty-state-links{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;justify-content:center;}
 .empty-state-link{padding:7px 16px;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);text-decoration:none;transition:all .14s;}
 .empty-state-link:hover{background:rgba(255,255,255,.09);color:var(--text);}
-.prev-close:hover{background:rgba(220,60,60,.15);color:#e08070;border-color:rgba(220,60,60,.3);}
 
-/* CARD CSS (same as generator pages) */
-.dc{
-  width:310px;height:437px;
-  border-radius:12px;overflow:hidden;
-  border:4px solid var(--cb,#a09080);
-  background:#e8dcc8;
-  display:flex;flex-direction:column;
-  font-family:'Crimson Text',Georgia,serif;
+/* ── СОРТИРОВКА ── */
+/* Условие лицензии CC BY 4.0, под которой Wizards выпустили SRD: без указания
+   источника разрешение копировать и переводить не действует. */
+.attrib{padding:6px 20px;border-top:0.5px solid var(--border);background:var(--bg2);font-family:'Crimson Text',Georgia,serif;font-size:11px;color:var(--text3);text-align:center;flex-shrink:0;}
+.attrib a{color:var(--text2);}
+.attrib a:hover{color:var(--gold-l);}
+.sort-bar{padding:8px 20px;border-bottom:0.5px solid var(--border);background:var(--bg2);display:flex;align-items:center;flex-shrink:0;}
+.sb-sort{display:flex;gap:3px;align-items:center;flex-wrap:wrap;}
+.sb-sort-h{font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--text2);margin-right:2px;}
+.sbs{padding:5px 11px;font-family:'Cinzel',serif;font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);background:transparent;border:0.5px solid var(--border2);border-radius:20px;cursor:pointer;transition:all .14s;}
+.sbs:hover{color:var(--text2);background:rgba(255,255,255,.05);}
+.sbs:focus-visible,.hbtn:focus-visible,.sp-row-del:focus-visible,.fdd:focus-visible{outline:2px solid var(--gold-l);outline-offset:1px;}
+.sbs.on{color:var(--gold-l);border-color:rgba(200,148,26,.4);background:rgba(200,148,26,.1);}
+
+/* ── СТРОКА СПИСКА (на пергаменте #grid-area) ──
+   Сетка, а не flex: шапка колонок и строки делят одну grid-template, поэтому
+   выравниваются гарантированно. В режиме выбора чекбокс появляется, а кнопка
+   удаления исчезает — число видимых ячеек не меняется, меняется только шаблон. */
+/* Название фиксировано на 400px. Избыток ширины монитора делят поровну
+   все остальные колонки через 1fr; minmax держит минимум, чтобы на узких экранах
+   содержимое не резалось. */
+.sp-grid{display:grid;grid-template-columns:3px 26px minmax(280px,400px) minmax(104px,1fr) minmax(96px,1fr) minmax(84px,1fr) minmax(104px,1fr) minmax(52px,92px) minmax(44px,70px) minmax(40px,70px) minmax(66px,70px) 20px;gap:14px;align-items:center;}
+.ga-selmode .sp-grid{grid-template-columns:20px 3px 26px minmax(280px,400px) minmax(104px,1fr) minmax(96px,1fr) minmax(84px,1fr) minmax(104px,1fr) minmax(52px,92px) minmax(44px,70px) minmax(40px,70px) minmax(66px,70px);}
+/* Шапка живёт ВНУТРИ .grid-wrap — иначе она шире таблицы ровно на полосу
+   прокрутки, потому что таблица эту полосу учитывает, а шапка снаружи нет.
+   sticky заодно удерживает её при прокрутке длинного списка. */
+/* Sticky живёт на обёртке, а не на самой шапке. У шапки скруглены верхние углы,
+   и содержимое, уезжая под неё, просвечивало пергаментом в вырезах. Обёртка
+   закрашена цветом прокручиваемой области — теперь в вырезах видно её. */
+.sp-hdr-wrap{position:sticky;top:0;z-index:5;background:#1a1814;padding-top:16px;}
+.sp-hdr{margin:0 16px;padding:7px 14px 7px 10px;background:#ddd2b6;border:1px solid rgba(200,148,26,.28);border-bottom:2px solid rgba(200,148,26,.45);border-radius:10px 10px 0 0;}
+.sp-hdr-c{font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#5f4d26;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* letter-spacing вешается и после последней буквы: колонке требуется лишний
+   пиксель ни на что, из-за него «КОМПОНЕНТЫ» резался при точном потолке.
+   Отрицательный margin-right снимает этот хвост. */
+.sp-hdr-c{margin-right:-.12em;}
+.sp-hdr-c.ctr{text-align:center;}
+.sp-hdr-cbx{display:none;}
+.ga-selmode .sp-hdr-cbx{display:block;}
+.ga-selmode .sp-hdr-del{display:none;}
+.sp-row{padding:7px 14px 7px 10px;cursor:pointer;border-bottom:0.5px solid rgba(90,72,32,.16);transition:background .12s;}
+.sp-row:last-child{border-bottom:none;}
+.sp-row:hover{background:rgba(200,148,26,.14);}
+.sp-row:focus-visible{outline:2px solid #8a6010;outline-offset:-2px;}
+.sp-row-stripe{width:3px;height:24px;border-radius:2px;}
+.sp-row-lvl{text-align:center;font-family:'Cinzel',serif;font-size:12.5px;font-weight:700;color:#5f4d26;}
+.sp-row-name{min-width:0;font-family:'Cinzel',serif;font-size:12.5px;font-weight:700;color:#241a08;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.sp-row-cell{min-width:0;font-family:'Crimson Text',Georgia,serif;font-size:12.5px;color:#3a2c14;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.sp-row-cell.dim{color:#6b5836;}
+.sp-row-comp{font-family:'Crimson Text',Georgia,serif;font-size:12.5px;color:#3a2c14;text-align:center;white-space:nowrap;}
+.sp-row-flags{display:flex;gap:3px;justify-content:center;}
+.sp-row-flag{font-family:'Cinzel',serif;font-size:10px;font-weight:700;color:#4a3a10;background:rgba(200,148,26,.3);border:0.5px solid rgba(200,148,26,.5);border-radius:3px;padding:1px 4px;line-height:1.4;}
+.sp-row-ed{font-family:'Cinzel',serif;font-size:10px;font-weight:600;color:#5f4d26;text-align:center;letter-spacing:.04em;}
+.sp-row-del{width:20px;height:20px;background:rgba(160,30,30,.85);border:none;border-radius:50%;color:#fff;font-size:9px;cursor:pointer;opacity:0;transition:opacity .13s;display:flex;align-items:center;justify-content:center;}
+.sp-row:hover .sp-row-del{opacity:1;}
+.sp-row-cbx{width:15px;height:15px;border-radius:4px;border:1.5px solid rgba(90,72,32,.5);background:rgba(255,255,255,.4);display:none;position:relative;}
+.ga-selmode .sp-row-cbx{display:block;}
+.ga-selmode .sp-row-del,.ga-selmode .sp-row-nodel{display:none;}
+.sp-row.gsel{background:rgba(200,148,26,.24);}
+.sp-row.gsel .sp-row-cbx{background:var(--gold-l);border-color:var(--gold-l);}
+.sp-row.gsel .sp-row-cbx::after{content:"";position:absolute;left:4px;top:1px;width:4px;height:8px;border:solid #1a1208;border-width:0 2px 2px 0;transform:rotate(45deg);}
+.sp-row-en{font-family:'Crimson Text',Georgia,serif;font-weight:400;font-size:12.5px;color:#6b5a3e;}
+.m-name-en{font-family:'Crimson Text',Georgia,serif;font-weight:400;font-size:13px;color:var(--text3);}
+.sp-src{max-width:66px;justify-self:center;font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:.06em;border-radius:3px;padding:2px 5px;text-align:center;white-space:nowrap;}
+.sp-src.own{color:#4a3a10;background:rgba(200,148,26,.3);border:0.5px solid rgba(200,148,26,.5);}
+.sp-src.tpl{color:#6b5836;background:rgba(90,72,32,.1);border:0.5px solid rgba(90,72,32,.25);}
+.sp-list{background:#efe9db;}
+/* ── УЗКИЕ ЭКРАНЫ ──
+   Десктопной таблице нужно ~1140px. Вместо горизонтального скролла роняем
+   колонки ступенями. Скрытый ребёнок не занимает ячейку grid, поэтому число
+   колонок в шаблоне равно числу ВИДИМЫХ ячеек (счёт — в шапке v21_mob.py).
+   Полоса цвета школы и название не падают никогда. */
+@media (max-width:1150px){
+  .sp-grid{grid-template-columns:3px 26px minmax(240px,400px) minmax(104px,1fr) minmax(96px,1fr) minmax(84px,1fr) minmax(104px,1fr) minmax(52px,92px) minmax(44px,70px) 20px;gap:12px;}
+  .ga-selmode .sp-grid{grid-template-columns:20px 3px 26px minmax(240px,400px) minmax(104px,1fr) minmax(96px,1fr) minmax(84px,1fr) minmax(104px,1fr) minmax(52px,92px) minmax(44px,70px);gap:12px;}
+  .sp-col-lg{display:none;}
 }
+@media (max-width:900px){
+  .sp-grid{grid-template-columns:3px 24px minmax(200px,1fr) minmax(104px,1fr) minmax(96px,1fr) minmax(52px,92px) minmax(44px,70px) 20px;gap:10px;}
+  .ga-selmode .sp-grid{grid-template-columns:20px 3px 24px minmax(200px,1fr) minmax(104px,1fr) minmax(96px,1fr) minmax(52px,92px) minmax(44px,70px);gap:10px;}
+  .sp-col-md{display:none;}
+  .sp-hdr,#grid-area{margin-left:8px;margin-right:8px;}
+  .sp-row,.sp-hdr{padding-left:8px;padding-right:8px;}
+}
+@media (max-width:600px){
+  .sp-grid{grid-template-columns:3px 22px minmax(110px,1fr) minmax(52px,92px) minmax(44px,70px) 20px;gap:8px;}
+  .ga-selmode .sp-grid{grid-template-columns:18px 3px 22px minmax(110px,1fr) minmax(52px,92px) minmax(44px,70px);gap:8px;}
+  .sp-col-sm{display:none;}
+  .sp-row-en{display:none;}
+}
+/* Шапка колонок стоит вплотную к списку: у #grid-area своя margin:16px из общих
+   стилей галерей, верхнюю гасим — иначе между шапкой и таблицей зазор в 16px. */
+#grid-area{margin-top:0;border-radius:0 0 12px 12px;}
+.gal-section-head{padding:7px 20px;}
+.gal-section-title{font-size:12.5px;color:#4a3a10;}
+/* превью без изображения: поля на всю ширину */
+.prev-simple.noimg .prev-simple-info{flex:1;min-width:0;}
 
 /* CONFIRM MODAL */
 .conf-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:400;display:none;align-items:center;justify-content:center;}
@@ -328,7 +409,7 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
       </span>
     </div>
     </div>
-    <h1 style="font-size:12px;color:var(--text2);font-family:'Crimson Text',serif;font-style:italic;font-weight:400;margin:0;">— Моя коллекция</h1>
+    <h1 style="font-size:12px;color:var(--text2);font-family:'Crimson Text',serif;font-style:italic;font-weight:400;margin:0;">— Книга заклинаний</h1>
   </div>
   <div class="header-right">
     <button class="hbtn" id="btn-select-mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span class="bsm-lbl">Выбрать</span></button>
@@ -344,18 +425,6 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 
 <div class="pg-layout">
 
-  <!-- FILTER BAR -->
-  <div class="filter-bar">
-    <div class="filter-search-wrap">
-      <svg class="filter-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input class="filter-search" id="filter-search" type="text" placeholder="Поиск по названию…" autocomplete="off"/>
-      <button class="filter-search-clear" id="filter-search-clear" title="Очистить">✕</button>
-    </div>
-    <div class="fdd-host" id="fdd-host"></div>
-    <div class="filter-stats" id="filter-stats">Загрузка…</div>
-  </div>
-
-  <!-- GRID -->
   <div class="sel-bar" id="sel-bar">
     <span class="sel-info">Выбрано: <b id="sel-count">0</b></span>
     <button class="hbtn" id="sel-save" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Сохранить выбранные</button>
@@ -363,28 +432,69 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
     <button class="hbtn" id="sel-all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Выбрать всё</button>
     <button class="hbtn" id="sel-clear">Снять выделение</button>
   </div>
-  <div class="grid-wrap" id="grid-wrap">
-    <div class="grid-area" id="grid-area"></div>
-    <div class="empty-state" id="empty-state" style="display:none;">
-      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
-      <div class="empty-state-title">Коллекция пуста</div>
-      <div class="empty-state-sub">Создайте карточку в генераторе<br/>и добавьте её в коллекцию.</div>
-      <div class="empty-state-links">
-        <a class="empty-state-link" href="weapon-2014.html">Оружие 2014</a>
-        <a class="empty-state-link" href="weapon-2024.html">Оружие 2024</a>
-        <a class="empty-state-link" href="armor.html">Доспехи</a>
-      </div>
+
+  <div class="filter-bar">
+        <div class="filter-search-wrap">
+          <svg class="filter-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="filter-search" id="filter-search" type="text" placeholder="Поиск по названию, рус. или англ.…" autocomplete="off"/>
+          <button class="filter-search-clear" id="filter-search-clear" title="Очистить">✕</button>
+        </div>
+    <div class="fdd-host" id="fdd-host"></div>
+    <div class="filter-stats" id="filter-stats" aria-live="polite" aria-atomic="true">Загрузка…</div>
+  </div>
+
+  <div class="sort-bar">
+    <div class="sb-sort" role="group" aria-label="Сортировка">
+      <span class="sb-sort-h">Сортировка</span>
+      <button class="sbs on" data-sort="level" aria-pressed="true">Уровень</button>
+      <button class="sbs" data-sort="name" aria-pressed="false">Название</button>
+      <button class="sbs" data-sort="school" aria-pressed="false">Школа</button>
     </div>
   </div>
 
+      <div class="grid-wrap" id="grid-wrap">
+      <div class="sp-hdr-wrap">
+      <div class="sp-hdr sp-grid" id="sp-hdr" aria-hidden="true">
+        <span class="sp-hdr-cbx"></span>
+        <span></span>
+        <span class="sp-hdr-c" style="text-align:center;">Ур.</span>
+        <span class="sp-hdr-c">Название</span>
+        <span class="sp-hdr-c sp-col-sm">Школа</span>
+        <span class="sp-hdr-c sp-col-sm">Время</span>
+        <span class="sp-hdr-c sp-col-md">Дистанция</span>
+        <span class="sp-hdr-c sp-col-md">Длительность</span>
+        <span class="sp-hdr-c ctr">Компоненты</span>
+        <span class="sp-hdr-c ctr">К/Р</span>
+        <span class="sp-hdr-c ctr sp-col-lg">Редакция</span>
+        <span class="sp-hdr-c ctr sp-col-lg">Шаблон</span>
+        <span class="sp-hdr-del"></span>
+      </div>
+      </div>
+        <div id="grid-area"></div>
+        <div class="empty-state" id="empty-state" style="display:none;">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="0.8"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+          <div class="empty-state-title">Книга пуста</div>
+          <div class="empty-state-sub">Создайте заклинание в генераторе<br/>и добавьте его в коллекцию.</div>
+          <div class="empty-state-links">
+            <a class="empty-state-link" href="spells.html">Генератор заклинаний</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="attrib">
+    Механические данные и описания заклинаний — из System Reference Document 5.1
+    © Wizards of the Coast, лицензия
+    <a href="https://creativecommons.org/licenses/by/4.0/legalcode" target="_blank" rel="noopener">CC BY 4.0</a>
+  </div>
 </div>
 
 <!-- PREVIEW MODAL -->
 <div class="prev-bg" id="prev-bg">
   <div class="prev-box">
     <div class="prev-head"><span class="prev-title" id="prev-title">Предпросмотр</span><button class="prev-close" id="prev-close">✕</button></div>
-    <div class="prev-simple">
-      <div class="prev-simple-img" id="m-img"></div>
+    <div class="prev-simple noimg">
       <div class="prev-simple-info">
         <div class="prev-simple-name" id="m-name">Имя</div>
         <div class="prev-simple-meta" id="m-meta"></div>
@@ -394,7 +504,7 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
     <div class="prev-actions">
       <button class="hbtn" id="btn-prev-save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Сохранить PNG</button>
       <button class="hbtn" id="btn-prev-print"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Печать</button>
-      <a class="hbtn" id="m-edit" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg>Редактировать в генераторе</a>
+      <a class="hbtn" id="m-edit" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4z"/></svg><span class="m-edit-lbl">Редактировать в генераторе</span></a>
       <button class="hbtn danger" id="btn-m-del"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Удалить карточку</button>
     </div>
   </div>
@@ -414,15 +524,16 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 <div class="gp-bg" id="gprint-bg">
   <div class="gp-box">
     <h3>Печать карточек</h3>
-    <p>Карточек: <b id="gprint-count">0</b>. Выберите режим:</p>
+    <p>Выбрано: <b id="gprint-count">0</b></p>
     <div class="gp-btns">
-      <button class="hbtn" id="gprint-single"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>На одном листе (лицо + оборот рядом)</button>
-      <button class="hbtn" id="gprint-duplex"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Двусторонняя (3×3, для дуплекс-принтера)</button>
+      <button class="hbtn" id="gprint-single">Лицо и оборот на одном листе</button>
+      <button class="hbtn" id="gprint-duplex">Двусторонняя печать</button>
       <button class="hbtn" id="gprint-cancel">Отмена</button>
     </div>
   </div>
 </div>
-<div class="toast" id="toast"></div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 (function(){
@@ -556,71 +667,350 @@ function describeCard(card){
   var html=(rows.length?'<div class="cf-rows">'+rows.join('')+'</div>':'')+blocks.join('');
   return html||'<div class="cf-empty">(свойства не заполнены)</div>';
 }
-var R={nonmagic:{l:'Немагический',a:'#f5f5f5'},common:{l:'Обычный',a:'#888077'},uncommon:{l:'Необычный',a:'#52aa40'},rare:{l:'Редкий',a:'#4a8ccc'},veryrare:{l:'Очень редкий',a:'#9870cc'},legendary:{l:'Легендарный',a:'#e09820'}};
-var COLLECTIONS=[
-  {key:'dnd_cardforge_weapon2014',src:'weapon2014',group:'weapon',label:'Оружие 2014',gen:'weapon-2014.html',idb:'dnd_weapon2014_imgs'},
-  {key:'dnd_cardforge_weapon2024',src:'weapon2024',group:'weapon',label:'Оружие 2024',gen:'weapon-2024.html',idb:'dnd_weapon2024_imgs'},
-  {key:'dnd_cardforge_armor',src:'armor',group:'armor',label:'Доспехи',gen:'armor.html',idb:'dnd_armor_imgs'},
-  {key:'dnd_cardforge_equipment',src:'equipment',group:'equipment',label:'Снаряжение',gen:'equipment.html',idb:'dnd_equipment_imgs'},
-  {key:'dnd_cardforge_tools',src:'tools',group:'tools',label:'Инструменты',gen:'tools.html',idb:'dnd_tools_imgs'},
-  {key:'dnd_cardforge_kits',src:'kits',group:'kits',label:'Наборы',gen:'kits.html',idb:'dnd_kits_imgs'},
-  {key:'dnd_cardforge_poisons',src:'poisons',group:'poisons',label:'Яды',gen:'poisons.html',idb:'dnd_poisons_imgs'}
-];
-/* Общее ядро галерей (collection + templates). Включать ВНУТРИ IIFE страницы
-   (замыкание: badgeText/openPreview/gaSelMode/... определяются страницей).
-   Хук galCardExtras(card,wrap) — опционален (collection добавляет кнопку удаления). */
-var GROUPS=[{id:'weapon',label:'Оружие'},{id:'armor',label:'Доспехи'},{id:'equipment',label:'Снаряжение'},{id:'tools',label:'Инструменты'},{id:'kits',label:'Наборы'},{id:'poisons',label:'Яды'}];
+
+/* Палитра школ — та же, что в генераторе заклинаний */
+var R={
+  abjuration:{l:'Ограждение',a:'#3a8ccc'},
+  conjuration:{l:'Вызов/Призыв',a:'#d98e2b'},
+  divination:{l:'Прорицание',a:'#9ab8c8'},
+  enchantment:{l:'Очарование',a:'#c05a9a'},
+  evocation:{l:'Воплощение',a:'#c04030'},
+  illusion:{l:'Иллюзия',a:'#8a5ac0'},
+  necromancy:{l:'Некромантия',a:'#557a3a'},
+  transmutation:{l:'Преобразование',a:'#3aa08a'}
+};
+var SCHOOL_ORDER=['evocation','conjuration','illusion','necromancy','abjuration','enchantment','transmutation','divination'];
+var LS_KEY='dnd_cardforge_spells';
+var GEN_PAGE='spells.html';
+
+var allCards=[],previewCard=null,toastTimer=null;
+
 function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){el.classList.remove('show');},2200);}
 function closePreview(){document.getElementById('prev-bg').classList.remove('open');previewCard=null;}
-function subLabel(c){switch(c._group){case 'armor':return (c.armorType||'Доспех')+(c.acDisplay?' · КБ '+c.acDisplay:'');case 'equipment':return c.category||'';case 'tools':return c.toolType||'';case 'kits':return (c.composition||'').split('\n').filter(function(x){return x.trim();}).length+' предм.';case 'poisons':return c.poisonType||'';default:return [c.kind,c.cat,c.dt].filter(Boolean).join(' · ');}}
-function makeGridCard(card){var d=R[card.rarity||'common']||R.common;var wrap=document.createElement('div');wrap.className='g-card';var stripe=document.createElement('div');stripe.className='g-card-stripe';stripe.style.background=d.a;var imgWrap=document.createElement('div');imgWrap.className='g-card-img';if(card.img){var img=document.createElement('img');img.src=card.img;img.alt='';imgWrap.appendChild(img);}else{imgWrap.innerHTML='<div class="g-card-img-ph"><svg viewBox="0 0 24 24" fill="none" stroke="#8a7860" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>';}var foot=document.createElement('div');foot.className='g-card-foot';var badgeCls='g-card-badge'+(card._source==='weapon2014'?' ed14':card._source==='weapon2024'?' ed24':'');foot.innerHTML='<div class="g-card-nrow"><span class="g-card-name">'+(card.name||'Без названия')+'</span><span class="'+badgeCls+'">'+badgeText(card)+'</span></div><span class="g-card-sub">'+subLabel(card)+'</span>';var ov=document.createElement('div');ov.className='g-card-ov';ov.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';wrap.appendChild(stripe);wrap.appendChild(imgWrap);wrap.appendChild(foot);if(typeof galCardExtras==='function')galCardExtras(card,wrap);wrap.appendChild(ov);wrap.addEventListener('click',function(){if(typeof gaSelMode==='function'&&gaSelMode()){gaToggleSelect(card,wrap);}else{openPreview(card);}});if(typeof gaIsSelected==='function'&&gaIsSelected(card))wrap.classList.add('gsel');var _cbx=document.createElement('div');_cbx.className='g-card-cbx';wrap.appendChild(_cbx);return wrap;}
-function srcInfo(src){for(var i=0;i<COLLECTIONS.length;i++)if(COLLECTIONS[i].src===src)return COLLECTIONS[i];return null;}
-var allCards=[],previewCard=null;
-function loadAll(){allCards=[];COLLECTIONS.forEach(function(col){try{var d=localStorage.getItem(col.key);if(d){var arr=JSON.parse(d);if(Array.isArray(arr))arr.forEach(function(c){allCards.push(Object.assign({},c,{_source:col.src,_group:col.group}));});}}catch(e){}});}
-/* картинки лежат в IndexedDB каждой страницы (store 'imgs', ключ = String(id)) — подтягиваем по id */
-function loadImages(done){
-  var cols=COLLECTIONS.filter(function(col){return allCards.some(function(c){return c._source===col.src;});});
-  if(!cols.length){if(done)done();return;}
-  var pending=cols.length;
-  function colDone(){if(--pending===0&&done)done();}
-  cols.forEach(function(col){
-    var cards=allCards.filter(function(c){return c._source===col.src;});
-    var r;try{r=indexedDB.open(col.idb,1);}catch(e){colDone();return;}
-    r.onupgradeneeded=function(e){try{if(!e.target.result.objectStoreNames.contains('imgs'))e.target.result.createObjectStore('imgs');}catch(e2){}};
-    r.onerror=function(){colDone();};
-    r.onsuccess=function(e){
-      var db=e.target.result;
-      if(!db.objectStoreNames.contains('imgs')){db.close();colDone();return;}
-      var p2=cards.length;if(!p2){db.close();colDone();return;}
-      try{
-        var store=db.transaction('imgs','readonly').objectStore('imgs');
-        cards.forEach(function(c){
-          var q=store.get(String(c.id));
-          q.onsuccess=function(ev){if(ev.target.result)c.img=ev.target.result;if(--p2===0){db.close();colDone();}};
-          q.onerror=function(){if(--p2===0){db.close();colDone();}};
-        });
-      }catch(err){db.close();colDone();}
-    };
+/* gallery-actions рендерит карту через скрытый iframe генератора */
+function _genPageOf(){return GEN_PAGE;}
+
+/* Готовые шаблоны читаются из файла, свои — из localStorage. Именно поэтому
+   шаблон невозможно удалить или изменить: удаление и сохранение пишут только в
+   localStorage, а при следующей загрузке шаблон снова придёт из файла.
+   _source различает их для _cardKey (выделение) и для кнопок превью. */
+function loadAll(){
+  allCards=[];
+  (window.SEED_SPELLS||[]).forEach(function(t){
+    allCards.push(Object.assign({},t,{_source:'spells-tpl',_group:'spells',_tpl:true}));
   });
+  try{
+    var d=localStorage.getItem(LS_KEY);
+    if(d){var arr=JSON.parse(d);if(Array.isArray(arr))arr.forEach(function(c){
+      allCards.push(Object.assign({},c,{_source:'spells',_group:'spells'}));
+    });}
+  }catch(e){}
 }
-function saveBack(src){var col=srcInfo(src);if(!col)return;var cards=allCards.filter(function(c){return c._source===src;}).map(function(c){var o=Object.assign({},c);delete o._source;delete o._group;return o;});try{localStorage.setItem(col.key,JSON.stringify(cards));}catch(e){try{var mini=cards.map(function(c){var o=Object.assign({},c);delete o.rawImg;delete o.img;return o;});localStorage.setItem(col.key,JSON.stringify(mini));}catch(e2){}}}
+function ownCards(){return allCards.filter(function(c){return !c._tpl;});}
+function saveBack(){
+  var cards=ownCards().map(function(c){var o=Object.assign({},c);delete o._source;delete o._group;delete o._tpl;return o;});
+  try{localStorage.setItem(LS_KEY,JSON.stringify(cards));}catch(e){}
+}
 
-function badgeText(c){if(c._source==='weapon2014')return '2014';if(c._source==='weapon2024')return '2024';var col=srcInfo(c._source);return col?col.label:'';}
-/* кнопка удаления на миниатюре (хук shared makeGridCard) */
-function galCardExtras(card,wrap){var del=document.createElement('button');del.className='g-card-del';del.title='Удалить';del.innerHTML='✕';del.addEventListener('click',function(e){e.stopPropagation();showConfirm('Удалить карточку «'+(card.name||'без названия')+'»?',function(){deleteCard(card);});});wrap.appendChild(del);}
-function renderGrid(){var cards=getFiltered();var area=document.getElementById('grid-area');var empty=document.getElementById('empty-state');area.innerHTML='';var total=allCards.length,vis=cards.length;var statsEl=document.getElementById('filter-stats');if(total===0){statsEl.textContent='Нет карточек';}else{var parts=['<b>'+vis+'</b> из <b>'+total+'</b>'];GROUPS.forEach(function(g){var n=allCards.filter(function(c){return c._group===g.id;}).length;if(n)parts.push(g.label+': <b>'+n+'</b>');});statsEl.innerHTML=parts.join('&nbsp;· ');}document.getElementById('btn-clear-all').disabled=total===0;if(vis===0){empty.style.display='';area.style.display='none';if(total>0){empty.querySelector('.empty-state-title').textContent='Ничего не найдено';empty.querySelector('.empty-state-sub').textContent='Измените фильтры или поиск.';empty.querySelector('.empty-state-links').style.display='none';}else{empty.querySelector('.empty-state-title').textContent='Коллекция пуста';empty.querySelector('.empty-state-sub').innerHTML='Создайте карточку в генераторе<br/>и добавьте её в коллекцию.';empty.querySelector('.empty-state-links').style.display='';}return;}empty.style.display='none';area.style.display='';GROUPS.forEach(function(g){var gc=cards.filter(function(c){return c._group===g.id;});if(!gc.length)return;var sect=document.createElement('div');sect.className='gal-section';var head=document.createElement('div');head.className='gal-section-head';head.innerHTML='<span class="gal-section-title">'+g.label+'</span><span class="gal-section-count">'+gc.length+'</span><span class="gal-grp-acts"><button class="gal-grp-save" data-group="'+g.id+'" title="Сохранить группу"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button><button class="gal-grp-print" data-group="'+g.id+'" title="Печать группы"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button></span>';var grid=document.createElement('div');grid.className='gal-grid';gc.forEach(function(c){grid.appendChild(makeGridCard(c));});sect.appendChild(head);sect.appendChild(grid);area.appendChild(sect);});}
-function openPreview(card){previewCard=card;var d=R[card.rarity||'common']||R.common;var col=srcInfo(card._source)||{label:'',gen:'#'};document.getElementById('prev-title').textContent=(card.name||'Без названия')+' · '+col.label;var imgEl=document.getElementById('m-img');imgEl.innerHTML=card.img?'<img src="'+card.img+'" alt=""/>':'<div class="m-img-ph">нет картинки</div>';imgEl.style.borderColor=d.a;document.getElementById('m-name').textContent=card.name||'Без названия';var meta=['<span class="m-tag" style="background:'+d.a+'">'+d.l+'</span>','<span class="m-tag2">'+col.label+'</span>'];if(card.cost)meta.push('<span class="m-tag2">'+card.cost+' '+(card.coin||'зм')+'</span>');if(card.wgt)meta.push('<span class="m-tag2">'+card.wgt+' фнт.</span>');document.getElementById('m-meta').innerHTML=meta.join('');document.getElementById('m-fields').innerHTML=describeCard(card);document.getElementById('m-edit').href=col.gen+(card.id?'?edit='+encodeURIComponent(card.id):'');document.getElementById('prev-bg').classList.add('open');}
+/* ── ФИЛЬТРЫ ──
+   Движок выпадашек, разбор поиска и getFiltered берём из shared/gallery-filters.js
+   (подключён ниже). Здесь только свои FILT и определения: тот же приём, каким в
+   генераторе переопределяется RARITY_ORDER. */
 
+function _lvl(c){var n=parseInt(c.level,10);return isNaN(n)?0:n;}
+function _lvlLbl(n){return n===0?'Заговор':n+'-й уровень';}
+/* Подкласс — свободный текст; разделителем может быть · , . ; / */
+function splitSub(s){
+  if(!s)return [];
+  return String(s).split(/[·,.;\/]+/).map(function(x){return x.trim();}).filter(Boolean);
+}
+function _comps(c){var a=[];if(c.compV)a.push('V');if(c.compS)a.push('S');if(c.compM)a.push('M');return a;}
+function _props(c){var a=[];if(c.conc)a.push('conc');if(c.ritual)a.push('ritual');return a;}
+function _dynOpts(fn){
+  return function(){
+    var seen={},out=[];
+    allCards.forEach(function(c){fn(c).forEach(function(v){if(v&&!seen[v]){seen[v]=1;out.push({v:v,l:v});}});});
+    out.sort(function(a,b){return a.l.localeCompare(b.l,'ru');});
+    return out;
+  };
+}
+function _present(vals,fn){return vals.filter(function(o){return allCards.some(function(c){return fn(c).indexOf(o.v)>-1;});});}
+
+var SB_ALL_DEFS=[
+  /* min2: фильтр бессмысленен, пока карточки только одного вида */
+  {key:'src',label:'Шаблон',always:true,min2:true,val:function(c){return [c._tpl?'tpl':'own'];},
+   opts:function(){return _present([{v:'tpl',l:'Готовый'},{v:'own',l:'Личный'}],function(c){return [c._tpl?'tpl':'own'];});}},
+  {key:'level',label:'Уровень',always:true,val:function(c){return [String(_lvl(c))];},
+   opts:function(){
+     var out=[];
+     for(var i=0;i<=9;i++)out.push({v:String(i),l:_lvlLbl(i)});
+     return _present(out,function(c){return [String(_lvl(c))];});
+   }},
+  {key:'school',label:'Школа',always:true,val:function(c){return [c.rarity||''];},
+   opts:function(){
+     var out=SCHOOL_ORDER.map(function(k){return {v:k,l:R[k].l,dot:R[k].a};});
+     return _present(out,function(c){return [c.rarity||''];});
+   }},
+  {key:'comp',label:'Компоненты',always:true,val:_comps,
+   opts:function(){return _present([{v:'V',l:'Вербальный'},{v:'S',l:'Соматический'},{v:'M',l:'Материальный'}],_comps);}},
+  {key:'prop',label:'Свойства',always:true,val:_props,
+   opts:function(){return _present([{v:'conc',l:'Концентрация'},{v:'ritual',l:'Ритуал'}],_props);}},
+  {key:'cls',label:'Класс',always:true,val:function(c){return c.classes||[];},opts:_dynOpts(function(c){return c.classes||[];})},
+  {key:'sub',label:'Подкласс',always:true,val:function(c){return splitSub(c.subclass);},opts:_dynOpts(function(c){return splitSub(c.subclass);})},
+  {key:'ed',label:'Редакция',always:true,val:function(c){return c.edition?[c.edition]:[];},opts:_dynOpts(function(c){return c.edition?[c.edition]:[];})}
+];
+
+/* Общий buildFilters читает FILTER_DEFS. Пересобираем его перед каждой отрисовкой:
+   пустые и min2-фильтры выкидываем, чтобы не висели мёртвыми кнопками. */
+function sbBuildFilters(){
+  FILTER_DEFS=SB_ALL_DEFS.filter(function(d){
+    var n=d.opts().length;
+    var keep=n>0&&(!d.min2||n>=2);
+    if(!keep&&FILT[d.key])FILT[d.key].clear();
+    return keep;
+  });
+  buildFilters();
+}
+
+/* ── СОРТИРОВКА И ГРУППИРОВКА ── */
+var SORT='level';
+function sortCards(arr){
+  var a=arr.slice();
+  a.sort(function(x,y){
+    if(SORT==='level'){
+      /* level хранится строкой — сравнение только числовое */
+      var d=_lvl(x)-_lvl(y);if(d)return d;
+    }else if(SORT==='school'){
+      var d2=SCHOOL_ORDER.indexOf(x.rarity)-SCHOOL_ORDER.indexOf(y.rarity);if(d2)return d2;
+      /* внутри школы — по уровню; название остаётся третьим, иначе заклинания
+         одного уровня встали бы в произвольном порядке */
+      var d3=_lvl(x)-_lvl(y);if(d3)return d3;
+    }
+    return (x.name||'').localeCompare(y.name||'','ru');
+  });
+  return a;
+}
+/* группировка следует за сортировкой; по названию групп нет */
+function groupOf(c){
+  if(SORT==='level')return _lvlLbl(_lvl(c));
+  if(SORT==='school')return (R[c.rarity]||{}).l||'Без школы';
+  return null;
+}
+
+/* ── СТРОКА ── */
+function makeRow(card){
+  var d=R[card.rarity]||{a:'#888077',l:''};
+  var row=document.createElement('div');
+  row.className='sp-row sp-grid'+(gaIsSelected(card)?' gsel':'');
+  row.setAttribute('role','button');
+  row.tabIndex=0;
+
+  var cbx=document.createElement('div');cbx.className='sp-row-cbx';row.appendChild(cbx);
+  var st=document.createElement('span');st.className='sp-row-stripe';st.style.background=d.a;row.appendChild(st);
+  var lv=document.createElement('span');lv.className='sp-row-lvl';
+  var n=_lvl(card);lv.textContent=String(n);lv.title=_lvlLbl(n);row.appendChild(lv);
+  var nm=document.createElement('span');nm.className='sp-row-name';
+  nm.textContent=card.name||'Без названия';
+  if(card.nameEn){
+    var en=document.createElement('span');en.className='sp-row-en';en.textContent=' ('+card.nameEn+')';
+    nm.appendChild(en);
+  }
+  nm.title=(card.name||'')+(card.nameEn?' ('+card.nameEn+')':'');
+  row.appendChild(nm);
+  /* длинные значения обрезаются многоточием — полное показываем в подсказке */
+  function cell(text,dim,extra){
+    var e=document.createElement('span');
+    e.className='sp-row-cell'+(dim?' dim':'')+(extra?' '+extra:'');
+    e.textContent=text||'—';
+    if(text)e.title=text;
+    return e;
+  }
+  row.appendChild(cell(d.l,false,'sp-col-sm'));
+  row.appendChild(cell(card.cast,!card.cast,'sp-col-sm'));
+  row.appendChild(cell(card.range,!card.range,'sp-col-md'));
+  row.appendChild(cell(card.duration,!card.duration,'sp-col-md'));
+  var cp=document.createElement('span');cp.className='sp-row-comp';
+  cp.textContent=_comps(card).map(function(x){return x==='V'?'В':x==='S'?'С':'М';}).join('·')||'—';row.appendChild(cp);
+  var fl=document.createElement('span');fl.className='sp-row-flags';
+  if(card.conc){var f1=document.createElement('span');f1.className='sp-row-flag';f1.textContent='К';f1.title='Концентрация';fl.appendChild(f1);}
+  if(card.ritual){var f2=document.createElement('span');f2.className='sp-row-flag';f2.textContent='Р';f2.title='Ритуал';fl.appendChild(f2);}
+  row.appendChild(fl);
+  var ed=document.createElement('span');ed.className='sp-row-ed sp-col-lg';ed.textContent=card.edition||'';row.appendChild(ed);
+  var sr=document.createElement('span');sr.className='sp-src sp-col-lg '+(card._tpl?'tpl':'own');
+  sr.textContent=card._tpl?'Готовый':'Личный';row.appendChild(sr);
+
+  if(card._tpl){
+    /* Готовое удалить нельзя. Пустышка держит ячейку сетки вместо кнопки — и
+       обязана исчезать в режиме выбора вместе с ней, иначе детей станет на одного
+       больше, чем колонок, и строка перенесётся на вторую. */
+    var nod=document.createElement('span');nod.className='sp-row-nodel';
+    row.appendChild(nod);
+  }else{
+    var del=document.createElement('button');del.className='sp-row-del';del.title='Удалить';del.textContent='✕';
+    del.addEventListener('click',function(e){
+      e.stopPropagation();
+      showConfirm('Удалить карточку «'+(card.name||'без названия')+'»?',function(){deleteCard(card);});
+    });
+    row.appendChild(del);
+  }
+
+  /* Скринридер читает строку как склейку ячеек («0 Брызги кислоты Вызов/Призыв
+     1 действие…») — без подписей это шум. Даём человеческое имя.
+     role=table здесь неприменим: заголовки секций («Заговор») — недопустимые
+     дети table/rowgroup, а каждая строка ещё и свой отдельный grid. */
+  var lab=[card.name||'Без названия'];
+  if(card.nameEn)lab.push(card.nameEn);
+  lab.push(_lvlLbl(n));
+  if(d.l)lab.push('школа: '+d.l);
+  if(card.cast)lab.push('время: '+card.cast);
+  if(card.range)lab.push('дистанция: '+card.range);
+  if(card.duration)lab.push('длительность: '+card.duration);
+  var _cp=_comps(card).map(function(x){return x==='V'?'вербальный':x==='S'?'соматический':'материальный';});
+  if(_cp.length)lab.push('компоненты: '+_cp.join(', '));
+  if(card.conc)lab.push('концентрация');
+  if(card.ritual)lab.push('ритуал');
+  if(card.edition)lab.push('редакция '+card.edition);
+  lab.push(card._tpl?'готовый шаблон':'личное заклинание');
+  row.setAttribute('aria-label',lab.join('. '));
+
+  function activate(){
+    if(gaSelMode())gaToggleSelect(card,row);
+    else openPreview(card);
+  }
+  row.addEventListener('click',activate);
+  row.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();activate();}});
+  return row;
+}
+
+function renderGrid(){
+  var cards=sortCards(getFiltered());
+  var area=document.getElementById('grid-area');
+  var empty=document.getElementById('empty-state');
+  area.innerHTML='';
+
+  var total=allCards.length,vis=cards.length;
+  var statsEl=document.getElementById('filter-stats');
+  statsEl.innerHTML=total===0?'Нет заклинаний':('<b>'+vis+'</b> из <b>'+total+'</b>');
+  document.getElementById('btn-clear-all').disabled=ownCards().length===0;
+
+  document.getElementById('sp-hdr').style.display=vis===0?'none':'grid';
+  if(vis===0){
+    empty.style.display='';area.style.display='none';
+    if(total>0){
+      empty.querySelector('.empty-state-title').textContent='Ничего не найдено';
+      empty.querySelector('.empty-state-sub').textContent='Измените фильтры или поиск.';
+      empty.querySelector('.empty-state-links').style.display='none';
+    }else{
+      empty.querySelector('.empty-state-title').textContent='Книга пуста';
+      empty.querySelector('.empty-state-sub').innerHTML='Шаблонов пока нет.<br/>Создайте своё заклинание в генераторе.';
+      empty.querySelector('.empty-state-links').style.display='';
+    }
+    return;
+  }
+  empty.style.display='none';area.style.display='';
+
+  if(SORT==='name'){
+    var list=document.createElement('div');list.className='sp-list';
+    cards.forEach(function(c){list.appendChild(makeRow(c));});
+    area.appendChild(list);
+    return;
+  }
+  var curKey=null,sect=null,list2=null,cnt=0,headCount=null;
+  cards.forEach(function(c){
+    var k=groupOf(c);
+    if(k!==curKey){
+      if(headCount)headCount.textContent=cnt;
+      curKey=k;cnt=0;
+      sect=document.createElement('div');sect.className='gal-section';
+      var head=document.createElement('div');head.className='gal-section-head';
+      var t=document.createElement('span');t.className='gal-section-title';t.textContent=k;head.appendChild(t);
+      headCount=document.createElement('span');headCount.className='gal-section-count';head.appendChild(headCount);
+      list2=document.createElement('div');list2.className='sp-list';
+      sect.appendChild(head);sect.appendChild(list2);area.appendChild(sect);
+    }
+    list2.appendChild(makeRow(c));cnt++;
+  });
+  if(headCount)headCount.textContent=cnt;
+}
+
+/* ── ПРЕВЬЮ (без изображения) ── */
+function openPreview(card){
+  previewCard=card;
+  var d=R[card.rarity]||{a:'#888077',l:'—'};
+  document.getElementById('prev-title').textContent=(card.name||'Без названия')+' · Заклинания';
+  var mn=document.getElementById('m-name');
+  mn.textContent=card.name||'Без названия';
+  if(card.nameEn){
+    var mne=document.createElement('span');mne.className='m-name-en';mne.textContent=' ('+card.nameEn+')';
+    mn.appendChild(mne);
+  }
+  var meta=document.getElementById('m-meta');
+  meta.innerHTML='';
+  function tag(cls,text,bg){var s=document.createElement('span');s.className=cls;s.textContent=text;if(bg)s.style.background=bg;meta.appendChild(s);}
+  tag('m-tag',d.l,d.a);
+  tag('m-tag2',_lvlLbl(_lvl(card)));
+  if(card.conc)tag('m-tag2','Концентрация');
+  if(card.ritual)tag('m-tag2','Ритуал');
+  if(card._tpl)tag('m-tag2','Готовый');
+  document.getElementById('m-fields').innerHTML=describeCard(card);
+  var me=document.getElementById('m-edit'),lbl=me.querySelector('.m-edit-lbl');
+  if(card._tpl){
+    /* шаблон открывается копией: id вырезан, поэтому генератор считает её новой
+       карточкой и «Создать» кладёт её в свои, не трогая оригинал */
+    lbl.textContent='Открыть в генераторе';
+    me.href=GEN_PAGE+'?prefill=1';
+    me.onclick=function(){
+      try{
+        var cc=Object.assign({},card);
+        /* в редактор уходит только переведённое название */
+        delete cc._source;delete cc._group;delete cc._tpl;delete cc.id;delete cc.nameEn;
+        sessionStorage.setItem('dnd_prefill',JSON.stringify(cc));
+      }catch(e){}
+    };
+  }else{
+    lbl.textContent='Редактировать в генераторе';
+    me.href=GEN_PAGE+(card.id?'?edit='+encodeURIComponent(card.id):'');
+    me.onclick=null;
+  }
+  document.getElementById('btn-m-del').style.display=card._tpl?'none':'';
+  document.getElementById('prev-bg').classList.add('open');
+}
 document.getElementById('prev-close').addEventListener('click',closePreview);
 document.getElementById('prev-bg').addEventListener('click',function(e){if(e.target===this)closePreview();});
-function deleteCard(card){var idx=allCards.findIndex(function(c){return c===card||(c.id===card.id&&c._source===card._source);});if(idx===-1)return;var src=allCards[idx]._source;allCards.splice(idx,1);saveBack(src);renderGrid();toast('Карточка удалена');}
-document.getElementById('btn-m-del').addEventListener('click',function(){if(!previewCard)return;showConfirm('Удалить карточку «'+(previewCard.name||'без названия')+'»?',function(){var c=previewCard;closePreview();deleteCard(c);});});
+
+/* ── УДАЛЕНИЕ ── */
+function deleteCard(card){
+  var idx=allCards.findIndex(function(c){return c===card||c.id===card.id;});
+  if(idx===-1)return;
+  allCards.splice(idx,1);saveBack();sbBuildFilters();renderGrid();toast('Карточка удалена');
+}
+document.getElementById('btn-m-del').addEventListener('click',function(){
+  if(!previewCard)return;
+  showConfirm('Удалить карточку «'+(previewCard.name||'без названия')+'»?',function(){var c=previewCard;closePreview();deleteCard(c);});
+});
 var confirmCallback=null;
 function showConfirm(msg,cb){document.getElementById('conf-h').textContent=msg;confirmCallback=cb;document.getElementById('conf-bg').classList.add('open');}
 document.getElementById('conf-yes').addEventListener('click',function(){document.getElementById('conf-bg').classList.remove('open');if(confirmCallback)confirmCallback();confirmCallback=null;});
 document.getElementById('conf-no').addEventListener('click',function(){document.getElementById('conf-bg').classList.remove('open');confirmCallback=null;});
-document.getElementById('btn-clear-all').addEventListener('click',function(){showConfirm('Удалить ВСЕ карточки из всех коллекций?',function(){allCards=[];COLLECTIONS.forEach(function(col){try{localStorage.removeItem(col.key);}catch(e){}});renderGrid();toast('Коллекция очищена');});});
-var toastTimer=null;
+document.getElementById('btn-clear-all').addEventListener('click',function(){
+  showConfirm('Удалить ВСЕ свои заклинания? Готовые останутся.',function(){
+    try{localStorage.removeItem(LS_KEY);}catch(e){}
+    loadAll();sbBuildFilters();renderGrid();toast('Свои заклинания удалены');
+  });
+});
+
+/* ── СОРТИРОВКА ──
+   Поиск не трогаем: его слушатели живут в shared/gallery-filters.js. Свои здесь
+   означали бы два обработчика на одном поле и двойной renderGrid на каждый ввод. */
+[].forEach.call(document.querySelectorAll('.sbs'),function(b){
+  b.addEventListener('click',function(){
+    SORT=b.getAttribute('data-sort');
+    [].forEach.call(document.querySelectorAll('.sbs'),function(o){
+      var on=o===b;o.classList.toggle('on',on);o.setAttribute('aria-pressed',on?'true':'false');
+    });
+    renderGrid();
+  });
+});
 
 /* Выпадающие фильтры галерей (collection/templates).
    Множественный выбор: пусто = без ограничения; ИЛИ внутри категории, И между категориями.
@@ -696,7 +1086,8 @@ function buildFilters(){
 function _closePanels(){[].forEach.call(document.querySelectorAll('.fdd-panel.open'),function(p){p.classList.remove('open');});}
 document.addEventListener('click',function(){_closePanels();});
 (function(){var s=document.getElementById('filter-search');if(s)s.addEventListener('input',function(){FILT.query=this.value.toLowerCase().trim();var cl=document.getElementById('filter-search-clear');if(cl)cl.style.display=FILT.query?'':'none';renderGrid();});var sc=document.getElementById('filter-search-clear');if(sc)sc.addEventListener('click',function(){var i=document.getElementById('filter-search');i.value='';FILT.query='';this.style.display='none';renderGrid();});})();
-function _genPageOf(card){var c=srcInfo(card._source);return c?c.gen:null;}
+/* Свои ключи вместо оружейных; общий движок читает эти же имена */
+FILT={src:new Set(),level:new Set(),school:new Set(),comp:new Set(),prop:new Set(),cls:new Set(),sub:new Set(),ed:new Set(),query:''};
 /* Сохранение и печать карточек из галерей (collection/templates).
    Реальные стороны карточек рендерятся через сами страницы-генераторы
    (скрытый iframe + window.__dndRenderCard), затем PNG/ZIP или PDF.
@@ -880,7 +1271,18 @@ function gaExitSel(clear){gaSelectMode=false;if(clear)gaSelected={};document.bod
   var sAll=document.getElementById('sel-all');if(sAll)sAll.addEventListener('click',gaSelectAll);
   var sClear=document.getElementById('sel-clear');if(sClear)sClear.addEventListener('click',function(){gaSelected={};[].forEach.call(document.querySelectorAll('.g-card.gsel'),function(el){el.classList.remove('gsel');});_gaUpdateSelBar();});
 })();
-loadAll();buildFilters();renderGrid();loadImages(renderGrid);
+/* gallery-actions снимает .gsel только с .g-card — у нас строки, перерисуем сами */
+document.getElementById('sel-clear').addEventListener('click',renderGrid);
+
+loadAll();sbBuildFilters();renderGrid();
+/* готовые подтягиваем отдельно: страница уже работает со своими, пока файл летит */
+/* no-cache: файл готовых обновляется вместе с сайтом, а браузер иначе годами
+   отдаёт свою копию. Не no-store — при неизменном файле сервер ответит 304. */
+fetch('spells-data.json',{cache:'no-cache'}).then(function(r){return r.json();}).then(function(seed){
+  if(!Array.isArray(seed)||!seed.length)return;
+  window.SEED_SPELLS=seed;
+  loadAll();sbBuildFilters();renderGrid();
+}).catch(function(){});
 })();
 </script>
 <script>

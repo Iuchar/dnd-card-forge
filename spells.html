@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>D&amp;D Card Forge — Наборы снаряжения</title>
-<meta name="description" content="Генератор карточек наборов снаряжения D&D 5e: состав набора и описание на печатной карточке."/>
+<title>D&amp;D Card Forge — Заклинания</title>
+<meta name="description" content="Генератор карточек заклинаний D&D 5e: уровень, школа, компоненты, длительность. Создайте и распечатайте карточку заклинания за минуту."/>
 <meta name="theme-color" content="#111009"/>
 <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"/>
 <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
 <meta property="og:type" content="website"/>
-<meta property="og:url" content="https://iuchar.github.io/dnd-card-forge/kits.html"/>
-<meta property="og:title" content="D&D Card Forge — Наборы снаряжения"/>
-<meta property="og:description" content="Генератор карточек наборов снаряжения D&D 5e: состав набора и описание на печатной карточке."/>
+<meta property="og:url" content="https://iuchar.github.io/dnd-card-forge/spells.html"/>
+<meta property="og:title" content="D&D Card Forge — Заклинания"/>
+<meta property="og:description" content="Генератор карточек заклинаний D&D 5e: уровень, школа, компоненты, длительность. Создайте и распечатайте карточку заклинания за минуту."/>
 <meta property="og:image" content="https://iuchar.github.io/dnd-card-forge/og-image.jpg"/>
 <meta property="og:image:width" content="1200"/>
 <meta property="og:image:height" content="630"/>
@@ -200,16 +200,28 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .fmt-btn{min-width:34px;height:32px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:0.5px solid var(--border2);border-radius:6px;color:var(--text);font-family:'Crimson Text',Georgia,serif;font-size:15px;line-height:1;cursor:pointer;transition:border-color .15s,background .15s;}
 .fmt-btn:hover{border-color:var(--gold);background:rgba(255,255,255,.09);}
 .fmt-warn{font-family:'Crimson Text',Georgia,serif;font-style:italic;font-size:11.5px;color:#e08070;line-height:1.4;margin:2px 0 8px;}
-html:focus,body:focus{outline:none;}
-button:focus{outline:none;}
-:root{--bg:#111009;--bg2:#1a1814;--bg3:#252018;--bg4:#2e2a20;--border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.13);--text:#e0d8c8;--text2:#a09070;--text3:#968769;--gold:#c8941a;--gold-l:#f0b830;--accent:#4a3fa0;--accent-l:#8070e0;--r:10px;}
-.sb>.lbl:first-child{margin-top:0;}
-.cv{flex:1;background:#f0ece2;display:flex;flex-direction:column;align-items:center;padding:20px 16px 16px;overflow:auto;}
-.cb-rubashka{position:absolute;inset:0;z-index:2;}
-.cb-body{flex:1;min-height:0;padding:2px 16px 5px;display:flex;flex-direction:column;overflow:hidden;}
-.cb-lbl{font-family:'Cinzel',serif;font-size:12px;font-weight:700;color:#3a2200;margin-bottom:5px;text-align:center;letter-spacing:.1em;border-bottom:.5px solid rgba(90,72,32,.3);padding:2px 0;}
-.cb-desc{font-family:'Crimson Text',Georgia,serif;font-size:11px;color:#2a1e0a;line-height:1.5;flex:1;overflow:hidden;white-space:pre-wrap;}
-.dc{width:310px;height:437px;border-radius:12px;overflow:hidden;border:3px solid var(--cb,#a09080);background:#e8dcc8;display:flex;flex-direction:column;font-family:'Crimson Text',Georgia,serif;transition:border-color .2s;position:relative;}
+:root{
+  --bg:#111009;--bg2:#1a1814;--bg3:#252018;--bg4:#2e2a20;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.13);
+  --text:#e0d8c8;--text2:#a09070;--text3:#968769;
+  --gold:#c8941a;--gold-l:#f0b830;
+  --accent:#4a3fa0;--accent-l:#8070e0;
+  --ca:#c04030;
+  --r:10px;
+}
+.sb > .lbl:first-child{margin-top:0;}
+.pcb{display:flex;align-items:center;gap:5px;cursor:pointer;padding:3px 0;min-height:24px;}
+.pcb input[type=checkbox]{accent-color:var(--gold);width:13px;height:13px;cursor:pointer;flex-shrink:0;}
+.pcb span{font-size:13px;color:var(--text2);}
+.pcb:hover span{color:var(--text);}
+.pcb-row{display:flex;gap:14px;flex-wrap:wrap;}
+.cls-grid{display:grid;grid-template-columns:1fr 1fr;column-gap:8px;}
+.sp-warn{font-family:'Crimson Text',Georgia,serif;font-style:italic;font-size:11.5px;color:#e08070;line-height:1.4;margin:-4px 0 10px;}
+textarea.si.si-rows{resize:none;min-height:0;overflow-y:auto;}
+.fmt-bar{display:flex;gap:5px;margin:0 0 6px;}
+.fmt-btn{min-width:34px;height:32px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.05);border:0.5px solid var(--border2);border-radius:6px;color:var(--text);font-family:'Crimson Text',Georgia,serif;font-size:15px;line-height:1;cursor:pointer;transition:border-color .15s,background .15s;}
+.fmt-btn:hover{border-color:var(--gold);background:rgba(255,255,255,.09);}
+.fmt-btn:focus-visible{outline:2px solid var(--gold);outline-offset:1px;}
 /* Общие стили карточки и пикера редкости (7 генераторов).
    Байт-идентичные правила, вынесены из страниц 2026-07-04. */
 .c-body{flex:1;min-height:0;padding:5px 14px 3px;display:flex;flex-direction:column;overflow:hidden;}
@@ -242,26 +254,133 @@ button:focus{outline:none;}
 .rp[data-r=veryrare].on{box-shadow:0 0 0 3px rgba(152,112,204,.4);}
 .rp[data-r=legendary].on{box-shadow:0 0 0 3px rgba(224,152,32,.45);}
 
-.c-kitlist{font-size:12px;color:#2a1e0a;line-height:1.55;flex:1;overflow:hidden;}
-.c-kitlist.two-col{column-count:2;column-gap:8px;font-size:10.5px;line-height:1.4;}
-.c-kit-item{display:flex;gap:4px;align-items:baseline;break-inside:avoid;}
-.c-kit-dot{color:#8b6914;flex-shrink:0;font-size:11px;}
+.cv{flex:1;background:#f0ece2;display:flex;flex-direction:column;align-items:center;padding:20px 16px 16px;overflow:auto;}
+.cb-rubashka{position:absolute;inset:0;z-index:2;}
+/* ── Карточка заклинания (дизайн v8) ── */
+.dc{
+  width:310px;height:437px;
+  border-radius:12px;overflow:hidden;
+  border:3px solid #463628;
+  background:linear-gradient(160deg,#f3ecdb,#ece2cd);
+  display:flex;flex-direction:column;text-align:left;
+  font-family:'Crimson Text',Georgia,serif;
+  transition:border-color .2s;
+  position:relative;
+}
+/* шапка цвета школы (эксклюзив заклинаний) */
+/* Блик и тень — рамками, а не box-shadow:inset. html2canvas на inset-тени рвёт
+   заливку: правая часть шапки заливалась мусором (166,99,82 вместо 157,50,38).
+   Та же болезнь была у .sp-bstripe на обороте. Градиент при этом не виноват —
+   проверено вычитанием, он остаётся. */
+.sp-head{position:relative;height:38px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(180deg,var(--ca-l,#ad3a2c) 0%,var(--ca-d,#8d2a20) 100%);
+  border-top:2px solid rgba(255,190,160,.35);
+  border-bottom:2px solid rgba(0,0,0,.3);}
+.sp-head-orn{position:absolute;top:50%;transform:translateY(-50%);line-height:0;}
+.sp-head-orn.l{left:11px;} .sp-head-orn.r{right:11px;}
+.sp-mname{font-family:'Cinzel',serif;font-size:var(--name-fs,15px);font-weight:700;color:#f8ead0;letter-spacing:.04em;
+  text-shadow:0 1px 2px rgba(0,0,0,.45);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:210px;}
+/* тело */
+.sp-body{flex:1;min-height:0;padding:8px 13px 2px;display:flex;flex-direction:column;overflow:hidden;}
+.sp-sep{height:1px;background:linear-gradient(90deg,transparent,rgba(90,72,32,.6),transparent);flex-shrink:0;}
+/* строка уровня — единственная по центру */
+.sp-lvl{font-family:'Cinzel',serif;font-size:8.5px;font-weight:700;letter-spacing:.1em;color:#8a6010;text-align:center;flex-shrink:0;}
+/* класс / подкласс */
+.sp-line{font-size:11px;color:#2e2010;line-height:1.2;flex-shrink:0;}
+.sp-line.sub{font-size:10.5px;color:#4a3a24;line-height:1.2;margin-top:3px;}
+.sp-lbl{font-family:'Cinzel',serif;font-size:7.5px;font-weight:700;letter-spacing:.1em;color:#8a6010;}
+/* статблок-панель с иконками */
+.sp-grid{margin:5px 0 0;border:1px solid rgba(90,72,32,.3);border-radius:7px;background:rgba(255,255,255,.28);
+  overflow:hidden;display:grid;grid-template-columns:1fr 1fr;flex-shrink:0;}
+.sp-cell{display:flex;align-items:center;gap:5px;padding:5px;min-width:0;}
+.sp-cell:nth-child(1){border-right:.5px solid rgba(90,72,32,.22);border-bottom:.5px solid rgba(90,72,32,.22);}
+.sp-cell:nth-child(2){border-bottom:.5px solid rgba(90,72,32,.22);}
+.sp-cell:nth-child(3){border-right:.5px solid rgba(90,72,32,.22);}
+.sp-cell svg{flex-shrink:0;}
+.sp-cell-in{min-width:0;}
+.sp-glbl{font-family:'Cinzel',serif;font-size:7px;font-weight:700;letter-spacing:.11em;color:#8a6010;line-height:1.2;}
+.sp-gval{font-size:11.5px;color:#241a08;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* материал */
+.sp-mat{font-size:10px;color:#4a3a24;line-height:1.35;margin-top:5px;flex-shrink:0;background:rgba(138,96,16,.08);border-radius:5px;padding:3px 9px;max-height:140px;overflow:hidden;}
+/* условие — золотой колаут */
+.sp-cond{margin-top:5px;border-left:3px solid #8a6010;background:rgba(138,96,16,.08);border-radius:0 5px 5px 0;
+  padding:3px 9px;font-size:10px;color:#2e2010;line-height:1.35;flex-shrink:0;max-height:32px;overflow:hidden;}
+.sp-cond i{font-style:italic;}
+/* описание */
+.c-desc{font-size:var(--desc-fs,12px);color:#241a08;line-height:1.4;margin-top:5px;flex:1;min-height:0;overflow:hidden;white-space:pre-wrap;}
+/* подвал */
+.sp-foot{height:24px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 13px;position:relative;}
+/* Зазор над нижним разделителем оборота. 6px отделяют его от колаута «На высоких
+   уровнях»; без колаута те же 6px оказались бы между ним и текстом описания и
+   просто съедали бы строку. Класс переключается в _setBackSp. */
+#pb-sep-foot{margin-top:6px;}
+#pb-sep-foot.nohl{margin-top:1px;}
+.sp-ed{font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.04em;color:#8a7860;}
+/* Подвал оборота нёс только редакцию и самоцвет по краям — середина пустовала.
+   Ромбы те же, что в шапке карточки: свой декор не изобретаем. */
+/* .sp-foot — space-between. Третий ребёнок в потоке выдавливал редакцию в
+   центр, прямо под орнамент. Редакция и номер обязаны быть одной ячейкой. */
+/* Карточка = пара сторон. Ряд переносит ПАРЫ целиком (вторая карта уходит под
+   первую), и только на узких экранах пара разворачивается в столбец — оборот
+   под свою лицевую. Порядок приоритетов задан этой вложенностью. */
+.cards-row{flex-wrap:wrap;justify-content:center;align-items:flex-start;}
+.card-pair{display:flex;gap:20px;align-items:flex-start;}
+@media (max-width:820px){.card-pair{flex-direction:column;align-items:center;}}
+.sp-foot-r{display:flex;align-items:center;gap:6px;}
+/* Центр подвала продолжения: там, где у первой карты школа или орнамент */
+.sp-cont-lbl{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:'Crimson Text',Georgia,serif;font-style:italic;font-size:11px;color:#8a7860;white-space:nowrap;}
+.sp-num{font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:.06em;color:#8a7860;}
+.sp-foot-orn{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);line-height:0;pointer-events:none;}
+.sp-plaque{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:150px;height:20px;}
+.sp-plaque svg{width:100%;height:100%;display:block;}
+.sp-gem{width:14px;height:14px;border-radius:50%;flex-shrink:0;
+  background:radial-gradient(circle at 34% 30%,var(--ca-hi,#ef9877),var(--ca,#c04030) 70%);
+  border:1px solid #3a2810;box-shadow:0 0 5px rgba(0,0,0,.35);}
+/* ── оборот ── */
+.dc-back{position:relative;}
+/* Знак — ФОН карточки, а не отдельный SVG-элемент. html2canvas рисовал элемент
+   лишь фрагментом 105x57 из 200x200 (и transform тут был ни при чём — проверено
+   вычитанием). Фоны библиотека берёт целиком. Прозрачность внутри SVG, поэтому
+   знак корректно смешивается с градиентом пергамента под ним.
+   Класс есть у оборота и у всех сторон продолжения — клонировать нечего. */
+.dc-back{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg opacity='.1' stroke='%235a2018' fill='none'%3E%3Cpath d='M100 8 L192 100 L100 192 L8 100 Z' stroke-width='3'/%3E%3Cpath d='M100 40 L160 100 L100 160 L40 100 Z' stroke-width='2'/%3E%3Cpath d='M100 70 L130 100 L100 130 L70 100 Z' fill='%235a2018' stroke='none'/%3E%3C/g%3E%3C/svg%3E"),linear-gradient(160deg,#f3ecdb,#ece2cd);
+  background-repeat:no-repeat;background-position:center 55%,0 0;background-size:200px 200px,auto;}
+/* Блик и тень — рамками, а не box-shadow:inset. html2canvas не тянет inset-тени
+   на тонком элементе: хвост полосы заливался плоским мусором (179,104,86 вместо
+   192,64,48). Проверено вычитанием — снимаешь тень, артефакт уходит; градиент и
+   скругление ни при чём. Фон оставлен сплошным: на 11px градиент не читается. */
+.sp-bstripe{height:11px;flex-shrink:0;background:var(--ca,#c04030);
+  border-top:2px solid rgba(255,190,160,.35);
+  border-bottom:2px solid rgba(0,0,0,.3);}
+.sp-bhead{position:relative;height:26px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.sp-bhead-t{font-family:'Cinzel',serif;font-size:14px;font-weight:700;color:#3a2200;letter-spacing:.08em;}
+.sp-bsep{height:1px;flex-shrink:0;margin:0 13px;background:linear-gradient(90deg,transparent,rgba(90,72,32,.6),transparent);}
+.cb-body{flex:1;min-height:0;padding:5px 13px 1px;display:flex;flex-direction:column;overflow:hidden;position:relative;z-index:2;}
+.cb-desc{font-size:var(--desc-fs,12px);color:#241a08;line-height:1.4;flex:1;min-height:0;overflow:hidden;white-space:pre-wrap;}
+/* «На высоких уровнях» — акцентный колаут цвета школы */
+.sp-hl{margin-top:6px;border-left:3px solid var(--ca,#c04030);background:rgba(0,0,0,.05);border-radius:0 7px 7px 0;
+  padding:8px 11px;flex-shrink:0;}
+.sp-hl-t{font-family:'Cinzel',serif;font-size:8px;font-weight:700;letter-spacing:.12em;color:var(--ca-d,#c04030);margin-bottom:3px;}
+.sp-hl-x{font-size:10px;color:#241a08;line-height:1.5;white-space:pre-wrap;max-height:92px;overflow:hidden;}
+.coll-search-clear:hover{color:var(--text2);}
+.coll-list::-webkit-scrollbar{width:3px;}
+.coll-list::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px;}
 .coll-item-thumb{width:30px;height:42px;border-radius:4px;flex-shrink:0;background:var(--bg4);overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.08);}
-.coll-sect-count{font-family:'Cinzel',serif;font-size:9px;color:var(--text3);opacity:.55;}
-.coll-sect-body{display:flex;flex-direction:column;gap:7px;max-height:304px;overflow-y:auto;padding-bottom:4px;}
-.crop-modal-title{font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:var(--gold-l);margin-bottom:14px;}
-.crop-area canvas{display:block;}
-.conf-modal{background:var(--bg2);border:0.5px solid var(--border2);border-radius:12px;padding:26px 24px 20px;width:290px;text-align:center;}
-.conf-modal h3{font-family:'Cinzel',serif;font-size:12px;font-weight:600;color:var(--text);margin:0 0 18px;line-height:1.5;}
-.conf-modal-btns button{padding:7px 20px;font-family:'Cinzel',serif;font-size:11px;cursor:pointer;border-radius:6px;border:0.5px solid var(--border2);background:transparent;color:var(--text2);transition:all .14s;}
-.nav-toggle{padding:7px 13px;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);transition:all .14s;display:flex;align-items:center;gap:6px;}
+.coll-sect-count{font-family:'Cinzel',serif;font-size:9px;color:var(--text3);opacity:.55;flex-shrink:0;}
+.coll-sect-body{display:flex;flex-direction:column;gap:7px;max-height:304px;overflow-y:auto;padding-bottom:4px;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
+.coll-sect-body::-webkit-scrollbar{width:3px;}
+.coll-sect-body::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px;}
+.conf-modal{background:var(--bg2);border:0.5px solid var(--border2);border-radius:12px;padding:26px 24px 20px;width:290px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.5);}
+.conf-modal h3{font-family:'Cinzel',serif;font-size:12px;font-weight:600;color:var(--text);margin:0 0 18px;letter-spacing:.04em;line-height:1.5;}
+.conf-modal-btns button{padding:7px 20px;font-family:'Cinzel',serif;font-size:11px;cursor:pointer;border-radius:6px;border:0.5px solid var(--border2);background:transparent;color:var(--text2);transition:all .14s;letter-spacing:.06em;}
+.nav-toggle{padding:7px 13px;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);transition:all .14s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
 .nav-section-lbl{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);padding:5px 10px 3px;pointer-events:none;}
-.nav-sub .nav-item{padding-left:26px;font-size:9.5px;}
-.field-hint{font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.05em;color:var(--text3);margin-top:5px;line-height:1.5;}
+.nav-sub .nav-item{padding-left:26px;font-size:9.5px;letter-spacing:.05em;}
 </style>
 <link rel="stylesheet" href="mobile.css"/>
 </head>
 <body>
+
 <header class="header">
   <div class="logo" style="display:flex;align-items:center;gap:10px;">
 <a href="index.html" class="logo-brand" style="display:flex;align-items:center;gap:10px;font-weight:700;color:inherit;text-decoration:none;cursor:pointer;">D&amp;D <span>CARD</span> FORGE</a>
@@ -333,7 +452,7 @@ button:focus{outline:none;}
       </span>
     </div>
     </div>
-    <h1 style="font-size:12px;color:var(--text2);font-family:'Crimson Text',serif;font-style:italic;font-weight:400;margin:0;">— Наборы снаряжения</h1>
+    <h1 style="font-size:12px;color:var(--text2);font-family:'Crimson Text',serif;font-style:italic;font-weight:400;margin:0;">— Заклинания</h1>
   </div>
   <div class="header-btns">
     <button class="hbtn" id="btn-png"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Сохранить PNG</button>
@@ -349,64 +468,114 @@ button:focus{outline:none;}
 </header>
 
 <div class="layout">
-<aside class="sb">
 
-  <div class="lbl">Редкость</div>
-  <div class="rprow">
-    <div class="rp on" data-r="nonmagic" title="Немагический"></div>
-    <span class="rname" id="rn">Немагический</span>
-  </div>
+<!-- SIDEBAR FORM -->
+<aside class="sb">
+  <div class="lbl">Школа магии</div>
+  <select class="si" id="fschool">
+    <option value="evocation" selected>Воплощение</option>
+    <option value="conjuration">Вызов/Призыв</option>
+    <option value="illusion">Иллюзия</option>
+    <option value="necromancy">Некромантия</option>
+    <option value="abjuration">Ограждение</option>
+    <option value="enchantment">Очарование</option>
+    <option value="transmutation">Преобразование</option>
+    <option value="divination">Прорицание</option>
+  </select>
+
   <div class="lbl">Название</div>
   <div class="field-wrap field-mb">
-    <input class="si" type="text" id="fn" placeholder="Набор путешественника" maxlength="34"/>
+    <input class="si" type="text" id="fn" placeholder="Огненный шар" maxlength="34"/>
     <span class="char-counter" id="cnt-fn">0/34</span>
   </div>
 
-  <div class="lbl">Картинка</div>
-  <label class="noimg-toggle"><input type="checkbox" id="f-noimg"/><span>Без картинки</span></label>
-  <div class="img-drop" id="img-drop">
-    <div class="img-thumb" id="img-thumb" style="display:none;"></div>
-    <svg id="img-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-    <span id="img-lbl">Загрузить картинку</span>
-    <input type="file" id="f-img" accept="image/*"/>
-  </div>
-  <button class="btn-recrop" id="btn-recrop" style="display:none;">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M6 2v14a2 2 0 0 0 2 2h14"/><path d="M18 22V8a2 2 0 0 0-2-2H2"/></svg>
-    Изменить область
-  </button>
-  <button class="btn-del-img" id="btn-del-img" style="display:none;">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-    Удалить изображение
-  </button>
-
   <div class="row2" style="margin-top:13px;">
-    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Цена</div><input class="si" type="text" id="fc" placeholder="12" maxlength="7" inputmode="decimal"/></div>
-    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Монеты</div>
-      <select class="si" id="fcoin">
-        <option>мм</option><option>см</option><option>эм</option><option selected>зм</option><option>пм</option>
+    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Уровень</div>
+      <select class="si" id="flvl">
+        <option value="0">Заговор</option>
+        <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+        <option value="4">4</option><option value="5">5</option><option value="6">6</option>
+        <option value="7">7</option><option value="8">8</option><option value="9">9</option>
       </select>
     </div>
+    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Редакция</div><input class="si" type="text" id="fed" placeholder="PH24" maxlength="8"/></div>
+  </div>
+  <div class="pcb-row" style="margin-top:7px;">
+    <label class="pcb"><input type="checkbox" id="fconc"/><span>Концентрация</span></label>
+    <label class="pcb"><input type="checkbox" id="fritual"/><span>Ритуал</span></label>
+  </div>
+
+  <div class="lbl" style="margin-bottom:4px;">Классы</div>
+  <div class="cls-grid" id="clsg">
+    <label class="pcb"><input type="checkbox" value="Бард"/><span>Бард</span></label>
+    <label class="pcb"><input type="checkbox" value="Волшебник"/><span>Волшебник</span></label>
+    <label class="pcb"><input type="checkbox" value="Друид"/><span>Друид</span></label>
+    <label class="pcb"><input type="checkbox" value="Жрец"/><span>Жрец</span></label>
+    <label class="pcb"><input type="checkbox" value="Изобретатель"/><span>Изобретатель</span></label>
+    <label class="pcb"><input type="checkbox" value="Колдун"/><span>Колдун</span></label>
+    <label class="pcb"><input type="checkbox" value="Паладин"/><span>Паладин</span></label>
+    <label class="pcb"><input type="checkbox" value="Следопыт"/><span>Следопыт</span></label>
+    <label class="pcb"><input type="checkbox" value="Чародей"/><span>Чародей</span></label>
+  </div>
+
+  <div class="lbl">Подкласс</div>
+  <div class="field-wrap field-mb">
+    <textarea class="si si-rows" id="fsub" placeholder="Домен Света · Домен Бури" maxlength="120" style="height:71px;"></textarea>
+    <span class="char-counter" id="cnt-sub">0/120</span>
+  </div>
+
+
+  <div class="divider"></div>
+
+  <div class="row2">
+    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Время</div><input class="si" type="text" id="fcast" placeholder="1 действие" maxlength="24"/></div>
+    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Дистанция</div><input class="si" type="text" id="frange" placeholder="150 футов" maxlength="24"/></div>
   </div>
   <div class="row2" style="margin-top:7px;">
-    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Вес (фунтов)</div><input class="si" type="text" id="fwgt" placeholder="61.5" maxlength="7" inputmode="decimal"/></div>
-    <div class="sf"></div>
+    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Компоненты</div>
+      <div class="pcb-row" style="padding-top:4px;">
+        <label class="pcb"><input type="checkbox" id="fcv"/><span>В</span></label>
+        <label class="pcb"><input type="checkbox" id="fcs"/><span>С</span></label>
+        <label class="pcb"><input type="checkbox" id="fcm"/><span>М</span></label>
+      </div>
+    </div>
+    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Длительность</div><input class="si" type="text" id="fdur" placeholder="Мгновенная" maxlength="24"/></div>
   </div>
-
-  <div class="divider"></div>
-
-  <div class="lbl">Состав набора</div>
+  <div class="lbl">Материал</div>
   <div class="field-wrap field-mb">
-    <textarea class="si" id="fcomposition" placeholder="Рюкзак&#10;Ломик&#10;Молоток&#10;Факелы (10 шт.)&#10;Трут и кремень&#10;Рацион на 10 дней&#10;Бурдюк с водой" style="height:170px;"></textarea>
+    <textarea class="si si-rows" id="fmat" placeholder="крошечный шарик из гуано и серы" maxlength="400" style="height:90px;"></textarea>
+    <span class="char-counter" id="cnt-mat">0/400</span>
   </div>
 
   <div class="divider"></div>
+
+  <div class="lbl">Условие</div>
+  <div class="field-wrap field-mb">
+    <textarea class="si si-rows" id="fcond" placeholder="Попадание по существу оружием" maxlength="70" style="height:52px;"></textarea>
+    <span class="char-counter" id="cnt-cond">0/70</span>
+  </div>
+
+  <div class="divider"></div>
+
   <div class="lbl">Описание / Эффект</div>
+  <div class="fmt-bar" role="group" aria-label="Форматирование описания">
+    <button type="button" class="fmt-btn" data-fmt="**" title="Полужирный (Ctrl+B)" aria-label="Полужирный"><b>Ж</b></button>
+    <button type="button" class="fmt-btn" data-fmt="*" title="Курсив (Ctrl+I)" aria-label="Курсив"><i>К</i></button>
+    <button type="button" class="fmt-btn" data-fmt="__" title="Подчёркнутый (Ctrl+U)" aria-label="Подчёркнутый"><u>П</u></button>
+  </div>
   <div class="field-wrap field-mb">
-    <textarea class="si" id="fback" maxlength="900" placeholder="История, дополнительное описание, легенда набора…" style="height:350px;"></textarea>
-    <span class="char-counter" id="cnt-back">0/750</span>
+    <textarea class="si" id="fdesc" maxlength="5000" placeholder="Описание заклинания и его эффект… (перенос на оборот — автоматически)" style="height:350px;"></textarea>
+    <span class="char-counter" id="cnt-desc">0/4400</span>
+  </div>
+  <div class="sp-warn" id="desc-warn" role="status" aria-live="polite" style="display:none;"></div>
+
+  <div class="lbl">На высоких уровнях</div>
+  <div class="field-wrap field-mb">
+    <textarea class="si" id="fhl" maxlength="250" placeholder="Урон увеличивается на 1к6 за каждый уровень ячейки выше 3-го." style="height:70px;"></textarea>
+    <span class="char-counter" id="cnt-hl">0/250</span>
   </div>
 
-  <button class="btn-build" id="gbtn" style="margin-top:14px;">✦ Создать карточку</button>
+  <button class="btn-build" id="gbtn">✦ Создать карточку</button>
   <button class="btn-build-alt" id="gbtn-new" style="display:none;">+ Создать как новую</button>
   <button class="btn-reset" id="btn-reset">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.5"/></svg>
@@ -414,125 +583,138 @@ button:focus{outline:none;}
   </button>
 </aside>
 
+<!-- PREVIEW CANVAS -->
 <main class="cv">
   <div class="cv-label">Предпросмотр</div>
   <div class="cards-row" id="cards-row">
+  <div class="card-pair">
   <div class="card-col">
   <div class="side-lbl">Лицевая</div>
-  <div class="dc" id="pc">
-    <div class="c-stripe" id="ps"></div>
-    <div class="c-stripe-under"></div>
-    <div class="c-meta">
-      <div class="c-meta-orn"><svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10 L10 3 L17 10 L10 17 Z" stroke="#5a4820" stroke-width="1.2" fill="#d4c4a0" opacity="0.8"/><circle cx="10" cy="10" r="2" fill="#5a4820" opacity="0.7"/></svg></div>
-      <div class="c-meta-inner">
-        <span class="c-meta-item cost" id="p-cost" style="visibility:hidden;">—</span>
-        <span class="c-meta-item" id="p-rar">Немагический</span>
-        
+    <div class="dc" id="pc">
+      <div class="sp-head">
+        <span class="sp-head-orn l"><svg width="15" height="15" viewBox="0 0 20 20"><path d="M10 2 L18 10 L10 18 L2 10 Z" fill="none" stroke="#e6c584" stroke-width="1.4"/><path d="M10 6.4 L13.6 10 L10 13.6 L6.4 10 Z" fill="#e6c584" opacity=".55"/></svg></span>
+        <span class="sp-mname" id="pnm">Название заклинания</span>
+        <span class="sp-head-orn r"><svg width="15" height="15" viewBox="0 0 20 20"><path d="M10 2 L18 10 L10 18 L2 10 Z" fill="none" stroke="#e6c584" stroke-width="1.4"/><path d="M10 6.4 L13.6 10 L10 13.6 L6.4 10 Z" fill="#e6c584" opacity=".55"/></svg></span>
       </div>
-      <div class="c-meta-orn"><svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10 L10 3 L17 10 L10 17 Z" stroke="#5a4820" stroke-width="1.2" fill="#d4c4a0" opacity="0.8"/><circle cx="10" cy="10" r="2" fill="#5a4820" opacity="0.7"/></svg></div>
-    </div>
-    <div class="c-img" id="cib">
-      <div class="c-img-ph" id="img-ph">
-        <svg viewBox="0 0 24 24" fill="none" stroke="#8a7860" stroke-width="1.2" width="40" height="40"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="16" y1="10" x2="8" y2="10"/></svg>
+      <div class="sp-body">
+        <div class="sp-lvl" id="plvl">ЗАГОВОР</div>
+        <div class="sp-sep" style="margin:5px 0;"></div>
+        <div class="sp-line" id="pcls-row" style="display:none;"><span class="sp-lbl">КЛАСС</span> &nbsp;<span id="pcls"></span></div>
+        <div class="sp-line sub" id="psub-row" style="display:none;"><span class="sp-lbl">ПОДКЛАСС</span> &nbsp;<span id="psub"></span></div>
+        <div class="sp-grid">
+          <div class="sp-cell">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8a6010" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            <div class="sp-cell-in"><div class="sp-glbl">ВРЕМЯ</div><div class="sp-gval" id="pcast">—</div></div>
+          </div>
+          <div class="sp-cell">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8a6010" stroke-width="2"><path d="M3 12h16"/><path d="M14 7l6 5-6 5"/></svg>
+            <div class="sp-cell-in"><div class="sp-glbl">ДИСТАНЦИЯ</div><div class="sp-gval" id="prange">—</div></div>
+          </div>
+          <div class="sp-cell">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8a6010" stroke-width="2"><path d="M12 3 L20 12 L12 21 L4 12 Z"/></svg>
+            <div class="sp-cell-in"><div class="sp-glbl">КОМПОНЕНТЫ</div><div class="sp-gval" id="pcomp">—</div></div>
+          </div>
+          <div class="sp-cell">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#8a6010" stroke-width="2"><path d="M6 3h12v3l-6 6 6 6v3H6v-3l6-6-6-6z"/></svg>
+            <div class="sp-cell-in"><div class="sp-glbl">ДЛИТЕЛЬНОСТЬ</div><div class="sp-gval" id="pdur">—</div></div>
+          </div>
+        </div>
+        <div class="sp-mat" id="pmat-row" style="display:none;"><span class="sp-lbl">МАТЕРИАЛ</span> &nbsp;<i id="pmat"></i></div>
+        <div class="sp-cond" id="pcond-row" style="display:none;"><span class="sp-lbl">УСЛОВИЕ</span> &nbsp;<i id="pcond"></i></div>
+        <div class="c-desc" id="pds"></div>
+        <div class="sp-sep" id="p-sep-hl" style="margin:6px 0 0;display:none;"></div>
+        <div class="sp-hl" id="p-hl" style="display:none;"><div class="sp-hl-t">НА ВЫСОКИХ УРОВНЯХ</div>
+        <div class="sp-hl-x" id="p-hl-x"></div></div>
+        <div class="sp-sep nohl" id="p-sep-foot"></div>
       </div>
-      <svg class="img-frame-svg" viewBox="0 0 310 163" xmlns="http://www.w3.org/2000/svg">
-        <rect x="1" y="1" width="308" height="161" fill="none" stroke="#3a2810" stroke-width="2" opacity="0.9"/>
-        <rect x="5" y="5" width="300" height="153" fill="none" stroke="#a07838" stroke-width="1" opacity="0.85"/>
-        <rect x="1"   y="1"   width="22" height="22" fill="#e8dcc8" stroke="#3a2810" stroke-width="2" opacity="0.95"/>
-        <line x1="4"  y1="19" x2="19" y2="4"   stroke="#3a2810" stroke-width="1.5" opacity="0.9"/>
-        <rect x="287" y="1"   width="22" height="22" fill="#e8dcc8" stroke="#3a2810" stroke-width="2" opacity="0.95"/>
-        <line x1="290" y1="19" x2="305" y2="4"  stroke="#3a2810" stroke-width="1.5" opacity="0.9"/>
-        <rect x="1"   y="140" width="22" height="22" fill="#e8dcc8" stroke="#3a2810" stroke-width="2" opacity="0.95"/>
-        <line x1="4"  y1="144" x2="19" y2="159" stroke="#3a2810" stroke-width="1.5" opacity="0.9"/>
-        <rect x="287" y="140" width="22" height="22" fill="#e8dcc8" stroke="#3a2810" stroke-width="2" opacity="0.95"/>
-        <line x1="290" y1="144" x2="305" y2="159" stroke="#3a2810" stroke-width="1.5" opacity="0.9"/>
-        <line x1="23"  y1="3"   x2="287" y2="3"   stroke="#a07838" stroke-width="1" opacity="0.8"/>
-        <line x1="23"  y1="160" x2="287" y2="160" stroke="#a07838" stroke-width="1" opacity="0.8"/>
-        <line x1="3"   y1="23"  x2="3"   y2="140" stroke="#a07838" stroke-width="1" opacity="0.8"/>
-        <line x1="307" y1="23"  x2="307" y2="140" stroke="#a07838" stroke-width="1" opacity="0.8"/>
-      </svg>
-    </div>
-    <div class="c-body">
-      <div class="c-name" id="pnm">Название набора</div>
-      <div class="c-rule"></div>
-      <div class="c-kitlist" id="pkitlist">
-        <div class="c-kit-item"><span class="c-kit-dot">•</span><span>Заполните состав набора</span></div>
+      <div class="sp-foot">
+        <span class="sp-ed" id="ped"></span>
+        <span class="sp-plaque"><svg viewBox="0 0 200 22"><path d="M14,11 Q14,2 26,2 L174,2 Q186,2 186,11 Q186,20 174,20 L26,20 Q14,20 14,11 Z" fill="#fbf4e2" stroke="#5a4820" stroke-width="1.3"/><path d="M8,11 L14,11 M186,11 L192,11" stroke="#5a4820" stroke-width="1.2"/><path d="M4,11 l3,-3 3,3 -3,3 z" fill="#d4c4a0" stroke="#5a4820" stroke-width="1"/><path d="M190,11 l3,-3 3,3 -3,3 z" fill="#d4c4a0" stroke="#5a4820" stroke-width="1"/><path d="M7,4.5 l.8,2 2,.8 -2,.8 -.8,2 -.8,-2 -2,-.8 2,-.8 z" fill="#5a4820"/><path d="M193,4.5 l.8,2 2,.8 -2,.8 -.8,2 -.8,-2 -2,-.8 2,-.8 z" fill="#5a4820"/><text x="100" y="15" text-anchor="middle" font-family="Crimson Text,Georgia,serif" font-style="italic" font-size="13" fill="#3a2810" id="pschool">Воплощение</text></svg></span>
+        <span class="sp-foot-r"><span class="sp-num" id="p-num"></span><div class="sp-gem" id="pgm"></div></span>
       </div>
     </div>
-    <div class="c-foot"><span class="c-wgt" id="pwgt"></span><span class="c-typeframe"><svg class="c-tfsvg" viewBox="0 0 210 28" xmlns="http://www.w3.org/2000/svg"><polygon points="40,14 51,3 159,3 170,14 159,25 51,25" fill="#efe6d2" stroke="#5a4820" stroke-width="1.4"/><polygon points="47,14 56,7.5 154,7.5 163,14 154,20.5 56,20.5" fill="none" stroke="#a07838" stroke-width="0.8"/><line x1="26" y1="14" x2="40" y2="14" stroke="#5a4820" stroke-width="1.3"/><line x1="170" y1="14" x2="184" y2="14" stroke="#5a4820" stroke-width="1.3"/><polygon points="15,3 27,14 15,25 3,14" fill="#d4c4a0" stroke="#5a4820" stroke-width="1.3"/><circle cx="15" cy="14" r="2.4" fill="#5a4820"/><polygon points="195,3 207,14 195,25 183,14" fill="#d4c4a0" stroke="#5a4820" stroke-width="1.3"/><circle cx="195" cy="14" r="2.4" fill="#5a4820"/><text x="105" y="18.5" text-anchor="middle" font-family="Crimson Text,Georgia,serif" font-style="italic" font-size="13" fill="#3a2810" id="p-type">Набор</text></svg></span><div class="c-gem" id="pgm"></div></div>
-  </div>
   </div><!-- /.card-col front -->
   <div class="card-col">
   <div class="side-lbl">Оборотная</div>
   <div class="dc dc-back" id="pb">
+    
     <div class="cb-rubashka" id="pb-rubashka">
       <svg width="100%" height="100%" viewBox="0 0 250 354" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <radialGradient id="rgrad-k" cx="50%" cy="50%" r="65%">
-            <stop offset="0%" stop-color="#0e1c0e"/>
-            <stop offset="100%" stop-color="#060806"/>
+          <radialGradient id="rgrad-sp" cx="50%" cy="50%" r="65%">
+            <stop offset="0%" stop-color="#161030"/>
+            <stop offset="100%" stop-color="#060310"/>
           </radialGradient>
-          <pattern id="rpat-k" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
-            <path d="M0,16 L16,0 M-4,4 L4,-4 M12,20 L20,12" stroke="#2a6a30" stroke-width="0.4" opacity="0.18"/>
-            <path d="M0,0 L16,16 M-4,12 L4,20 M12,-4 L20,4" stroke="#2a6a30" stroke-width="0.4" opacity="0.18"/>
+          <pattern id="rpat-sp" x="0" y="0" width="22" height="22" patternUnits="userSpaceOnUse">
+            <path d="M11,8 l.9,2.1 2.1,.9 -2.1,.9 -.9,2.1 -.9,-2.1 -2.1,-.9 2.1,-.9 z" fill="#6a4aa8" opacity="0.14"/>
           </pattern>
         </defs>
-        <rect width="250" height="354" fill="url(#rgrad-k)"/>
-        <rect width="250" height="354" fill="url(#rpat-k)"/>
-        <rect x="6" y="6" width="238" height="342" rx="5" fill="none" stroke="#2a8a3a" stroke-width="2" opacity="0.85"/>
-        <rect x="10" y="10" width="230" height="334" rx="3" fill="none" stroke="#3aaa4a" stroke-width="0.8" opacity="0.4"/>
-        <path d="M7,21 Q10,12 21,7 Q14,12 11,18 Z" fill="#2a8a3a" opacity="0.5"/>
-        <line x1="7" y1="21" x2="21" y2="7" stroke="#3aaa4a" stroke-width="1" opacity="0.5"/>
-        <path d="M243,21 Q240,12 229,7 Q236,12 239,18 Z" fill="#2a8a3a" opacity="0.5"/>
-        <line x1="243" y1="21" x2="229" y2="7" stroke="#3aaa4a" stroke-width="1" opacity="0.5"/>
-        <path d="M7,333 Q10,342 21,347 Q14,342 11,336 Z" fill="#2a8a3a" opacity="0.5"/>
-        <line x1="7" y1="333" x2="21" y2="347" stroke="#3aaa4a" stroke-width="1" opacity="0.5"/>
-        <path d="M243,333 Q240,342 229,347 Q236,342 239,336 Z" fill="#2a8a3a" opacity="0.5"/>
-        <line x1="243" y1="333" x2="229" y2="347" stroke="#3aaa4a" stroke-width="1" opacity="0.5"/>
-        <line x1="21" y1="8" x2="229" y2="8" stroke="#2a8a3a" stroke-width="0.5" opacity="0.4"/>
-        <line x1="21" y1="346" x2="229" y2="346" stroke="#2a8a3a" stroke-width="0.5" opacity="0.4"/>
-        <line x1="8" y1="21" x2="8" y2="333" stroke="#2a8a3a" stroke-width="0.5" opacity="0.4"/>
-        <line x1="242" y1="21" x2="242" y2="333" stroke="#2a8a3a" stroke-width="0.5" opacity="0.4"/>
-        <!-- Backpack handle -->
-        <path d="M114,141 Q125,131 136,141" fill="none" stroke="#2a8a3a" stroke-width="2.5" stroke-linecap="round" opacity="0.82"/>
-        <!-- Top flap -->
-        <rect x="97" y="141" width="56" height="21" rx="6" fill="#0c1a0c" stroke="#2a8a3a" stroke-width="2" opacity="0.92"/>
-        <!-- Flap buckle -->
-        <rect x="119" y="148" width="12" height="6" rx="1.5" fill="none" stroke="#3aaa4a" stroke-width="1.3" opacity="0.72"/>
-        <line x1="125" y1="148" x2="125" y2="154" stroke="#3aaa4a" stroke-width="0.8" opacity="0.5"/>
-        <!-- Main body -->
-        <rect x="99" y="160" width="52" height="68" rx="7" fill="#0c1a0c" stroke="#2a8a3a" stroke-width="2" opacity="0.92"/>
-        <!-- Body top seam -->
-        <line x1="101" y1="167" x2="149" y2="167" stroke="#3aaa4a" stroke-width="0.7" opacity="0.3"/>
-        <!-- Front pocket -->
-        <rect x="109" y="175" width="32" height="38" rx="4" fill="none" stroke="#3aaa4a" stroke-width="1.4" opacity="0.72"/>
-        <!-- Pocket D-ring pull -->
-        <path d="M122,175 Q125,171 128,175" fill="none" stroke="#3aaa4a" stroke-width="1.3" stroke-linecap="round" opacity="0.65"/>
-        <!-- Side compression straps -->
-        <line x1="99" y1="170" x2="94" y2="198" stroke="#2a8a3a" stroke-width="1.5" stroke-linecap="round" opacity="0.52"/>
-        <line x1="151" y1="170" x2="156" y2="198" stroke="#2a8a3a" stroke-width="1.5" stroke-linecap="round" opacity="0.52"/>
-        <!-- Strap buckles -->
-        <rect x="90" y="198" width="8" height="5" rx="2" fill="none" stroke="#2a8a3a" stroke-width="1.2" opacity="0.55"/>
-        <rect x="152" y="198" width="8" height="5" rx="2" fill="none" stroke="#2a8a3a" stroke-width="1.2" opacity="0.55"/>
-        <!-- Cardinal diamonds -->
-        <path d="M125,52 L130,63 L125,74 L120,63 Z" fill="#2a8a3a" opacity="0.65"/>
-        <path d="M125,280 L130,291 L125,302 L120,291 Z" fill="#2a8a3a" opacity="0.65"/>
-        <path d="M28,177 L39,172 L50,177 L39,182 Z" fill="#2a8a3a" opacity="0.65"/>
-        <path d="M200,177 L211,172 L222,177 L211,182 Z" fill="#2a8a3a" opacity="0.65"/>
+        <rect width="250" height="354" fill="url(#rgrad-sp)"/>
+        <rect width="250" height="354" fill="url(#rpat-sp)"/>
+        <rect x="6" y="6" width="238" height="342" rx="5" fill="none" stroke="#6a4aa8" stroke-width="2" opacity="0.85"/>
+        <rect x="10" y="10" width="230" height="334" rx="3" fill="none" stroke="#8a66cc" stroke-width="0.8" opacity="0.45"/>
+        <polygon points="12.5,6 19,13 16,22 9,22 6,13" fill="#120a24" stroke="#8a66cc" stroke-width="1.2" opacity="0.7"/>
+        <polygon points="237.5,6 244,13 241,22 234,22 231,13" fill="#120a24" stroke="#8a66cc" stroke-width="1.2" opacity="0.7"/>
+        <polygon points="12.5,330 19,337 16,346 9,346 6,337" fill="#120a24" stroke="#8a66cc" stroke-width="1.2" opacity="0.7"/>
+        <polygon points="237.5,330 244,337 241,346 234,346 231,337" fill="#120a24" stroke="#8a66cc" stroke-width="1.2" opacity="0.7"/>
+        <line x1="19" y1="8" x2="231" y2="8" stroke="#6a4aa8" stroke-width="0.5" opacity="0.4"/>
+        <line x1="19" y1="346" x2="231" y2="346" stroke="#6a4aa8" stroke-width="0.5" opacity="0.4"/>
+        <line x1="8" y1="22" x2="8" y2="330" stroke="#6a4aa8" stroke-width="0.5" opacity="0.4"/>
+        <line x1="242" y1="22" x2="242" y2="330" stroke="#6a4aa8" stroke-width="0.5" opacity="0.4"/>
+        <circle cx="125" cy="177" r="56" fill="none" stroke="#6a4aa8" stroke-width="1.6" opacity="0.8"/>
+        <circle cx="125" cy="177" r="47" fill="none" stroke="#8a66cc" stroke-width="0.6" opacity="0.4"/>
+        <g stroke="#8a66cc" stroke-width="1" opacity="0.6">
+          <line x1="125" y1="121" x2="125" y2="130"/><line x1="125" y1="224" x2="125" y2="233"/>
+          <line x1="69" y1="177" x2="78" y2="177"/><line x1="172" y1="177" x2="181" y2="177"/>
+        </g>
+        <polygon points="125,132 136,166 170,166 143,187 153,220 125,200 97,220 107,187 80,166 114,166" fill="none" stroke="#8a66cc" stroke-width="1.5" opacity="0.85"/>
+        <polygon points="125,148 132,168 152,168 136,181 142,201 125,189 108,201 114,181 98,168 118,168" fill="#6a4aa8" opacity="0.28"/>
+        <circle cx="125" cy="180" r="7" fill="#0c0618" stroke="#a988e0" stroke-width="1.2" opacity="0.95"/>
+        <circle cx="125" cy="180" r="2" fill="#a988e0" opacity="0.8"/>
+        <g fill="#8a66cc" opacity="0.7">
+          <path d="M125,52 L130,63 L125,74 L120,63 Z"/><path d="M125,280 L130,291 L125,302 L120,291 Z"/>
+          <path d="M28,177 L39,172 L50,177 L39,182 Z"/><path d="M200,177 L211,172 L222,177 L211,182 Z"/>
+        </g>
+        <g fill="#a988e0" opacity="0.55">
+          <circle cx="125" cy="63" r="1.3"/><circle cx="125" cy="291" r="1.3"/>
+          <circle cx="39" cy="177" r="1.3"/><circle cx="211" cy="177" r="1.3"/>
+        </g>
+        <g stroke="#6a4aa8" stroke-width="0.6" opacity="0.4">
+          <line x1="125" y1="74" x2="125" y2="115"/><line x1="125" y1="239" x2="125" y2="280"/>
+          <line x1="50" y1="177" x2="63" y2="177"/><line x1="187" y1="177" x2="200" y2="177"/>
+        </g>
+        <g fill="#8a66cc" opacity="0.5">
+          <path d="M42,60 l1.2,3 3,1.2 -3,1.2 -1.2,3 -1.2,-3 -3,-1.2 3,-1.2 z"/>
+          <path d="M208,60 l1.2,3 3,1.2 -3,1.2 -1.2,3 -1.2,-3 -3,-1.2 3,-1.2 z"/>
+          <path d="M42,286 l1.2,3 3,1.2 -3,1.2 -1.2,3 -1.2,-3 -3,-1.2 3,-1.2 z"/>
+          <path d="M208,286 l1.2,3 3,1.2 -3,1.2 -1.2,3 -1.2,-3 -3,-1.2 3,-1.2 z"/>
+        </g>
       </svg>
     </div>
-    <div class="c-stripe" id="pbs" style="display:none;"></div>
-    <div class="c-stripe-under" id="pbs2" style="display:none;"></div>
-    <div class="cb-body" id="pb-body" style="display:none;">
-      <div class="cb-lbl">Дополнительно</div>
-      <div class="cb-desc" id="pb-desc"></div>
+    <div class="sp-bstripe" id="pbs" style="display:none;"></div>
+    <div class="sp-bhead" id="pbs2" style="display:none;">
+      <span class="sp-head-orn l"><svg width="14" height="14" viewBox="0 0 20 20"><path d="M10 2 L18 10 L10 18 L2 10 Z" fill="none" stroke="#8a6010" stroke-width="1.4"/><path d="M10 6.4 L13.6 10 L10 13.6 L6.4 10 Z" fill="#8a6010" opacity=".5"/></svg></span>
+      <span class="sp-bhead-t">Описание</span>
+      <span class="sp-head-orn r"><svg width="14" height="14" viewBox="0 0 20 20"><path d="M10 2 L18 10 L10 18 L2 10 Z" fill="none" stroke="#8a6010" stroke-width="1.4"/><path d="M10 6.4 L13.6 10 L10 13.6 L6.4 10 Z" fill="#8a6010" opacity=".5"/></svg></span>
     </div>
-    <div class="c-foot" id="pb-foot" style="display:none;"><div class="c-gem" id="pbgm"></div></div>
+    <div class="sp-bsep" id="pbs3" style="display:none;"></div>
+    <div class="cb-body" id="pb-body" style="display:none;">
+      <div class="cb-desc" id="pb-desc"></div>
+      <div class="sp-sep" id="pb-sep-hl" style="margin:6px 0 0;display:none;"></div>
+      <div class="sp-hl" id="pb-hl" style="display:none;">
+        <div class="sp-hl-t">НА ВЫСОКИХ УРОВНЯХ</div>
+        <div class="sp-hl-x" id="pb-hl-x"></div>
+      </div>
+      <div class="sp-sep" id="pb-sep-foot"></div>
+    </div>
+    <div class="sp-foot" id="pb-foot" style="display:none;"><span class="sp-foot-r"><div class="sp-gem" id="pbgm"></div><span class="sp-num" id="pb-num"></span></span><span class="sp-foot-orn" aria-hidden="true"><svg width="42" height="12" viewBox="0 0 42 12"><path d="M5 6 L8 3 L11 6 L8 9 Z" fill="#4a3a24"/><path d="M17 6 L21 2 L25 6 L21 10 Z" fill="#4a3a24"/><path d="M31 6 L34 3 L37 6 L34 9 Z" fill="#4a3a24"/></svg></span><span class="sp-ed" id="pbed"></span></div>
   </div>
   </div><!-- /.card-col back -->
+  </div><!-- /.card-pair -->
   </div><!-- /.cards-row -->
 </main>
 
+<!-- COLLECTION PANEL -->
 <aside class="coll-panel">
   <div class="coll-head">
     <span class="coll-title">Коллекция</span>
@@ -542,7 +724,10 @@ button:focus{outline:none;}
       <span class="coll-count" id="coll-count">0</span>
     </div>
   </div>
-  <a class="coll-full-link" href="collection.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>Перейти в полную коллекцию</a>
+  <a class="coll-full-link" href="collection.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    Перейти в полную коллекцию
+  </a>
   <div class="coll-search-wrap">
     <svg class="coll-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <input class="coll-search" id="coll-search" type="text" placeholder="Поиск…" autocomplete="off"/>
@@ -550,32 +735,14 @@ button:focus{outline:none;}
   </div>
   <div class="coll-list" id="coll-list">
     <div class="coll-empty" id="coll-empty">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
+      <svg width="32" height="32" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M24 4 L28 20 L44 24 L28 28 L24 44 L20 28 L4 24 L20 20 Z"/></svg>
       Коллекция пуста.<br/>Создайте карточку.
     </div>
   </div>
 </aside>
-</div>
 
-<div class="crop-modal-bg" id="crop-modal-bg">
-  <div class="crop-modal">
-    <div class="crop-modal-title">Выберите область картинки</div>
-    <div class="crop-area" id="crop-area">
-      <canvas id="crop-canvas"></canvas>
-      <div class="cov" id="cov-t"></div><div class="cov" id="cov-b"></div>
-      <div class="cov" id="cov-l"></div><div class="cov" id="cov-r"></div>
-      <div class="crop-rect" id="crop-rect">
-        <div class="ch tl" data-h="tl"></div><div class="ch tr" data-h="tr"></div>
-        <div class="ch bl" data-h="bl"></div><div class="ch br" data-h="br"></div>
-      </div>
-    </div>
-    <div id="crop-coords-lbl" style="font-size:11px;color:var(--text3);margin-top:6px;font-family:'Cinzel',serif;"></div>
-    <div class="crop-actions">
-      <button class="crop-btn secondary" id="crop-cancel">Отмена</button>
-      <button class="crop-btn primary" id="crop-apply">✦ Применить</button>
-    </div>
-  </div>
-</div>
+</div><!-- /.layout -->
+
 <div class="conf-modal-bg" id="print-modal-bg">
   <div class="conf-modal">
     <h3>Параметры печати</h3>
@@ -586,6 +753,7 @@ button:focus{outline:none;}
     </div>
   </div>
 </div>
+<!-- CONFIRM DELETE MODAL -->
 <div class="conf-modal-bg" id="conf-modal-bg">
   <div class="conf-modal">
     <h3 id="conf-modal-h">Удалить карточку?</h3>
@@ -595,13 +763,94 @@ button:focus{outline:none;}
     </div>
   </div>
 </div>
+
 <div class="toast" id="toast"></div>
 
 <script>
 (function(){
-var R={nonmagic:{l:'Немагический',a:'#f5f5f5',cb:'#f5f5f5',cs:'#cdc8be'}};
-var LS_KEY='dnd_cardforge_kits';
-var IDB_NAME='dnd_kits_imgs';
+/* Школы магии играют роль «редкости»: красят полосу/самоцвет, группируют коллекцию */
+var R={
+  abjuration:{l:'Ограждение',a:'#3a8ccc',hl:'#4f9fd8',hd:'#2a6ea6',hi:'#8fd0f5'},
+  conjuration:{l:'Вызов/Призыв',a:'#d98e2b',hl:'#e5a03f',hd:'#a86a18',hi:'#f7cf86'},
+  divination:{l:'Прорицание',a:'#9ab8c8',hl:'#a9c6d4',hd:'#6d8f9f',hi:'#dff0f8'},
+  enchantment:{l:'Очарование',a:'#c05a9a',hl:'#cd6ba8',hd:'#934074',hi:'#f2a5d4'},
+  evocation:{l:'Воплощение',a:'#c04030',hl:'#ad3a2c',hd:'#8d2a20',hi:'#ef9877'},
+  illusion:{l:'Иллюзия',a:'#8a5ac0',hl:'#9a6ccd',hd:'#664095',hi:'#c9a5f0'},
+  necromancy:{l:'Некромантия',a:'#557a3a',hl:'#638b45',hd:'#3c5a28',hi:'#9dc47e'},
+  transmutation:{l:'Преобразование',a:'#3aa08a',hl:'#45b09a',hd:'#277666',hi:'#87dcc9'}
+};
+/* палитра школы -> CSS-переменные карточки (шапка, полоса, самоцвет, колауты) */
+function applySchoolVars(k){
+  var d=R[k]||R.evocation, e=document.documentElement.style;
+  e.setProperty('--ca',d.a);e.setProperty('--ca-l',d.hl);e.setProperty('--ca-d',d.hd);e.setProperty('--ca-hi',d.hi);
+}
+var LS_KEY='dnd_cardforge_spells';
+var IDB_NAME='dnd_spells_imgs';
+/* ── Разметка описания: **полужирный** *курсив* __подчёркнутый__ ──
+   Текст без маркеров даёт один ран, поэтому старые карточки, импорт и шаблоны
+   рендерятся ровно как прежде — миграция не нужна.
+
+   Маркер открывает стиль только при наличии парного дальше по строке, иначе это
+   обычный символ: "2*3" остаётся умножением, незакрытый "**жирный" — текстом.
+
+   Текст попадает в DOM только через createTextNode, теги берутся из белого
+   списка из трёх штук. innerHTML здесь не используется намеренно: описание
+   приходит из localStorage и из импортированного JSON, то есть является
+   недоверенным вводом. */
+var FMT_MARKS=[{m:'**',k:'b'},{m:'__',k:'u'},{m:'*',k:'i'}];
+
+/* текст -> плоский список ранов [{t,b,i,u}] */
+function parseFmt(text){
+  var s=String(text==null?'':text),runs=[],buf='',st={b:false,i:false,u:false},i=0;
+  function flush(){if(buf){runs.push({t:buf,b:st.b,i:st.i,u:st.u});buf='';}}
+  while(i<s.length){
+    var hit=null,lit=null;
+    for(var j=0;j<FMT_MARKS.length;j++){
+      var f=FMT_MARKS[j];
+      if(s.substr(i,f.m.length)!==f.m)continue;
+      /* закрывающий — всегда; открывающий — только если есть парный */
+      if(st[f.k]||s.indexOf(f.m,i+f.m.length)!==-1)hit=f;
+      else lit=f;
+      /* первое текстовое совпадение решает: иначе непарный "**" откатился бы на
+         одиночный "*" и нашёл "пару" в собственной второй звёздочке */
+      break;
+    }
+    if(hit){flush();st[hit.k]=!st[hit.k];i+=hit.m.length;}
+    else if(lit){buf+=lit.m;i+=lit.m.length;}
+    else{buf+=s.charAt(i);i++;}
+  }
+  flush();
+  return runs;
+}
+
+function runsText(runs){var o='',i=0;for(;i<runs.length;i++)o+=runs[i].t;return o;}
+/* видимый текст без маркеров — для счётчика и текстовых превью галерей */
+function stripFmt(text){return runsText(parseFmt(text));}
+function visLen(text){return stripFmt(text).length;}
+
+/* срез по ВИДИМОМУ смещению [from,to): теги на границе закрываются сами,
+   потому что каждая сторона карточки рендерит свой список ранов независимо */
+function sliceRuns(runs,from,to){
+  var out=[],pos=0;
+  for(var i=0;i<runs.length;i++){
+    var r=runs[i],a=pos,b=pos+r.t.length;pos=b;
+    if(b<=from||a>=to)continue;
+    var s=Math.max(from,a)-a,e=Math.min(to,b)-a;
+    if(e>s)out.push({t:r.t.slice(s,e),b:r.b,i:r.i,u:r.u});
+  }
+  return out;
+}
+
+function renderRuns(el,runs){
+  el.textContent='';
+  for(var i=0;i<runs.length;i++){
+    var r=runs[i],node=document.createTextNode(r.t);
+    if(r.u){var u=document.createElement('u');u.appendChild(node);node=u;}
+    if(r.i){var it=document.createElement('i');it.appendChild(node);node=it;}
+    if(r.b){var bo=document.createElement('b');bo.appendChild(node);node=bo;}
+    el.appendChild(node);
+  }
+}
 var cr='nonmagic', imgDataUrl=null, collection=[], currentCard=null;
 var IDB_STORE='imgs',_idb=null;
 function _openIDB(cb){if(_idb){cb(_idb);return;}var r=indexedDB.open(IDB_NAME,1);r.onupgradeneeded=function(e){e.target.result.createObjectStore(IDB_STORE);};r.onsuccess=function(e){_idb=e.target.result;cb(_idb);};r.onerror=function(){cb(null);};}
@@ -666,276 +915,511 @@ function mkCounter(inputId,countId,max,lenFn){
   }
   if(!inp._cbound){inp.addEventListener('input',upd);inp._cbound=true;}upd();
 }
-cr='nonmagic';
-mkCounter('fn','cnt-fn',34);mkCounter('fback','cnt-back',900);
+cr='evocation';
+/* Жёсткий предел по ВИДИМЫМ символам: маркеры разметки не считаются.
+   Ловим beforeinput и НЕ пускаем лишнее, вместо того чтобы резать после ввода:
+   присваивание ta.value стирает нативный стек отмены, и Ctrl+Z переставал
+   работать. Вдобавок отмена возвращала текст сверх лимита, обрезание срабатывало
+   снова — и отмена выглядела как «ничего не делает».
+   Сырой maxlength остаётся потолком на случай поля из одних маркеров. */
+var DESC_LIMIT=4400;
+(function(){
+  var ta=document.getElementById('fdesc');
+  ta.addEventListener('beforeinput',function(e){
+    var t=e.inputType||'';
+    /* удаление и история — всегда пропускаем */
+    if(t.indexOf('delete')===0||t.indexOf('history')===0)return;
+    var data=e.data;
+    /* Enter даёт insertLineBreak/insertParagraph с data===null — без этой строки
+       перевод строки проскакивал бы мимо предела. */
+    if(data==null&&(t==='insertLineBreak'||t==='insertParagraph'))data='\n';
+    if(data==null&&e.dataTransfer)data=e.dataTransfer.getData('text/plain');
+    if(data==null)return;
+    var v=ta.value,head=v.slice(0,ta.selectionStart),tail=v.slice(ta.selectionEnd);
+    if(visLen(head+data+tail)<=DESC_LIMIT)return;
+    e.preventDefault();
+    /* вставка не влезает целиком — кладём сколько влезет, через insertText,
+       он не ломает стек отмены */
+    var lo=0,hi=data.length;
+    while(lo<hi-1){var mid=(lo+hi)>>1;if(visLen(head+data.slice(0,mid)+tail)<=DESC_LIMIT)lo=mid;else hi=mid;}
+    if(lo>0)document.execCommand('insertText',false,data.slice(0,lo));
+  });
+})();
 
-/* Автошрифт названия: одна строка, лестница кеглей 16→10, дальше многоточие
-   (по образцу заклинаний). Общий для всех семи генераторов — spells crop.js
-   не включает, конфликта с его собственным _fitName нет. */
-var NAME_FS=[16,15,14,13,12,11,10];
+mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',4400,visLen);mkCounter('fhl','cnt-hl',250);mkCounter('fsub','cnt-sub',120);mkCounter('fmat','cnt-mat',400);mkCounter('fcond','cnt-cond',70);
+  /* поля-textarea только ради переноса по ширине: значение однострочное */
+  ['fsub','fmat','fcond'].forEach(function(id){
+    document.getElementById(id).addEventListener('keydown',function(e){if(e.key==='Enter')e.preventDefault();});
+  });
+
+  /* Замена куска поля с сохранением нативной отмены.
+     Присваивание ta.value стирает стек undo браузера — после него Ctrl+Z либо
+     не делает ничего, либо отыгрывает записи, уже не соответствующие тексту.
+     execCommand('insertText') — единственный способ изменить textarea, оставив
+     undo/redo живыми; событие input он порождает сам. */
+  function taReplace(ta,from,to,text){
+    ta.focus();
+    ta.setSelectionRange(from,to);
+    var ok=false;
+    try{ok=document.execCommand('insertText',false,text);}catch(e){ok=false;}
+    if(ok)return true;
+    /* откат для браузеров без insertText: теряется только отмена */
+    var v=ta.value;
+    ta.value=v.slice(0,from)+text+v.slice(to);
+    ta.dispatchEvent(new Event('input',{bubbles:true}));
+    return false;
+  }
+  /* Кнопки разметки: оборачивают выделение парой маркеров, повторное нажатие —
+     снимают. Без выделения ставят пару и помещают каретку между маркерами. */
+  function fmtWrap(mark){
+    var ta=document.getElementById('fdesc'),ml=mark.length;
+    var st=ta.selectionStart,en=ta.selectionEnd,v=ta.value,inner=v.slice(st,en);
+    if(st>=ml&&v.slice(st-ml,st)===mark&&v.slice(en,en+ml)===mark){
+      /* маркеры снаружи выделения */
+      taReplace(ta,st-ml,en+ml,inner);
+      ta.setSelectionRange(st-ml,st-ml+inner.length);
+    }else if(inner.length>=ml*2&&inner.slice(0,ml)===mark&&inner.slice(inner.length-ml)===mark){
+      /* маркеры внутри выделения */
+      var bare=inner.slice(ml,inner.length-ml);
+      taReplace(ta,st,en,bare);
+      ta.setSelectionRange(st,st+bare.length);
+    }else{
+      taReplace(ta,st,en,mark+inner+mark);
+      ta.setSelectionRange(st+ml,st+ml+inner.length);
+    }
+    ta.focus();
+  }
+  [].forEach.call(document.querySelectorAll('.fmt-btn'),function(b){
+    b.addEventListener('click',function(){fmtWrap(b.getAttribute('data-fmt'));});
+  });
+  document.getElementById('fdesc').addEventListener('keydown',function(e){
+    if(!(e.ctrlKey||e.metaKey)||e.altKey)return;
+    var k=(e.key||'').toLowerCase();
+    var m=k==='b'?'**':k==='i'?'*':k==='u'?'__':null;
+    if(!m)return;
+    e.preventDefault();fmtWrap(m);
+  });
+
+
+/* ── readForm ── */
+function readForm(){
+  var cls=[];
+  document.querySelectorAll('#clsg input:checked').forEach(function(x){cls.push(x.value);});
+  cr=document.getElementById('fschool').value;
+  return {
+    type:'spell',
+    rarity:cr,
+    name:document.getElementById('fn').value.trim(),
+    level:document.getElementById('flvl').value,
+    edition:document.getElementById('fed').value.trim(),
+    cast:document.getElementById('fcast').value.trim(),
+    range:document.getElementById('frange').value.trim(),
+    compV:document.getElementById('fcv').checked,
+    compS:document.getElementById('fcs').checked,
+    compM:document.getElementById('fcm').checked,
+    material:document.getElementById('fmat').value.trim(),
+    duration:document.getElementById('fdur').value.trim(),
+    conc:document.getElementById('fconc').checked,
+    ritual:document.getElementById('fritual').checked,
+    classes:cls,
+    subclass:document.getElementById('fsub').value.trim(),
+    condition:document.getElementById('fcond').value.trim(),
+    desc:document.getElementById('fdesc').value,
+    hl:document.getElementById('fhl').value
+  };
+}
+
+/* ── Название: авто-кегль ──
+   Ступенчато уменьшаем, пока строка не влезет в шапку. Многоточие из CSS
+   остаётся последним рубежом: совсем длинному имени и 10px не хватит. */
+var NAME_FS=[15,14.5,14,13,12,11,10];
 function _fitName(){
-  var el=document.getElementById('pnm');if(!el)return;
+  var el=document.getElementById('pnm');
   for(var i=0;i<NAME_FS.length;i++){
     el.style.setProperty('--name-fs',NAME_FS[i]+'px');
     if(el.scrollWidth<=el.clientWidth+1)return;
   }
 }
 
-/* Флаг «Без картинки». Зону загрузки прячем здесь; превью перерисует
-   делегированный change на .sb из core.js — отдельный ререндер не нужен. */
-function _applyNoImgForm(on){
-  var drop=document.getElementById('img-drop');if(drop)drop.style.display=on?'none':'';
-  var rc=document.getElementById('btn-recrop'),dl=document.getElementById('btn-del-img');
-  if(on){if(rc)rc.style.display='none';if(dl)dl.style.display='none';}
-  else{var has=!!imgDataUrl;if(rc)rc.style.display=has?'flex':'none';if(dl)dl.style.display=has?'flex':'none';}
+/* ── spSplit: авто-кегль описания + перенос на оборот ──
+   Базовый кегль 12px; если текст не помещается на лицевой+обороте — ступенчато
+   уменьшаем до 9.5px. Если не влезло даже там — режем хвост с предупреждением.
+   Работаем не со строкой, а со списком ранов: срез по индексу строки разорвал бы
+   разметку пополам, а срез по ранам закрывает и переоткрывает теги сам.
+   rAF с таймаут-фолбэком: в фоновых вкладках rAF заморожен. */
+var DESC_FS=[12,11.5,11,10.5,10];
+function _rafSoon(cb){var done=false;function run(){if(!done){done=true;cb();}}requestAnimationFrame(run);setTimeout(run,60);}
+function _setFs(fs){document.documentElement.style.setProperty('--desc-fs',fs+'px');}
+function _descWarn(n){
+  var el=document.getElementById('desc-warn');if(!el)return;
+  if(n>0){el.textContent='⚠ Текст не помещается даже при кегле 9.5px — обрезано '+n+' симв. Сократите описание.';el.style.display='';}
+  else{el.style.display='none';}
 }
-var _noImgCb=document.getElementById('f-noimg');
-if(_noImgCb)_noImgCb.addEventListener('change',function(){_applyNoImgForm(_noImgCb.checked);});
+/* ── СТОРОНЫ КАРТОЧКИ ──
+   Лицевая держит статблок; все следующие стороны — «чистый лист»: полоса школы,
+   шапка с названием, текст, подвал. Оборот #pb — уже такой лист, поэтому
+   продолжение это ещё одна пара таких же.
+   Карта = 2 стороны, поэтому продолжение добавляется парами. */
+var ORN_SVG='<svg width="14" height="14" viewBox="0 0 20 20"><path d="M10 2 L18 10 L10 18 L2 10 Z" fill="none" stroke="#8a6010" stroke-width="1.4"/><path d="M10 6.4 L13.6 10 L10 13.6 L6.4 10 Z" fill="#8a6010" opacity=".5"/></svg>';
+var FOOT_ORN_SVG='<svg width="42" height="12" viewBox="0 0 42 12"><path d="M5 6 L8 3 L11 6 L8 9 Z" fill="#4a3a24"/><path d="M17 6 L21 2 L25 6 L21 10 Z" fill="#4a3a24"/><path d="M31 6 L34 3 L37 6 L34 9 Z" fill="#4a3a24"/></svg>';
+var contCols=[],contPairs=[];
 
-/* image upload & crop */
-var fImgInput=document.getElementById('f-img');
-fImgInput.addEventListener('change',function(){
-  var file=this.files[0];if(!file)return;
-  var reader=new FileReader();
-  reader.onload=function(e){rawImgDataUrl=e.target.result;openCrop(rawImgDataUrl);};
-  reader.readAsDataURL(file);
-  /* reset so same file can be picked again */
-  this.value='';
-});
-
-/* п.2: separate recrop button */
-document.getElementById('btn-recrop').addEventListener('click',function(){
-  if(rawImgDataUrl) openCrop(rawImgDataUrl);
-});
-
-document.getElementById('btn-del-img').addEventListener('click',function(){
-  imgDataUrl=null; rawImgDataUrl=null;
-  var th=document.getElementById('img-thumb');
-  th.style.display='none'; th.style.backgroundImage='';
-  document.getElementById('img-icon').style.display='';
-  document.getElementById('img-lbl').style.display='';
-  document.getElementById('f-img').value='';
-  setCardImg(null);
-});
-
-function setCardImg(src){
-  var ci=document.getElementById('cib');
-  var ex=ci.querySelector('.c-img-el');
-  if(src){
-    if(!ex){ex=document.createElement('img');ex.className='c-img-el';ci.insertBefore(ex,ci.firstChild);}
-    ex.src=src;
-    document.getElementById('img-ph').style.display='none';
-    document.getElementById('btn-recrop').style.display='flex';
-    document.getElementById('btn-del-img').style.display='flex';
-  }else{
-    if(ex)ex.remove();
-    document.getElementById('img-ph').style.display='flex';
-    document.getElementById('btn-recrop').style.display='none';
-    document.getElementById('btn-del-img').style.display='none';
-  }
+/* Рубашка продолжения — копия основной со СВОИМИ id в defs.
+   Ссылку url(#…) на скрытый display:none оригинал браузер не разрешает
+   (градиент пропадал, оставалась голая подложка), а дублировать id нельзя. */
+var _rubN=0;
+function _contRubashka(){
+  var n=++_rubN;
+  var html=document.getElementById('pb-rubashka').innerHTML
+    .replace(/id="rgrad-sp"/g,'id="rgrad-sp-c'+n+'"')
+    .replace(/id="rpat-sp"/g,'id="rpat-sp-c'+n+'"')
+    .replace(/url\(#rgrad-sp\)/g,'url(#rgrad-sp-c'+n+')')
+    .replace(/url\(#rpat-sp\)/g,'url(#rpat-sp-c'+n+')');
+  var div=document.createElement('div');
+  div.className='cb-rubashka c-rubashka';
+  div.innerHTML=html;
+  return div;
 }
 
-/* CROP */
-/* CROP — image fills canvas fully, selection in display-px,
-   mapped back to natural-image-px on apply */
-var cropImg = new Image();
-var cropNW = 1, cropNH = 1;   /* natural size */
-var cropDW = 1, cropDH = 1;   /* display size (canvas CSS px) */
-/* selection in display-px */
-var sel = {x:0,y:0,w:100,h:100};
-var cropState = null;
-
-function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
-
-/* Card image slot ratio: 310px wide : 163px tall */
-var CARD_RATIO = 296 / 149;
-
-function openCrop(src){
-  cropImg = new Image();
-  cropImg.onload = function(){
-    cropNW = cropImg.naturalWidth;
-    cropNH = cropImg.naturalHeight;
-    /* Открываем модал до измерения, чтобы clientWidth был корректным */
-    document.getElementById('crop-modal-bg').classList.add('open');
-    requestAnimationFrame(function(){
-      var area = document.getElementById('crop-area');
-      area.style.width='';
-      var maxW = area.clientWidth || 500;
-      var maxH = Math.max(160, window.innerHeight - 200);
-      var aW = maxW;
-      var aH = Math.round(aW * cropNH / cropNW);
-      if(aH > maxH){ aH = maxH; aW = Math.round(aH * cropNW / cropNH); }
-      area.style.width = aW + 'px'; area.style.margin = '0 auto';
-      var cv = document.getElementById('crop-canvas');
-      cv.width = aW; cv.height = aH;
-      cv.style.width = aW+'px'; cv.style.height = aH+'px';
-      cropDW = aW; cropDH = aH;
-      var ctx = cv.getContext('2d');
-      ctx.drawImage(cropImg, 0, 0, aW, aH);
-      /* initial selection: card-ratio rect centered in image */
-      var initW = aW;
-      var initH = Math.round(aW / CARD_RATIO);
-      if(initH > aH){ initH = aH; initW = Math.round(aH * CARD_RATIO); }
-      sel = {
-        x: Math.round((aW - initW) / 2),
-        y: Math.round((aH - initH) / 2),
-        w: initW, h: initH
-      };
-      updateCropUI();
-    });
-  };
-  cropImg.src = src;
+/* Подвал продолжения зеркалит первую карту: на лицевой редакция слева и номер у
+   самоцвета справа, на обороте наоборот. В центре вместо школы и орнамента —
+   «Продолжение». */
+function _contFootHTML(front){
+  var ed='<span class="sp-ed c-ed"></span>';
+  var gem='<span class="sp-foot-r"><span class="sp-num c-num"></span><div class="sp-gem"></div></span>';
+  var gemL='<span class="sp-foot-r"><div class="sp-gem"></div><span class="sp-num c-num"></span></span>';
+  return '<div class="sp-foot">'+(front?ed:gemL)
+    +'<span class="sp-cont-lbl">Продолжение</span>'
+    +(front?gem:ed)+'</div>';
 }
-
-function updateCropUI(){
-  var r = document.getElementById('crop-rect');
-  /* top/left/bottom/right in px relative to crop-area */
-  var t = sel.y;
-  var l = sel.x;
-  var b = cropDH - (sel.y + sel.h);
-  var rr = cropDW - (sel.x + sel.w);
-  r.style.top    = t+'px';
-  r.style.left   = l+'px';
-  r.style.bottom = b+'px';
-  r.style.right  = rr+'px';
-  document.getElementById('cov-t').style.cssText = 'top:0;left:0;right:0;height:'+t+'px';
-  document.getElementById('cov-b').style.cssText = 'bottom:0;left:0;right:0;height:'+b+'px';
-  document.getElementById('cov-l').style.cssText = 'top:'+t+'px;bottom:'+b+'px;left:0;width:'+l+'px';
-  document.getElementById('cov-r').style.cssText = 'top:'+t+'px;bottom:'+b+'px;right:0;width:'+rr+'px';
-  /* show natural-px coords for debug */
-  var sx = Math.round(sel.x / cropDW * cropNW);
-  var sy = Math.round(sel.y / cropDH * cropNH);
-  var sw = Math.round(sel.w / cropDW * cropNW);
-  var sh = Math.round(sel.h / cropDH * cropNH);
-  document.getElementById('crop-coords-lbl').textContent =
-    'Область: '+sx+', '+sy+' → '+sw+'×'+sh+' px';
+function _contSideHTML(front){
+  return '<div class="sp-bstripe"></div>'
+    +'<div class="sp-bhead"><span class="sp-head-orn l">'+ORN_SVG+'</span>'
+    +'<span class="sp-bhead-t c-title"></span>'
+    +'<span class="sp-head-orn r">'+ORN_SVG+'</span></div>'
+    +'<div class="sp-bsep"></div>'
+    +'<div class="cb-body"><div class="cb-desc c-desc-box"></div>'
+    +'<div class="sp-sep c-sep-hl" style="margin:6px 0 0;display:none;"></div>'
+    +'<div class="sp-hl c-hl" style="display:none;"><div class="sp-hl-t">НА ВЫСОКИХ УРОВНЯХ</div>'
+    +'<div class="sp-hl-x c-hl-x"></div></div>'
+    +'<div class="sp-sep c-sep-foot nohl"></div></div>'
+    +_contFootHTML(front);
 }
-
-document.getElementById('crop-rect').addEventListener('pointerdown',function(e){
-  var h = e.target.getAttribute('data-h');
-  cropState = {
-    h: h || 'move',
-    sx: e.clientX, sy: e.clientY,
-    ox: sel.x, oy: sel.y, ow: sel.w, oh: sel.h
-  };
-  e.preventDefault(); e.stopPropagation();
-});
-
-document.addEventListener('pointermove',function(e){
-  if(!cropState) return;
-  var dx = e.clientX - cropState.sx;
-  var dy = e.clientY - cropState.sy;
-  var MIN = 40;
-  var ox=cropState.ox, oy=cropState.oy, ow=cropState.ow, oh=cropState.oh;
-  var nx=ox, ny=oy, nw=ow, nh=oh;
-
-  if(cropState.h==='move'){
-    /* move: keep size, clamp to canvas */
-    nx = clamp(ox+dx, 0, cropDW-ow);
-    ny = clamp(oy+dy, 0, cropDH-oh);
-  } else {
-    /* resize: diagonal only, fixed ratio CARD_RATIO (w/h) */
-    /* use the larger of |dx|/|dy| projected onto the ratio */
-    var delta;
-    if(cropState.h==='tl'){
-      /* growing toward top-left: dx<0 grows, dy<0 grows */
-      delta = -(dx + dy * CARD_RATIO) / 2;
-      nw = clamp(ow + delta, MIN, Math.min(ox+ow, cropDH*CARD_RATIO));
-      nh = nw / CARD_RATIO;
-      nx = ox + ow - nw;
-      ny = oy + oh - nh;
-      /* clamp so we don't go negative */
-      if(nx < 0){ nx=0; nw=ox+ow; nh=nw/CARD_RATIO; ny=oy+oh-nh; }
-      if(ny < 0){ ny=0; nh=oy+oh; nw=nh*CARD_RATIO; nx=ox+ow-nw; }
-    } else if(cropState.h==='tr'){
-      /* growing toward top-right: dx>0 grows, dy<0 grows */
-      delta = (dx - dy * CARD_RATIO) / 2;
-      nw = clamp(ow + delta, MIN, Math.min(cropDW-ox, cropDH*CARD_RATIO));
-      nh = nw / CARD_RATIO;
-      ny = oy + oh - nh;
-      if(ny < 0){ ny=0; nh=oy+oh; nw=nh*CARD_RATIO; }
-    } else if(cropState.h==='bl'){
-      /* growing toward bottom-left: dx<0 grows, dy>0 grows */
-      delta = (-dx + dy * CARD_RATIO) / 2;
-      nw = clamp(ow + delta, MIN, Math.min(ox+ow, cropDH*CARD_RATIO));
-      nh = nw / CARD_RATIO;
-      nx = ox + ow - nw;
-      if(nx < 0){ nx=0; nw=ox+ow; nh=nw/CARD_RATIO; }
-      if(ny+nh > cropDH){ nh=cropDH-ny; nw=nh*CARD_RATIO; nx=ox+ow-nw; }
-    } else if(cropState.h==='br'){
-      /* growing toward bottom-right: dx>0 grows, dy>0 grows */
-      delta = (dx + dy * CARD_RATIO) / 2;
-      nw = clamp(ow + delta, MIN, Math.min(cropDW-ox, (cropDH-oy)*CARD_RATIO));
-      nh = nw / CARD_RATIO;
-      if(nx+nw > cropDW){ nw=cropDW-nx; nh=nw/CARD_RATIO; }
-      if(ny+nh > cropDH){ nh=cropDH-ny; nw=nh*CARD_RATIO; }
+/* n — сколько ДОПОЛНИТЕЛЬНЫХ карт нужно (0 = только основная) */
+function _ensureCont(n){
+  var row=document.getElementById('cards-row');
+  /* карта = пара сторон, поэтому продолжение добавляется и снимается парой */
+  while(contPairs.length>n){var pr=contPairs.pop();pr.parentNode.removeChild(pr);}
+  while(contPairs.length<n){
+    var pair=document.createElement('div');pair.className='card-pair';
+    for(var i=0;i<2;i++){
+      var col=document.createElement('div');col.className='card-col';
+      var lbl=document.createElement('div');lbl.className='side-lbl';
+      lbl.textContent=i===0?'Лицевая (прод.)':'Оборотная (прод.)';
+      var card=document.createElement('div');card.className='dc dc-back';
+      card.innerHTML=_contSideHTML(i===0);
+      card.insertBefore(_contRubashka(),card.firstChild);
+      col.appendChild(lbl);col.appendChild(card);pair.appendChild(col);
     }
-    /* round */
-    nw=Math.round(nw); nh=Math.round(nh);
-    nx=Math.round(nx); ny=Math.round(ny);
-    /* hard clamp: selection must not exceed canvas bounds */
-    if(nx < 0){ nx=0; }
-    if(ny < 0){ ny=0; }
-    if(nx + nw > cropDW){ nw = cropDW - nx; nh = Math.round(nw / CARD_RATIO); }
-    if(ny + nh > cropDH){ nh = cropDH - ny; nw = Math.round(nh * CARD_RATIO); }
-    if(nw < MIN){ nw=MIN; nh=Math.round(nw/CARD_RATIO); }
-    if(nh < Math.round(MIN/CARD_RATIO)){ nh=Math.round(MIN/CARD_RATIO); nw=Math.round(nh*CARD_RATIO); }
+    row.appendChild(pair);contPairs.push(pair);
   }
-  sel = {x:nx, y:ny, w:nw, h:nh};
-  updateCropUI();
+  contCols=[].slice.call(row.querySelectorAll('.card-pair .card-col')).slice(2);
+}
+/* Все стороны, куда льётся описание, по порядку. Первая — лицевая со статблоком,
+   остальные — чистые листы. */
+function _sides(){
+  var a=[{desc:document.getElementById('pds'),clean:false,
+          hl:document.getElementById('p-hl'),hlx:document.getElementById('p-hl-x'),
+          sepHl:document.getElementById('p-sep-hl'),sepFoot:document.getElementById('p-sep-foot')}];
+  a.push({desc:document.getElementById('pb-desc'),clean:true,
+          hl:document.getElementById('pb-hl'),hlx:document.getElementById('pb-hl-x'),
+          sepHl:document.getElementById('pb-sep-hl'),sepFoot:document.getElementById('pb-sep-foot'),
+          card:document.getElementById('pb'),num:null});
+  contCols.forEach(function(col){
+    var card=col.querySelector('.dc');
+    a.push({desc:card.querySelector('.c-desc-box'),clean:true,cont:true,
+            hl:card.querySelector('.c-hl'),hlx:card.querySelector('.c-hl-x'),
+            sepHl:card.querySelector('.c-sep-hl'),sepFoot:card.querySelector('.c-sep-foot'),
+            card:card,num:card.querySelector('.c-num'),title:card.querySelector('.c-title')});
+  });
+  return a;
+}
+function _rafSoon(cb){var done=false;function run(){if(!done){done=true;cb();}}requestAnimationFrame(run);setTimeout(run,60);}
+function _setFs(fs){document.documentElement.style.setProperty('--desc-fs',fs+'px');}
+function _descWarn(n){
+  var el=document.getElementById('desc-warn');if(!el)return;
+  if(n>0){el.textContent='⚠ Текст не помещается даже на двух карточках — обрезано '+n+' симв. Сократите описание.';el.style.display='';}
+  else{el.style.display='none';}
+}
+/* бинарный поиск по ВИДИМОМУ смещению + откат до границы слова */
+function _fitCutRuns(el,runs,vis,from,ch,suffix){
+  var lo=from,hi=vis.length;
+  while(lo<hi-1){
+    var mid=Math.floor((lo+hi)/2);
+    renderRuns(el,sliceRuns(runs,from,mid));
+    if(suffix)el.appendChild(document.createTextNode(suffix));
+    if(el.scrollHeight<=ch+2)lo=mid;else hi=mid;
+  }
+  var cut=lo;
+  for(var i=cut;i>Math.max(from,cut-60);i--){if(vis.charAt(i)===' '||vis.charAt(i)==='\n'){cut=i;break;}}
+  return cut;
+}
+/* Показать/скрыть служебные части чистой стороны */
+/* Сторона без текста не исчезает: у физической карты всегда два лица.
+   Пусто — значит рубашка, ровно как у оборота основной карты. */
+function _showClean(sd,on){
+  if(!sd.cont){renderBackCard({back:on?'x':'',hl:''});return;}
+  var rub=sd.card.querySelector('.c-rubashka');
+  if(rub)rub.style.display=on?'none':'block';
+  ['.sp-bstripe','.sp-bhead','.sp-bsep','.cb-body','.sp-foot'].forEach(function(sel){
+    var e=sd.card.querySelector(sel);
+    if(e)e.style.display=on?(sel==='.cb-body'||sel==='.sp-foot'||sel==='.sp-bhead'?'flex':'block'):'none';
+  });
+}
+/* flex:1 у бокса описания съедает высоту стороны и выдавливает плашку вниз.
+   Стороне без текста растяжка не нужна — тогда hl встаёт под шапку, а не в подвал. */
+function _setDescFill(sd,on){sd.desc.style.flex=on?'':'0 0 auto';}
+function _putHl(sd,hl){
+  if(!sd.hl)return;
+  if(hl){sd.hlx.textContent=hl;sd.hl.style.display='';
+    sd.sepHl.style.display=sd.desc.textContent?'':'none';sd.sepFoot.className='sp-sep '+(sd.cont?'c-sep-foot':'');}
+  else{sd.hl.style.display='none';sd.sepHl.style.display='none';
+    sd.sepFoot.className='sp-sep '+(sd.cont?'c-sep-foot ':'')+'nohl';}
+}
+/* Разложить runs по сторонам. Возвращает {ok, rest} — rest>0 значит не влезло. */
+function _layout(runs,vis,hl,sides){
+  /* Чистим ВСЕ стороны до раскладки. Иначе текст прошлого рендера остаётся в
+     неиспользованных боксах: проверка «влез ли hl» видит чужое переполнение,
+     возвращает неудачу, лестница исчерпывается и рождается лишняя карта. */
+  for(var q=0;q<sides.length;q++){renderRuns(sides[q].desc,[]);_putHl(sides[q],'');_setDescFill(sides[q],true);}
+  var pos=0,used=0,hlDone=!hl;
+  for(var i=0;i<sides.length;i++){
+    var sd=sides[i];
+    if(sd.clean)_showClean(sd,true);
+    /* Сначала пробуем посадить остаток описания и плашку на ОДНУ сторону.
+       Плашка отъедает высоту у описания, поэтому ставим её ДО замера. */
+    if(!hlDone&&sd.hl){
+      _putHl(sd,hl);
+      renderRuns(sd.desc,sliceRuns(runs,pos,vis.length));
+      var ch1=sd.desc.clientHeight;
+      if(ch1&&sd.desc.scrollHeight<=ch1+2){
+        used=i;pos=vis.length;hlDone=true;
+        _setDescFill(sd,!!sd.desc.textContent);
+        break;
+      }
+      _putHl(sd,'');  /* вдвоём не влезли — сторона уходит под текст целиком */
+    }
+    renderRuns(sd.desc,sliceRuns(runs,pos,vis.length));
+    var ch=sd.desc.clientHeight;
+    if(!ch)return {ok:false,rest:vis.length-pos,used:i};
+    if(sd.desc.scrollHeight<=ch+2){used=i;pos=vis.length;break;}
+    var cut=_fitCutRuns(sd.desc,runs,vis,pos,ch);
+    renderRuns(sd.desc,sliceRuns(runs,pos,cut));
+    pos=(vis.charAt(cut)===' '||vis.charAt(cut)==='\n')?cut+1:cut;
+    used=i;
+  }
+  /* Описание кончилось, а плашка рядом не поместилась — она уходит на следующую
+     сторону и встаёт СВЕРХУ: текста там нет, растягивать бокс не под что. */
+  if(!hlDone&&pos>=vis.length){
+    var nx=sides[used+1];
+    if(nx&&nx.hl){
+      if(nx.clean)_showClean(nx,true);
+      renderRuns(nx.desc,[]);
+      _setDescFill(nx,false);
+      _putHl(nx,hl);
+      var body=nx.desc.parentNode;
+      if(body.scrollHeight<=body.clientHeight+2){used=used+1;hlDone=true;}
+      else{_putHl(nx,'');_setDescFill(nx,true);}
+    }
+  }
+  /* Стороны после последней занятой гасим — пусто значит рубашка. Сюда же
+     попадает оборот, когда описание с плашкой уместились на лицевой. */
+  for(var k=used+1;k<sides.length;k++){if(sides[k].clean)_showClean(sides[k],false);}
+  return {ok:pos>=vis.length&&hlDone,rest:vis.length-pos,used:used};
+}
+function _numbering(total){
+  var sides=_sides();
+  var fnum=document.getElementById('p-num');
+  var bnum=document.getElementById('pb-num');
+  if(total<2){
+    if(fnum)fnum.textContent='';
+    if(bnum)bnum.textContent='';
+    return;
+  }
+  /* Обе стороны первой карты несут «1/N» — при печати они разъезжаются по листам */
+  if(fnum)fnum.textContent='1/'+total;
+  if(bnum)bnum.textContent='1/'+total;
+  contPairs.forEach(function(pair,pi){
+    [].forEach.call(pair.querySelectorAll('.c-num'),function(n){n.textContent=(2+pi)+'/'+total;});
+    [].forEach.call(pair.querySelectorAll('.c-title'),function(t){t.textContent=document.getElementById('pnm').textContent;});
+    [].forEach.call(pair.querySelectorAll('.c-ed'),function(e){e.textContent=document.getElementById('ped').textContent;});
+  });
+}
+function _setBackSp(backRuns,hl){
+  var runs=backRuns||[],txt=runsText(runs);
+  renderBackCard({back:txt,hl:hl});
+  renderRuns(document.getElementById('pb-desc'),runs);
+  var hlBox=document.getElementById('pb-hl'),hlSep=document.getElementById('pb-sep-hl');
+  var sepFoot=document.getElementById('pb-sep-foot');
+  if(hl){document.getElementById('pb-hl-x').textContent=hl;hlBox.style.display='';hlSep.style.display=txt?'':'none';sepFoot.className='sp-sep';}
+  else{hlBox.style.display='none';hlSep.style.display='none';sepFoot.className='sp-sep nohl';}
+}
+function spSplit(data){
+  var desc=document.getElementById('pds'),raw=(data.desc||''),hl=(data.hl||'').trim();
+  var runs=parseFmt(raw),vis=runsText(runs);
+  desc.textContent='';
+  /* пусто и без плашки — раскладывать нечего; с плашкой идём через лестницу */
+  if(!vis&&!hl){_setFs(DESC_FS[0]);_ensureCont(0);_setBackSp(null,'');_numbering(1);_descWarn(0);return;}
+  _rafSoon(function(){
+    /* Правило: минимум сторон; среди кеглей, дающих этот минимум, — самый крупный.
+       Меряем на полном раскладе в 4 стороны и смотрим, сколько сторон кегль съел
+       на самом деле (used+1). Идём от крупного вниз и меняем лучший только при
+       СТРОГОМ n<best.n — тогда при равном числе сторон побеждает крупный кегль.
+       Ужатие, не убравшее ни одной стороны, выбрасывается: платить мелким шрифтом
+       не за что. Замеров пять, как и было, — перебора «цель × кегль» нет. */
+    _ensureCont(1);
+    var best=null;
+    for(var i=0;i<DESC_FS.length;i++){
+      _setFs(DESC_FS[i]);
+      var r=_layout(runs,vis,hl,_sides());
+      if(!r.ok)continue;
+      var n=r.used+1;
+      if(!best||n<best.n)best={n:n,fs:DESC_FS[i]};
+      if(best.n===1)break;  /* меньше одной стороны не бывает */
+    }
+    if(best){
+      _ensureCont(best.n>2?1:0);
+      _setFs(best.fs);
+      _layout(runs,vis,hl,_sides());
+      _numbering(best.n>2?2:1);
+      _descWarn(0);
+      return;
+    }
+    /* Не уместилось и на нижней ступени в четыре стороны — режем хвост */
+    _setFs(DESC_FS[DESC_FS.length-1]);
+    _ensureCont(1);
+    var r2=_layout(runs,vis,hl,_sides());
+    _numbering(2);
+    _descWarn(r2.rest);
+  });
+}
+
+/* ── renderCard ── */
+function renderCard(data){
+  cr=data.rarity||'evocation';
+  var d=R[cr]||R.evocation;
+  document.getElementById('pnm').textContent=data.name||'Название заклинания';
+  _fitName();
+  /* строка уровня */
+  var lvl=data.level==null?'0':String(data.level);
+  var parts=[lvl==='0'?'ЗАГОВОР':lvl+'-Й УРОВЕНЬ'];
+  if(data.conc)parts.push('КОНЦЕНТРАЦИЯ');
+  if(data.ritual)parts.push('РИТУАЛ');
+  document.getElementById('plvl').textContent=parts.join(' · ');
+  /* класс / подкласс */
+  var clsRow=document.getElementById('pcls-row');
+  if(data.classes&&data.classes.length){document.getElementById('pcls').textContent=' '+data.classes.join(' · ');clsRow.style.display='';}
+  else{clsRow.style.display='none';}
+  var subRow=document.getElementById('psub-row');
+  if(data.subclass){document.getElementById('psub').textContent=' '+data.subclass;subRow.style.display='';}
+  else{subRow.style.display='none';}
+  /* сетка */
+  document.getElementById('pcast').textContent=data.cast||'—';
+  document.getElementById('prange').textContent=data.range||'—';
+  var comp=[];if(data.compV)comp.push('В');if(data.compS)comp.push('С');if(data.compM)comp.push('М');
+  document.getElementById('pcomp').textContent=comp.length?comp.join(' · '):'—';
+  document.getElementById('pdur').textContent=data.duration||'—';
+  /* материал */
+  var matRow=document.getElementById('pmat-row');
+  if(data.material){document.getElementById('pmat').textContent=' '+data.material;matRow.style.display='';}
+  else{matRow.style.display='none';}
+  /* условие */
+  var condRow=document.getElementById('pcond-row');
+  if(data.condition){document.getElementById('pcond').textContent=data.condition;condRow.style.display='';}
+  else{condRow.style.display='none';}
+  /* подвал */
+  document.getElementById('ped').textContent=data.edition||'';
+  document.getElementById('pbed').textContent=data.edition||'';
+  document.getElementById('pschool').textContent=d.l;
+  applySchoolVars(cr);
+  applyR(cr);
+  spSplit(data);
+}
+/* оборот: рубашка, пока нет ни описания-хвоста, ни «на высоких уровнях» */
+function renderBackCard(data){
+  var has=!!(data.back&&String(data.back).trim())||!!(data.hl&&String(data.hl).trim());
+  var rub=document.getElementById('pb-rubashka');
+  var ids=['pbs','pbs2','pbs3','pb-body','pb-foot'];
+  if(has){
+    rub.style.display='none';
+    document.getElementById('pbs').style.display='';
+    document.getElementById('pbs2').style.display='flex';
+    document.getElementById('pbs3').style.display='';
+    document.getElementById('pb-body').style.display='flex';
+    document.getElementById('pb-foot').style.display='flex';
+  }else{
+    rub.style.display='block';
+    ids.forEach(function(i){document.getElementById(i).style.display='none';});
+  }
+}
+
+/* ── applyFormData ── */
+function applyFormData(data){
+  cr=data.rarity||'evocation';
+  document.getElementById('fschool').value=R[cr]?cr:'evocation';
+  document.getElementById('fn').value=data.name||'';
+  document.getElementById('flvl').value=data.level!=null?String(data.level):'0';
+  document.getElementById('fed').value=data.edition||'';
+  document.getElementById('fcast').value=data.cast||'';
+  document.getElementById('frange').value=data.range||'';
+  document.getElementById('fcv').checked=!!data.compV;
+  document.getElementById('fcs').checked=!!data.compS;
+  document.getElementById('fcm').checked=!!data.compM;
+  document.getElementById('fmat').value=data.material||'';
+  document.getElementById('fdur').value=data.duration||'';
+  document.getElementById('fconc').checked=!!data.conc;
+  document.getElementById('fritual').checked=!!data.ritual;
+  var cls=data.classes||[];
+  document.querySelectorAll('#clsg input').forEach(function(x){x.checked=cls.indexOf(x.value)!==-1;});
+  document.getElementById('fsub').value=data.subclass||'';
+  document.getElementById('fcond').value=data.condition||'';
+  document.getElementById('fdesc').value=data.desc||'';
+  document.getElementById('fhl').value=data.hl||'';
+  mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',4400,visLen);mkCounter('fhl','cnt-hl',250);mkCounter('fsub','cnt-sub',120);mkCounter('fmat','cnt-mat',400);mkCounter('fcond','cnt-cond',70);
+}
+
+/* ── reset ── */
+document.getElementById('btn-reset').addEventListener('click',function(){
+  if(!confirm('Сбросить все поля?'))return;
+  cr='evocation';
+  document.getElementById('fschool').value='evocation';
+  ['fn','fed','fcast','frange','fmat','fdur','fsub','fcond','fdesc','fhl'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('flvl').value='0';
+  ['fcv','fcs','fcm','fconc','fritual'].forEach(function(id){document.getElementById(id).checked=false;});
+  document.querySelectorAll('#clsg input').forEach(function(x){x.checked=false;});
+  currentCard=null;editingId=null;updateBuildBtn();
+  applyR('evocation');
+  document.getElementById('pnm').textContent='Название заклинания';
+  document.getElementById('plvl').textContent='ЗАГОВОР';
+  document.getElementById('pcls-row').style.display='none';
+  document.getElementById('psub-row').style.display='none';
+  ['pcast','prange','pcomp','pdur'].forEach(function(id){document.getElementById(id).textContent='—';});
+  document.getElementById('pmat-row').style.display='none';
+  document.getElementById('pcond-row').style.display='none';
+  document.getElementById('ped').textContent='';
+  document.getElementById('pbed').textContent='';
+  document.getElementById('pschool').textContent=R.evocation.l;
+  applySchoolVars('evocation');
+  _descWarn(0);
+  spSplit({desc:'',hl:'',rarity:'evocation'});
+  if(window.__syncSelects)window.__syncSelects();
+  mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',4400,visLen);mkCounter('fhl','cnt-hl',250);mkCounter('fsub','cnt-sub',120);mkCounter('fmat','cnt-mat',400);mkCounter('fcond','cnt-cond',70);
+  toast('Поля сброшены');
 });
 
-document.addEventListener('pointerup',function(){cropState=null;});
-
-document.getElementById('crop-cancel').addEventListener('click',function(){
-  document.getElementById('crop-modal-bg').classList.remove('open');
-});
-
-document.getElementById('crop-apply').addEventListener('click',function(){
-  /* map display-px selection → natural-image-px */
-  var scaleX = cropNW / cropDW;
-  var scaleY = cropNH / cropDH;
-  var nx = Math.floor(sel.x * scaleX);
-  var ny = Math.floor(sel.y * scaleY);
-  var nw = Math.ceil((sel.x + sel.w) * scaleX) - nx;
-  var nh = Math.ceil((sel.y + sel.h) * scaleY) - ny;
-  nx=Math.max(0,nx); ny=Math.max(0,ny);
-  nw=Math.min(nw,cropNW-nx); nh=Math.min(nh,cropNH-ny);
-  var maxW=900, maxH=450, dw=nw, dh=nh;
-  if(dw>maxW){ dh=Math.round(dh*maxW/dw); dw=maxW; }
-  if(dh>maxH){ dw=Math.round(dw*maxH/dh); dh=maxH; }
-  var out = document.createElement('canvas');
-  out.width=dw; out.height=dh;
-  var octx = out.getContext('2d');
-  octx.drawImage(cropImg, nx, ny, nw, nh, 0, 0, dw, dh);
-  /* прозрачность: JPEG не хранит альфа-канал → если есть полупрозрачные
-     пиксели, сохраняем PNG (сохраняет прозрачность), иначе JPEG (компактнее) */
-  var hasAlpha=false;
-  try{
-    var px=octx.getImageData(0,0,dw,dh).data;
-    for(var ai=3;ai<px.length;ai+=4){ if(px[ai]<255){ hasAlpha=true; break; } }
-  }catch(e){ hasAlpha=false; }
-  imgDataUrl = hasAlpha ? out.toDataURL('image/png') : out.toDataURL('image/jpeg', 0.85);
-  var th=document.getElementById('img-thumb');
-  th.style.backgroundImage='url('+imgDataUrl+')'; th.style.display='block';
-  document.getElementById('img-icon').style.display='none';
-  document.getElementById('img-lbl').style.display='none';
-  setCardImg(imgDataUrl);
-  document.getElementById('crop-modal-bg').classList.remove('open');
-  toast('✦ Картинка применена');
-});
-function parseComposition(text){return(text||'').split('\n').map(function(s){return s.trim();}).filter(function(s){return s.length>0;});}
-function readForm(){return{type:'kit',rarity:cr,name:document.getElementById('fn').value.trim(),cost:document.getElementById('fc').value.trim(),coin:document.getElementById('fcoin').value,wgt:document.getElementById('fwgt').value.trim(),composition:document.getElementById('fcomposition').value,back:document.getElementById('fback').value,noImg:document.getElementById('f-noimg').checked,
-    img:imgDataUrl,rawImg:rawImgDataUrl};}
-/* Оборотная сторона с «рубашкой» (equipment/tools/kits/poisons). */
-function renderBackCard(data){var hasBack=data.back&&data.back.trim();var rubashka=document.getElementById('pb-rubashka');var pbs=document.getElementById('pbs');var pbs2=document.getElementById('pbs2');var pbBody=document.getElementById('pb-body');var pbFoot=document.getElementById('pb-foot');var pbDesc=document.getElementById('pb-desc');var pbgm=document.getElementById('pbgm');if(hasBack){rubashka.style.display='none';pbs.style.display='';pbs2.style.display='';pbBody.style.display='flex';pbFoot.style.display='';pbDesc.textContent=data.back;var d=R[data.rarity||'common'];pbs.style.background=d.a;pbgm.style.background=d.a;}else{rubashka.style.display='block';pbs.style.display='none';pbs2.style.display='none';pbBody.style.display='none';pbFoot.style.display='none';}}
-function renderCard(data){var d=R[data.rarity||'common'];document.getElementById('p-rar').textContent=d.l;document.getElementById('p-type').textContent='Набор';document.getElementById('pnm').textContent=data.name||'Название набора';
-  _fitName();document.getElementById('pc').classList.toggle('no-img',!!data.noImg);var cm=document.getElementById('p-cost');if(cm){if(data.cost){cm.textContent=data.cost+' '+(data.coin||'зм');cm.style.visibility='visible';}else{cm.style.visibility='hidden';}}document.getElementById('pwgt').textContent=data.wgt?data.wgt+' фнт.':'';var kl=document.getElementById('pkitlist');kl.innerHTML='';var items=parseComposition(data.composition);kl.classList.toggle('two-col',items.length>8);if(items.length){items.forEach(function(item){var row=document.createElement('div');row.className='c-kit-item';row.innerHTML='<span class="c-kit-dot">•</span><span>'+item+'</span>';kl.appendChild(row);});}else{kl.innerHTML='<div class="c-kit-item"><span class="c-kit-dot">•</span><span>Заполните состав набора</span></div>';}setCardImg(data.img||null);applyR(data.rarity||'common');renderBackCard(data);}
-function applyFormData(data){cr='nonmagic';document.getElementById('fn').value=data.name||'';document.getElementById('fc').value=data.cost||'';document.getElementById('fcoin').value=data.coin||'зм';document.getElementById('fwgt').value=data.wgt||'';document.getElementById('fcomposition').value=data.composition||'';document.getElementById('fback').value=data.back||'';imgDataUrl=data.img||null;rawImgDataUrl=data.rawImg||data.img||null;
-  var _ni=document.getElementById('f-noimg');if(_ni)_ni.checked=!!data.noImg;if(typeof _applyNoImgForm==='function')_applyNoImgForm(!!data.noImg);var th=document.getElementById('img-thumb');if(imgDataUrl){th.style.backgroundImage='url('+imgDataUrl+')';th.style.display='block';document.getElementById('img-icon').style.display='none';document.getElementById('img-lbl').style.display='none';document.getElementById('btn-recrop').style.display='flex';document.getElementById('btn-del-img').style.display='flex';}else{th.style.display='none';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';}mkCounter('fn','cnt-fn',34);mkCounter('fback','cnt-back',900);}
-document.getElementById('btn-reset').addEventListener('click',function(){if(!confirm('Сбросить все поля?'))return;cr='nonmagic';['fn','fc','fwgt','fcomposition','fback'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('fcoin').value='зм';imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('f-img').value='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';setCardImg(null);applyR('nonmagic');renderCard({});toast('Поля сброшены');});
-var DEFAULT_NAME='Набор';
-function collItemSub(card){return parseComposition(card.composition).length+' предметов';}
+/* ── create card ── */
+var DEFAULT_NAME='Заклинание';
+function collItemSub(card){var lv=card.level==='0'?'Заговор':(card.level||'?')+'-й ур.';return lv;}
 var editingId=null;
 function _stamp(){var d=new Date(),p=function(n){return(n<10?'0':'')+n;};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'_'+p(d.getHours())+'-'+p(d.getMinutes())+'-'+p(d.getSeconds());}
 function updateBuildBtn(){var g=document.getElementById('gbtn'),n=document.getElementById('gbtn-new');if(!g)return;if(editingId){g.textContent='✦ Сохранить изменения';if(n)n.style.display='';}else{g.textContent='✦ Создать карточку';if(n)n.style.display='none';}}
@@ -1388,6 +1872,17 @@ function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.c
 
 applyR('common');
 loadFromLS();
+/* коллекция группируется по школам (перекрываем канонический порядок редкостей) */
+RARITY_ORDER=['evocation','conjuration','illusion','necromancy','abjuration','enchantment','transmutation','divination'];
+/* Стороны для экспорта и печати: лицо, оборот и все стороны продолжений.
+   renderapi зовёт этот хук, если страница его объявила. */
+function _cardSides(){
+  var a=[document.getElementById('pc'),document.getElementById('pb')];
+  contPairs.forEach(function(pair){
+    [].forEach.call(pair.querySelectorAll('.dc'),function(c){a.push(c);});
+  });
+  return a;
+}
 /* Внешний рендер карточки для галерей (collection/templates).
    Галерея грузит страницу-генератор в скрытый iframe и вызывает эту функцию,
    переиспользуя applyFormData+renderCard страницы и html2canvas. Отдаёт PNG
@@ -1425,6 +1920,7 @@ window.__dndRenderCard=function(card,cb){
 window.__dndReady=true;
 })();
 </script>
+
 <script>
 (function(){
   var toggle=document.getElementById('nav-toggle');
