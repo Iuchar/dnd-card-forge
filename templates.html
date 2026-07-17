@@ -133,6 +133,11 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .cst-v{font-size:13px;font-weight:700;color:#2a1e0a;}
 /* armor info-row */
 .c-info-row{display:flex;align-items:stretch;flex-shrink:0;}
+/* Не декорация: у части людей анимации вызывают тошноту и мигрень.
+   Живёт здесь, а не в styles.css, потому что галереи его не подключают. */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important;}
+}
 /* TOAST */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:9px 18px;font-family:'Cinzel',serif;font-size:11px;color:var(--text);letter-spacing:.06em;z-index:500;transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
 .toast.show{transform:translateX(-50%) translateY(0);}
@@ -222,7 +227,7 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .prev-note{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.08em;color:var(--text3);text-align:center;}
 
 /* CARD CSS */
-.dc{width:310px;height:437px;border-radius:12px;overflow:hidden;border:4px solid var(--cb,#a09080);background:#e8dcc8;display:flex;flex-direction:column;font-family:'Crimson Text',Georgia,serif;box-shadow:4px 4px 0 var(--cs,#6a5838);}
+.dc{width:310px;height:437px;border-radius:12px;overflow:hidden;border:4px solid var(--cb,#a09080);background:#e8dcc8;display:flex;flex-direction:column;font-family:'Crimson Text',Georgia,serif;}
 </style>
 <link rel="stylesheet" href="mobile.css"/>
 </head>
@@ -244,6 +249,10 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
       <a class="nav-item" href="templates.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         Готовые шаблоны
+      </a>
+      <a class="nav-item" href="spellbook.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Книга заклинаний
       </a>
       <div class="nav-sep"></div>
       <div class="nav-section-lbl">Генераторы</div>
@@ -275,12 +284,12 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><line x1="8.5" y1="2" x2="15.5" y2="2"/></svg>
         Яды
       </a>
+      <a class="nav-item" href="spells.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M12 3l1.9 5.3L19 10l-5.1 1.7L12 17l-1.9-5.3L5 10l5.1-1.7z"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z"/></svg>
+        Заклинания
+      </a>
       <div class="nav-sep"></div>
       <div class="nav-section-lbl">Скоро</div>
-      <span class="nav-item nav-disabled">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-        Заклинания
-      </span>
       <span class="nav-item nav-disabled">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>
         Огнестрел и взрывчатка
@@ -322,6 +331,7 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
     <span class="sel-info">Выбрано: <b id="sel-count">0</b></span>
     <button class="hbtn" id="sel-save" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Сохранить выбранные</button>
     <button class="hbtn" id="sel-print" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Печать выбранные</button>
+    <button class="hbtn" id="sel-all"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Выбрать всё</button>
     <button class="hbtn" id="sel-clear">Снять выделение</button>
   </div>
   <div class="grid-wrap" id="grid-wrap">
@@ -371,6 +381,71 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 
 <script>
 (function(){
+/* ── Разметка описания: **полужирный** *курсив* __подчёркнутый__ ──
+   Текст без маркеров даёт один ран, поэтому старые карточки, импорт и шаблоны
+   рендерятся ровно как прежде — миграция не нужна.
+
+   Маркер открывает стиль только при наличии парного дальше по строке, иначе это
+   обычный символ: "2*3" остаётся умножением, незакрытый "**жирный" — текстом.
+
+   Текст попадает в DOM только через createTextNode, теги берутся из белого
+   списка из трёх штук. innerHTML здесь не используется намеренно: описание
+   приходит из localStorage и из импортированного JSON, то есть является
+   недоверенным вводом. */
+var FMT_MARKS=[{m:'**',k:'b'},{m:'__',k:'u'},{m:'*',k:'i'}];
+
+/* текст -> плоский список ранов [{t,b,i,u}] */
+function parseFmt(text){
+  var s=String(text==null?'':text),runs=[],buf='',st={b:false,i:false,u:false},i=0;
+  function flush(){if(buf){runs.push({t:buf,b:st.b,i:st.i,u:st.u});buf='';}}
+  while(i<s.length){
+    var hit=null,lit=null;
+    for(var j=0;j<FMT_MARKS.length;j++){
+      var f=FMT_MARKS[j];
+      if(s.substr(i,f.m.length)!==f.m)continue;
+      /* закрывающий — всегда; открывающий — только если есть парный */
+      if(st[f.k]||s.indexOf(f.m,i+f.m.length)!==-1)hit=f;
+      else lit=f;
+      /* первое текстовое совпадение решает: иначе непарный "**" откатился бы на
+         одиночный "*" и нашёл "пару" в собственной второй звёздочке */
+      break;
+    }
+    if(hit){flush();st[hit.k]=!st[hit.k];i+=hit.m.length;}
+    else if(lit){buf+=lit.m;i+=lit.m.length;}
+    else{buf+=s.charAt(i);i++;}
+  }
+  flush();
+  return runs;
+}
+
+function runsText(runs){var o='',i=0;for(;i<runs.length;i++)o+=runs[i].t;return o;}
+/* видимый текст без маркеров — для счётчика и текстовых превью галерей */
+function stripFmt(text){return runsText(parseFmt(text));}
+function visLen(text){return stripFmt(text).length;}
+
+/* срез по ВИДИМОМУ смещению [from,to): теги на границе закрываются сами,
+   потому что каждая сторона карточки рендерит свой список ранов независимо */
+function sliceRuns(runs,from,to){
+  var out=[],pos=0;
+  for(var i=0;i<runs.length;i++){
+    var r=runs[i],a=pos,b=pos+r.t.length;pos=b;
+    if(b<=from||a>=to)continue;
+    var s=Math.max(from,a)-a,e=Math.min(to,b)-a;
+    if(e>s)out.push({t:r.t.slice(s,e),b:r.b,i:r.i,u:r.u});
+  }
+  return out;
+}
+
+function renderRuns(el,runs){
+  el.textContent='';
+  for(var i=0;i<runs.length;i++){
+    var r=runs[i],node=document.createTextNode(r.t);
+    if(r.u){var u=document.createElement('u');u.appendChild(node);node=u;}
+    if(r.i){var it=document.createElement('i');it.appendChild(node);node=it;}
+    if(r.b){var bo=document.createElement('b');bo.appendChild(node);node=bo;}
+    el.appendChild(node);
+  }
+}
 /* Единый текстовый разбор карточки для превью галерей (collection/templates).
    Маленькая картинка остаётся отдельно; здесь — компактный список всех свойств
    + текстовые блоки лицевой и оборотной сторон. Значения select уже на русском. */
@@ -394,11 +469,11 @@ function describeCard(card){
   add('Характеристика', card.stat);
   add('Спасбросок', card.savingThrow);
   add('Урон', card.damageDice);
-  add('Длительность', card.duration);
+  if(card.type!=='spell') add('Длительность', card.duration);
   if(card.props){ var p=Array.isArray(card.props)?card.props.join(', '):card.props; add('Свойства', p); }
   add('Мастерство', card.mastery);
   add('Боеприпас', card.ammo);
-  add('Материал', card.material);
+  if(card.type!=='spell') add('Материал', card.material);
   add('Требование Силы', card.strReq);
   add('Бонус к урону', card.strBonus);
   add('Бонус владения', card.profBonus);
@@ -406,10 +481,31 @@ function describeCard(card){
   add('Надевание', card.donnTime);
   add('Снятие', card.doffTime);
   add('Настройка', card.attune);
+  /* Заклинания — порядок ровно как на лицевой стороне карточки:
+     строка уровня (с концентрацией и ритуалом), класс, подкласс, сетка 2x2
+     (время, дистанция, компоненты, длительность), материал. Условие и редакция
+     идут ниже общими строками — они там уже в нужном месте. */
+  if(card.type==='spell'){
+    if(!_cfEmpty(card.level)) add('Уровень', card.level==='0'?'Заговор':card.level+'-й');
+    if(card.conc===true) add('Концентрация','да');
+    if(card.ritual===true) add('Ритуал','да');
+    if(card.classes&&card.classes.length) add('Классы', card.classes.join(' · '));
+    add('Подкласс', card.subclass);
+    add('Время накладывания', card.cast);
+    add('Дистанция', card.range);
+    if(card.compV||card.compS||card.compM){var _cc=[];if(card.compV)_cc.push('В');if(card.compS)_cc.push('С');if(card.compM)_cc.push('М');
+      add('Компоненты',_cc.join(', '));}
+    add('Длительность', card.duration);
+    add('Материал', card.material);
+  }
+  add('Условие', card.condition);
+  add('Редакция', card.edition);
   var blocks=[];
   function block(label,val){ if(_cfEmpty(val))return; blocks.push('<div class="cf-block"><div class="cf-block-h">'+label+'</div><div class="cf-block-t">'+_cfEsc(String(val).trim())+'</div></div>'); }
   block('Цитата', card.flv);
-  block('Описание', card.desc);
+  /* у заклинаний описание размечено маркерами — в текстовом превью они лишние */
+  block('Описание', card.type==='spell'&&typeof stripFmt==='function'?stripFmt(card.desc):card.desc);
+  block('На высоких уровнях', card.hl);
   block('Состав', card.composition);
   block('Оборотная сторона', card.back);
   var html=(rows.length?'<div class="cf-rows">'+rows.join('')+'</div>':'')+blocks.join('');
@@ -467,7 +563,9 @@ var FILTER_DEFS=[
 function _filtRel(def){if(def.always)return true;if(def.rel==='weapon')return allCards.some(function(c){return c._group==='weapon';});if(def.rel==='armor')return allCards.some(function(c){return c._group==='armor';});return true;}
 function getFiltered(){
   return allCards.filter(function(c){
-    if(FILT.query&&(c.name||'').toLowerCase().indexOf(FILT.query)<0)return false;
+    /* nameEn есть только у заклинаний; у предметов он пуст и условие просто не сработает */
+    if(FILT.query&&(c.name||'').toLowerCase().indexOf(FILT.query)<0
+       &&(c.nameEn||'').toLowerCase().indexOf(FILT.query)<0)return false;
     for(var i=0;i<FILTER_DEFS.length;i++){var def=FILTER_DEFS[i],sel=FILT[def.key];if(!sel||!sel.size)continue;var vals=def.val(c),ok=false;for(var j=0;j<vals.length;j++){if(sel.has(vals[j])){ok=true;break;}}if(!ok)return false;}
     return true;
   });
@@ -553,7 +651,16 @@ function _renderImages(cards,done){
     _withGen(_genPageOf(card),function(win){
       if(!win){out.push({card:card,front:null,back:null});next();return;}
       win.__dndRenderCard(card,function(res){
-        out.push({card:card,front:res?res.front:null,back:res?res.back:null});next();
+        /* Больше двух сторон = карточка-продолжение. Разбиваем на пары: дальше по
+           конвейеру (PNG, ZIP, печать) физическая карта — это ровно лицо+оборот,
+           и менять там ничего не надо. */
+        if(res&&res.sides&&res.sides.length>2){
+          for(var k=0;k<res.sides.length;k+=2)
+            out.push({card:card,front:res.sides[k],back:res.sides[k+1]||null});
+        }else{
+          out.push({card:card,front:res?res.front:null,back:res?res.back:null});
+        }
+        next();
       });
     });
   })();
@@ -655,6 +762,13 @@ function gaSelMode(){return gaSelectMode;}
 function gaIsSelected(c){return !!gaSelected[_cardKey(c)];}
 function gaSelectedCards(){var a=[];for(var k in gaSelected)a.push(gaSelected[k]);return a;}
 function _gaUpdateSelBar(){var n=gaSelectedCards().length;var el=document.getElementById('sel-count');if(el)el.textContent=n;var ss=document.getElementById('sel-save'),sp=document.getElementById('sel-print');if(ss)ss.disabled=!n;if(sp)sp.disabled=!n;}
+/* Выбрать всё = всё, что сейчас проходит фильтры. Без фильтров getFiltered()
+   отдаёт полный список, с фильтрами — только отфильтрованное. */
+function gaSelectAll(){
+  getFiltered().forEach(function(c){gaSelected[_cardKey(c)]=c;});
+  if(typeof renderGrid==='function')renderGrid();
+  _gaUpdateSelBar();
+}
 function gaToggleSelect(card,wrap){var k=_cardKey(card);if(gaSelected[k]){delete gaSelected[k];if(wrap)wrap.classList.remove('gsel');}else{gaSelected[k]=card;if(wrap)wrap.classList.add('gsel');}_gaUpdateSelBar();}
 function gaEnterSel(){gaSelectMode=true;document.body.classList.add('ga-selmode');var sb=document.getElementById('sel-bar');if(sb)sb.classList.add('open');var b=document.getElementById('btn-select-mode');if(b){b.classList.add('active');b.querySelector('.bsm-lbl').textContent='Готово';}if(typeof renderGrid==='function')renderGrid();_gaUpdateSelBar();}
 function gaExitSel(clear){gaSelectMode=false;if(clear)gaSelected={};document.body.classList.remove('ga-selmode');var sb=document.getElementById('sel-bar');if(sb)sb.classList.remove('open');var b=document.getElementById('btn-select-mode');if(b){b.classList.remove('active');b.querySelector('.bsm-lbl').textContent='Выбрать';}if(typeof renderGrid==='function')renderGrid();}
@@ -678,6 +792,7 @@ function gaExitSel(clear){gaSelectMode=false;if(clear)gaSelected={};document.bod
   var bSel=document.getElementById('btn-select-mode');if(bSel)bSel.addEventListener('click',function(){if(gaSelectMode)gaExitSel(true);else gaEnterSel();});
   var sSave=document.getElementById('sel-save');if(sSave)sSave.addEventListener('click',function(){saveCards(gaSelectedCards());});
   var sPrint=document.getElementById('sel-print');if(sPrint)sPrint.addEventListener('click',function(){openPrintModal(gaSelectedCards());});
+  var sAll=document.getElementById('sel-all');if(sAll)sAll.addEventListener('click',gaSelectAll);
   var sClear=document.getElementById('sel-clear');if(sClear)sClear.addEventListener('click',function(){gaSelected={};[].forEach.call(document.querySelectorAll('.g-card.gsel'),function(el){el.classList.remove('gsel');});_gaUpdateSelBar();});
 })();
 loadAll();buildFilters();renderGrid();
@@ -685,7 +800,7 @@ loadAll();buildFilters();renderGrid();
 if(!allCards.length){
   document.getElementById('empty-title').textContent='Загружаем примеры…';
   document.getElementById('empty-sub').textContent='';
-  fetch('templates-data.json').then(function(r){return r.json();}).then(function(seed){
+  fetch('templates-data.json',{cache:'no-cache'}).then(function(r){return r.json();}).then(function(seed){
     window.SEED_TEMPLATES=seed;
     if(!allCards.length){loadAll();buildFilters();renderGrid();}
   }).catch(function(){document.getElementById('empty-title').textContent='Шаблонов пока нет';});
