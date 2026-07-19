@@ -178,6 +178,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.07em;color:var(--text2);cursor:pointer;transition:all .13s;text-decoration:none;}
 .nav-item:hover{background:rgba(255,255,255,.06);color:var(--text);}
 .nav-item.nav-active{background:rgba(200,148,26,.12);color:var(--gold-l);border:0.5px solid rgba(200,148,26,.2);}
+.nav-badge{margin-left:auto;font-family:'Crimson Text',Georgia,serif;font-size:8.5px;letter-spacing:.02em;color:#c88a4a;border:0.5px solid rgba(200,138,74,.4);border-radius:4px;padding:1px 5px;text-transform:lowercase;flex-shrink:0;}
 .nav-item.nav-disabled{color:#5a5040;cursor:default;pointer-events:none;font-size:9.5px;padding:5px 10px;}
 .nav-group-head{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:6px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.07em;color:var(--text2);cursor:pointer;transition:all .13s;user-select:none;}
 .nav-group-head:hover{background:rgba(255,255,255,.06);color:var(--text);}
@@ -242,8 +243,15 @@ button:focus{outline:none;}
 .rp[data-r=veryrare].on{box-shadow:0 0 0 3px rgba(152,112,204,.4);}
 .rp[data-r=legendary].on{box-shadow:0 0 0 3px rgba(224,152,32,.45);}
 
-.c-kitlist{font-size:12px;color:#2a1e0a;line-height:1.55;flex:1;overflow:hidden;}
-.c-kitlist.two-col{column-count:2;column-gap:8px;font-size:10.5px;line-height:1.4;}
+/* Состав занимает место по содержимому, описание (.c-desc) забирает остаток лица. */
+/* Состав: одна или две явные колонки (распределение — в JS по числу позиций).
+   Кегль подгоняется под высоту лица (renderKitList), позиции переносятся полностью,
+   текст не обрезается. flex:0 0 auto: состав занимает место по содержимому,
+   описание (.c-desc) забирает остаток лица. */
+.c-kitlist{display:flex;gap:8px;font-size:12px;color:#2a1e0a;line-height:1.4;flex:0 0 auto;overflow:hidden;}
+.c-kitlist .kit-col{flex:1;min-width:0;display:flex;flex-direction:column;}
+.c-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);line-height:1.4;color:#2a1e0a;flex:1;min-height:0;overflow:hidden;white-space:pre-wrap;}
+.cb-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);line-height:1.4;color:#2a1e0a;flex:1;min-height:0;overflow:hidden;white-space:pre-wrap;}
 .c-kit-item{display:flex;gap:4px;align-items:baseline;break-inside:avoid;}
 .c-kit-dot{color:#8b6914;flex-shrink:0;font-size:11px;}
 .coll-item-thumb{width:30px;height:42px;border-radius:4px;flex-shrink:0;background:var(--bg4);overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.08);}
@@ -281,7 +289,7 @@ button:focus{outline:none;}
       </a>
       <a class="nav-item" href="spellbook.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-        Книга заклинаний
+        Книга заклинаний<span class="nav-badge">в разработке</span>
       </a>
       <div class="nav-sep"></div>
       <div class="nav-section-lbl">Генераторы</div>
@@ -397,13 +405,20 @@ button:focus{outline:none;}
   <div class="lbl">Состав набора</div>
   <div class="field-wrap field-mb">
     <textarea class="si" id="fcomposition" placeholder="Рюкзак&#10;Ломик&#10;Молоток&#10;Факелы (10 шт.)&#10;Трут и кремень&#10;Рацион на 10 дней&#10;Бурдюк с водой" style="height:170px;"></textarea>
+    <div class="fmt-warn" id="kit-warn" role="status" aria-live="polite" style="display:none;"></div>
   </div>
 
   <div class="divider"></div>
   <div class="lbl">Описание / Эффект</div>
+  <div class="fmt-bar" role="group" aria-label="Форматирование описания">
+    <button type="button" class="fmt-btn" data-fmt="**" title="Полужирный (Ctrl+B)" aria-label="Полужирный"><b>Ж</b></button>
+    <button type="button" class="fmt-btn" data-fmt="*" title="Курсив (Ctrl+I)" aria-label="Курсив"><i>К</i></button>
+    <button type="button" class="fmt-btn" data-fmt="__" title="Подчёркнутый (Ctrl+U)" aria-label="Подчёркнутый"><u>П</u></button>
+  </div>
   <div class="field-wrap field-mb">
-    <textarea class="si" id="fback" maxlength="900" placeholder="История, дополнительное описание, легенда набора…" style="height:350px;"></textarea>
-    <span class="char-counter" id="cnt-back">0/750</span>
+    <textarea class="si" id="fdesc" maxlength="2400" placeholder="Описание, эффект, легенда набора… (перенос на оборот — автоматически)" style="height:350px;"></textarea>
+    <span class="char-counter" id="cnt-desc">0/2000</span>
+    <div class="fmt-warn" id="desc-warn" role="status" aria-live="polite" style="display:none;"></div>
   </div>
 
   <button class="btn-build" id="gbtn" style="margin-top:14px;">✦ Создать карточку</button>
@@ -458,6 +473,8 @@ button:focus{outline:none;}
       <div class="c-kitlist" id="pkitlist">
         <div class="c-kit-item"><span class="c-kit-dot">•</span><span>Заполните состав набора</span></div>
       </div>
+      <div class="c-rule" id="p-rule-desc" style="display:none;"></div>
+      <div class="c-desc" id="pdesc"></div>
     </div>
     <div class="c-foot"><span class="c-wgt" id="pwgt"></span><span class="c-typeframe"><svg class="c-tfsvg" viewBox="0 0 210 28" xmlns="http://www.w3.org/2000/svg"><polygon points="40,14 51,3 159,3 170,14 159,25 51,25" fill="#efe6d2" stroke="#5a4820" stroke-width="1.4"/><polygon points="47,14 56,7.5 154,7.5 163,14 154,20.5 56,20.5" fill="none" stroke="#a07838" stroke-width="0.8"/><line x1="26" y1="14" x2="40" y2="14" stroke="#5a4820" stroke-width="1.3"/><line x1="170" y1="14" x2="184" y2="14" stroke="#5a4820" stroke-width="1.3"/><polygon points="15,3 27,14 15,25 3,14" fill="#d4c4a0" stroke="#5a4820" stroke-width="1.3"/><circle cx="15" cy="14" r="2.4" fill="#5a4820"/><polygon points="195,3 207,14 195,25 183,14" fill="#d4c4a0" stroke="#5a4820" stroke-width="1.3"/><circle cx="195" cy="14" r="2.4" fill="#5a4820"/><text x="105" y="18.5" text-anchor="middle" font-family="Crimson Text,Georgia,serif" font-style="italic" font-size="13" fill="#3a2810" id="p-type">Набор</text></svg></span><div class="c-gem" id="pgm"></div></div>
   </div>
@@ -925,15 +942,296 @@ document.getElementById('crop-apply').addEventListener('click',function(){
   toast('✦ Картинка применена');
 });
 function parseComposition(text){return(text||'').split('\n').map(function(s){return s.trim();}).filter(function(s){return s.length>0;});}
-function readForm(){return{type:'kit',rarity:cr,name:document.getElementById('fn').value.trim(),cost:document.getElementById('fc').value.trim(),coin:document.getElementById('fcoin').value,wgt:document.getElementById('fwgt').value.trim(),composition:document.getElementById('fcomposition').value,back:document.getElementById('fback').value,noImg:document.getElementById('f-noimg').checked,
+function readForm(){return{type:'kit',rarity:cr,name:document.getElementById('fn').value.trim(),cost:document.getElementById('fc').value.trim(),coin:document.getElementById('fcoin').value,wgt:document.getElementById('fwgt').value.trim(),composition:document.getElementById('fcomposition').value,desc:document.getElementById('fdesc').value,noImg:document.getElementById('f-noimg').checked,
     img:imgDataUrl,rawImg:rawImgDataUrl};}
+/* ── Разметка описания: **полужирный** *курсив* __подчёркнутый__ ──
+   Текст без маркеров даёт один ран, поэтому старые карточки, импорт и шаблоны
+   рендерятся ровно как прежде — миграция не нужна.
+
+   Маркер открывает стиль только при наличии парного дальше по строке, иначе это
+   обычный символ: "2*3" остаётся умножением, незакрытый "**жирный" — текстом.
+
+   Текст попадает в DOM только через createTextNode, теги берутся из белого
+   списка из трёх штук. innerHTML здесь не используется намеренно: описание
+   приходит из localStorage и из импортированного JSON, то есть является
+   недоверенным вводом. */
+var FMT_MARKS=[{m:'**',k:'b'},{m:'__',k:'u'},{m:'*',k:'i'}];
+
+/* текст -> плоский список ранов [{t,b,i,u}] */
+function parseFmt(text){
+  var s=String(text==null?'':text),runs=[],buf='',st={b:false,i:false,u:false},i=0;
+  function flush(){if(buf){runs.push({t:buf,b:st.b,i:st.i,u:st.u});buf='';}}
+  while(i<s.length){
+    var hit=null,lit=null;
+    for(var j=0;j<FMT_MARKS.length;j++){
+      var f=FMT_MARKS[j];
+      if(s.substr(i,f.m.length)!==f.m)continue;
+      /* закрывающий — всегда; открывающий — только если есть парный */
+      if(st[f.k]||s.indexOf(f.m,i+f.m.length)!==-1)hit=f;
+      else lit=f;
+      /* первое текстовое совпадение решает: иначе непарный "**" откатился бы на
+         одиночный "*" и нашёл "пару" в собственной второй звёздочке */
+      break;
+    }
+    if(hit){flush();st[hit.k]=!st[hit.k];i+=hit.m.length;}
+    else if(lit){buf+=lit.m;i+=lit.m.length;}
+    else{buf+=s.charAt(i);i++;}
+  }
+  flush();
+  return runs;
+}
+
+function runsText(runs){var o='',i=0;for(;i<runs.length;i++)o+=runs[i].t;return o;}
+/* видимый текст без маркеров — для счётчика и текстовых превью галерей */
+function stripFmt(text){return runsText(parseFmt(text));}
+function visLen(text){return stripFmt(text).length;}
+
+/* срез по ВИДИМОМУ смещению [from,to): теги на границе закрываются сами,
+   потому что каждая сторона карточки рендерит свой список ранов независимо */
+function sliceRuns(runs,from,to){
+  var out=[],pos=0;
+  for(var i=0;i<runs.length;i++){
+    var r=runs[i],a=pos,b=pos+r.t.length;pos=b;
+    if(b<=from||a>=to)continue;
+    var s=Math.max(from,a)-a,e=Math.min(to,b)-a;
+    if(e>s)out.push({t:r.t.slice(s,e),b:r.b,i:r.i,u:r.u});
+  }
+  return out;
+}
+
+function renderRuns(el,runs){
+  el.textContent='';
+  for(var i=0;i<runs.length;i++){
+    var r=runs[i],node=document.createTextNode(r.t);
+    if(r.u){var u=document.createElement('u');u.appendChild(node);node=u;}
+    if(r.i){var it=document.createElement('i');it.appendChild(node);node=it;}
+    if(r.b){var bo=document.createElement('b');bo.appendChild(node);node=bo;}
+    el.appendChild(node);
+  }
+}
+/* Разметка описания для генераторов: кнопки Ж/К/П, Ctrl+B/I/U и жёсткий предел
+   по ВИДИМЫМ символам. Автономный — поле находит сам (fdesc у большинства,
+   fprops у доспехов), поэтому один include обслуживает все шесть страниц.
+   Зависит от fmt.js (visLen); подключать после него, до splitdesc.js. */
+(function(){
+  var ta=document.getElementById('fdesc')||document.getElementById('fprops');
+  if(!ta)return;
+  /* Видимый предел: маркеры **__ __** в счёт не идут. Сырой maxlength поля выше —
+     это лишь потолок на случай, если поле забьют одними маркерами. */
+  var LIMIT=2000;
+
+  /* Замена куска поля с сохранением нативной отмены: присваивание ta.value стирает
+     стек undo браузера, поэтому пишем через execCommand, с откатом для старых. */
+  function taReplace(from,to,text){
+    ta.focus();ta.setSelectionRange(from,to);
+    var ok=false;try{ok=document.execCommand('insertText',false,text);}catch(e){ok=false;}
+    if(ok)return;
+    var v=ta.value;ta.value=v.slice(0,from)+text+v.slice(to);
+    ta.dispatchEvent(new Event('input',{bubbles:true}));
+  }
+
+  /* Обернуть выделение маркерами; повторный вызов на уже обёрнутом — снимает. */
+  function fmtWrap(mark){
+    var ml=mark.length,st=ta.selectionStart,en=ta.selectionEnd,v=ta.value,inner=v.slice(st,en);
+    if(st>=ml&&v.slice(st-ml,st)===mark&&v.slice(en,en+ml)===mark){
+      taReplace(st-ml,en+ml,inner);ta.setSelectionRange(st-ml,st-ml+inner.length);
+    }else if(inner.length>=ml*2&&inner.slice(0,ml)===mark&&inner.slice(inner.length-ml)===mark){
+      var bare=inner.slice(ml,inner.length-ml);
+      taReplace(st,en,bare);ta.setSelectionRange(st,st+bare.length);
+    }else{
+      taReplace(st,en,mark+inner+mark);ta.setSelectionRange(st+ml,st+ml+inner.length);
+    }
+    ta.focus();
+  }
+
+  [].forEach.call(document.querySelectorAll('.fmt-btn'),function(b){
+    b.addEventListener('click',function(){fmtWrap(b.getAttribute('data-fmt'));});
+  });
+
+  ta.addEventListener('keydown',function(e){
+    if(!(e.ctrlKey||e.metaKey)||e.altKey)return;
+    var k=(e.key||'').toLowerCase();
+    var m=k==='b'?'**':k==='i'?'*':k==='u'?'__':null;
+    if(!m)return;
+    e.preventDefault();fmtWrap(m);
+  });
+
+  /* Жёсткий предел по видимым символам. Работаем через beforeinput +
+     preventDefault (а не обрезкой value — та ломает Ctrl+Z). */
+  ta.addEventListener('beforeinput',function(e){
+    var t=e.inputType||'';
+    if(t.indexOf('delete')===0||t.indexOf('history')===0)return;
+    var data=e.data;
+    /* Enter даёт insertLineBreak/insertParagraph с data===null — без этой строки
+       перевод строки проскакивал бы мимо предела. */
+    if(data==null&&(t==='insertLineBreak'||t==='insertParagraph'))data='\n';
+    if(data==null&&e.dataTransfer)data=e.dataTransfer.getData('text/plain');
+    if(data==null)return;
+    var v=ta.value,head=v.slice(0,ta.selectionStart),tail=v.slice(ta.selectionEnd);
+    if(visLen(head+data+tail)<=LIMIT)return;
+    e.preventDefault();
+    /* кладём столько, сколько влезает */
+    var lo=0,hi=data.length;
+    while(lo<hi-1){var mid=(lo+hi)>>1;if(visLen(head+data.slice(0,mid)+tail)<=LIMIT)lo=mid;else hi=mid;}
+    if(lo>0)document.execCommand('insertText',false,data.slice(0,lo));
+  });
+})();
+/* Единое описание с разметкой и автокеглем. Лицевая заполняется, излишек уходит
+   на оборот. Кегль 12→10 общий для обеих сторон (--desc-fs). Разметка **__ __**
+   рендерится ранами, поэтому режем по ВИДИМОМУ смещению, а не по строке — иначе
+   срез разорвал бы тег пополам; sliceRuns закрывает и переоткрывает теги сам.
+   Оборот двух видов: renderBackCard (equipment/tools/poisons — прячет пустую
+   сторону в рубашку) или прямой #pbk (armor/weapon — оборот виден всегда).
+   _rafSoon: rAF с таймаут-фолбэком — в фоновой вкладке rAF заморожен, без него
+   экспорт из галерей давал бы карточки без описания. */
+var DESC_FS=[12,11.5,11,10.5,10];
+function _rafSoon(cb){var done=false;function run(){if(!done){done=true;cb();}}requestAnimationFrame(run);setTimeout(run,60);}
+function _descWarn(n){
+  var el=document.getElementById('desc-warn');if(!el)return;
+  if(n>0){var ni=document.getElementById('f-noimg');
+    el.textContent='⚠ Текст не помещается на карточку — обрезано '+n+' симв. Сократите описание'
+      +(ni&&!ni.checked?' или уберите картинку.':'.');
+    el.style.display='';}
+  else{el.style.display='none';}
+}
+/* наибольший видимый префикс с from, влезающий в el по высоте, с откатом до слова */
+function _cutRuns(el,runs,vis,from){
+  var ch=el.clientHeight,lo=from,hi=vis.length;
+  while(lo<hi-1){var mid=(lo+hi)>>1;renderRuns(el,sliceRuns(runs,from,mid));
+    if(el.scrollHeight<=ch+2)lo=mid;else hi=mid;}
+  var cut=lo;
+  for(var i=cut;i>Math.max(from,cut-60);i--){if(vis.charAt(i)===' '||vis.charAt(i)==='\n'){cut=i;break;}}
+  return cut;
+}
+function splitDesc(data){
+  var faceEl=document.getElementById('pds')||document.getElementById('pdesc');
+  var backEl=document.getElementById('pbk')||document.getElementById('pb-desc');
+  var hasRB=(typeof renderBackCard==='function');
+  var runs=parseFmt(data.desc||''),vis=runsText(runs);
+  function showBack(on){if(hasRB)renderBackCard({rarity:data.rarity,back:on?'x':''});}
+  function fillBack(from,to){showBack(true);renderRuns(backEl,sliceRuns(runs,from,to));}
+  function emptyBack(){showBack(false);if(!hasRB)renderRuns(backEl,[]);}
+
+  renderRuns(faceEl,[]);
+  if(!vis){emptyBack();_descWarn(0);return;}
+  _rafSoon(function(){
+    for(var i=0;i<DESC_FS.length;i++){
+      document.documentElement.style.setProperty('--desc-fs',DESC_FS[i]+'px');
+      renderRuns(faceEl,sliceRuns(runs,0,vis.length));
+      var ch=faceEl.clientHeight;
+      if(!ch)continue;
+      /* всё уместилось на лице — оборот в рубашку */
+      if(faceEl.scrollHeight<=ch+2){emptyBack();_descWarn(0);return;}
+      /* режем лицо, остаток — на оборот */
+      var cut=_cutRuns(faceEl,runs,vis,0);
+      renderRuns(faceEl,sliceRuns(runs,0,cut));
+      var bs=(vis.charAt(cut)===' '||vis.charAt(cut)==='\n')?cut+1:cut;
+      fillBack(bs,vis.length);
+      if(backEl.scrollHeight<=backEl.clientHeight+2){_descWarn(0);return;}
+      /* оборот переполнен — следующая ступень кегля */
+    }
+    /* не влезло даже на 10px — обрезаем оборот, считаем остаток для предупреждения */
+    var last=DESC_FS[DESC_FS.length-1];
+    document.documentElement.style.setProperty('--desc-fs',last+'px');
+    renderRuns(faceEl,sliceRuns(runs,0,vis.length));
+    var cut=_cutRuns(faceEl,runs,vis,0);
+    renderRuns(faceEl,sliceRuns(runs,0,cut));
+    var bs=(vis.charAt(cut)===' '||vis.charAt(cut)==='\n')?cut+1:cut;
+    showBack(true);
+    var bcut=_cutRuns(backEl,runs,vis,bs);
+    renderRuns(backEl,sliceRuns(runs,bs,bcut));
+    _descWarn(vis.length-bcut);
+  });
+}
 /* Оборотная сторона с «рубашкой» (equipment/tools/kits/poisons). */
 function renderBackCard(data){var hasBack=data.back&&data.back.trim();var rubashka=document.getElementById('pb-rubashka');var pbs=document.getElementById('pbs');var pbs2=document.getElementById('pbs2');var pbBody=document.getElementById('pb-body');var pbFoot=document.getElementById('pb-foot');var pbDesc=document.getElementById('pb-desc');var pbgm=document.getElementById('pbgm');if(hasBack){rubashka.style.display='none';pbs.style.display='';pbs2.style.display='';pbBody.style.display='flex';pbFoot.style.display='';pbDesc.textContent=data.back;var d=R[data.rarity||'common'];pbs.style.background=d.a;pbgm.style.background=d.a;}else{rubashka.style.display='block';pbs.style.display='none';pbs2.style.display='none';pbBody.style.display='none';pbFoot.style.display='none';}}
 function renderCard(data){var d=R[data.rarity||'common'];document.getElementById('p-rar').textContent=d.l;document.getElementById('p-type').textContent='Набор';document.getElementById('pnm').textContent=data.name||'Название набора';
-  _fitName();document.getElementById('pc').classList.toggle('no-img',!!data.noImg);var cm=document.getElementById('p-cost');if(cm){if(data.cost){cm.textContent=data.cost+' '+(data.coin||'зм');cm.style.visibility='visible';}else{cm.style.visibility='hidden';}}document.getElementById('pwgt').textContent=data.wgt?data.wgt+' фнт.':'';var kl=document.getElementById('pkitlist');kl.innerHTML='';var items=parseComposition(data.composition);kl.classList.toggle('two-col',items.length>8);if(items.length){items.forEach(function(item){var row=document.createElement('div');row.className='c-kit-item';row.innerHTML='<span class="c-kit-dot">•</span><span>'+item+'</span>';kl.appendChild(row);});}else{kl.innerHTML='<div class="c-kit-item"><span class="c-kit-dot">•</span><span>Заполните состав набора</span></div>';}setCardImg(data.img||null);applyR(data.rarity||'common');renderBackCard(data);}
-function applyFormData(data){cr='nonmagic';document.getElementById('fn').value=data.name||'';document.getElementById('fc').value=data.cost||'';document.getElementById('fcoin').value=data.coin||'зм';document.getElementById('fwgt').value=data.wgt||'';document.getElementById('fcomposition').value=data.composition||'';document.getElementById('fback').value=data.back||'';imgDataUrl=data.img||null;rawImgDataUrl=data.rawImg||data.img||null;
-  var _ni=document.getElementById('f-noimg');if(_ni)_ni.checked=!!data.noImg;if(typeof _applyNoImgForm==='function')_applyNoImgForm(!!data.noImg);var th=document.getElementById('img-thumb');if(imgDataUrl){th.style.backgroundImage='url('+imgDataUrl+')';th.style.display='block';document.getElementById('img-icon').style.display='none';document.getElementById('img-lbl').style.display='none';document.getElementById('btn-recrop').style.display='flex';document.getElementById('btn-del-img').style.display='flex';}else{th.style.display='none';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';}mkCounter('fn','cnt-fn',34);mkCounter('fback','cnt-back',900);}
-document.getElementById('btn-reset').addEventListener('click',function(){if(!confirm('Сбросить все поля?'))return;cr='nonmagic';['fn','fc','fwgt','fcomposition','fback'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('fcoin').value='зм';imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('f-img').value='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';setCardImg(null);applyR('nonmagic');renderCard({});toast('Поля сброшены');});
+  _fitName();document.getElementById('pc').classList.toggle('no-img',!!data.noImg);var cm=document.getElementById('p-cost');if(cm){if(data.cost){cm.textContent=data.cost+' '+(data.coin||'зм');cm.style.visibility='visible';}else{cm.style.visibility='hidden';}}document.getElementById('pwgt').textContent=data.wgt?data.wgt+' фнт.':'';renderKitList(parseComposition(data.composition));setCardImg(data.img||null);applyR(data.rarity||'common');
+  var _hasDesc=!!(data.desc||data.back),_rd=document.getElementById('p-rule-desc');if(_rd)_rd.style.display=_hasDesc?'':'none';
+  splitDesc({desc:data.desc||data.back||'',rarity:data.rarity||'common'});}
+function applyFormData(data){cr='nonmagic';document.getElementById('fn').value=data.name||'';document.getElementById('fc').value=data.cost||'';document.getElementById('fcoin').value=data.coin||'зм';document.getElementById('fwgt').value=data.wgt||'';document.getElementById('fcomposition').value=data.composition||'';document.getElementById('fdesc').value=data.desc||data.back||'';imgDataUrl=data.img||null;rawImgDataUrl=data.rawImg||data.img||null;
+  var _ni=document.getElementById('f-noimg');if(_ni)_ni.checked=!!data.noImg;if(typeof _applyNoImgForm==='function')_applyNoImgForm(!!data.noImg);var th=document.getElementById('img-thumb');if(imgDataUrl){th.style.backgroundImage='url('+imgDataUrl+')';th.style.display='block';document.getElementById('img-icon').style.display='none';document.getElementById('img-lbl').style.display='none';document.getElementById('btn-recrop').style.display='flex';document.getElementById('btn-del-img').style.display='flex';}else{th.style.display='none';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';}mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);}
+document.getElementById('btn-reset').addEventListener('click',function(){if(!confirm('Сбросить все поля?'))return;cr='nonmagic';['fn','fc','fwgt','fcomposition','fdesc'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('fcoin').value='зм';imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('f-img').value='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';setCardImg(null);applyR('nonmagic');renderCard({});toast('Поля сброшены');});
+/* Рендер состава: одна/две явные колонки + автокегль под высоту лица.
+   Колонки по числу позиций: ≤5 — одна; 6–10 — левая 5 и правая остальные;
+   >10 — поровну. Кегль ступенчато 12→10, пока состав влезает в лицо; не влез
+   на минимуме — предупреждение. Текст позиций переносится целиком, без обрезки. */
+var KIT_FS=[12,11.5,11,10.5,10];
+function _kitCols(items){
+  var n=items.length;
+  if(n<=5)return [items];
+  if(n<=10)return [items.slice(0,5),items.slice(5)];
+  var h=Math.ceil(n/2);return [items.slice(0,h),items.slice(h)];
+}
+function _kitItemEl(text){
+  var row=document.createElement('div');row.className='c-kit-item';
+  var dot=document.createElement('span');dot.className='c-kit-dot';dot.textContent='•';
+  var sp=document.createElement('span');sp.textContent=text;
+  row.appendChild(dot);row.appendChild(sp);return row;
+}
+function _kitWarn(on){
+  var el=document.getElementById('kit-warn');if(!el)return;
+  el.textContent=on?'⚠ Состав не помещается на карточку — сократите список.':'';
+  el.style.display=on?'':'none';
+}
+function renderKitList(items){
+  var kl=document.getElementById('pkitlist');
+  function build(){
+    kl.innerHTML='';
+    if(!items.length){var c=document.createElement('div');c.className='kit-col';
+      c.appendChild(_kitItemEl('Заполните состав набора'));kl.appendChild(c);return;}
+    _kitCols(items).forEach(function(col){
+      var c=document.createElement('div');c.className='kit-col';
+      col.forEach(function(it){c.appendChild(_kitItemEl(it));});
+      kl.appendChild(c);
+    });
+  }
+  var cbody=document.querySelector('#pc .c-body');
+  var name=document.querySelector('#pc .c-name');
+  /* доступно под составом = всё лицо минус название и верхний разделитель;
+     описание получает то, что состав не занял (A1) */
+  var avail=cbody?cbody.clientHeight-(name?name.offsetHeight:0)-16:9999;
+  for(var i=0;i<KIT_FS.length;i++){
+    kl.style.fontSize=KIT_FS[i]+'px';
+    build();
+    if(kl.offsetHeight<=avail){_kitWarn(false);_kitFits=true;return;}
+  }
+  _kitWarn(true);_kitFits=false;
+}
+/* Жёсткая блокировка: если состав не влез даже на минимальном кегле, откатываем
+   ввод к последнему валидному — добавить позицию сверх вместимости нельзя.
+   Откат через ta.value стирает шаг undo на этом поле (согласовано, состав — список). */
+var _kitFits=true;
+(function(){
+  var ta=document.getElementById('fcomposition');if(!ta)return;
+  var lastValid=ta.value;
+  /* Пустые строки не создают позиций, поэтому рендер-блокировка их не ловит —
+     без этого Enter на пустой строке накапливался бы бесконечно. Запрещаем
+     перевод строки, когда текущая строка пуста (одна хвостовая пустая допустима). */
+  ta.addEventListener('beforeinput',function(e){
+    var t=e.inputType||'';
+    /* Перевод строки приходит по-разному: insertLineBreak/insertParagraph, либо
+       insertText с data='\n'. Ловим все три; но НЕ трогаем вставку текста с
+       переносами (paste позиций) — только «пустой» перевод без букв. */
+    var isBlankNL=(t==='insertLineBreak'||t==='insertParagraph')
+      ||(t==='insertText'&&e.data!=null&&e.data.indexOf('\n')!==-1&&e.data.trim()==='');
+    if(!isBlankNL)return;
+    var before=ta.value.slice(0,ta.selectionStart);
+    var curLine=before.slice(before.lastIndexOf('\n')+1);
+    if(curLine.trim()==='')e.preventDefault();
+  });
+  ta.addEventListener('input',function(){
+    _rafSoon(function(){
+      if(!_kitFits){
+        var pos=ta.selectionStart;
+        ta.value=lastValid;
+        try{var c=Math.max(0,Math.min(pos,ta.value.length));ta.setSelectionRange(c,c);}catch(e){}
+        renderCard(readForm());
+        if(typeof toast==='function')toast('⚠ Состав не помещается — сократите список');
+      }else lastValid=ta.value;
+    });
+  });
+})();
 var DEFAULT_NAME='Набор';
 function collItemSub(card){return parseComposition(card.composition).length+' предметов';}
 var editingId=null;
