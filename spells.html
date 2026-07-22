@@ -572,8 +572,8 @@ textarea.si.si-rows{resize:none;min-height:0;overflow-y:auto;}
 
   <div class="lbl">На высоких уровнях</div>
   <div class="field-wrap field-mb">
-    <textarea class="si" id="fhl" maxlength="250" placeholder="Урон увеличивается на 1к6 за каждый уровень ячейки выше 3-го." style="height:70px;"></textarea>
-    <span class="char-counter" id="cnt-hl">0/250</span>
+    <textarea class="si" id="fhl" maxlength="340" placeholder="Урон увеличивается на 1к6 за каждый уровень ячейки выше 3-го." style="height:70px;"></textarea>
+    <span class="char-counter" id="cnt-hl">0/340</span>
   </div>
 
   <button class="btn-build" id="gbtn">✦ Создать карточку</button>
@@ -947,7 +947,7 @@ var DESC_LIMIT=4400;
   });
 })();
 
-mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',4400,visLen);mkCounter('fhl','cnt-hl',250);mkCounter('fsub','cnt-sub',120);mkCounter('fmat','cnt-mat',400);mkCounter('fcond','cnt-cond',70);
+mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',4400,visLen);mkCounter('fhl','cnt-hl',340);mkCounter('fsub','cnt-sub',120);mkCounter('fmat','cnt-mat',400);mkCounter('fcond','cnt-cond',70);
   /* поля-textarea только ради переноса по ширине: значение однострочное */
   ['fsub','fmat','fcond'].forEach(function(id){
     document.getElementById(id).addEventListener('keydown',function(e){if(e.key==='Enter')e.preventDefault();});
@@ -1386,7 +1386,7 @@ function applyFormData(data){
   document.getElementById('fcond').value=data.condition||'';
   document.getElementById('fdesc').value=data.desc||'';
   document.getElementById('fhl').value=data.hl||'';
-  mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',4400,visLen);mkCounter('fhl','cnt-hl',250);mkCounter('fsub','cnt-sub',120);mkCounter('fmat','cnt-mat',400);mkCounter('fcond','cnt-cond',70);
+  mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',4400,visLen);mkCounter('fhl','cnt-hl',340);mkCounter('fsub','cnt-sub',120);mkCounter('fmat','cnt-mat',400);mkCounter('fcond','cnt-cond',70);
 }
 
 /* ── reset ── */
@@ -1414,7 +1414,7 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   _descWarn(0);
   spSplit({desc:'',hl:'',rarity:'evocation'});
   if(window.__syncSelects)window.__syncSelects();
-  mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',4400,visLen);mkCounter('fhl','cnt-hl',250);mkCounter('fsub','cnt-sub',120);mkCounter('fmat','cnt-mat',400);mkCounter('fcond','cnt-cond',70);
+  mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',4400,visLen);mkCounter('fhl','cnt-hl',340);mkCounter('fsub','cnt-sub',120);mkCounter('fmat','cnt-mat',400);mkCounter('fcond','cnt-cond',70);
   toast('Поля сброшены');
 });
 
