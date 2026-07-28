@@ -391,6 +391,10 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M12 3l1.9 5.3L19 10l-5.1 1.7L12 17l-1.9-5.3L5 10l5.1-1.7z"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z"/></svg>
         Заклинания
       </a>
+      <a class="nav-item" href="custom.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Произвольная карточка<span class="nav-badge">в разработке</span>
+      </a>
       <div class="nav-sep"></div>
       <div class="nav-section-lbl">Скоро</div>
       <span class="nav-item nav-disabled">
@@ -539,7 +543,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
         <div class="c-meta-orn"><svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10 L10 3 L17 10 L10 17 Z" stroke="#5a4820" stroke-width="1.2" fill="#d4c4a0" opacity="0.8"/><circle cx="10" cy="10" r="2" fill="#5a4820" opacity="0.7"/></svg></div>
       </div>
         <div class="c-title">
-          <div class="c-name" id="pnm">Название предмета</div>
+          <div class="c-name" id="pnm">Снаряжение</div>
           <div class="c-eqtype" id="peqtype" style="display:none;"></div>
         </div>
       <div class="c-img" id="cib">
@@ -549,7 +553,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 
       </div>
       <div class="c-body">
-        <div class="c-desc" id="pdesc">Описание предмета и его эффект.</div>
+        <div class="c-desc" id="pdesc"></div>
       </div>
       <div class="c-foot"><span class="c-wgt" id="pwgt"></span><span class="c-typeframe"><svg class="c-tfsvg" viewBox="0 0 210 28" xmlns="http://www.w3.org/2000/svg"><polygon points="40,14 51,3 159,3 170,14 159,25 51,25" fill="#fbf4e2" stroke="#5a4820" stroke-width="1.4"/><line x1="23" y1="14" x2="40" y2="14" stroke="#5a4820" stroke-width="1.3"/><line x1="170" y1="14" x2="187" y2="14" stroke="#5a4820" stroke-width="1.3"/><polygon points="15,6 23,14 15,22 7,14" fill="#d4c4a0" stroke="#5a4820" stroke-width="1.3"/><circle cx="15" cy="14" r="2" fill="#5a4820"/><polygon points="195,6 203,14 195,22 187,14" fill="#d4c4a0" stroke="#5a4820" stroke-width="1.3"/><circle cx="195" cy="14" r="2" fill="#5a4820"/><text x="105" y="18.5" text-anchor="middle" font-family="Crimson Text,Georgia,serif" font-style="italic" font-size="13" fill="#3a2810" id="p-type">Снаряжение</text></svg></span><div class="c-gem" id="pgm"></div></div>
     </div>
@@ -1263,7 +1267,7 @@ function renderCard(data){
   document.getElementById('p-rar').textContent=d.l;
   document.getElementById('p-type').textContent='Снаряжение';
   /* name */
-  document.getElementById('pnm').textContent=data.name||'Название предмета';
+  document.getElementById('pnm').textContent=data.name||'Снаряжение';
   _fitName();document.getElementById('pc').classList.toggle('no-img',!!data.noImg);
   /* cost/weight */
   var cm=document.getElementById('p-cost');
@@ -1335,7 +1339,7 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   document.getElementById('btn-del-img').style.display='none';
   setCardImg(null);applyR('nonmagic');applyPal('nonmagic');var _at=document.getElementById('p-attune');if(_at)_at.style.display='none';
   document.getElementById('p-rar').textContent=R.nonmagic.l;document.getElementById('p-type').textContent='Снаряжение';
-  document.getElementById('pnm').textContent='Название предмета';
+  document.getElementById('pnm').textContent='Снаряжение';
   document.getElementById('pwgt').textContent='';
   splitDesc({desc:'',rarity:'common'});
   mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);

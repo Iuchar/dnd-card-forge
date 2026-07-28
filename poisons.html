@@ -383,6 +383,10 @@ button:focus{outline:none;}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M12 3l1.9 5.3L19 10l-5.1 1.7L12 17l-1.9-5.3L5 10l5.1-1.7z"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z"/></svg>
         Заклинания
       </a>
+      <a class="nav-item" href="custom.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Произвольная карточка<span class="nav-badge">в разработке</span>
+      </a>
       <div class="nav-sep"></div>
       <div class="nav-section-lbl">Скоро</div>
       <span class="nav-item nav-disabled">
@@ -522,7 +526,7 @@ button:focus{outline:none;}
       <div class="c-meta-orn"><svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10 L10 3 L17 10 L10 17 Z" stroke="#5a4820" stroke-width="1.2" fill="#d4c4a0" opacity="0.8"/><circle cx="10" cy="10" r="2" fill="#5a4820" opacity="0.7"/></svg></div>
     </div>
         <div class="c-title">
-          <div class="c-name" id="pnm">Название яда</div>
+          <div class="c-name" id="pnm">Яды</div>
         </div>
     <div class="c-img" id="cib">
       <div class="c-img-ph" id="img-ph">
@@ -1072,7 +1076,7 @@ function applyPal(rar){
     ['ps','pbs'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=g;});}
   if(d.gem){['pgm','pbgm'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=d.gem;});}
 }
-function renderCard(data){var d=R[data.rarity||'common'];document.getElementById('p-rar').textContent=d.l;document.getElementById('pnm').textContent=data.name||'Название яда';
+function renderCard(data){var d=R[data.rarity||'common'];document.getElementById('p-rar').textContent=d.l;document.getElementById('pnm').textContent=data.name||'Яды';
   _fitName();document.getElementById('pc').classList.toggle('no-img',!!data.noImg);var _pcm=document.getElementById('pcost-meta');if(data.cost){_pcm.textContent=data.cost+' '+(data.coin||'зм');_pcm.style.visibility='visible';}else{_pcm.style.visibility='hidden';}document.getElementById('pwgt-foot').textContent=data.wgt?data.wgt+' фнт.':'';document.getElementById('psb-val').textContent=data.savingThrow||'—';document.getElementById('pdice-val').textContent=data.damageDice||'—';document.getElementById('pdur-val').textContent=data.duration||'—';document.getElementById('pdel-val').textContent=data.poisonType||'—';setCardImg(data.img||null);applyR(data.rarity||'common');applyPal(data.rarity||'common');splitDesc(data);}
 /* ── Разметка описания: **полужирный** *курсив* __подчёркнутый__ ──
    Текст без маркеров даёт один ран, поэтому старые карточки, импорт и шаблоны
