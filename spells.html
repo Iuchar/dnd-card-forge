@@ -41,7 +41,9 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .sb{width:285px;flex-shrink:0;background:var(--bg2);border-right:0.5px solid var(--border);padding:14px 14px 32px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
 .sb::-webkit-scrollbar{width:4px;}
 .sb::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px;}
-.lbl{font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--text3);margin:13px 0 5px;}
+.lbl{display:block;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--text3);margin:13px 0 5px;}
+/* подпись поля кликабельна: label[for] ставит курсор в поле и озвучивает его имя */
+label.lbl{cursor:pointer;}
 .si{width:100%;background:rgba(255,255,255,.05);border:0.5px solid var(--border2);border-radius:7px;color:var(--text);font-family:'Crimson Text',Georgia,serif;font-size:13px;padding:6px 9px;accent-color:var(--gold);outline:none;transition:border-color .15s;}
 .si:focus{border-color:var(--gold);}
 .si::placeholder{color:#5a5040;}
@@ -72,6 +74,12 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .img-drop{width:100%;height:56px;border:1.5px dashed var(--border2);border-radius:7px;display:flex;align-items:center;justify-content:center;gap:7px;color:var(--text3);font-family:'Cinzel',serif;font-size:11px;letter-spacing:.07em;cursor:pointer;transition:all .14s;position:relative;overflow:hidden;}
 .img-drop:hover{border-color:var(--accent-l);color:var(--text2);background:rgba(255,255,255,.03);}
 .img-drop input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+/* «Загрузить проект»: input был display:none и выпадал из таб-порядка, а label
+   сам не фокусируется — кнопку проскакивало. Теперь input прозрачно накрывает
+   label, поэтому фокусируется штатно; обводку рисуем на самом label. */
+.hbtn-upload{position:relative;cursor:pointer;}
+.hbtn-file{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;}
+.hbtn-upload:has(.hbtn-file:focus-visible){outline:2px solid var(--gold-l);outline-offset:2px;}
 .img-thumb{position:absolute;inset:0;background-size:cover;background-position:center;border-radius:6px;}
 .divider{height:0.5px;background:var(--border);margin:12px 0;}
 .btn-reset{width:100%;padding:8px 9px;margin-top:10px;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.08em;cursor:pointer;border:1px solid rgba(220,60,60,.35);border-radius:6px;background:rgba(220,60,60,.08);color:#cf8474;transition:all .14s;display:flex;align-items:center;justify-content:center;gap:5px;}
@@ -89,10 +97,10 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .btn-build{width:100%;padding:10px;margin-top:10px;font-family:'Cinzel',serif;font-size:12px;font-weight:700;letter-spacing:.1em;cursor:pointer;border:1.5px solid var(--gold);border-radius:var(--r);background:linear-gradient(135deg,#5a4200,#3a2a00);color:var(--gold-l);transition:all .14s;}
 .btn-build:hover{background:linear-gradient(135deg,#7a5800,#5a4000);}
 .btn-build:active{transform:scale(.98);}
-.cv-label{font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#9a9080;align-self:flex-start;margin-bottom:14px;}
+.cv-label{font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:#6b6152;align-self:flex-start;margin-bottom:14px;}
 .cards-row{display:flex;gap:20px;align-items:flex-start;justify-content:center;}
 .card-col{display:flex;flex-direction:column;align-items:center;gap:5px;}
-.side-lbl{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#b0a890;}
+.side-lbl{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#6b6152;}
 .c-meta{height:24px;flex-shrink:0;display:flex;align-items:center;padding:0;background:rgba(0,0,0,0.07);}
 .c-meta-orn{width:24px;height:100%;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
 .c-meta-orn svg{width:20px;height:20px;}
@@ -100,7 +108,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-meta-item{font-family:'Cinzel',serif;font-size:9px;font-weight:700;letter-spacing:.09em;color:#5a4830;text-transform:uppercase;white-space:nowrap;}
 .c-meta-item.cost{color:#8a6010;position:absolute;left:10px;}
 .c-img-el{position:absolute;top:7px;left:7px;width:calc(100% - 14px);height:calc(100% - 14px);object-fit:fill;border-radius:2px;display:block;}
-.img-frame-svg{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none;}
 .c-foot{height:26px;flex-shrink:0;padding:0 14px;display:flex;align-items:center;justify-content:space-between;position:relative;}
 .c-wgt{font-family:'Cinzel',serif;font-size:10px;color:#8a7860;letter-spacing:.04em;}
 /* рамка типа в подвале карточки (ромбы + линии) */
@@ -210,7 +217,60 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   --ca:#c04030;
   --r:10px;
 }
+/* ═══ ХРОМ ПРИЛОЖЕНИЯ (не карточка) ═══
+   Переменные темы, боковая панель, модалки, навигация, панель коллекции, кроп.
+   Раньше эти правила копировались в каждый генератор и успели разойтись —
+   часть копий была усечённой. Здесь сведена полная версия каждого правила.
+   Подключать сразу после shared/styles.css: дальше идут стили карточки,
+   которые у каждого генератора свои. */
+
+:root{
+  --bg:#111009;--bg2:#1a1814;--bg3:#252018;--bg4:#2e2a20;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.13);
+  --text:#e0d8c8;--text2:#a09070;--text3:#968769;
+  --gold:#c8941a;--gold-l:#f0b830;
+  --accent:#4a3fa0;--accent-l:#8070e0;
+  --ca:#f5f5f5;
+  --r:10px;
+}
+
 .sb > .lbl:first-child{margin-top:0;}
+.cv{flex:1;background:#f0ece2;display:flex;flex-direction:column;align-items:center;padding:20px 16px 16px;overflow:auto;}
+
+/* панель коллекции */
+.coll-search-clear:hover{color:var(--text2);}
+.coll-list::-webkit-scrollbar{width:3px;}
+.coll-list::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px;}
+.coll-sect-count{font-family:'Cinzel',serif;font-size:9px;color:var(--text3);opacity:.55;flex-shrink:0;}
+.coll-sect-body{display:flex;flex-direction:column;gap:7px;max-height:304px;overflow-y:auto;padding-bottom:4px;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
+.coll-sect-body::-webkit-scrollbar{width:3px;}
+.coll-sect-body::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px;}
+
+/* модалка кропа */
+.crop-modal-title{font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:var(--gold-l);margin-bottom:14px;letter-spacing:.08em;}
+.crop-area canvas{display:block;}
+.crop-btn.secondary:hover{background:rgba(255,255,255,.09);color:var(--text);}
+
+/* модалка подтверждения */
+.conf-modal{background:var(--bg2);border:0.5px solid var(--border2);border-radius:12px;padding:26px 24px 20px;width:290px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.5);}
+.conf-modal h3{font-family:'Cinzel',serif;font-size:12px;font-weight:600;color:var(--text);margin:0 0 18px;letter-spacing:.04em;line-height:1.5;}
+.conf-modal-btns button{padding:7px 20px;font-family:'Cinzel',serif;font-size:11px;cursor:pointer;border-radius:6px;border:0.5px solid var(--border2);background:transparent;color:var(--text2);transition:all .14s;letter-spacing:.06em;}
+
+/* навигация */
+.nav-toggle{padding:7px 13px;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);transition:all .14s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
+.nav-section-lbl{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);padding:5px 10px 3px;pointer-events:none;}
+.nav-sub .nav-item{padding-left:26px;font-size:9.5px;letter-spacing:.05em;}
+
+/* видимый фокус для навигации с клавиатуры: :focus-visible срабатывает только
+   при табуляции, мышь его не показывает — вид при обычной работе не меняется.
+   У полей ввода своя индикация (рамка золотеет), поэтому им обводка не нужна:
+   иначе получалось два кольца. */
+:focus-visible{outline:2px solid var(--gold-l,#f0b830);outline-offset:2px;border-radius:3px;}
+.si:focus-visible,.coll-search:focus-visible,textarea:focus-visible{outline:none;}
+.si:focus-visible{border-color:var(--gold-l,#f0b830);border-width:1.5px;}
+.coll-search:focus-visible{border-color:var(--accent-l);border-width:1.5px;}
+.rp:focus-visible{outline-offset:3px;}
+
 .pcb{display:flex;align-items:center;gap:5px;cursor:pointer;padding:3px 0;min-height:24px;}
 .pcb input[type=checkbox]{accent-color:var(--gold);width:13px;height:13px;cursor:pointer;flex-shrink:0;}
 .pcb span{font-size:13px;color:var(--text2);}
@@ -363,20 +423,7 @@ textarea.si.si-rows{resize:none;min-height:0;overflow-y:auto;}
   padding:8px 11px;flex-shrink:0;}
 .sp-hl-t{font-family:'Cinzel',serif;font-size:8px;font-weight:700;letter-spacing:.12em;color:var(--ca-d,#c04030);margin-bottom:3px;}
 .sp-hl-x{font-size:10px;color:#241a08;line-height:1.4;white-space:pre-wrap;max-height:92px;overflow:hidden;}
-.coll-search-clear:hover{color:var(--text2);}
-.coll-list::-webkit-scrollbar{width:3px;}
-.coll-list::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px;}
 .coll-item-thumb{width:30px;height:42px;border-radius:4px;flex-shrink:0;background:var(--bg4);overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.08);}
-.coll-sect-count{font-family:'Cinzel',serif;font-size:9px;color:var(--text3);opacity:.55;flex-shrink:0;}
-.coll-sect-body{display:flex;flex-direction:column;gap:7px;max-height:304px;overflow-y:auto;padding-bottom:4px;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
-.coll-sect-body::-webkit-scrollbar{width:3px;}
-.coll-sect-body::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:2px;}
-.conf-modal{background:var(--bg2);border:0.5px solid var(--border2);border-radius:12px;padding:26px 24px 20px;width:290px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.5);}
-.conf-modal h3{font-family:'Cinzel',serif;font-size:12px;font-weight:600;color:var(--text);margin:0 0 18px;letter-spacing:.04em;line-height:1.5;}
-.conf-modal-btns button{padding:7px 20px;font-family:'Cinzel',serif;font-size:11px;cursor:pointer;border-radius:6px;border:0.5px solid var(--border2);background:transparent;color:var(--text2);transition:all .14s;letter-spacing:.06em;}
-.nav-toggle{padding:7px 13px;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);transition:all .14s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
-.nav-section-lbl{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);padding:5px 10px 3px;pointer-events:none;}
-.nav-sub .nav-item{padding-left:26px;font-size:9.5px;letter-spacing:.05em;}
 </style>
 <link rel="stylesheet" href="mobile.css"/>
 </head>
@@ -468,7 +515,7 @@ textarea.si.si-rows{resize:none;min-height:0;overflow-y:auto;}
     <button class="hbtn danger" id="btn-del-sel" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Удалить выбранные</button>
     <div class="hbtn-sep"></div>
     <button class="hbtn gold" id="btn-export-json"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Сохранить проект</button>
-    <label class="hbtn" style="cursor:pointer;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 14 12 9 17 14"/><line x1="12" y1="9" x2="12" y2="21"/></svg>Загрузить проект<input type="file" id="btn-import-json" accept=".json" style="display:none;"/></label>
+    <label class="hbtn hbtn-upload"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 14 12 9 17 14"/><line x1="12" y1="9" x2="12" y2="21"/></svg>Загрузить проект<input type="file" id="btn-import-json" accept=".json" class="hbtn-file"/></label>
   </div>
 </header>
 
@@ -476,7 +523,7 @@ textarea.si.si-rows{resize:none;min-height:0;overflow-y:auto;}
 
 <!-- SIDEBAR FORM -->
 <aside class="sb">
-  <div class="lbl">Школа магии</div>
+  <label class="lbl" for="fschool">Школа магии</label>
   <select class="si" id="fschool">
     <option value="evocation" selected>Воплощение</option>
     <option value="conjuration">Вызов/Призыв</option>
@@ -488,14 +535,14 @@ textarea.si.si-rows{resize:none;min-height:0;overflow-y:auto;}
     <option value="divination">Прорицание</option>
   </select>
 
-  <div class="lbl">Название</div>
+  <label class="lbl" for="fn">Название</label>
   <div class="field-wrap field-mb">
     <input class="si" type="text" id="fn" placeholder="Огненный шар" maxlength="34"/>
     <span class="char-counter" id="cnt-fn">0/34</span>
   </div>
 
   <div class="row2" style="margin-top:13px;">
-    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Уровень</div>
+    <div class="sf"><label class="lbl" style="margin:0 0 5px;" for="flvl">Уровень</label>
       <select class="si" id="flvl">
         <option value="0">Заговор</option>
         <option value="1">1</option><option value="2">2</option><option value="3">3</option>
@@ -503,7 +550,7 @@ textarea.si.si-rows{resize:none;min-height:0;overflow-y:auto;}
         <option value="7">7</option><option value="8">8</option><option value="9">9</option>
       </select>
     </div>
-    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Редакция</div><input class="si" type="text" id="fed" placeholder="PH24" maxlength="8"/></div>
+    <div class="sf"><label class="lbl" style="margin:0 0 5px;" for="fed">Редакция</label><input class="si" type="text" id="fed" placeholder="PH24" maxlength="8"/></div>
   </div>
   <div class="pcb-row" style="margin-top:7px;">
     <label class="pcb"><input type="checkbox" id="fconc"/><span>Концентрация</span></label>
@@ -523,7 +570,7 @@ textarea.si.si-rows{resize:none;min-height:0;overflow-y:auto;}
     <label class="pcb"><input type="checkbox" value="Чародей"/><span>Чародей</span></label>
   </div>
 
-  <div class="lbl">Подкласс</div>
+  <label class="lbl" for="fsub">Подкласс</label>
   <div class="field-wrap field-mb">
     <textarea class="si si-rows" id="fsub" placeholder="Домен Света · Домен Бури" maxlength="120" style="height:71px;"></textarea>
     <span class="char-counter" id="cnt-sub">0/120</span>
@@ -533,8 +580,8 @@ textarea.si.si-rows{resize:none;min-height:0;overflow-y:auto;}
   <div class="divider"></div>
 
   <div class="row2">
-    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Время</div><input class="si" type="text" id="fcast" placeholder="1 действие" maxlength="24"/></div>
-    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Дистанция</div><input class="si" type="text" id="frange" placeholder="150 футов" maxlength="24"/></div>
+    <div class="sf"><label class="lbl" style="margin:0 0 5px;" for="fcast">Время</label><input class="si" type="text" id="fcast" placeholder="1 действие" maxlength="24"/></div>
+    <div class="sf"><label class="lbl" style="margin:0 0 5px;" for="frange">Дистанция</label><input class="si" type="text" id="frange" placeholder="150 футов" maxlength="24"/></div>
   </div>
   <div class="row2" style="margin-top:7px;">
     <div class="sf"><div class="lbl" style="margin:0 0 5px;">Компоненты</div>
@@ -544,9 +591,9 @@ textarea.si.si-rows{resize:none;min-height:0;overflow-y:auto;}
         <label class="pcb"><input type="checkbox" id="fcm"/><span>М</span></label>
       </div>
     </div>
-    <div class="sf"><div class="lbl" style="margin:0 0 5px;">Длительность</div><input class="si" type="text" id="fdur" placeholder="Мгновенная" maxlength="24"/></div>
+    <div class="sf"><label class="lbl" style="margin:0 0 5px;" for="fdur">Длительность</label><input class="si" type="text" id="fdur" placeholder="Мгновенная" maxlength="24"/></div>
   </div>
-  <div class="lbl">Материал</div>
+  <label class="lbl" for="fmat">Материал</label>
   <div class="field-wrap field-mb">
     <textarea class="si si-rows" id="fmat" placeholder="крошечный шарик из гуано и серы" maxlength="400" style="height:90px;"></textarea>
     <span class="char-counter" id="cnt-mat">0/400</span>
@@ -554,7 +601,7 @@ textarea.si.si-rows{resize:none;min-height:0;overflow-y:auto;}
 
   <div class="divider"></div>
 
-  <div class="lbl">Условие</div>
+  <label class="lbl" for="fcond">Условие</label>
   <div class="field-wrap field-mb">
     <textarea class="si si-rows" id="fcond" placeholder="Попадание по существу оружием" maxlength="70" style="height:52px;"></textarea>
     <span class="char-counter" id="cnt-cond">0/70</span>
@@ -574,7 +621,7 @@ textarea.si.si-rows{resize:none;min-height:0;overflow-y:auto;}
   </div>
   <div class="sp-warn" id="desc-warn" role="status" aria-live="polite" style="display:none;"></div>
 
-  <div class="lbl">На высоких уровнях</div>
+  <label class="lbl" for="fhl">На высоких уровнях</label>
   <div class="field-wrap field-mb">
     <textarea class="si" id="fhl" maxlength="340" placeholder="Урон увеличивается на 1к6 за каждый уровень ячейки выше 3-го." style="height:70px;"></textarea>
     <span class="char-counter" id="cnt-hl">0/340</span>
@@ -889,15 +936,25 @@ function applyR(r){
   var prar=document.getElementById('p-rar'); if(prar) prar.textContent=d.l;
 }
 
-/* выбор редкости (пикер .rp есть не на всех страницах — где нет, forEach пуст) */
+/* выбор редкости (пикер .rp есть не на всех страницах — где нет, forEach пуст).
+   Кружки — это div, поэтому клавиатуре их нужно объявить кнопками: tabindex
+   даёт фокус, role/aria-checked озвучивают состояние, Enter и пробел выбирают. */
 document.querySelectorAll('.rp').forEach(function(el){
-  el.addEventListener('click',function(){
-    document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');});
-    el.classList.add('on');cr=el.getAttribute('data-r');
+  function pick(){
+    document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');x.setAttribute('aria-checked','false');});
+    el.classList.add('on');el.setAttribute('aria-checked','true');cr=el.getAttribute('data-r');
     var rn=document.getElementById('rn'); if(rn) rn.textContent=R[cr].l;
     applyR(cr);
     if(typeof updateAttuneWrap==='function') updateAttuneWrap();
     renderCard(readForm());
+  }
+  el.setAttribute('tabindex','0');
+  el.setAttribute('role','radio');
+  el.setAttribute('aria-checked',el.classList.contains('on')?'true':'false');
+  if(!el.getAttribute('aria-label')&&el.getAttribute('title'))el.setAttribute('aria-label',el.getAttribute('title'));
+  el.addEventListener('click',pick);
+  el.addEventListener('keydown',function(e){
+    if(e.key===' '||e.key==='Enter'){e.preventDefault();pick();}
   });
 });
 
@@ -1053,13 +1110,6 @@ function _fitName(){
    разметку пополам, а срез по ранам закрывает и переоткрывает теги сам.
    rAF с таймаут-фолбэком: в фоновых вкладках rAF заморожен. */
 var DESC_FS=[12,11.5,11,10.5,10];
-function _rafSoon(cb){var done=false;function run(){if(!done){done=true;cb();}}requestAnimationFrame(run);setTimeout(run,60);}
-function _setFs(fs){document.documentElement.style.setProperty('--desc-fs',fs+'px');}
-function _descWarn(n){
-  var el=document.getElementById('desc-warn');if(!el)return;
-  if(n>0){el.textContent='⚠ Текст не помещается даже при кегле 9.5px — обрезано '+n+' симв. Сократите описание.';el.style.display='';}
-  else{el.style.display='none';}
-}
 /* ── СТОРОНЫ КАРТОЧКИ ──
    Лицевая держит статблок; все следующие стороны — «чистый лист»: полоса школы,
    шапка с названием, текст, подвал. Оборот #pb — уже такой лист, поэтому
@@ -1709,8 +1759,11 @@ function startPrintCapture(mode,cards){
           }
           captureNext();return;
         }
-        html2canvas(els[k++],{scale:3,useCORS:true,allowTaint:true,logging:false})
-          .then(function(cv){shots.push(cv.toDataURL('image/png'));shot();})
+        /* печать: 2.4 = 300 dpi при ширине карты 63мм, JPEG 92% вместо PNG —
+           PDF легче примерно в 7 раз, на бумаге разницы не видно. ZIP и
+           «Сохранить PNG» остаются без потерь. */
+        html2canvas(els[k++],{scale:2.4,useCORS:true,allowTaint:true,logging:false})
+          .then(function(cv){shots.push(cv.toDataURL('image/jpeg',0.92));shot();})
           .catch(function(){captureNext();});
       })();
     },80);
@@ -1728,12 +1781,13 @@ function buildPrintWindow(mode,cards,frontImgs,backImgs){
   function newPage(){if(first){first=false;}else{doc.addPage();}}
 
   if(mode==='single'){
-    /* 10mm page margin; 3 pairs per page, 5mm vertical gap between rows */
-    var margin=10,rows=3,gap=5;
+    /* 3 пары на лист, зазор рядов 2мм: 3*89+2*2=271мм оставляют поля 13мм
+       сверху и снизу — лист влезает в печатаемую область и не ужимается. */
+    var margin=10,rows=3,gap=2;
     var pairW=cW*2+10; /* 136mm, 10mm gap between front and back */
     var lx=margin+(pageW-2*margin-pairW)/2;  /* centre horizontally */
     var rx=lx+cW+10;
-    var totalH=rows*cH+(rows-1)*gap;          /* 277mm = fills printable height exactly */
+    var totalH=rows*cH+(rows-1)*gap;          /* 271мм */
     var startY=margin+(pageH-2*margin-totalH)/2;
     var stepY=cH+gap;
     var perPage=rows;
@@ -1743,18 +1797,19 @@ function buildPrintWindow(mode,cards,frontImgs,backImgs){
         var idx=p*perPage+r;
         if(idx>=n)break;
         var y=startY+r*stepY;
-        doc.addImage(frontImgs[idx],'PNG',lx,y,cW,cH);
-        doc.addImage(backImgs[idx],'PNG',rx,y,cW,cH);
+        doc.addImage(frontImgs[idx],'JPEG',lx,y,cW,cH);
+        doc.addImage(backImgs[idx],'JPEG',rx,y,cW,cH);
       }
     }
   } else {
-    /* 7mm page margin; 3×3 grid, 3mm gaps between cards */
-    var margin=7,gap=3,cols=3,rows=3,perPage=cols*rows;
-    var totalW=cols*cW+(cols-1)*gap;  /* 195mm */
-    var totalH=rows*cH+(rows-1)*gap;  /* 273mm */
-    var startX=margin+(pageW-2*margin-totalW)/2;  /* 7.5mm */
-    var startY=margin+(pageH-2*margin-totalH)/2;  /* 12mm */
-    var stepX=cW+gap,stepY=cH+gap;
+    /* сетка 3×3: по горизонтали зазор 3мм, ряды вплотную — поля 15мм сверху
+       и снизу, лист не выходит за печатаемую область и не ужимается. */
+    var margin=7,gap=3,vgap=2,cols=3,rows=3,perPage=cols*rows;
+    var totalW=cols*cW+(cols-1)*gap;   /* 195мм */
+    var totalH=rows*cH+(rows-1)*vgap;  /* 271мм */
+    var startX=margin+(pageW-2*margin-totalW)/2;  /* 7.5мм */
+    var startY=margin+(pageH-2*margin-totalH)/2;  /* 13мм */
+    var stepX=cW+gap,stepY=cH+vgap;
     var pageCount=Math.ceil(n/perPage);
 
     for(var p=0;p<pageCount;p++){
@@ -1763,7 +1818,7 @@ function buildPrintWindow(mode,cards,frontImgs,backImgs){
         for(var c=0;c<cols;c++){
           var idx=p*perPage+r*cols+c;
           if(idx>=n)continue;
-          doc.addImage(frontImgs[idx],'PNG',startX+c*stepX,startY+r*stepY,cW,cH);
+          doc.addImage(frontImgs[idx],'JPEG',startX+c*stepX,startY+r*stepY,cW,cH);
         }
       }
     }
@@ -1774,7 +1829,7 @@ function buildPrintWindow(mode,cards,frontImgs,backImgs){
         for(var c=0;c<cols;c++){
           var idx=p*perPage+r*cols+(cols-1-c);
           if(idx>=n)continue;
-          doc.addImage(backImgs[idx],'PNG',startX+c*stepX,startY+r*stepY,cW,cH);
+          doc.addImage(backImgs[idx],'JPEG',startX+c*stepX,startY+r*stepY,cW,cH);
         }
       }
     }
