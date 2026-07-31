@@ -296,19 +296,15 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
       </a>
       <a class="nav-item" href="equipment.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-        Снаряжение
+        Снаряжение<span class="nav-badge">в разработке</span>
       </a>
       <a class="nav-item" href="tools.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-        Инструменты
-      </a>
-      <a class="nav-item" href="kits.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="16" y1="10" x2="8" y2="10"/></svg>
-        Наборы снаряжения
+        Инструменты<span class="nav-badge">в разработке</span>
       </a>
       <a class="nav-item" href="poisons.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><line x1="8.5" y1="2" x2="15.5" y2="2"/></svg>
-        Яды
+        Яды<span class="nav-badge">в разработке</span>
       </a>
       <a class="nav-item" href="spells.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M12 3l1.9 5.3L19 10l-5.1 1.7L12 17l-1.9-5.3L5 10l5.1-1.7z"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z"/></svg>
@@ -320,6 +316,10 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
       </a>
       <div class="nav-sep"></div>
       <div class="nav-section-lbl">Скоро</div>
+      <span class="nav-item nav-disabled">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M12 3l1.9 5.3L19 10l-5.1 1.7L12 17l-1.9-5.3L5 10l5.1-1.7z"/><circle cx="18" cy="18" r="3"/></svg>
+        Магические предметы
+      </span>
       <span class="nav-item nav-disabled">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>
         Огнестрел и взрывчатка
@@ -569,16 +569,15 @@ var COLLECTIONS=[
   {key:'dnd_cardforge_armor',src:'armor',group:'armor',label:'Доспехи',gen:'armor.html',idb:'dnd_armor_imgs'},
   {key:'dnd_cardforge_equipment',src:'equipment',group:'equipment',label:'Снаряжение',gen:'equipment.html',idb:'dnd_equipment_imgs'},
   {key:'dnd_cardforge_tools',src:'tools',group:'tools',label:'Инструменты',gen:'tools.html',idb:'dnd_tools_imgs'},
-  {key:'dnd_cardforge_kits',src:'kits',group:'kits',label:'Наборы',gen:'kits.html',idb:'dnd_kits_imgs'},
   {key:'dnd_cardforge_poisons',src:'poisons',group:'poisons',label:'Яды',gen:'poisons.html',idb:'dnd_poisons_imgs'}
 ];
 /* Общее ядро галерей (collection + templates). Включать ВНУТРИ IIFE страницы
    (замыкание: badgeText/openPreview/gaSelMode/... определяются страницей).
    Хук galCardExtras(card,wrap) — опционален (collection добавляет кнопку удаления). */
-var GROUPS=[{id:'weapon',label:'Оружие'},{id:'armor',label:'Доспехи'},{id:'equipment',label:'Снаряжение'},{id:'tools',label:'Инструменты'},{id:'kits',label:'Наборы'},{id:'poisons',label:'Яды'}];
+var GROUPS=[{id:'weapon',label:'Оружие'},{id:'armor',label:'Доспехи'},{id:'equipment',label:'Снаряжение'},{id:'tools',label:'Инструменты'},{id:'poisons',label:'Яды'},{id:'custom',label:'Произвольные'}];
 function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){el.classList.remove('show');},2200);}
 function closePreview(){document.getElementById('prev-bg').classList.remove('open');previewCard=null;}
-function subLabel(c){switch(c._group){case 'armor':return (c.armorType||'Доспех')+(c.acDisplay?' · КБ '+c.acDisplay:'');case 'equipment':return c.category||'';case 'tools':return c.toolType||'';case 'kits':return (c.composition||'').split('\n').filter(function(x){return x.trim();}).length+' предм.';case 'poisons':return c.poisonType||'';default:return [c.kind,c.cat,c.dt].filter(Boolean).join(' · ');}}
+function subLabel(c){switch(c._group){case 'armor':return (c.armorType||'Доспех')+(c.acDisplay?' · КБ '+c.acDisplay:'');case 'equipment':return c.category||'';case 'tools':return c.toolType||'';case 'kits':return (c.composition||'').split('\n').filter(function(x){return x.trim();}).length+' предм.';case 'poisons':return c.poisonType||'';case 'custom':return c.cardType||'Произвольная';default:return [c.kind,c.cat,c.dt].filter(Boolean).join(' · ');}}
 function makeGridCard(card){var d=R[card.rarity||'common']||R.common;var wrap=document.createElement('div');wrap.className='g-card';var stripe=document.createElement('div');stripe.className='g-card-stripe';stripe.style.background=d.a;var imgWrap=document.createElement('div');imgWrap.className='g-card-img';if(card.img){var img=document.createElement('img');img.src=card.img;img.alt='';imgWrap.appendChild(img);}else{imgWrap.innerHTML='<div class="g-card-img-ph"><svg viewBox="0 0 24 24" fill="none" stroke="#8a7860" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>';}var foot=document.createElement('div');foot.className='g-card-foot';var badgeCls='g-card-badge'+(card._source==='weapon2014'?' ed14':card._source==='weapon2024'?' ed24':'');foot.innerHTML='<div class="g-card-nrow"><span class="g-card-name">'+(card.name||'Без названия')+'</span><span class="'+badgeCls+'">'+badgeText(card)+'</span></div><span class="g-card-sub">'+subLabel(card)+'</span>';var ov=document.createElement('div');ov.className='g-card-ov';ov.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';wrap.appendChild(stripe);wrap.appendChild(imgWrap);wrap.appendChild(foot);if(typeof galCardExtras==='function')galCardExtras(card,wrap);wrap.appendChild(ov);wrap.addEventListener('click',function(){if(typeof gaSelMode==='function'&&gaSelMode()){gaToggleSelect(card,wrap);}else{openPreview(card);}});if(typeof gaIsSelected==='function'&&gaIsSelected(card))wrap.classList.add('gsel');var _cbx=document.createElement('div');_cbx.className='g-card-cbx';wrap.appendChild(_cbx);return wrap;}
 function srcInfo(src){for(var i=0;i<COLLECTIONS.length;i++)if(COLLECTIONS[i].src===src)return COLLECTIONS[i];return null;}
 var allCards=[],previewCard=null;
@@ -635,7 +634,7 @@ var toastTimer=null;
 var FILT={type:new Set(),rarity:new Set(),attune:new Set(),wkind:new Set(),wcat:new Set(),wdt:new Set(),wprops:new Set(),wmastery:new Set(),armortype:new Set(),stealth:new Set(),query:''};
 var _RLABEL={nonmagic:'Немагический',common:'Обычный',uncommon:'Необычный',rare:'Редкий',veryrare:'Очень редкий',legendary:'Легендарный'};
 var _RDOT={nonmagic:'#f5f5f5',common:'#888077',uncommon:'#52aa40',rare:'#4a8ccc',veryrare:'#9870cc',legendary:'#e09820'};
-var _TLABEL={weapon:'Оружие',armor:'Доспехи',equipment:'Снаряжение',tools:'Инструменты',kits:'Наборы снаряжения',poisons:'Яды'};
+var _TLABEL={weapon:'Оружие',armor:'Доспехи',equipment:'Снаряжение',tools:'Инструменты',poisons:'Яды'};
 function _attuneState(c){var a=(c.attune||'').trim().toLowerCase();return(!a||a==='не требуется'||a==='не требует настройки'||a==='нет')?'no':'yes';}
 function _dyn(group,field){return function(){var seen={},out=[];allCards.forEach(function(c){if(c._group===group){var v=c[field];if(v&&!seen[v]){seen[v]=1;out.push({v:v,l:v});}}});out.sort(function(a,b){return a.l.localeCompare(b.l,'ru');});return out;};}
 function _dynArr(group,field){return function(){var seen={},out=[];allCards.forEach(function(c){if(c._group===group){var a=c[field];if(a){(Array.isArray(a)?a:[a]).forEach(function(v){if(v&&!seen[v]){seen[v]=1;out.push({v:v,l:v});}});}}});out.sort(function(a,b){return a.l.localeCompare(b.l,'ru');});return out;};}
