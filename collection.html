@@ -20,42 +20,62 @@
 <script src="lib/jszip.min.js" defer></script>
 <script src="lib/jspdf.umd.min.js" defer></script>
 <style>
-/* Общие стили галерей (collection + templates): фильтр-бар, сетка,
-   карточки-миниатюры, превью-модалка, шапки групп, тосты. */
+/* ═══ ОБЩИЙ ХРОМ ВСЕХ СТРАНИЦ ═══
+   Тема, сброс, шапка, навигация, тосты, видимый фокус — одинаково на генераторах
+   и в галереях. Раньше эти правила лежали копиями в styles.css и gallery-styles.css
+   и успели разойтись: правка в одном файле не доезжала до другого.
+   Подключать ПЕРВЫМ, до styles.css / gallery-styles.css. */
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:15px;height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,serif;height:100%;display:flex;flex-direction:column;overflow:hidden;}
+.header{padding:13px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--border);background:linear-gradient(to bottom,rgba(200,148,26,.06),transparent);gap:12px;flex-wrap:wrap;flex-shrink:0;}
+.logo{font-family:'Cinzel',serif;font-size:17px;font-weight:700;letter-spacing:.12em;color:var(--gold-l);white-space:nowrap;}
+.logo span{color:var(--text2);font-weight:400;}
+.hbtn:hover{background:rgba(255,255,255,.09);color:var(--text);}
+.hbtn svg{width:13px;height:13px;flex-shrink:0;}
+.nav-wrap{position:relative;flex-shrink:0;}
+.nav-toggle svg{width:14px;height:14px;flex-shrink:0;}
+.nav-toggle:hover,.nav-toggle.open{background:rgba(255,255,255,.09);color:var(--text);}
+.nav-menu{position:absolute;top:calc(100% + 8px);left:0;width:230px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:10px;padding:6px;box-shadow:0 8px 32px rgba(0,0,0,.55);z-index:300;display:none;max-height:460px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
+.nav-menu.open{display:block;}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.07em;color:var(--text2);cursor:pointer;transition:all .13s;text-decoration:none;}
+.nav-item > svg{flex-shrink:0;}
+.nav-item:hover{background:rgba(255,255,255,.06);color:var(--text);}
+.nav-item.nav-active{background:rgba(200,148,26,.12);color:var(--gold-l);border:0.5px solid rgba(200,148,26,.2);}
+.nav-item.nav-disabled{color:#5a5040;cursor:default;pointer-events:none;font-size:9.5px;padding:5px 10px;}
+.nav-sep{height:0.5px;background:var(--border);margin:5px 4px;}
+.nav-sub{display:none;padding-left:8px;}
+.nav-badge{margin-left:auto;font-family:'Crimson Text',Georgia,serif;font-size:8.5px;letter-spacing:.02em;color:#c88a4a;border:0.5px solid rgba(200,138,74,.4);border-radius:4px;padding:1px 5px;text-transform:lowercase;flex-shrink:0;}
+.toast.show{transform:translateX(-50%) translateY(0);}
 :root{
   --bg:#111009;--bg2:#1a1814;--bg3:#252018;--bg4:#2e2a20;
   --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.13);
   --text:#e0d8c8;--text2:#a09070;--text3:#968769;
   --gold:#c8941a;--gold-l:#f0b830;
   --accent:#4a3fa0;--accent-l:#8070e0;
+  --ca:#f5f5f5;
   --r:10px;
 }
-html{font-size:15px;height:100%;overflow:hidden;}
-body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,serif;height:100%;display:flex;flex-direction:column;overflow:hidden;}
-/* HEADER */
-.header{padding:13px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--border);background:linear-gradient(to bottom,rgba(200,148,26,.06),transparent);gap:12px;flex-wrap:wrap;flex-shrink:0;}
-.logo{font-family:'Cinzel',serif;font-size:17px;font-weight:700;letter-spacing:.12em;color:var(--gold-l);white-space:nowrap;}
-.logo span{color:var(--text2);font-weight:400;}
-.header-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-.hbtn:hover{background:rgba(255,255,255,.09);color:var(--text);}
-.hbtn svg{width:13px;height:13px;flex-shrink:0;}
-/* NAV */
-.nav-wrap{position:relative;flex-shrink:0;}
 .nav-toggle{padding:7px 13px;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);transition:all .14s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
-.nav-toggle:hover,.nav-toggle.open{background:rgba(255,255,255,.09);color:var(--text);}
-.nav-toggle svg{width:14px;height:14px;flex-shrink:0;}
-.nav-menu{position:absolute;top:calc(100% + 8px);left:0;width:230px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:10px;padding:6px;box-shadow:0 8px 32px rgba(0,0,0,.55);z-index:300;display:none;max-height:460px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
-.nav-menu.open{display:block;}
-.nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.07em;color:var(--text2);cursor:pointer;transition:all .13s;text-decoration:none;}
-.nav-item:hover{background:rgba(255,255,255,.06);color:var(--text);}
-.nav-item.nav-active{background:rgba(200,148,26,.12);color:var(--gold-l);border:0.5px solid rgba(200,148,26,.2);}
-.nav-badge{margin-left:auto;font-family:'Crimson Text',Georgia,serif;font-size:8.5px;letter-spacing:.02em;color:#c88a4a;border:0.5px solid rgba(200,138,74,.4);border-radius:4px;padding:1px 5px;text-transform:lowercase;flex-shrink:0;}
-.nav-item.nav-disabled{color:#5a5040;cursor:default;pointer-events:none;font-size:9.5px;padding:5px 10px;}
-.nav-sub{display:none;padding-left:8px;}
-.nav-sep{height:0.5px;background:var(--border);margin:5px 4px;}
-.nav-section-lbl{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);padding:5px 10px 3px;pointer-events:none;user-select:none;}
+.nav-section-lbl{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);padding:5px 10px 3px;pointer-events:none;}
 .nav-sub .nav-item{padding-left:26px;font-size:9.5px;letter-spacing:.05em;}
+:focus-visible{outline:2px solid var(--gold-l,#f0b830);outline-offset:2px;border-radius:3px;}
+.si:focus-visible,.coll-search:focus-visible,textarea:focus-visible{outline:none;}
+.si:focus-visible{border-color:var(--gold-l,#f0b830);border-width:1.5px;}
+.coll-search:focus-visible{border-color:var(--accent-l);border-width:1.5px;}
+.rp:focus-visible{outline-offset:3px;}
+/* Общие стили галерей (collection + templates): фильтр-бар, сетка,
+   карточки-миниатюры, превью-модалка, шапки групп, тосты. */
+
+/* HEADER */
+
+.header-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+
+/* NAV */
+
+/* иконку не сжимаем: у длинных пунктов с бейджем flex схлопывал её до нуля */
+
 /* PAGE LAYOUT */
 .pg-layout{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;}
 /* FILTER BAR */
@@ -140,7 +160,7 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 }
 /* TOAST */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:9px 18px;font-family:'Cinzel',serif;font-size:11px;color:var(--text);letter-spacing:.06em;z-index:500;transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
-.toast.show{transform:translateX(-50%) translateY(0);}
+
 /* группы галереи */
 #grid-area{display:block;padding:0;background:#efe9db;margin:16px;border-radius:12px;overflow:hidden;min-height:calc(100% - 32px);}
 .gal-section{padding-bottom:14px;}
@@ -219,11 +239,6 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
    при табуляции, мышь его не показывает — вид при обычной работе не меняется.
    У полей ввода своя индикация (рамка золотеет), поэтому им обводка не нужна:
    иначе получалось два кольца. */
-:focus-visible{outline:2px solid var(--gold-l,#f0b830);outline-offset:2px;border-radius:3px;}
-.si:focus-visible,.coll-search:focus-visible,textarea:focus-visible{outline:none;}
-.si:focus-visible{border-color:var(--gold-l,#f0b830);border-width:1.5px;}
-.coll-search:focus-visible{border-color:var(--accent-l);border-width:1.5px;}
-.rp:focus-visible{outline-offset:3px;}
 .hbtn{padding:7px 13px;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);transition:all .14s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
 .hbtn.danger{border-color:rgba(220,60,60,.25);color:#c07060;}
 .hbtn.danger:not(:disabled):hover{background:rgba(220,60,60,.1);color:#e08070;border-color:rgba(220,60,60,.4);}
@@ -577,7 +592,10 @@ var COLLECTIONS=[
 var GROUPS=[{id:'weapon',label:'Оружие'},{id:'armor',label:'Доспехи'},{id:'equipment',label:'Снаряжение'},{id:'tools',label:'Инструменты'},{id:'poisons',label:'Яды'},{id:'custom',label:'Произвольные'}];
 function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){el.classList.remove('show');},2200);}
 function closePreview(){document.getElementById('prev-bg').classList.remove('open');previewCard=null;}
-function subLabel(c){switch(c._group){case 'armor':return (c.armorType||'Доспех')+(c.acDisplay?' · КБ '+c.acDisplay:'');case 'equipment':return c.category||'';case 'tools':return c.toolType||'';case 'kits':return (c.composition||'').split('\n').filter(function(x){return x.trim();}).length+' предм.';case 'poisons':return c.poisonType||'';case 'custom':return c.cardType||'Произвольная';default:return [c.kind,c.cat,c.dt].filter(Boolean).join(' · ');}}
+/* Английское название показываем в галерее рядом с типом — по нему же ищет
+   getFiltered. На самой карточке оно не выводится. */
+function subLabel(c){var _en=c.nameEn?' · '+c.nameEn:'';return _sub0(c)+_en;}
+function _sub0(c){switch(c._group){case 'armor':return (c.armorType||'Доспех')+(c.acDisplay?' · КБ '+c.acDisplay:'');case 'equipment':return c.category||'';case 'tools':return c.toolType||'';case 'kits':return (c.composition||'').split('\n').filter(function(x){return x.trim();}).length+' предм.';case 'poisons':return c.poisonType||'';case 'custom':return c.cardType||'Произвольная';default:return [c.kind,c.cat,c.dt].filter(Boolean).join(' · ');}}
 function makeGridCard(card){var d=R[card.rarity||'common']||R.common;var wrap=document.createElement('div');wrap.className='g-card';var stripe=document.createElement('div');stripe.className='g-card-stripe';stripe.style.background=d.a;var imgWrap=document.createElement('div');imgWrap.className='g-card-img';if(card.img){var img=document.createElement('img');img.src=card.img;img.alt='';imgWrap.appendChild(img);}else{imgWrap.innerHTML='<div class="g-card-img-ph"><svg viewBox="0 0 24 24" fill="none" stroke="#8a7860" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>';}var foot=document.createElement('div');foot.className='g-card-foot';var badgeCls='g-card-badge'+(card._source==='weapon2014'?' ed14':card._source==='weapon2024'?' ed24':'');foot.innerHTML='<div class="g-card-nrow"><span class="g-card-name">'+(card.name||'Без названия')+'</span><span class="'+badgeCls+'">'+badgeText(card)+'</span></div><span class="g-card-sub">'+subLabel(card)+'</span>';var ov=document.createElement('div');ov.className='g-card-ov';ov.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';wrap.appendChild(stripe);wrap.appendChild(imgWrap);wrap.appendChild(foot);if(typeof galCardExtras==='function')galCardExtras(card,wrap);wrap.appendChild(ov);wrap.addEventListener('click',function(){if(typeof gaSelMode==='function'&&gaSelMode()){gaToggleSelect(card,wrap);}else{openPreview(card);}});if(typeof gaIsSelected==='function'&&gaIsSelected(card))wrap.classList.add('gsel');var _cbx=document.createElement('div');_cbx.className='g-card-cbx';wrap.appendChild(_cbx);return wrap;}
 function srcInfo(src){for(var i=0;i<COLLECTIONS.length;i++)if(COLLECTIONS[i].src===src)return COLLECTIONS[i];return null;}
 var allCards=[],previewCard=null;
@@ -613,7 +631,7 @@ function saveBack(src){var col=srcInfo(src);if(!col)return;var cards=allCards.fi
 function badgeText(c){if(c._source==='weapon2014')return '2014';if(c._source==='weapon2024')return '2024';var col=srcInfo(c._source);return col?col.label:'';}
 /* кнопка удаления на миниатюре (хук shared makeGridCard) */
 function galCardExtras(card,wrap){var del=document.createElement('button');del.className='g-card-del';del.title='Удалить';del.innerHTML='✕';del.addEventListener('click',function(e){e.stopPropagation();showConfirm('Удалить карточку «'+(card.name||'без названия')+'»?',function(){deleteCard(card);});});wrap.appendChild(del);}
-function renderGrid(){var cards=getFiltered();var area=document.getElementById('grid-area');var empty=document.getElementById('empty-state');area.innerHTML='';var total=allCards.length,vis=cards.length;var statsEl=document.getElementById('filter-stats');if(total===0){statsEl.textContent='Нет карточек';}else{var parts=['<b>'+vis+'</b> из <b>'+total+'</b>'];GROUPS.forEach(function(g){var n=allCards.filter(function(c){return c._group===g.id;}).length;if(n)parts.push(g.label+': <b>'+n+'</b>');});statsEl.innerHTML=parts.join('&nbsp;· ');}document.getElementById('btn-clear-all').disabled=total===0;if(vis===0){empty.style.display='';area.style.display='none';if(total>0){empty.querySelector('.empty-state-title').textContent='Ничего не найдено';empty.querySelector('.empty-state-sub').textContent='Измените фильтры или поиск.';empty.querySelector('.empty-state-links').style.display='none';}else{empty.querySelector('.empty-state-title').textContent='Коллекция пуста';empty.querySelector('.empty-state-sub').innerHTML='Создайте карточку в генераторе<br/>и добавьте её в коллекцию.';empty.querySelector('.empty-state-links').style.display='';}return;}empty.style.display='none';area.style.display='';GROUPS.forEach(function(g){var gc=cards.filter(function(c){return c._group===g.id;});if(!gc.length)return;var sect=document.createElement('div');sect.className='gal-section';var head=document.createElement('div');head.className='gal-section-head';head.innerHTML='<span class="gal-section-title">'+g.label+'</span><span class="gal-section-count">'+gc.length+'</span><span class="gal-grp-acts"><button class="gal-grp-save" data-group="'+g.id+'" title="Сохранить группу"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button><button class="gal-grp-print" data-group="'+g.id+'" title="Печать группы"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button></span>';var grid=document.createElement('div');grid.className='gal-grid';gc.forEach(function(c){grid.appendChild(makeGridCard(c));});sect.appendChild(head);sect.appendChild(grid);area.appendChild(sect);});}
+function renderGrid(){var cards=getFiltered();var area=document.getElementById('grid-area');var empty=document.getElementById('empty-state');area.innerHTML='';var total=allCards.length,vis=cards.length;var statsEl=document.getElementById('filter-stats');if(total===0){statsEl.textContent='Нет карточек';}else{var parts=['<b>'+vis+'</b> из <b>'+total+'</b>'];GROUPS.forEach(function(g){var n=allCards.filter(function(c){return c._group===g.id;}).length;if(n)parts.push(g.label+': <b>'+n+'</b>');});statsEl.innerHTML=parts.join('&nbsp;· ');}document.getElementById('btn-clear-all').disabled=total===0;if(vis===0){empty.style.display='';area.style.display='none';if(total>0){empty.querySelector('.empty-state-title').textContent='Ничего не найдено';empty.querySelector('.empty-state-sub').textContent='Измените фильтры или поиск.';empty.querySelector('.empty-state-links').style.display='none';}else{empty.querySelector('.empty-state-title').textContent='Коллекция пуста';empty.querySelector('.empty-state-sub').innerHTML='Создайте карточку в генераторе<br/>и добавьте её в коллекцию.';empty.querySelector('.empty-state-links').style.display='';}return;}empty.style.display='none';area.style.display='';GROUPS.forEach(function(g){var gc=cards.filter(function(c){return c._group===g.id;})/* разделы идут в порядке меню, карточки внутри — по алфавиту */.sort(function(a,b){return (a.name||'').localeCompare(b.name||'','ru');});if(!gc.length)return;var sect=document.createElement('div');sect.className='gal-section';var head=document.createElement('div');head.className='gal-section-head';head.innerHTML='<span class="gal-section-title">'+g.label+'</span><span class="gal-section-count">'+gc.length+'</span><span class="gal-grp-acts"><button class="gal-grp-save" data-group="'+g.id+'" title="Сохранить группу"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button><button class="gal-grp-print" data-group="'+g.id+'" title="Печать группы"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button></span>';var grid=document.createElement('div');grid.className='gal-grid';gc.forEach(function(c){grid.appendChild(makeGridCard(c));});sect.appendChild(head);sect.appendChild(grid);area.appendChild(sect);});}
 function openPreview(card){previewCard=card;var d=R[card.rarity||'common']||R.common;var col=srcInfo(card._source)||{label:'',gen:'#'};document.getElementById('prev-title').textContent=(card.name||'Без названия')+' · '+col.label;var imgEl=document.getElementById('m-img');imgEl.innerHTML=card.img?'<img src="'+card.img+'" alt=""/>':'<div class="m-img-ph">нет картинки</div>';imgEl.style.borderColor=d.a;document.getElementById('m-name').textContent=card.name||'Без названия';var meta=['<span class="m-tag" style="background:'+d.a+'">'+d.l+'</span>','<span class="m-tag2">'+col.label+'</span>'];if(card.cost)meta.push('<span class="m-tag2">'+card.cost+' '+(card.coin||'зм')+'</span>');if(card.wgt)meta.push('<span class="m-tag2">'+card.wgt+' фнт.</span>');document.getElementById('m-meta').innerHTML=meta.join('');document.getElementById('m-fields').innerHTML=describeCard(card);document.getElementById('m-edit').href=col.gen+(card.id?'?edit='+encodeURIComponent(card.id):'');document.getElementById('prev-bg').classList.add('open');}
 
 document.getElementById('prev-close').addEventListener('click',closePreview);
