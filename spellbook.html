@@ -20,42 +20,62 @@
 <script src="lib/jszip.min.js" defer></script>
 <script src="lib/jspdf.umd.min.js" defer></script>
 <style>
-/* Общие стили галерей (collection + templates): фильтр-бар, сетка,
-   карточки-миниатюры, превью-модалка, шапки групп, тосты. */
+/* ═══ ОБЩИЙ ХРОМ ВСЕХ СТРАНИЦ ═══
+   Тема, сброс, шапка, навигация, тосты, видимый фокус — одинаково на генераторах
+   и в галереях. Раньше эти правила лежали копиями в styles.css и gallery-styles.css
+   и успели разойтись: правка в одном файле не доезжала до другого.
+   Подключать ПЕРВЫМ, до styles.css / gallery-styles.css. */
+
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:15px;height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,serif;height:100%;display:flex;flex-direction:column;overflow:hidden;}
+.header{padding:13px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--border);background:linear-gradient(to bottom,rgba(200,148,26,.06),transparent);gap:12px;flex-wrap:wrap;flex-shrink:0;}
+.logo{font-family:'Cinzel',serif;font-size:17px;font-weight:700;letter-spacing:.12em;color:var(--gold-l);white-space:nowrap;}
+.logo span{color:var(--text2);font-weight:400;}
+.hbtn:hover{background:rgba(255,255,255,.09);color:var(--text);}
+.hbtn svg{width:13px;height:13px;flex-shrink:0;}
+.nav-wrap{position:relative;flex-shrink:0;}
+.nav-toggle svg{width:14px;height:14px;flex-shrink:0;}
+.nav-toggle:hover,.nav-toggle.open{background:rgba(255,255,255,.09);color:var(--text);}
+.nav-menu{position:absolute;top:calc(100% + 8px);left:0;width:230px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:10px;padding:6px;box-shadow:0 8px 32px rgba(0,0,0,.55);z-index:300;display:none;max-height:460px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
+.nav-menu.open{display:block;}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.07em;color:var(--text2);cursor:pointer;transition:all .13s;text-decoration:none;}
+.nav-item > svg{flex-shrink:0;}
+.nav-item:hover{background:rgba(255,255,255,.06);color:var(--text);}
+.nav-item.nav-active{background:rgba(200,148,26,.12);color:var(--gold-l);border:0.5px solid rgba(200,148,26,.2);}
+.nav-item.nav-disabled{color:#5a5040;cursor:default;pointer-events:none;font-size:9.5px;padding:5px 10px;}
+.nav-sep{height:0.5px;background:var(--border);margin:5px 4px;}
+.nav-sub{display:none;padding-left:8px;}
+.nav-badge{margin-left:auto;font-family:'Crimson Text',Georgia,serif;font-size:8.5px;letter-spacing:.02em;color:#c88a4a;border:0.5px solid rgba(200,138,74,.4);border-radius:4px;padding:1px 5px;text-transform:lowercase;flex-shrink:0;}
+.toast.show{transform:translateX(-50%) translateY(0);}
 :root{
   --bg:#111009;--bg2:#1a1814;--bg3:#252018;--bg4:#2e2a20;
   --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.13);
   --text:#e0d8c8;--text2:#a09070;--text3:#968769;
   --gold:#c8941a;--gold-l:#f0b830;
   --accent:#4a3fa0;--accent-l:#8070e0;
+  --ca:#f5f5f5;
   --r:10px;
 }
-html{font-size:15px;height:100%;overflow:hidden;}
-body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,serif;height:100%;display:flex;flex-direction:column;overflow:hidden;}
-/* HEADER */
-.header{padding:13px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--border);background:linear-gradient(to bottom,rgba(200,148,26,.06),transparent);gap:12px;flex-wrap:wrap;flex-shrink:0;}
-.logo{font-family:'Cinzel',serif;font-size:17px;font-weight:700;letter-spacing:.12em;color:var(--gold-l);white-space:nowrap;}
-.logo span{color:var(--text2);font-weight:400;}
-.header-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
-.hbtn:hover{background:rgba(255,255,255,.09);color:var(--text);}
-.hbtn svg{width:13px;height:13px;flex-shrink:0;}
-/* NAV */
-.nav-wrap{position:relative;flex-shrink:0;}
 .nav-toggle{padding:7px 13px;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);transition:all .14s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
-.nav-toggle:hover,.nav-toggle.open{background:rgba(255,255,255,.09);color:var(--text);}
-.nav-toggle svg{width:14px;height:14px;flex-shrink:0;}
-.nav-menu{position:absolute;top:calc(100% + 8px);left:0;width:230px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:10px;padding:6px;box-shadow:0 8px 32px rgba(0,0,0,.55);z-index:300;display:none;max-height:460px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
-.nav-menu.open{display:block;}
-.nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.07em;color:var(--text2);cursor:pointer;transition:all .13s;text-decoration:none;}
-.nav-item:hover{background:rgba(255,255,255,.06);color:var(--text);}
-.nav-item.nav-active{background:rgba(200,148,26,.12);color:var(--gold-l);border:0.5px solid rgba(200,148,26,.2);}
-.nav-badge{margin-left:auto;font-family:'Crimson Text',Georgia,serif;font-size:8.5px;letter-spacing:.02em;color:#c88a4a;border:0.5px solid rgba(200,138,74,.4);border-radius:4px;padding:1px 5px;text-transform:lowercase;flex-shrink:0;}
-.nav-item.nav-disabled{color:#5a5040;cursor:default;pointer-events:none;font-size:9.5px;padding:5px 10px;}
-.nav-sub{display:none;padding-left:8px;}
-.nav-sep{height:0.5px;background:var(--border);margin:5px 4px;}
-.nav-section-lbl{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);padding:5px 10px 3px;pointer-events:none;user-select:none;}
+.nav-section-lbl{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);padding:5px 10px 3px;pointer-events:none;}
 .nav-sub .nav-item{padding-left:26px;font-size:9.5px;letter-spacing:.05em;}
+:focus-visible{outline:2px solid var(--gold-l,#f0b830);outline-offset:2px;border-radius:3px;}
+.si:focus-visible,.coll-search:focus-visible,textarea:focus-visible{outline:none;}
+.si:focus-visible{border-color:var(--gold-l,#f0b830);border-width:1.5px;}
+.coll-search:focus-visible{border-color:var(--accent-l);border-width:1.5px;}
+.rp:focus-visible{outline-offset:3px;}
+/* Общие стили галерей (collection + templates): фильтр-бар, сетка,
+   карточки-миниатюры, превью-модалка, шапки групп, тосты. */
+
+/* HEADER */
+
+.header-right{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+
+/* NAV */
+
+/* иконку не сжимаем: у длинных пунктов с бейджем flex схлопывал её до нуля */
+
 /* PAGE LAYOUT */
 .pg-layout{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;}
 /* FILTER BAR */
@@ -140,7 +160,7 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 }
 /* TOAST */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:9px 18px;font-family:'Cinzel',serif;font-size:11px;color:var(--text);letter-spacing:.06em;z-index:500;transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
-.toast.show{transform:translateX(-50%) translateY(0);}
+
 /* группы галереи */
 #grid-area{display:block;padding:0;background:#efe9db;margin:16px;border-radius:12px;overflow:hidden;min-height:calc(100% - 32px);}
 .gal-section{padding-bottom:14px;}
@@ -219,11 +239,6 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
    при табуляции, мышь его не показывает — вид при обычной работе не меняется.
    У полей ввода своя индикация (рамка золотеет), поэтому им обводка не нужна:
    иначе получалось два кольца. */
-:focus-visible{outline:2px solid var(--gold-l,#f0b830);outline-offset:2px;border-radius:3px;}
-.si:focus-visible,.coll-search:focus-visible,textarea:focus-visible{outline:none;}
-.si:focus-visible{border-color:var(--gold-l,#f0b830);border-width:1.5px;}
-.coll-search:focus-visible{border-color:var(--accent-l);border-width:1.5px;}
-.rp:focus-visible{outline-offset:3px;}
 .hbtn{padding:7px 13px;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);transition:all .14s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
 .hbtn.danger{border-color:rgba(220,60,60,.25);color:#c07060;}
 .hbtn.danger:not(:disabled):hover{background:rgba(220,60,60,.1);color:#e08070;border-color:rgba(220,60,60,.4);}
