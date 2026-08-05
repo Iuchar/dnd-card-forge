@@ -143,6 +143,60 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .gal-section-head{display:flex;align-items:center;gap:10px;padding:9px 20px;background:#ddd2b6;border-top:1px solid rgba(200,148,26,.22);border-bottom:2px solid rgba(200,148,26,.42);}
 .gal-section-title{font-family:'Cinzel',serif;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#5f4d26;}
 .gal-section-count{font-family:'Cinzel',serif;font-size:10px;color:#6e5a2e;background:rgba(200,148,26,.16);border:0.5px solid rgba(200,148,26,.3);border-radius:20px;padding:2px 9px;}
+/* ═══ ПОЛНОЕ ОПИСАНИЕ ═══
+   Окно перестало быть вторым списком свойств — он есть в панели справа. Здесь
+   разворот компендиума: пергаментный лист на тёмной подложке, проза набрана
+   для чтения, свойства ужаты в справочный столбец сбоку. */
+.prev-bg .prev-box:has(.pv-page){background:#efe9db;border-color:rgba(90,72,32,.3);padding:0;overflow:hidden;gap:0;}
+.prev-bg .prev-box:has(.pv-page) .prev-head{padding:12px 20px;background:#4a3f28;border-bottom:1px solid rgba(0,0,0,.25);}
+.prev-bg .prev-box:has(.pv-page) .prev-title{color:#f0e4c0;}
+.prev-bg .prev-box:has(.pv-page) .prev-actions{padding:12px 26px 16px;border-top:1px solid rgba(90,72,32,.22);background:#e6dfcd;}
+.prev-bg .prev-box:has(.pv-page) .prev-actions .hbtn{border-color:rgba(90,72,32,.35);background:rgba(90,72,32,.07);color:#5f4d26;}
+.prev-bg .prev-box:has(.pv-page) .prev-actions .hbtn:hover{background:rgba(90,72,32,.16);color:#2a1e0a;}
+
+.prev-body{overflow-y:auto;flex:1;min-height:0;}
+.pv-page{padding:22px 26px 24px;}
+.pv-head{border-bottom:2px solid rgba(150,110,30,.4);padding-bottom:11px;margin-bottom:18px;}
+/* Цвет редкости — полосой под шапкой окна (как шапка карточки) и точкой в
+   надзаголовке (как в строке указателя). У ядов и произвольных здесь их
+   собственная палитра: цвет ставит galPal, а не шкала редкости. */
+.pv-stripe{height:4px;flex-shrink:0;}
+.pv-eyebrow{display:flex;align-items:center;gap:7px;font-family:'Cinzel',serif;font-size:9.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#8a7550;margin-bottom:5px;}
+.pv-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;border:0.5px solid rgba(0,0,0,.25);}
+.pv-name{font-family:'Cinzel',serif;font-size:24px;font-weight:700;color:#2a1e0a;margin:0;line-height:1.15;text-wrap:balance;}
+.pv-en{font-size:14px;font-style:italic;color:#8a7550;margin-top:3px;}
+
+.pv-cols{display:flex;gap:26px;align-items:flex-start;}
+.pv-aside{width:210px;flex-shrink:0;}
+.pv-body{flex:1;min-width:0;max-width:62ch;}
+
+.pv-img{border:2px solid #3a2810;border-radius:3px;background:#cfc0a0;position:relative;overflow:hidden;
+  width:100%;aspect-ratio:296/149;box-sizing:content-box;margin-bottom:14px;}
+.pv-img::after{content:'';position:absolute;inset:4px;border:1px solid rgba(160,120,56,.7);border-radius:2px;pointer-events:none;}
+.pv-img img{width:100%;height:100%;object-fit:contain;display:block;}
+
+/* справочный столбец: мельче прозы, он для сверки, а не для чтения */
+.pv-stat{font-size:12.5px;}
+.pv-strow{display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-bottom:0.5px solid rgba(90,72,32,.16);}
+.pv-strow .k{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#8a7550;align-self:center;white-space:nowrap;}
+.pv-strow .v{color:#2a1e0a;text-align:right;}
+
+/* проза — то, ради чего окно и открывают */
+.pv-quote{margin:0 0 18px;padding:0 0 0 16px;border-left:2px solid rgba(150,110,30,.45);
+  font-size:16px;font-style:italic;line-height:1.6;color:#5f4d26;}
+.pv-sec{margin-bottom:18px;}
+.pv-sec h3{font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+  color:#8a6b2e;margin:0 0 6px;}
+.pv-text{font-size:16px;line-height:1.7;color:#241a08;white-space:pre-wrap;overflow-wrap:break-word;}
+.pv-text u{text-decoration:underline;text-underline-offset:2px;}
+.pv-empty{font-size:15px;font-style:italic;color:#8a7550;}
+@media (max-width:700px){
+  .pv-cols{flex-direction:column;}
+  .pv-aside{width:100%;}
+  .pv-page{padding:18px;}
+  .pv-name{font-size:20px;}
+}
+
 /* простое превью */
 .prev-simple{display:flex;gap:16px;padding:2px 0 14px;}
 .prev-simple-img{width:210px;height:110px;flex-shrink:0;border:2px solid var(--accent-l);border-radius:6px;overflow:hidden;background:#1a1814;display:flex;align-items:center;justify-content:center;}
@@ -496,14 +550,7 @@ table.gx-t{width:100%;border-collapse:collapse;font-size:14px;}
 <div class="prev-bg" id="prev-bg">
   <div class="prev-box">
     <div class="prev-head"><span class="prev-title" id="prev-title">Предпросмотр</span><button class="prev-close" id="prev-close">✕</button></div>
-    <div class="prev-simple">
-      <div class="prev-simple-img" id="m-img"></div>
-      <div class="prev-simple-info">
-        <div class="prev-simple-name" id="m-name">Имя</div>
-        <div class="prev-simple-meta" id="m-meta"></div>
-        <div class="prev-simple-fields" id="m-fields"></div>
-      </div>
-    </div>
+    <div class="prev-body" id="m-body"></div>
     <div class="prev-actions">
       <button class="hbtn" id="btn-prev-save"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Сохранить PNG</button>
       <button class="hbtn" id="btn-prev-print"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>Печать</button>
@@ -653,7 +700,8 @@ function describeCard(card){
   block('Описание', card.type==='spell'&&typeof stripFmt==='function'?stripFmt(card.desc):card.desc);
   block('На высоких уровнях', card.hl);
   block('Состав', card.composition);
-  block('Оборотная сторона', card.back);
+  /* «Оборотной стороны» как отдельного поля нет: в генераторах его не было,
+     описание само переливается на оборот карточки. Старые данные перенесены. */
   var html=(rows.length?'<div class="cf-rows">'+rows.join('')+'</div>':'')+blocks.join('');
   return html||'<div class="cf-empty">(свойства не заполнены)</div>';
 }
@@ -979,13 +1027,25 @@ function galSelect(card,el){
   if(galIsNarrow()){if(typeof openPreview==='function')openPreview(card);return;}
   galRenderSide();
 }
-function galRenderSide(){
-  var host=document.getElementById('gx-side');if(!host)return;
-  var c=galCurrent;
-  if(!c){host.innerHTML='<div class="gx-snote">Выберите строку —<br/>карточка появится здесь</div>';return;}
+/* Окно «Полное описание» переехало в shared/preview-full.js — им пользуется
+   и книга заклинаний, а тянуть туда весь этот файл со значками и указателем
+   было бы незачем. Ниже хуки, которыми галереи его настраивают. */
+function pvFields(c){return galFields(c);}
+function pvImage(c){return c.img;}
+function pvAccent(c){
+  var d=galPal(c),dot=galRarityColor(c);
+  return {dot:dot,stripe:(d&&d.grad)?('linear-gradient(90deg,'+d.grad[0]+','+d.grad[1]+','+d.grad[0]+')'):dot};
+}
+function pvEyebrow(c){
+  var g=(typeof GROUPS!=='undefined')&&(GROUPS.filter(function(x){return x.id===c._group;})[0]||null);
   var d=galPal(c);
-  /* Панель показывает ВСЕ свойства раздела, кроме описания и цитаты — те живут
-     в полном описании. Пустые поля не выводим: add сам их отсеивает. */
+  return [g?g.label:'',(d&&d.l)?d.l:''].filter(Boolean).join(' · ');
+}
+
+/* Полный список свойств раздела — используется и панелью, и полным описанием.
+   Описание и цитата сюда не входят: это проза, у неё своё место. */
+function galFields(c){
+  var d=galPal(c);
   var rows=[];
   function add(k,v){
     if(v===true)v='да';
@@ -1039,6 +1099,16 @@ function galRenderSide(){
   if(c.wgt)add('Вес',c.wgt+' фнт');
   if(c.cost)add('Цена',c.cost+' '+(c.coin||'зм'));
   if(d&&d.l)add('Редкость',d.l);
+  return rows;
+}
+function galRenderSide(){
+  var host=document.getElementById('gx-side');if(!host)return;
+  var c=galCurrent;
+  if(!c){host.innerHTML='<div class="gx-snote">Выберите строку —<br/>карточка появится здесь</div>';return;}
+  var d=galPal(c);
+  /* Панель показывает ВСЕ свойства раздела, кроме описания и цитаты — те живут
+     в полном описании. Пустые поля не выводим: add сам их отсеивает. */
+  var rows=galFields(c);
   /* Название стоит НАД картинкой, а не поверх неё: в панели это заголовок, а не
      подпись на обложке. Слот картинки повторяет генератор — та же тёмная рамка с
      внутренним волоском и та же пропорция, поэтому изображение просто уменьшается,
@@ -1066,6 +1136,97 @@ function galRenderSide(){
   var bp=document.getElementById('gx-print');if(bp)bp.onclick=function(){openPrintModal([c]);};
   var bo=document.getElementById('gx-open');if(bo)bo.onclick=function(){galOpenInGen(c);};
   var bm=document.getElementById('gx-more');if(bm)bm.onclick=function(){if(typeof openPreview==='function')openPreview(c);};
+}
+
+/* галереи: окно открывается как есть, «в генератор» ведёт galOpenInGen */
+function openPreview(card){
+  pvOpen(card);
+  var ed=document.getElementById('m-edit');
+  if(ed)ed.onclick=function(e){e.preventDefault();galOpenInGen(card);};
+}
+/* Окно «Полное описание» — общее для галерей и книги заклинаний.
+   Включать ВНУТРИ IIFE страницы. Разметку берёт из #m-body, кнопки подвала —
+   из существующих btn-prev-save / btn-prev-print / m-edit.
+
+   Разворот страницы компендиума: пергаментный лист на тёмной подложке, проза
+   набрана для чтения, свойства сжаты в справочный столбец сбоку. Содержимое
+   повторяет боковую панель и добавляет то, чего в ней нет, — цитату и описание.
+
+   Страница задаёт четыре хука; у каждого есть разумное умолчание:
+     pvFields(card)   -> [[подпись,значение],…]  свойства справочного столбца
+     pvAccent(card)   -> {dot:'#…', stripe:'#… | linear-gradient(…)'}
+     pvEyebrow(card)  -> строка над именем
+     pvImage(card)    -> URL картинки или пусто
+   Кнопку «в генератор» вешает страница через galOpenInGen(card). */
+
+function pvEsc(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+
+/* разметка **жирный** __подчёркнутый__ *курсив* — та же, что на карточке */
+function pvRuns(text){
+  if(typeof parseFmt!=='function')return pvEsc(text).replace(/\n/g,'<br/>');
+  return parseFmt(text).map(function(r){
+    var t=pvEsc(r.t).replace(/\n/g,'<br/>');
+    if(r.u)t='<u>'+t+'</u>';
+    if(r.i)t='<i>'+t+'</i>';
+    if(r.b)t='<b>'+t+'</b>';
+    return t;
+  }).join('');
+}
+
+/* проза карточки: всё, что читается, а не сверяется */
+function pvProse(c){
+  var out=[];
+  function add(label,text,quote){
+    var t=(text==null?'':String(text)).trim();
+    if(t)out.push({l:label,t:t,q:!!quote});
+  }
+  add('',c.flv,true);
+  add('Описание',c.desc);
+  add('На высоких уровнях',c.hl);
+  add('Состав',c.composition);
+  return out;
+}
+
+function pvHTML(c){
+  var fields=(typeof pvFields==='function')?pvFields(c):[];
+  var accent=(typeof pvAccent==='function')?pvAccent(c):{};
+  var eyebrow=(typeof pvEyebrow==='function')?pvEyebrow(c):'';
+  var imgUrl=(typeof pvImage==='function')?pvImage(c):c.img;
+  var dot=accent.dot||'#888077',stripe=accent.stripe||dot;
+  var prose=pvProse(c);
+
+  var img=imgUrl?'<div class="pv-img"><img src="'+imgUrl+'" alt=""/></div>':'';
+  var stat=fields.length?('<div class="pv-stat">'+fields.map(function(r){
+      return '<div class="pv-strow"><span class="k">'+pvEsc(r[0])+'</span><span class="v">'+pvEsc(r[1])+'</span></div>';
+    }).join('')+'</div>'):'';
+  var body=prose.length?prose.map(function(p){
+      if(p.q)return '<blockquote class="pv-quote">'+pvRuns(p.t)+'</blockquote>';
+      return '<section class="pv-sec"><h3>'+pvEsc(p.l)+'</h3><div class="pv-text">'+pvRuns(p.t)+'</div></section>';
+    }).join(''):'<div class="pv-empty">У этой карточки нет описания.</div>';
+
+  return '<div class="pv-stripe" style="background:'+stripe+'"></div>'+
+    '<div class="pv-page">'+
+      '<header class="pv-head">'+
+        '<div class="pv-eyebrow"><span class="pv-dot" style="background:'+dot+'"></span>'+pvEsc(eyebrow)+'</div>'+
+        '<h2 class="pv-name">'+pvEsc(c.name||'Без названия')+'</h2>'+
+        (c.nameEn?'<div class="pv-en">'+pvEsc(c.nameEn)+'</div>':'')+
+      '</header>'+
+      '<div class="pv-cols">'+
+        ((img||stat)?('<aside class="pv-aside">'+img+stat+'</aside>'):'')+
+        '<div class="pv-body">'+body+'</div>'+
+      '</div>'+
+    '</div>';
+}
+
+/* Открывает окно. Страница дальше сама решает, что делать с кнопками подвала:
+   у галерей это переход в генератор, у книги заклинаний ещё и кнопка удаления. */
+function pvOpen(card){
+  previewCard=card;
+  var box=document.getElementById('m-body');
+  if(box)box.innerHTML=pvHTML(card);
+  var t=document.getElementById('prev-title');
+  if(t)t.textContent='Полное описание';
+  document.getElementById('prev-bg').classList.add('open');
 }
 var GENPAGE={weapon:'weapon-2014.html',armor:'armor.html',equipment:'equipment.html',tools:'tools.html',poisons:'poisons.html',custom:'custom.html'};
 function grpLabel(id){for(var i=0;i<GROUPS.length;i++)if(GROUPS[i].id===id)return GROUPS[i].label;return id;}
@@ -1101,7 +1262,6 @@ function galOpenInGen(card){
     sessionStorage.setItem('dnd_prefill',JSON.stringify(cc));}catch(e){}
   location.href=pg+'?prefill=1';
 }
-function openPreview(card){previewCard=card;var d=R[card.rarity||'common']||R.common;var grp=card._group;document.getElementById('prev-title').textContent=(card.name||'Без названия')+' · '+grpLabel(grp);var imgEl=document.getElementById('m-img');imgEl.innerHTML=card.img?'<img src="'+card.img+'" alt=""/>':'<div class="m-img-ph">нет картинки</div>';imgEl.style.borderColor=d.a;document.getElementById('m-name').textContent=card.name||'Без названия';var meta=['<span class="m-tag" style="background:'+d.a+'">'+d.l+'</span>','<span class="m-tag2">'+grpLabel(grp)+'</span>'];if(card.cost)meta.push('<span class="m-tag2">'+card.cost+' '+(card.coin||'зм')+'</span>');if(card.wgt)meta.push('<span class="m-tag2">'+card.wgt+' фнт.</span>');document.getElementById('m-meta').innerHTML=meta.join('');document.getElementById('m-fields').innerHTML=describeCard(card);var _me=document.getElementById('m-edit');var _pg=card._source==='weapon2024'?'weapon-2024.html':card._source==='weapon2014'?'weapon-2014.html':(GENPAGE[grp]||'weapon-2014.html');_me.href=_pg+'?prefill=1';_me.onclick=function(){try{var cc=Object.assign({},card);delete cc._group;delete cc._source;delete cc._edition;delete cc.id;sessionStorage.setItem('dnd_prefill',JSON.stringify(cc));}catch(e){}};document.getElementById('prev-bg').classList.add('open');}
 
 document.getElementById('prev-close').addEventListener('click',closePreview);
 document.getElementById('prev-bg').addEventListener('click',function(e){if(e.target===this)closePreview();});
@@ -1132,7 +1292,7 @@ function _galOn(){return typeof GAL_SEC!=='undefined';}
 
 /* ── определения фильтров по разделам (только коллекция/шаблоны) ── */
 var GAL_FDEFS={
-  weapon:[['cat','Класс оружия'],['kind','Тип оружия'],['dt','Тип урона'],['props','Свойства'],['mastery','Мастерство'],['_rarity','Редкость'],['_attune','Настройка']],
+  weapon:[['_edition','Редакция'],['cat','Класс оружия'],['kind','Тип оружия'],['dt','Тип урона'],['props','Свойства'],['mastery','Мастерство'],['_rarity','Редкость'],['_attune','Настройка']],
   armor:[['armorType','Категория доспеха'],['_stealth','Скрытность'],['_rarity','Редкость'],['_attune','Настройка']],
   poisons:[['poisonType','Тип яда'],['saveStat','Характеристика спасброска']],
   tools:[['toolType','Тип инструмента'],['stat','Характеристика']],
@@ -1140,6 +1300,8 @@ var GAL_FDEFS={
   custom:[['cardType','Тип карточки']]
 };
 function _galVals(c,f){
+  /* редакция живёт в _source (weapon2014/weapon2024), а не отдельным полем */
+  if(f==='_edition')return [c._source==='weapon2024'?'2024':c._source==='weapon2014'?'2014':(c.edition||'')].filter(Boolean);
   if(f==='_rarity')return [c.rarity||'common'];
   if(f==='_attune')return [_attuneState(c)];
   if(f==='_stealth')return [c.stealth===true?'dis':'ok'];
