@@ -1148,8 +1148,12 @@ document.getElementById('btn-clear-all').addEventListener('click',function(){
    Из страницы нужны: allCards, GROUPS, renderGrid. */
 var FILT={query:''};
 var FILTER_DEFS=[];
-var _RLABEL={nonmagic:'Немагический',common:'Обычный',uncommon:'Необычный',rare:'Редкий',veryrare:'Очень редкий',legendary:'Легендарный'};
-var _RDOT={nonmagic:'#f5f5f5',common:'#888077',uncommon:'#52aa40',rare:'#4a8ccc',veryrare:'#9870cc',legendary:'#e09820'};
+/* Подписи и цвета редкости берём из общего rarities.js, а не держим копию:
+   копия отставала — в галереях оставались старые плоские цвета, пока карточки
+   уже рисовались новой палитрой (grad/gem). Запасные значения нужны книге
+   заклинаний: она rarities.js не подключает и редкостью не оперирует. */
+function _RLBL(v){return (typeof R!=='undefined'&&R[v]&&R[v].l)||v;}
+function _RCOL(v){var d=(typeof R!=='undefined')?R[v]:null;return (d&&(d.gem||d.a))||'#888077';}
 var _RSEQ=['nonmagic','common','uncommon','rare','veryrare','legendary'];
 function _attuneState(c){var a=(c.attune||'').trim().toLowerCase();return(!a||a==='не требуется'||a==='не требует настройки'||a==='нет')?'no':'yes';}
 function _galOn(){return typeof GAL_SEC!=='undefined';}
@@ -1173,7 +1177,7 @@ function _galVals(c,f){
   return String(v).split(',').map(function(x){return x.trim();});
 }
 function _galLabel(f,v){
-  if(f==='_rarity')return _RLABEL[v]||v;
+  if(f==='_rarity')return _RLBL(v);
   if(f==='_attune')return v==='yes'?'Требует настройки':'Не требует настройки';
   if(f==='_stealth')return v==='dis'?'С помехой':'Без помехи';
   return v;
@@ -1194,7 +1198,7 @@ function _galOpts(f){
       return ra!==rb?ra-rb:a.localeCompare(b,'ru');});
   }
   return vals.map(function(v){
-    return {v:v,l:_galLabel(f,v),dot:(f==='_rarity'?_RDOT[v]:null)};});
+    return {v:v,l:_galLabel(f,v),dot:(f==='_rarity'?_RCOL(v):null)};});
 }
 function _galDefs(){
   return (GAL_FDEFS[GAL_SEC]||[]).map(function(d){
