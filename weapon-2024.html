@@ -46,7 +46,6 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .nav-item.nav-active{background:rgba(200,148,26,.12);color:var(--gold-l);border:0.5px solid rgba(200,148,26,.2);}
 .nav-item.nav-disabled{color:#5a5040;cursor:default;pointer-events:none;font-size:9.5px;padding:5px 10px;}
 .nav-sep{height:0.5px;background:var(--border);margin:5px 4px;}
-.nav-sub{display:none;padding-left:8px;}
 .nav-badge{margin-left:auto;font-family:'Crimson Text',Georgia,serif;font-size:8.5px;letter-spacing:.02em;color:#c88a4a;border:0.5px solid rgba(200,138,74,.4);border-radius:4px;padding:1px 5px;text-transform:lowercase;flex-shrink:0;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 :root{
@@ -60,7 +59,6 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 }
 .nav-toggle{padding:7px 13px;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);transition:all .14s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
 .nav-section-lbl{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);padding:5px 10px 3px;pointer-events:none;}
-.nav-sub .nav-item{padding-left:26px;font-size:9.5px;letter-spacing:.05em;}
 :focus-visible{outline:2px solid var(--gold-l,#f0b830);outline-offset:2px;border-radius:3px;}
 .si:focus-visible,.coll-search:focus-visible,textarea:focus-visible{outline:none;}
 .si:focus-visible{border-color:var(--gold-l,#f0b830);border-width:1.5px;}
@@ -130,11 +128,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .btn-del-img{width:100%;padding:5px 9px;margin-top:4px;font-family:'Cinzel',serif;font-size:10px;font-weight:500;letter-spacing:.08em;cursor:pointer;border:0.5px solid var(--border);border-radius:6px;background:transparent;color:var(--text3);transition:all .14s;display:flex;align-items:center;justify-content:center;gap:5px;}
 .btn-del-img:hover{background:rgba(220,60,60,.1);color:#e08070;border-color:rgba(220,60,60,.3);}
 .field-wrap{position:relative;}
-/* пара узких полей под одной подписью (КБ: базовый + бонус) */
-.sb-pair{display:flex;gap:8px;margin-bottom:2px;}
-.ac-sub{display:flex;flex-direction:column;gap:3px;}
-.ac-sub > span{font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);}
-.ac-sub .si{width:80px;}
 /* подпись половинки парного поля (.row2 > .sf) — та же типографика, что у .ac-sub */
 .sl{font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);}
 /* пара полей в столбик: длинные значения селектов не влезают в половину ширины
@@ -233,16 +226,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .conf-del:hover{background:rgba(220,60,60,.15)!important;}
 .conf-keep:hover{background:rgba(255,255,255,.06);}
 
-/* иконку не сжимаем: у длинных пунктов с бейджем flex схлопывал её до нуля */
-
-.nav-group-head{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:6px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.07em;color:var(--text2);cursor:pointer;transition:all .13s;user-select:none;}
-.nav-group-head:hover{background:rgba(255,255,255,.06);color:var(--text);}
-.nav-group-chev{width:12px;height:12px;transition:transform .15s;flex-shrink:0;opacity:.5;}
-.nav-group.open .nav-group-chev{transform:rotate(90deg);}
-
-.nav-group.open .nav-sub{display:block;}
-
-.nav-group-head-inner{display:flex;align-items:center;gap:8px;}
 .coll-full-link{display:flex;align-items:center;gap:5px;padding:5px 14px 8px;font-family:'Cinzel',serif;font-size:9px;letter-spacing:.07em;color:var(--text3);text-decoration:none;flex-shrink:0;transition:color .13s;border-bottom:0.5px solid var(--border);}
 .coll-full-link:hover{color:var(--gold-l);}
 
@@ -2156,7 +2139,7 @@ window.__dndReady=true;
   /* подсветка активного пункта по текущему URL */
   var _cur=(location.pathname.split('/').pop()||'index.html');
   var _act=menu.querySelector('a[href="'+_cur+'"]');
-  if(_act){_act.classList.add('nav-active');var _g=_act.closest('.nav-group');if(_g)_g.classList.add('has-active','open');}
+  if(_act)_act.classList.add('nav-active');
   toggle.addEventListener('click',function(e){
     e.stopPropagation();
     var open=menu.classList.toggle('open');
@@ -2170,11 +2153,6 @@ window.__dndReady=true;
   });
   document.addEventListener('keydown',function(e){
     if(e.key==='Escape'){menu.classList.remove('open');toggle.classList.remove('open');}
-  });
-  document.querySelectorAll('.nav-group-head').forEach(function(head){
-    head.addEventListener('click',function(){
-      head.closest('.nav-group').classList.toggle('open');
-    });
   });
 })();
 /* Кастомные выпадашки вместо нативного <select> (чтобы убрать синюю
