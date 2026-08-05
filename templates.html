@@ -212,10 +212,6 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .m-field-text{font-size:13px;color:var(--text2);line-height:1.5;white-space:pre-wrap;max-height:220px;overflow:auto;}
 /* текстовый разбор полей карточки */
 #m-fields{max-height:48vh;overflow:auto;padding-right:4px;}
-.cf-rows{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;margin-bottom:10px;}
-.cf-row{display:contents;}
-.cf-k{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--text3);white-space:nowrap;padding-top:1px;}
-.cf-v{font-size:13px;color:var(--text);min-width:0;word-break:break-word;}
 .cf-block{margin-bottom:9px;}
 .cf-block-h{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--gold);margin-bottom:2px;}
 .cf-block-t{font-size:13px;color:var(--text2);line-height:1.5;white-space:pre-wrap;overflow-wrap:break-word;word-break:break-word;}
@@ -645,71 +641,38 @@ function renderRuns(el,runs){
     el.appendChild(node);
   }
 }
-/* Единый текстовый разбор карточки для превью галерей (collection/templates).
-   Маленькая картинка остаётся отдельно; здесь — компактный список всех свойств
-   + текстовые блоки лицевой и оборотной сторон. Значения select уже на русском. */
-function _cfEsc(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
-function _cfEmpty(v){
-  if(v==null)return true;
-  var s=String(v).trim().toLowerCase();
-  return s===''||s==='0'||s==='—'||s==='-'||s==='нет'||s==='не требуется'||s==='не требует настройки';
+/* Дополнительный урон оружия («Пламенный язык» — 2d6 огнём, «Убийца драконов» — 3d6).
+   Кубики и тип хранятся раздельно (xDice/xType), чтобы галерея могла фильтровать
+   по типу; строка собирается здесь, иначе формулировка разъедется между
+   генераторами и превью. Тип в форме именительный, на карточке — творительный. */
+var XDMG_INSTR={
+  'Огонь':'огнём','Холод':'холодом','Электричество':'электричеством',
+  'Кислота':'кислотой','Яд':'ядом','Звук':'звуком','Излучение':'излучением',
+  'Некротическая энергия':'некротической энергией',
+  'Психическая энергия':'психической энергией','Силовое поле':'силовым полем'
+};
+function xDmgText(card){
+  var d=String((card&&card.xDice)||'').trim();
+  if(!d)return '';
+  var t=String((card&&card.xType)||'').trim();
+  return t?(d+' '+(XDMG_INSTR[t]||t.toLowerCase())):d;
 }
-function describeCard(card){
-  var rows=[];
-  function add(label,val){ if(_cfEmpty(val))return; rows.push('<div class="cf-row"><span class="cf-k">'+label+'</span><span class="cf-v">'+_cfEsc(String(val).trim())+'</span></div>'); }
-  add('Тип', card.kind);
-  add('Категория', card.cat||card.category);
-  add('Тип доспеха', card.armorType);
-  add('Тип инструмента', card.toolType);
-  add('Тип яда', card.poisonType);
-  if(!_cfEmpty(card.d1)){ var dmg=_cfEsc(card.d1)+(_cfEmpty(card.dt)?'':' · '+_cfEsc(card.dt))+(_cfEmpty(card.d2)?'':' · универс. '+_cfEsc(card.d2)); rows.push('<div class="cf-row"><span class="cf-k">Урон</span><span class="cf-v">'+dmg+'</span></div>'); }
-  add('Класс брони', card.acDisplay);
-  if(!_cfEmpty(card.r1)) add('Дистанция', card.r1+(_cfEmpty(card.r2)?'':' / '+card.r2));
-  add('Характеристика', card.stat);
-  add('Спасбросок', card.savingThrow);
-  add('Урон', card.damageDice);
-  if(card.type!=='spell') add('Длительность', card.duration);
-  if(card.props){ var p=Array.isArray(card.props)?card.props.join(', '):card.props; add('Свойства', p); }
-  add('Мастерство', card.mastery);
-  add('Боеприпас', card.ammo);
-  if(card.type!=='spell') add('Материал', card.material);
-  add('Требование Силы', card.strReq);
-  add('Бонус к урону', card.strBonus);
-  add('Бонус владения', card.profBonus);
-  if(card.stealth===true) rows.push('<div class="cf-row"><span class="cf-k">Скрытность</span><span class="cf-v">помеха</span></div>');
-  add('Надевание', card.donnTime);
-  add('Снятие', card.doffTime);
-  add('Настройка', card.attune);
-  /* Заклинания — порядок ровно как на лицевой стороне карточки:
-     строка уровня (с концентрацией и ритуалом), класс, подкласс, сетка 2x2
-     (время, дистанция, компоненты, длительность), материал. Условие и редакция
-     идут ниже общими строками — они там уже в нужном месте. */
-  if(card.type==='spell'){
-    if(!_cfEmpty(card.level)) add('Уровень', card.level==='0'?'Заговор':card.level+'-й');
-    if(card.conc===true) add('Концентрация','да');
-    if(card.ritual===true) add('Ритуал','да');
-    if(card.classes&&card.classes.length) add('Классы', card.classes.join(' · '));
-    add('Подкласс', card.subclass);
-    add('Время накладывания', card.cast);
-    add('Дистанция', card.range);
-    if(card.compV||card.compS||card.compM){var _cc=[];if(card.compV)_cc.push('В');if(card.compS)_cc.push('С');if(card.compM)_cc.push('М');
-      add('Компоненты',_cc.join(', '));}
-    add('Длительность', card.duration);
-    add('Материал', card.material);
-  }
-  add('Условие', card.condition);
-  add('Редакция', card.edition);
-  var blocks=[];
-  function block(label,val){ if(_cfEmpty(val))return; blocks.push('<div class="cf-block"><div class="cf-block-h">'+label+'</div><div class="cf-block-t">'+_cfEsc(String(val).trim())+'</div></div>'); }
-  block('Цитата', card.flv);
-  /* у заклинаний описание размечено маркерами — в текстовом превью они лишние */
-  block('Описание', card.type==='spell'&&typeof stripFmt==='function'?stripFmt(card.desc):card.desc);
-  block('На высоких уровнях', card.hl);
-  block('Состав', card.composition);
-  /* «Оборотной стороны» как отдельного поля нет: в генераторах его не было,
-     описание само переливается на оборот карточки. Старые данные перенесены. */
-  var html=(rows.length?'<div class="cf-rows">'+rows.join('')+'</div>':'')+blocks.join('');
-  return html||'<div class="cf-empty">(свойства не заполнены)</div>';
+/* Особое свойство доспеха («Доспех сопротивления», адамантин, иммунитет).
+   Эффект и тип урона хранятся раздельно (spec/specType), чтобы галерея могла
+   фильтровать по типу; строка собирается здесь, иначе формулировка разъедется
+   между карточкой, таблицей и превью. Тип в форме именительный, в строке —
+   дательный: «Сопротивление огню». */
+var SPEC_DAT={'Огонь':'огню','Холод':'холоду','Электричество':'электричеству',
+  'Кислота':'кислоте','Яд':'яду','Звук':'звуку','Излучение':'излучению',
+  'Некротическая энергия':'некротической энергии','Психическая энергия':'психической энергии',
+  'Силовое поле':'силовому полю','Дробящий':'дробящему урону',
+  'Колющий':'колющему урону','Рубящий':'рубящему урону'};
+function specText(card){
+  var sp=String((card&&card.spec)||'').trim();
+  if(!sp)return '';
+  if(sp!=='Сопротивление')return sp;
+  var t=String((card&&card.specType)||'').trim();
+  return t?('Сопротивление '+(SPEC_DAT[t]||t.toLowerCase())):sp;
 }
 /* Палитра редкостей (общая для генераторов, кроме kits — у него своя
    единственная «Немагический»). Порядок секций RARITY_ORDER — в collection.js.
@@ -744,7 +707,7 @@ function toast(msg){var el=document.getElementById('toast');el.textContent=msg;e
 function closePreview(){document.getElementById('prev-bg').classList.remove('open');previewCard=null;}
 /* Указатель и таблица галерей (collection + templates).
    Включать ВНУТРИ IIFE страницы, после gallery-core.js: опирается на GROUPS,
-   getFiltered, R, describeCard, а также на хуки страницы galCardExtras/openPreview.
+   getFiltered, R, а также на хуки страницы galCardExtras/openPreview.
 
    Два режима, переключает их выбор раздела в шапке:
      GAL_SEC==='all'  — плотный указатель: генератор → подраздел → имена;
@@ -863,6 +826,7 @@ function galVlist(v){
 
 /* ── значения ячеек ── */
 function galDmg(c){return c.d1||c.d2||'';}
+function galMagic(c){var n=parseInt(c.magicBonus,10);return(isNaN(n)||n===0)?'':'+'+n;}
 function galProps(c){var p=c.props;return Array.isArray(p)?p.join(', '):(p||'');}
 function galStealth(c){return c.stealth===true?'помеха':'без помехи';}
 function galSave(c){var s=c.savingThrow;return s?((c.saveStat||'Тел')+' '+s):'';}
@@ -897,27 +861,28 @@ function _gxEsc(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</
    Оружейный». Значения сняты замером самого длинного содержимого колонки.
    0 = ширины нет: такие колонки делят между собой всё, что осталось. */
 var GAL_SCHEMA={
-  weapon:{cols:['Название','Ред.','Класс','Тип','Урон','Тип урона','Дистанция','Свойства','Мастерство','Боеприпас','Вес','Цена'],num:[10,11],
-    w:[0,56,92,124,64,102,108,0,116,162,82,78],
+  weapon:{cols:['Название','Ред.','Маг.','Класс','Тип','Урон','Тип урона','Доп. урон','Дистанция','Свойства','Мастерство','Боеприпас','Вес','Цена'],num:[12,13],
+    w:[0,56,48,92,124,64,102,150,108,0,116,162,82,78],opt:[2,7],
     cell:function(c){return [galNameCell(c),
       c._source==='weapon2024'?'2024':c._source==='weapon2014'?'2014':(c.edition||'—'),
-      c.cat||'—',c.kind||'—',galDmg(c)||'—',c.dt||'—',
+      galMagic(c)||'—',
+      c.cat||'—',c.kind||'—',galDmg(c)||'—',c.dt||'—',xDmgText(c)||'—',
       c.r1?(c.r1+(c.r2?' / '+c.r2:'')):'—',
       '<span class="gx-dim">'+(galProps(c)||'—')+'</span>',
       c.mastery||'—',c.ammo||'—',galWgt(c),galCost(c)];}},
-  armor:{cols:['Название','Категория','КБ','Материал','Треб. Силы','Скрытность','Надевание','Снятие','Вес','Цена'],num:[4,8,9],
-    w:[0,104,146,156,106,118,106,98,72,76],
-    cell:function(c){return [galNameCell(c),c.armorType||'—',c.acDisplay||'—',c.material||'—',
-      c.strReq||'—',galStealth(c),c.donnTime||'—',c.doffTime||'—',galWgt(c),galCost(c)];}},
+  armor:{cols:['Название','Маг.','Категория','КБ','Материал','Особое свойство','Треб. Силы','Скрытность','Надевание','Снятие','Вес','Цена'],num:[6,10,11],
+    w:[0,48,104,146,156,196,106,118,106,98,72,76],opt:[1,5],
+    cell:function(c){return [galNameCell(c),galMagic(c)||'—',c.armorType||'—',c.acDisplay||'—',c.material||'—',
+      specText(c)||'—',c.strReq||'—',galStealth(c),c.donnTime||'—',c.doffTime||'—',galWgt(c),galCost(c)];}},
   poisons:{cols:['Название','Тип','Спасбросок','Урон','Длительность','Вес','Цена'],num:[5,6],
     w:[0,212,116,160,250,76,78],
     cell:function(c){return [galNameCell(c),c.poisonType||'—',galSave(c)||'—',c.damageDice||'—','<span class="gx-wrap">'+_gxEsc(c.duration||'—')+'</span>',galWgt(c),galCost(c)];}},
   tools:{cols:['Название','Тип инструмента','Характеристика','Вес','Цена'],num:[3,4],
     w:[0,236,146,64,66],
     cell:function(c){return [galNameCell(c),c.toolType||'—',c.stat||'—',galWgt(c),galCost(c)];}},
-  equipment:{cols:['Название','Категория','Материал','Вес','Цена'],num:[3,4],
-    w:[0,104,100,64,66],
-    cell:function(c){return [galNameCell(c),c.category||'—',c.material||'—',galWgt(c),galCost(c)];}},
+  equipment:{cols:['Название','Категория','Вес','Цена'],num:[2,3],
+    w:[0,104,64,66],
+    cell:function(c){return [galNameCell(c),c.category||'—',galWgt(c),galCost(c)];}},
   custom:{cols:['Название','Тип карточки'],num:[],
     w:[0,154],
     cell:function(c){return [galNameCell(c),c.cardType||'—'];}}
@@ -934,7 +899,9 @@ var GAL_SORTS={
 var galSortF='name',galSortDir=1;
 function galVal(c,f){
   if(f==='_rar')return GAL_RORD[c.rarity||'common']||0;
-  if(f==='_ac')return parseFloat(c.acBase)||0;
+  /* итоговый КБ = базовый + бонус: у «Кольчуги +1» слагаемые лежат порознь,
+     а сортировать надо по тому числу, что стоит на карточке */
+  if(f==='_ac')return (parseFloat(c.acBase)||0)+(parseFloat(c.magicBonus)||0);
   if(f==='_dc')return parseFloat(c.savingThrow)||0;
   if(f==='_pt1')return galPt1(c);
   return c[f];
@@ -1026,9 +993,19 @@ function galRenderTable(cards,host,gid){
      и она остаётся пустой: правило одно для обеих галерей. */
   /* colgroup + table-layout:fixed: иначе браузер раздаёт ширину по содержимому
      и «Цена» с «Весом» занимают столько же, сколько название. */
+  /* Колонки из s.opt показываем, только если хоть у одной карточки раздела есть
+     значение. «Маг.» и «Доп. урон» есть у считаных предметов, а пустая пара
+     колонок стоит 200px и загоняет таблицу в горизонтальную прокрутку. */
+  var idx=s.cols.map(function(_,i){return i;});
+  if(s.opt&&s.opt.length){
+    var filled={};
+    cards.forEach(function(c){var r=s.cell(c);
+      s.opt.forEach(function(i){if(r[i]&&r[i]!=='—')filled[i]=1;});});
+    idx=idx.filter(function(i){return s.opt.indexOf(i)<0||filled[i];});
+  }
   var minW=34;
-  var cg='<colgroup>'+s.cols.map(function(h,i){
-      var w=(s.w&&s.w[i])||0;
+  var cg='<colgroup>'+idx.map(function(i){
+      var h=s.cols[i],w=(s.w&&s.w[i])||0;
       /* Без своей ширины остаются «Название» и «Свойства»: они делят остаток.
          В минимум таблицы название входит по самому длинному имени с английским
          (замер: 344px), иначе на узком экране его сожмёт до многоточия. Свойствам
@@ -1036,15 +1013,16 @@ function galRenderTable(cards,host,gid){
       minW+=w||(h==='Название'?424:180);
       return '<col'+(w?' style="width:'+w+'px"':'')+'/>';}).join('')+
     '<col style="width:34px"/></colgroup>';
-  var html='<table class="gx-t" style="min-width:'+minW+'px">'+cg+'<thead><tr>'+s.cols.map(function(h,i){
-    return '<th'+(s.num.indexOf(i)>=0?' class="num"':'')+'>'+h+'</th>';}).join('')+
+  var html='<table class="gx-t" style="min-width:'+minW+'px">'+cg+'<thead><tr>'+idx.map(function(i){
+    return '<th'+(s.num.indexOf(i)>=0?' class="num"':'')+'>'+s.cols[i]+'</th>';}).join('')+
     '<th class="gx-act" aria-label="Действия"></th></tr></thead><tbody></tbody></table>';
   wrap.innerHTML=html;
   var tb=wrap.querySelector('tbody');
   rows.forEach(function(c){
     var tr=document.createElement('tr');
-    tr.innerHTML=s.cell(c).map(function(v,i){
-      return '<td'+(s.num.indexOf(i)>=0?' class="num"':'')+'>'+v+'</td>';}).join('')+
+    var r=s.cell(c);
+    tr.innerHTML=idx.map(function(i){
+      return '<td'+(s.num.indexOf(i)>=0?' class="num"':'')+'>'+r[i]+'</td>';}).join('')+
       '<td class="gx-act"></td>';
     if(galCurrent===c)tr.classList.add('gx-sel');
     _gxBind(tr,c,tr.lastElementChild);
@@ -1095,10 +1073,12 @@ function galFields(c){
   }
   if(c._group==='weapon'){
     add('Редакция',c._source==='weapon2024'?'2024':c._source==='weapon2014'?'2014':c.edition);
+    add('Магический бонус',galMagic(c));
     add('Класс',c.cat);
     add('Тип',c.kind);
     add('Урон',galDmg(c));
     add('Тип урона',c.dt);
+    add('Доп. урон',xDmgText(c));
     add('Универсальный',c.d1&&c.d2?c.d2:'');
     add('Дистанция',c.r1?(c.r1+(c.r2?' / '+c.r2:'')):'');
     add('Свойства',galProps(c));
@@ -1108,9 +1088,11 @@ function galFields(c){
     add('Бонус владения',c.profBonus);
   }
   else if(c._group==='armor'){
+    add('Магический бонус',galMagic(c));
     add('Категория',c.armorType);
     add('КБ',c.acDisplay);
     add('Материал',c.material);
+    add('Особое свойство',specText(c));
     add('Требование Силы',c.strReq);
     add('Скрытность',galStealth(c));
     add('Надевание',c.donnTime);
@@ -1331,8 +1313,8 @@ function _galOn(){return typeof GAL_SEC!=='undefined';}
 
 /* ── определения фильтров по разделам (только коллекция/шаблоны) ── */
 var GAL_FDEFS={
-  weapon:[['_edition','Редакция'],['_rarity','Редкость'],['cat','Класс оружия'],['kind','Тип оружия'],['dt','Тип урона'],['props','Свойства'],['mastery','Мастерство'],['ammo','Боеприпас'],['_attune','Настройка']],
-  armor:[['_rarity','Редкость'],['armorType','Категория доспеха'],['acDisplay','КБ'],['strReq','Требование Силы'],['_stealth','Скрытность'],['_attune','Настройка']],
+  weapon:[['_edition','Редакция'],['_rarity','Редкость'],['_magic','Магический бонус'],['cat','Класс оружия'],['kind','Тип оружия'],['dt','Тип урона'],['props','Свойства'],['xType','Тип доп. урона'],['mastery','Мастерство'],['ammo','Боеприпас'],['_attune','Настройка']],
+  armor:[['_rarity','Редкость'],['_magic','Магический бонус'],['armorType','Категория доспеха'],['acDisplay','КБ'],['spec','Особое свойство'],['specType','Тип урона (сопротивление)'],['strReq','Требование Силы'],['_stealth','Скрытность'],['_attune','Настройка']],
   poisons:[['poisonType','Тип яда'],['savingThrow','Спасбросок'],['saveStat','Характеристика спасброска']],
   tools:[['toolType','Тип инструмента'],['stat','Характеристика']],
   equipment:[['category','Категория'],['_rarity','Редкость']],
@@ -1344,6 +1326,7 @@ function _galVals(c,f){
   if(f==='_rarity')return [c.rarity||'common'];
   if(f==='_attune')return [_attuneState(c)];
   if(f==='_stealth')return [c.stealth===true?'dis':'ok'];
+  if(f==='_magic'){var mb=parseInt(c.magicBonus,10);return (isNaN(mb)||mb===0)?[]:['+'+mb];}
   var v=c[f];
   if(v==null||v==='')return [];
   if(Array.isArray(v))return v.map(function(x){return String(x).trim();});

@@ -130,6 +130,21 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .btn-del-img{width:100%;padding:5px 9px;margin-top:4px;font-family:'Cinzel',serif;font-size:10px;font-weight:500;letter-spacing:.08em;cursor:pointer;border:0.5px solid var(--border);border-radius:6px;background:transparent;color:var(--text3);transition:all .14s;display:flex;align-items:center;justify-content:center;gap:5px;}
 .btn-del-img:hover{background:rgba(220,60,60,.1);color:#e08070;border-color:rgba(220,60,60,.3);}
 .field-wrap{position:relative;}
+/* пара узких полей под одной подписью (КБ: базовый + бонус) */
+.sb-pair{display:flex;gap:8px;margin-bottom:2px;}
+.ac-sub{display:flex;flex-direction:column;gap:3px;}
+.ac-sub > span{font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);}
+.ac-sub .si{width:80px;}
+/* подпись половинки парного поля (.row2 > .sf) — та же типографика, что у .ac-sub */
+.sl{font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);}
+/* пара полей в столбик: длинные значения селектов не влезают в половину ширины
+   панели, поэтому такие пары ставим друг под друга, а не в .row2 */
+.sf-col{display:flex;flex-direction:column;gap:7px;}
+/* магический бонус предмета: значений всего четыре, поэтому переключатель, а не поле ввода */
+.magseg{display:flex;gap:5px;}
+.magseg button{flex:1;padding:6px 0;font-family:'Crimson Text',Georgia,serif;font-size:13px;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.05);color:var(--text2);}
+.magseg button:hover{background:rgba(255,255,255,.09);}
+.magseg button.on{border:1px solid var(--gold);background:rgba(200,148,26,.13);color:var(--gold-l);}
 .char-counter{position:absolute;right:0;bottom:-16px;font-family:'Cinzel',serif;font-size:9px;color:var(--text3);}
 .char-counter.warn{color:var(--gold);}
 .char-counter.over{color:#c05040;}
@@ -300,19 +315,9 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .rprow{display:flex;gap:6px;align-items:center;padding:3px 0;}
 .rp{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .12s;flex-shrink:0;}
 .rp:hover{transform:scale(1.15);}
-.rp.on{transform:scale(1.1);}
-.rp[data-r=nonmagic]{background:#f5f5f5;}
-.rp[data-r=common]{background:#888077;}
-.rp[data-r=uncommon]{background:#52aa40;}
-.rp[data-r=rare]{background:#4a8ccc;}
-.rp[data-r=veryrare]{background:#9870cc;}
-.rp[data-r=legendary]{background:#e09820;}
-.rp[data-r=nonmagic].on{box-shadow:0 0 0 3px rgba(245,245,245,.4);}
-.rp[data-r=common].on{box-shadow:0 0 0 3px rgba(136,128,119,.4);}
-.rp[data-r=uncommon].on{box-shadow:0 0 0 3px rgba(82,170,64,.4);}
-.rp[data-r=rare].on{box-shadow:0 0 0 3px rgba(74,140,204,.4);}
-.rp[data-r=veryrare].on{box-shadow:0 0 0 3px rgba(152,112,204,.4);}
-.rp[data-r=legendary].on{box-shadow:0 0 0 3px rgba(224,152,32,.45);}
+.rp.on{transform:scale(1.1);box-shadow:0 0 0 3px var(--rp-glow,rgba(136,128,119,.4));}
+/* Цвет кружков ставит core.js из R (rarities.js). Раньше палитра была продублирована
+   здесь шестью правилами и при её обновлении пикер оставался со старыми цветами. */
 
 .btn-recrop svg{flex-shrink:0;}
 .btn-del-img svg{flex-shrink:0;}
@@ -326,6 +331,15 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   transition:border-color .2s;
 }
 .c-stripe-wrap{flex-shrink:0;}
+/* Знак магического бонуса. Выведен из потока: во flex-строке он забирал бы
+   ширину у всего блока заголовка. Рамка повторяет коробку строки названия
+   (у .c-name line-height 1.2), а место под неё резервирует только .c-name —
+   её clientWidth учитывает _fitName, поэтому имя ужимается верно. Позицию
+   знака внутри рамки задаёт line-height: у Cinzel в строчном боксе
+   резервируется место под выносные элементы, которых у «+N» нет. */
+.c-title-main{position:relative;}
+.c-mag{position:absolute;right:0;top:0;box-sizing:border-box;height:calc(var(--name-fs,16px)*1.2);line-height:calc(var(--name-fs,16px)*1.5 - 5px);font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.02em;color:#6b4a12;border:.5px solid #b89a58;background:rgba(138,96,16,.10);border-radius:3px;padding:0 7px;}
+.c-title-main.has-mag .c-name{padding-right:34px;}
 .c-info-row{display:flex;align-items:stretch;flex-shrink:0;}
 .c-infolist{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0;padding-right:10px;border-right:.5px solid rgba(0,0,0,.13);}
 .c-info-item{display:flex;align-items:baseline;gap:6px;font-size:12px;color:#2e2010;line-height:1.35;}
@@ -539,6 +553,14 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     <span class="rname" id="rn">Немагический</span>
   </div>
 
+  <div class="lbl">Магический бонус</div>
+  <div class="magseg" id="magseg" role="radiogroup" aria-label="Магический бонус">
+    <button type="button" class="on" data-v="" role="radio" aria-checked="true" aria-label="без бонуса">—</button>
+    <button type="button" data-v="1" role="radio" aria-checked="false">+1</button>
+    <button type="button" data-v="2" role="radio" aria-checked="false">+2</button>
+    <button type="button" data-v="3" role="radio" aria-checked="false">+3</button>
+  </div>
+
   <label class="lbl" for="fn">Название</label>
   <div class="field-wrap field-mb">
     <input class="si" type="text" id="fn" placeholder="Латные доспехи +1" maxlength="34"/>
@@ -594,9 +616,10 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     <option>Тяжёлый</option>
     <option>Щит</option>
   </select>
-
-  <label class="lbl" for="facbase">КБ базовый</label>
-  <input class="si" type="text" id="facbase" placeholder="18" style="width:80px;" maxlength="2" inputmode="numeric"/>
+  <label class="pcb" style="margin-top:7px;">
+    <input type="checkbox" id="fstealth"/>
+    <span>Помеха скрытности</span>
+  </label>
 
   <label class="lbl" for="fmaterial">Материал</label>
   <div class="field-wrap field-mb">
@@ -604,14 +627,18 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     <span class="char-counter" id="cnt-material">0/26</span>
   </div>
 
-  <label class="lbl" for="fstrreq">Треб. Силы</label>
-  <input class="si" type="text" id="fstrreq" placeholder="13" style="width:80px;" maxlength="2" inputmode="numeric"/>
+  <div class="row2">
+    <div class="sf"><label class="lbl" style="margin:0 0 5px;" for="facbase">КБ</label>
+      <input class="si" type="text" id="facbase" placeholder="18" maxlength="2" inputmode="numeric"/></div>
+    <div class="sf"><label class="lbl" style="margin:0 0 5px;" for="fstrreq">Треб. Силы</label>
+      <input class="si" type="text" id="fstrreq" placeholder="13" maxlength="2" inputmode="numeric"/></div>
+  </div>
 
-  <div class="lbl" style="margin-bottom:4px;">Особенности</div>
-  <label class="pcb">
-    <input type="checkbox" id="fstealth"/>
-    <span>Помеха скрытности</span>
-  </label>
+  <div class="lbl">Особое свойство</div>
+  <div class="sf-col">
+    <div class="sf"><label class="sl" for="fspec">Эффект</label><select class="si" id="fspec"><option value="">—</option><option>Сопротивление</option><option>Адамантин</option><option>Иммунитет к немагическому</option></select></div>
+    <div class="sf"><label class="sl" for="fspectype">Тип урона</label><select class="si" id="fspectype"><option value="">—</option><option>Огонь</option><option>Холод</option><option>Электричество</option><option>Кислота</option><option>Яд</option><option>Звук</option><option>Излучение</option><option>Некротическая энергия</option><option>Психическая энергия</option><option>Силовое поле</option><option>Дробящий</option><option>Колющий</option><option>Рубящий</option></select></div>
+  </div>
 
   <div class="divider"></div>
 
@@ -653,7 +680,10 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
           <div class="c-meta-orn"><svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10 L10 3 L17 10 L10 17 Z" stroke="#5a4820" stroke-width="1.2" fill="#d4c4a0" opacity="0.8"/><circle cx="10" cy="10" r="2" fill="#5a4820" opacity="0.7"/></svg></div>
         </div>
         <div class="c-title">
-          <div class="c-name" id="pnm">Доспехи</div>
+          <div class="c-title-main">
+            <span class="c-mag" id="pmag" style="display:none;"></span>
+            <div class="c-name" id="pnm">Доспехи</div>
+          </div>
         </div>
         <div class="c-img" id="cib">
           <div class="c-img-ph" id="img-ph">
@@ -809,8 +839,12 @@ var IDB_NAME='dnd_armor_imgs';
 function updateAttuneWrap(){document.getElementById('attune-wrap').style.display=cr==='nonmagic'?'none':'block';if(cr==='nonmagic')document.getElementById('fattune').value='';}
 function computeAcDisplay(){
   var type=document.getElementById('farmortype').value;
-  var base=document.getElementById('facbase').value.trim();
-  if(!base)return '';
+  var raw=document.getElementById('facbase').value.trim();
+  if(!raw)return '';
+  /* бонус (кольчуга +1 и прочие артефакты) складывается с базовым: на карточке
+     нужен итоговый КБ, а слагаемые остаются в данных для сортировки и правки */
+  var bonus=parseInt(_magVal(),10)||0;
+  var base=String((parseInt(raw,10)||0)+bonus);
   if(type==='Лёгкий')return base+' + Лов';
   if(type==='Средний')return base+' + Лов (макс. +2)';
   if(type==='Щит')return '+'+base+' к КБ';
@@ -860,6 +894,23 @@ function applyR(r){
 /* выбор редкости (пикер .rp есть не на всех страницах — где нет, forEach пуст).
    Кружки — это div, поэтому клавиатуре их нужно объявить кнопками: tabindex
    даёт фокус, role/aria-checked озвучивают состояние, Enter и пробел выбирают. */
+/* Красим кружки из общей палитры: цвет — акцент карточки (gem), обводка
+   выбранного — он же полупрозрачным. Раньше все шесть цветов были продублированы
+   в card-styles.css, и обновление палитры до пикера не доходило. */
+(function(){
+  function _rgba(hex,a){
+    var h=String(hex||'').replace('#','');
+    if(h.length!==6)return 'rgba(136,128,119,'+a+')';
+    return 'rgba('+parseInt(h.slice(0,2),16)+','+parseInt(h.slice(2,4),16)+','+parseInt(h.slice(4,6),16)+','+a+')';
+  }
+  document.querySelectorAll('.rp').forEach(function(el){
+    var d=R[el.getAttribute('data-r')];if(!d)return;
+    var col=d.gem||d.a;
+    el.style.background=col;
+    el.style.setProperty('--rp-glow',_rgba(col,.4));
+  });
+})();
+
 document.querySelectorAll('.rp').forEach(function(el){
   function pick(){
     document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');x.setAttribute('aria-checked','false');});
@@ -899,6 +950,29 @@ function mkCounter(inputId,countId,max,lenFn){
   if(!inp._cbound){inp.addEventListener('input',upd);inp._cbound=true;}upd();
 }
 mkCounter('fn','cnt-fn',34);mkCounter('fmaterial','cnt-material',26);mkCounter('fprops','cnt-props',2000,visLen);
+/* магический бонус: кнопки не дают input/change, поэтому ререндер вызываем сами */
+document.querySelectorAll('#magseg button').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('#magseg button').forEach(function(x){x.classList.remove('on');x.setAttribute('aria-checked','false');});
+    b.classList.add('on');b.setAttribute('aria-checked','true');
+    renderCard(readForm());
+  });
+});
+function _magVal(){var b=document.querySelector('#magseg button.on');return b?b.getAttribute('data-v'):'';}
+function _magSet(v){
+  v=String(v||'');
+  document.querySelectorAll('#magseg button').forEach(function(x){
+    var on=x.getAttribute('data-v')===v;
+    x.classList.toggle('on',on);x.setAttribute('aria-checked',on?'true':'false');
+  });
+}
+/* тип урона имеет смысл только у сопротивления: у адамантина и иммунитета его нет */
+function _specSync(){
+  var sp=document.getElementById('fspec'),st=document.getElementById('fspectype');
+  var on=sp.value==='Сопротивление';
+  st.disabled=!on; if(!on)st.value='';
+}
+document.getElementById('fspec').addEventListener('change',_specSync);
 ['facbase','fstrreq'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9]/g,'').slice(0,2);this.setSelectionRange(p,p);});});
 
 /* Автошрифт названия: одна строка, лестница кеглей 16→10, дальше многоточие
@@ -1173,6 +1247,9 @@ function readForm(){
     cost:document.getElementById('fc').value.trim(),coin:document.getElementById('fcoin').value,
     armorType:document.getElementById('farmortype').value,
     acBase:document.getElementById('facbase').value.trim(),
+    magicBonus:_magVal(),
+    spec:document.getElementById('fspec').value,
+    specType:document.getElementById('fspectype').value,
     acDisplay:computeAcDisplay(),
     material:document.getElementById('fmaterial').value.trim(),
     strReq:document.getElementById('fstrreq').value.trim(),
@@ -1388,9 +1465,33 @@ function splitDesc(data){
   });
 }
 /* renderCard */
+/* Особое свойство доспеха («Доспех сопротивления», адамантин, иммунитет).
+   Эффект и тип урона хранятся раздельно (spec/specType), чтобы галерея могла
+   фильтровать по типу; строка собирается здесь, иначе формулировка разъедется
+   между карточкой, таблицей и превью. Тип в форме именительный, в строке —
+   дательный: «Сопротивление огню». */
+var SPEC_DAT={'Огонь':'огню','Холод':'холоду','Электричество':'электричеству',
+  'Кислота':'кислоте','Яд':'яду','Звук':'звуку','Излучение':'излучению',
+  'Некротическая энергия':'некротической энергии','Психическая энергия':'психической энергии',
+  'Силовое поле':'силовому полю','Дробящий':'дробящему урону',
+  'Колющий':'колющему урону','Рубящий':'рубящему урону'};
+function specText(card){
+  var sp=String((card&&card.spec)||'').trim();
+  if(!sp)return '';
+  if(sp!=='Сопротивление')return sp;
+  var t=String((card&&card.specType)||'').trim();
+  return t?('Сопротивление '+(SPEC_DAT[t]||t.toLowerCase())):sp;
+}
 function renderCard(data){
   document.getElementById('pnm').textContent=data.name||'Доспехи';
-  _fitName();document.getElementById('pc').classList.toggle('no-img',!!data.noImg);
+  /* плашку ставим до _fitName: она забирает ширину у строки названия */
+  var mg=parseInt(data.magicBonus,10)||0;
+  var mgEl=document.getElementById('pmag'),tmEl=document.querySelector('.c-title-main');
+  if(mg){mgEl.textContent='+'+mg;mgEl.style.display='';}else{mgEl.style.display='none';}
+  tmEl.classList.toggle('has-mag',!!mg);
+  _fitName();
+  /* плашка — сестра .c-name, переменную кегля _fitName ставит на само имя */
+  tmEl.style.setProperty('--name-fs',getComputedStyle(document.getElementById('pnm')).fontSize);document.getElementById('pc').classList.toggle('no-img',!!data.noImg);
   var co=document.getElementById('p-cost');
   if(data.cost){co.textContent=data.cost+' '+(data.coin||'зм');co.style.visibility='visible';}
   else{co.style.visibility='hidden';}
@@ -1413,6 +1514,8 @@ function renderCard(data){
   }
   if(data.armorType)addInfo('✦',data.armorType==='Щит'?'Щит':data.armorType+' доспех');
   if(data.material)addInfo('◈',data.material);
+  var spTxt=specText(data);
+  if(spTxt)addInfo('◇',spTxt);
   if(data.strReq)addInfo('♦','Требует Силы: '+data.strReq);
   if(data.stealth)addInfo('⊙','Помеха скрытности');
   var atEl=document.getElementById('p-attune');
@@ -1450,6 +1553,10 @@ function applyFormData(data){
   document.getElementById('fcoin').value=data.coin||'зм';
   document.getElementById('farmortype').value=data.armorType||'';
   document.getElementById('facbase').value=data.acBase||'';
+  _magSet(data.magicBonus);
+  document.getElementById('fspec').value=data.spec||'';
+  document.getElementById('fspectype').value=data.specType||'';
+  _specSync();
   document.getElementById('fmaterial').value=data.material||'';
   document.getElementById('fstrreq').value=data.strReq||'';
   document.getElementById('fstealth').checked=!!data.stealth;
@@ -1484,6 +1591,9 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   document.querySelector('.rp[data-r="nonmagic"]').classList.add('on');
   document.getElementById('rn').textContent=R.nonmagic.l;
   ['fn','fc','fmaterial','fstrreq','fwgt','fprops','facbase'].forEach(function(id){document.getElementById(id).value='';});
+  _magSet('');
+  document.getElementById('fspec').selectedIndex=0;
+  document.getElementById('fspectype').selectedIndex=0;_specSync();
   document.getElementById('fcoin').value='зм';
   document.getElementById('farmortype').selectedIndex=0;
   document.getElementById('fattune').selectedIndex=0;
@@ -1496,6 +1606,8 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   document.getElementById('btn-recrop').style.display='none';
   document.getElementById('btn-del-img').style.display='none';
   document.getElementById('pnm').textContent='Доспехи';
+  document.getElementById('pmag').style.display='none';
+  document.querySelector('.c-title-main').classList.remove('has-mag');
   document.getElementById('p-cost').style.visibility='hidden';
   document.getElementById('pac-num').textContent='—';
   document.getElementById('pac-mod').textContent='';
@@ -1560,7 +1672,7 @@ function makeCollItem(card){
   var item=document.createElement('div');
   item.className='coll-item'+(selMode?' sel-mode':'')+(selectedIds.has(card.id)?' selected':'');
   var cbHtml='<input type="checkbox" class="coll-item-cb"'+(selectedIds.has(card.id)?' checked':'')+'/>';
-  item.innerHTML=cbHtml+'<div class="coll-item-thumb"><div class="coll-item-stripe" style="background:'+d.a+';"></div>'+(card.img?'<img src="'+card.img+'" alt=""/>':'')+'</div><div class="coll-item-info"><div class="coll-item-name">'+(card.name||DEFAULT_NAME)+'</div><div class="coll-item-sub">'+collItemSub(card)+'</div></div>'+(selMode?'':'<button class="coll-item-dup" title="Дублировать"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="coll-item-del">✕</button>');
+  item.innerHTML=cbHtml+'<div class="coll-item-thumb"><div class="coll-item-stripe" style="background:'+(d.gem||d.a)+';"></div>'+(card.img?'<img src="'+card.img+'" alt=""/>':'')+'</div><div class="coll-item-info"><div class="coll-item-name">'+(card.name||DEFAULT_NAME)+'</div><div class="coll-item-sub">'+collItemSub(card)+'</div></div>'+(selMode?'':'<button class="coll-item-dup" title="Дублировать"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="coll-item-del">✕</button>');
   if(!selMode){
     item.querySelector('.coll-item-del').addEventListener('click',function(e){
       e.stopPropagation();
@@ -1620,7 +1732,7 @@ function renderCollection(){
 
     var head=document.createElement('div');
     head.className='coll-sect-head';
-    head.innerHTML='<div class="coll-sect-dot" style="background:'+d.a+';"></div>'
+    head.innerHTML='<div class="coll-sect-dot" style="background:'+(d.gem||d.a)+';"></div>'
       +'<span class="coll-sect-label">'+d.l+'</span>'
       +'<span class="coll-sect-count">'+cards.length+'</span>'
       +'<div class="coll-sect-line"></div>'
