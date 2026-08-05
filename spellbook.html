@@ -105,32 +105,8 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .filter-stats b{color:var(--text2);}
 .grid-wrap::-webkit-scrollbar{width:5px;}
 .grid-wrap::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px;}
-.grid-area{display:grid;grid-template-columns:repeat(auto-fill,155px);gap:16px;padding:20px;justify-content:center;align-content:start;min-height:100%;}
-/* GRID CARD */
-.g-card{
-  width:155px;height:218px;
-  border-radius:6px;
-  border:2px solid var(--gc-border,#888077);
-  background:#e8dcc8;
-  overflow:hidden;
-  cursor:pointer;
-  display:flex;flex-direction:column;
-  position:relative;
-  box-shadow:2px 2px 0 var(--gc-shadow,#5a5030);
-  transition:transform .15s,box-shadow .15s;
-}
-.g-card:hover{transform:translateY(-3px);box-shadow:2px 5px 0 var(--gc-shadow,#5a5030);}
-.g-card-stripe{height:5px;flex-shrink:0;}
-.g-card-img{flex:1;overflow:hidden;position:relative;background:#cfc0a0;display:flex;align-items:center;justify-content:center;}
-.g-card-img img{width:100%;height:100%;object-fit:cover;display:block;}
-.g-card-img-ph{opacity:.2;}
-.g-card-nrow{display:flex;align-items:center;gap:5px;}
-.g-card-nrow .g-card-badge{flex-shrink:0;}
-.g-card-name{font-family:'Cinzel',serif;font-size:8.5px;font-weight:700;color:#2a1e0a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.3;flex:1;min-width:0;}
-.g-card-sub{font-family:'Crimson Text',serif;font-size:9px;color:#7a6850;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;line-height:1.2;}
-.g-card-ov{position:absolute;inset:0;background:rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;border-radius:4px;}
-.g-card:hover .g-card-ov{opacity:1;}
-.g-card-ov svg{width:28px;height:28px;color:rgba(255,255,255,.8);}
+/* Сетка плиток удалена: обе галереи рисуют указатель и таблицу (gallery-index.js).
+   .g-card-del живёт ниже — кнопка удаления переехала в строку. */
 /* EMPTY STATE */
 .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:40px 20px;gap:16px;background:#efe9db;margin:16px;border-radius:12px;}
 .empty-state svg{opacity:.15;}
@@ -167,7 +143,6 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .gal-section-head{display:flex;align-items:center;gap:10px;padding:9px 20px;background:#ddd2b6;border-top:1px solid rgba(200,148,26,.22);border-bottom:2px solid rgba(200,148,26,.42);}
 .gal-section-title{font-family:'Cinzel',serif;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#5f4d26;}
 .gal-section-count{font-family:'Cinzel',serif;font-size:10px;color:#6e5a2e;background:rgba(200,148,26,.16);border:0.5px solid rgba(200,148,26,.3);border-radius:20px;padding:2px 9px;}
-.gal-grid{display:grid;grid-template-columns:repeat(auto-fill,155px);gap:16px;padding:6px 20px 14px;justify-content:center;}
 /* простое превью */
 .prev-simple{display:flex;gap:16px;padding:2px 0 14px;}
 .prev-simple-img{width:210px;height:110px;flex-shrink:0;border:2px solid var(--accent-l);border-radius:6px;overflow:hidden;background:#1a1814;display:flex;align-items:center;justify-content:center;}
@@ -208,13 +183,7 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .sel-bar.open{display:flex;}
 .sel-info{font-family:'Cinzel',serif;font-size:11px;color:var(--text2);margin-right:auto;}
 .sel-info b{color:var(--gold-l);}
-.g-card-cbx{position:absolute;top:8px;left:8px;width:20px;height:20px;border-radius:5px;border:2px solid rgba(255,255,255,.75);background:rgba(0,0,0,.45);display:none;z-index:3;}
-.ga-selmode .g-card-cbx{display:block;}
-.ga-selmode .g-card-del{display:none;}
 .ga-selmode .g-card-ov{display:none;}
-.g-card.gsel{outline:3px solid var(--gold-l);outline-offset:-2px;}
-.g-card.gsel .g-card-cbx{background:var(--gold-l);border-color:var(--gold-l);}
-.g-card.gsel .g-card-cbx::after{content:"¹3";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#1a1208;font-size:13px;font-weight:bold;}
 /* выпадающие фильтры */
 .fdd-host{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
 .fdd-wrap{position:relative;}
@@ -260,24 +229,45 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .gx-main::-webkit-scrollbar-thumb{background:rgba(90,72,32,.35);border-radius:3px;}
 
 /* уровень 1 — генератор, уровень 2 — подраздел */
-.gx-h1{display:flex;align-items:center;gap:10px;padding:10px 16px;background:#d3c49f;border-top:1px solid rgba(150,110,30,.35);border-bottom:1px solid rgba(150,110,30,.35);position:sticky;top:0;z-index:3;}
-.gx-h1 > svg{width:16px;height:16px;color:#4d3d18;flex-shrink:0;}
-.gx-h1 .t{font-family:'Cinzel',serif;font-size:13px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#4d3d18;}
-.gx-h1 .c{font-family:'Cinzel',serif;font-size:11px;color:#4d3d18;background:rgba(255,255,255,.42);border-radius:20px;padding:2px 9px;}
+/* Уровень генератора — тёмная полоса, как разделитель главы в книге. Раньше обе
+   плашки были из одной охры и различались на семь процентов светлоты, отчего
+   иерархия читалась плохо. Взят контраст, а не новый цвет: цветом в галерее уже
+   говорит редкость, и второй цветовой язык с ней бы спорил. */
+.gx-h1{display:flex;align-items:center;gap:10px;padding:10px 16px;background:#4a3f28;border-top:1px solid rgba(0,0,0,.3);border-bottom:1px solid rgba(0,0,0,.25);position:sticky;top:0;z-index:3;}
+.gx-h1 > svg{width:16px;height:16px;color:#e8d9ae;flex-shrink:0;}
+.gx-h1 .t{font-family:'Cinzel',serif;font-size:13px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#f0e4c0;}
+.gx-h1 .c{font-family:'Cinzel',serif;font-size:11px;color:#4a3f28;background:#d8c48c;border-radius:20px;padding:2px 9px;}
+/* кнопки группы лежат на этой полосе — на тёмном их прежняя охра не видна */
+.gx-h1 .gal-grp-save,.gx-h1 .gal-grp-print{border-color:rgba(232,217,174,.3);background:rgba(232,217,174,.1);color:#e8d9ae;}
+.gx-h1 .gal-grp-save:hover,.gx-h1 .gal-grp-print:hover{background:rgba(232,217,174,.22);border-color:rgba(232,217,174,.5);color:#fbf1d8;}
 .gx-h2{display:flex;align-items:center;gap:9px;padding:7px 16px 7px 24px;background:#ddd2b6;border-bottom:0.5px solid rgba(200,148,26,.32);position:sticky;top:41px;z-index:2;}
 .gx-h2 .t{font-family:'Cinzel',serif;font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#5f4d26;}
 .gx-h2 .c{font-size:11px;color:#7d6835;}
 
-/* строки указателя: число колонок считает galFitCols по длине названий */
-.gx-ix{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));column-gap:22px;padding:4px 16px 10px 24px;}
-.gx-row{display:flex;align-items:center;gap:8px;padding:7px 3px;border-bottom:0.5px solid rgba(90,72,32,.16);cursor:pointer;min-width:0;position:relative;}
+/* Строки указателя. Ширина колонки фиксированная, число колонок считает сам
+   браузер через auto-fill. Раньше это считал JS, замеряя отрисованный текст, и
+   ломался: scrollWidth отдаёт бо́льшее из ширины текста и ширины элемента, а
+   название лежит в растянутом блоке — выходила обратная связь, при расширении
+   окна колонки переставали добавляться.
+   316px и зазор 8px подобраны так, чтобы на мониторе 1920 (1622px под список)
+   вставало 5 колонок И название в 34 символа помещалось целиком:
+   (1622 − 4×8) / 5 = 318px на колонку, минус 60px служебных (точка, значок,
+   зазоры, поля и место под кнопку удаления) = 258px под подпись при нужных 256.
+   Зазор здесь мал намеренно: он оплачен теми самыми символами. При смене кегля,
+   значка или отступов строки пересчитать. */
+.gx-ix{display:grid;grid-template-columns:repeat(auto-fill,minmax(316px,1fr));column-gap:8px;padding:4px 16px 10px 24px;}
+/* служебная часть строки = 60px: точка 7 + значок 13 + два зазора 14 + поля 2
+   и 24 под кнопку удаления. Ровно на неё заложен минимум колонки выше. */
+.gx-row{display:flex;align-items:center;gap:7px;padding:7px 2px;border-bottom:0.5px solid rgba(90,72,32,.16);cursor:pointer;min-width:0;position:relative;}
 .gx-row:hover{background:rgba(200,148,26,.09);}
 .gx-row.gx-sel{background:rgba(200,148,26,.2);}
 .gx-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;border:0.5px solid rgba(0,0,0,.25);}
-.gx-gi{width:14px;height:14px;flex-shrink:0;color:#8a7550;display:flex;}
-.gx-gi svg{width:14px;height:14px;}
-.gx-n{font-size:14.5px;color:#2a1e0a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
-.gx-e{font-size:12px;font-style:italic;color:#9a8a6c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-left:auto;padding-left:10px;flex-shrink:2;}
+.gx-gi{width:13px;height:13px;flex-shrink:0;color:#8a7550;display:flex;}
+.gx-gi svg{width:13px;height:13px;}
+/* в указателе название и английское имя стоят одно под другим */
+.gx-txt{display:flex;flex-direction:column;min-width:0;flex:1;}
+.gx-n{font-size:14.5px;color:#2a1e0a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;line-height:1.3;}
+.gx-e{font-size:12px;font-style:italic;color:#9a8a6c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;line-height:1.25;}
 
 /* таблица раздела */
 .gx-tw{overflow-x:auto;}
@@ -316,16 +306,27 @@ table.gx-t{width:100%;border-collapse:collapse;font-size:14px;}
 .gx-snote{font-size:9.5px;color:#8a7550;text-align:center;line-height:1.45;margin-top:20px;}
 @media (max-width:899px){.gx-side{display:none;}}
 
-/* Удаление: кнопка видна всегда. Спрятанная за hover находилась только случайным
-   тычком — про такую нельзя догадаться, а на тач-экране её нет вовсе. */
-.gx-row .g-card-del,.gx-t tbody tr .g-card-del{position:absolute;right:3px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:5px;border:0.5px solid rgba(120,40,40,.28);background:rgba(120,30,30,.09);color:#9a3a3a;font-size:11px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;z-index:2;transition:background-color .13s,color .13s;}
-.gx-row .g-card-del:hover,.gx-t tbody tr .g-card-del:hover{background:rgba(150,40,40,.22);color:#7a2020;border-color:rgba(120,40,40,.5);}
-/* Место под кнопку резервирует сама строка — тогда его видит galRowNeed,
-   который читает отступы из computed style, и колонки считаются с её учётом. */
-.gx-row:has(.g-card-del){padding-right:26px;}
-.gx-row .g-card-del{right:1px;}
-.ga-selmode .gx-row .g-card-del,.ga-selmode .gx-t tbody tr .g-card-del{display:none;}
-.ga-selmode .gx-row:has(.g-card-del){padding-right:3px;}
+/* Удаление: видно всегда, но тихо. Спрятанная за hover кнопка находилась только
+   случайным тычком, а красная плашка перетягивала на себя весь взгляд — здесь
+   знак живёт в той же охре, что и остальной пергамент, и краснеет лишь под
+   курсором, когда речь и правда идёт об удалении. */
+.g-card-del{width:22px;height:22px;border:none;background:transparent;color:#a08a63;font-size:12px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;border-radius:5px;transition:color .13s,background-color .13s;}
+.g-card-del:hover{color:#8a2a2a;background:rgba(150,40,40,.12);}
+.g-card-del:focus-visible{outline:2px solid var(--gold-l);outline-offset:1px;}
+
+/* колонка действий в таблице: в коллекции в ней кнопка, в шаблонах пусто */
+/* min-width, а не width: пустую ячейку в шаблонах браузер иначе схлопывает,
+   и колонки двух галерей расходятся по ширине */
+.gx-t th.gx-act,.gx-t td.gx-act{width:34px;min-width:34px;padding-left:0;padding-right:8px;}
+.gx-t td.gx-act{text-align:right;}
+.gx-t td.gx-act .g-card-del{margin-left:auto;}
+
+/* в указателе своей ячейки нет — кнопка кладётся по правому краю строки, а место
+   под неё резервирует сама строка: его читает galRowNeed при подсчёте колонок */
+.gx-row .g-card-del{position:absolute;right:0;top:50%;transform:translateY(-50%);z-index:2;}
+.gx-row:has(.g-card-del){padding-right:24px;}
+.ga-selmode .g-card-del{display:none;}
+.ga-selmode .gx-row:has(.g-card-del){padding-right:2px;}
 .gx-row.gsel,.gx-t tbody tr.gsel{background:rgba(200,148,26,.28);box-shadow:inset 3px 0 0 var(--gold);}
 
 /* видимый фокус для навигации с клавиатуры: :focus-visible срабатывает только
