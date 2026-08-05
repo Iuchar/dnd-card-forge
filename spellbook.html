@@ -235,6 +235,99 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .fdd-cbx.ck{background:var(--gold);border-color:var(--gold);}
 .fdd-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
 
+/* ═══ УКАЗАТЕЛЬ И ТАБЛИЦА (gallery-index.js) ═══
+   Сетка плиток показывала 74 одинаковых серых прямоугольника: картинка есть
+   у считанных карточек. Здесь плотный указатель для «Всего» и таблица со
+   своими колонками для раздела. Светлая область — та же, что была у сетки. */
+
+/* строка разделов живёт внутри .filter-bar; фильтры и сортировка — своими строками */
+.gx-secbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;row-gap:6px;}
+.filter-bar-sub{padding:7px 20px;background:rgba(200,148,26,.05);}
+.gx-sortbar{display:none;align-items:center;gap:7px;padding:7px 20px;border-bottom:0.5px solid var(--border);flex-wrap:wrap;row-gap:6px;background:rgba(200,148,26,.05);}
+.gx-sortbar.open{display:flex;}
+.gx-blbl{font-family:'Cinzel',serif;font-size:8.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);white-space:nowrap;}
+.gx-sec{font-family:'Cinzel',serif;font-size:9.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);border:0.5px solid var(--border2);border-radius:20px;padding:5px 11px;cursor:pointer;background:transparent;transition:background-color .14s,color .14s,border-color .14s;white-space:nowrap;}
+.gx-sec:hover{color:var(--text2);background:rgba(255,255,255,.05);}
+.gx-sec.on{color:var(--gold-l);border-color:rgba(200,148,26,.4);background:rgba(200,148,26,.1);}
+
+/* светлая область: список + панель */
+.gx-stage{display:flex;flex:1;min-height:0;background:#efe9db;margin:16px;border-radius:12px;overflow:hidden;}
+.gx-main{flex:1;min-width:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
+/* #grid-area из старой сетки живёт ниже и по ID перебивает .gx-main — гасим его
+   здесь. Само правило не трогаем: по нему до сих пор рисуется книга заклинаний. */
+.gx-stage > #grid-area{display:block;padding:0;margin:0;background:transparent;border-radius:0;min-height:0;overflow-y:auto;}
+.gx-main::-webkit-scrollbar{width:5px;}
+.gx-main::-webkit-scrollbar-thumb{background:rgba(90,72,32,.35);border-radius:3px;}
+
+/* уровень 1 — генератор, уровень 2 — подраздел */
+.gx-h1{display:flex;align-items:center;gap:10px;padding:10px 16px;background:#d3c49f;border-top:1px solid rgba(150,110,30,.35);border-bottom:1px solid rgba(150,110,30,.35);position:sticky;top:0;z-index:3;}
+.gx-h1 > svg{width:16px;height:16px;color:#4d3d18;flex-shrink:0;}
+.gx-h1 .t{font-family:'Cinzel',serif;font-size:13px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#4d3d18;}
+.gx-h1 .c{font-family:'Cinzel',serif;font-size:11px;color:#4d3d18;background:rgba(255,255,255,.42);border-radius:20px;padding:2px 9px;}
+.gx-h2{display:flex;align-items:center;gap:9px;padding:7px 16px 7px 24px;background:#ddd2b6;border-bottom:0.5px solid rgba(200,148,26,.32);position:sticky;top:41px;z-index:2;}
+.gx-h2 .t{font-family:'Cinzel',serif;font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#5f4d26;}
+.gx-h2 .c{font-size:11px;color:#7d6835;}
+
+/* строки указателя: число колонок считает galFitCols по длине названий */
+.gx-ix{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));column-gap:22px;padding:4px 16px 10px 24px;}
+.gx-row{display:flex;align-items:center;gap:8px;padding:7px 3px;border-bottom:0.5px solid rgba(90,72,32,.16);cursor:pointer;min-width:0;position:relative;}
+.gx-row:hover{background:rgba(200,148,26,.09);}
+.gx-row.gx-sel{background:rgba(200,148,26,.2);}
+.gx-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;border:0.5px solid rgba(0,0,0,.25);}
+.gx-gi{width:14px;height:14px;flex-shrink:0;color:#8a7550;display:flex;}
+.gx-gi svg{width:14px;height:14px;}
+.gx-n{font-size:14.5px;color:#2a1e0a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;}
+.gx-e{font-size:12px;font-style:italic;color:#9a8a6c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-left:auto;padding-left:10px;flex-shrink:2;}
+
+/* таблица раздела */
+.gx-tw{overflow-x:auto;}
+table.gx-t{width:100%;border-collapse:collapse;font-size:14px;}
+.gx-t thead th{position:sticky;top:0;z-index:2;background:#ddd2b6;color:#5f4d26;font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-align:left;padding:9px 12px;border-bottom:1px solid rgba(200,148,26,.4);white-space:nowrap;}
+.gx-t thead th.num{text-align:right;}
+.gx-t tbody td{padding:8px 12px;border-bottom:0.5px solid rgba(90,72,32,.16);color:#7a6850;white-space:nowrap;}
+.gx-t tbody td.num{text-align:right;font-variant-numeric:tabular-nums;}
+.gx-t tbody tr{cursor:pointer;position:relative;}
+.gx-t tbody tr:hover{background:rgba(200,148,26,.09);}
+.gx-t tbody tr.gx-sel{background:rgba(200,148,26,.2);}
+.gx-tn{display:flex;align-items:center;gap:8px;color:#2a1e0a;font-weight:600;}
+.gx-tn svg{width:14px;height:14px;flex-shrink:0;color:#8a7550;}
+.gx-en{font-style:italic;color:#9a8a6c;font-size:12.5px;font-weight:400;}
+.gx-dim{color:#9a8a6c;font-size:12.5px;}
+
+/* панель карточки справа */
+.gx-side{width:216px;flex-shrink:0;border-left:1px solid rgba(90,72,32,.18);background:#e6dfcd;padding:14px;display:flex;flex-direction:column;align-items:center;gap:9px;overflow-y:auto;}
+.gx-card{width:142px;height:198px;border-radius:6px;border:2px solid #888077;background:#e8dcc8;box-shadow:2px 2px 0 #5a5030;display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;}
+.gx-stripe{height:5px;flex-shrink:0;}
+.gx-img{flex:1;background:#cfc0a0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.gx-img img{width:100%;height:100%;object-fit:cover;display:block;}
+.gx-ph{opacity:.32;color:#2a1e0a;display:flex;}
+.gx-foot{padding:6px 7px;background:rgba(0,0,0,.06);}
+.gx-cn{font-family:'Cinzel',serif;font-size:9.5px;font-weight:700;color:#2a1e0a;line-height:1.25;}
+.gx-ce{font-size:8px;font-style:italic;color:#7a6850;}
+.gx-st{width:100%;font-size:13px;}
+.gx-str{display:flex;justify-content:space-between;gap:9px;padding:5px 0;border-bottom:0.5px solid rgba(90,72,32,.16);}
+.gx-str .k{color:#8a7550;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.05em;text-transform:uppercase;align-self:center;white-space:nowrap;}
+.gx-str .v{color:#2a1e0a;text-align:right;}
+.gx-acts{width:100%;display:flex;flex-direction:column;gap:5px;}
+.gx-btn{width:100%;font-family:'Cinzel',serif;font-size:9.5px;font-weight:600;letter-spacing:.06em;text-align:center;color:#5f4d26;border:0.5px solid rgba(90,72,32,.35);border-radius:7px;padding:6px 0;background:rgba(90,72,32,.07);cursor:pointer;transition:background-color .13s;}
+.gx-btn:hover{background:rgba(90,72,32,.16);}
+.gx-btn-main{background:rgba(200,148,26,.2);border-color:rgba(150,110,30,.45);color:#4d3d18;}
+.gx-btn-lite{background:transparent;color:#8a7550;}
+.gx-snote{font-size:9.5px;color:#8a7550;text-align:center;line-height:1.45;margin-top:20px;}
+@media (max-width:899px){.gx-side{display:none;}}
+
+/* Удаление: кнопка видна всегда. Спрятанная за hover находилась только случайным
+   тычком — про такую нельзя догадаться, а на тач-экране её нет вовсе. */
+.gx-row .g-card-del,.gx-t tbody tr .g-card-del{position:absolute;right:3px;top:50%;transform:translateY(-50%);width:20px;height:20px;border-radius:5px;border:0.5px solid rgba(120,40,40,.28);background:rgba(120,30,30,.09);color:#9a3a3a;font-size:11px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;z-index:2;transition:background-color .13s,color .13s;}
+.gx-row .g-card-del:hover,.gx-t tbody tr .g-card-del:hover{background:rgba(150,40,40,.22);color:#7a2020;border-color:rgba(120,40,40,.5);}
+/* Место под кнопку резервирует сама строка — тогда его видит galRowNeed,
+   который читает отступы из computed style, и колонки считаются с её учётом. */
+.gx-row:has(.g-card-del){padding-right:26px;}
+.gx-row .g-card-del{right:1px;}
+.ga-selmode .gx-row .g-card-del,.ga-selmode .gx-t tbody tr .g-card-del{display:none;}
+.ga-selmode .gx-row:has(.g-card-del){padding-right:3px;}
+.gx-row.gsel,.gx-t tbody tr.gsel{background:rgba(200,148,26,.28);box-shadow:inset 3px 0 0 var(--gold);}
+
 /* видимый фокус для навигации с клавиатуры: :focus-visible срабатывает только
    при табуляции, мышь его не показывает — вид при обычной работе не меняется.
    У полей ввода своя индикация (рамка золотеет), поэтому им обводка не нужна:
@@ -1041,47 +1134,137 @@ document.getElementById('btn-clear-all').addEventListener('click',function(){
   });
 });
 
-/* Выпадающие фильтры галерей (collection/templates).
-   Множественный выбор: пусто = без ограничения; ИЛИ внутри категории, И между категориями.
-   Узкоспециальные (оружие/доспех) показываются, только если такие карты есть.
+/* Выпадающие фильтры галерей (collection/templates/spellbook).
+   Множественный выбор: пусто = без ограничения; ИЛИ внутри категории, И между
+   категориями.
+
+   Движок читает FILTER_DEFS — массив {key,label,val(card),opts()}. Книга
+   заклинаний подменяет его своими определениями перед каждой отрисовкой; в
+   коллекции и шаблонах он пересобирается из GAL_FDEFS под выбранный раздел
+   (GAL_SEC из gallery-index.js). Если gallery-index.js не подключён — как в
+   книге заклинаний — раздельного режима просто нет, всё работает как раньше.
+
    Из страницы нужны: allCards, GROUPS, renderGrid. */
-var FILT={type:new Set(),rarity:new Set(),attune:new Set(),wkind:new Set(),wcat:new Set(),wdt:new Set(),wprops:new Set(),wmastery:new Set(),armortype:new Set(),stealth:new Set(),query:''};
+var FILT={query:''};
+var FILTER_DEFS=[];
 var _RLABEL={nonmagic:'Немагический',common:'Обычный',uncommon:'Необычный',rare:'Редкий',veryrare:'Очень редкий',legendary:'Легендарный'};
 var _RDOT={nonmagic:'#f5f5f5',common:'#888077',uncommon:'#52aa40',rare:'#4a8ccc',veryrare:'#9870cc',legendary:'#e09820'};
-var _TLABEL={weapon:'Оружие',armor:'Доспехи',equipment:'Снаряжение',tools:'Инструменты',poisons:'Яды'};
+var _RSEQ=['nonmagic','common','uncommon','rare','veryrare','legendary'];
 function _attuneState(c){var a=(c.attune||'').trim().toLowerCase();return(!a||a==='не требуется'||a==='не требует настройки'||a==='нет')?'no':'yes';}
-function _dyn(group,field){return function(){var seen={},out=[];allCards.forEach(function(c){if(c._group===group){var v=c[field];if(v&&!seen[v]){seen[v]=1;out.push({v:v,l:v});}}});out.sort(function(a,b){return a.l.localeCompare(b.l,'ru');});return out;};}
-function _dynArr(group,field){return function(){var seen={},out=[];allCards.forEach(function(c){if(c._group===group){var a=c[field];if(a){(Array.isArray(a)?a:[a]).forEach(function(v){if(v&&!seen[v]){seen[v]=1;out.push({v:v,l:v});}});}}});out.sort(function(a,b){return a.l.localeCompare(b.l,'ru');});return out;};}
-var FILTER_DEFS=[
-  {key:'type',label:'Тип',always:true,val:function(c){return [c._group];},opts:function(){return GROUPS.filter(function(g){return allCards.some(function(c){return c._group===g.id;});}).map(function(g){return {v:g.id,l:_TLABEL[g.id]||g.label};});}},
-  {key:'rarity',label:'Редкость',always:true,val:function(c){return [c.rarity||'common'];},opts:function(){return ['nonmagic','common','uncommon','rare','veryrare','legendary'].filter(function(r){return allCards.some(function(c){return (c.rarity||'common')===r;});}).map(function(r){return {v:r,l:_RLABEL[r],dot:_RDOT[r]};});}},
-  {key:'attune',label:'Настройка',always:true,val:function(c){return [_attuneState(c)];},opts:function(){return [{v:'yes',l:'Требует настройки'},{v:'no',l:'Не требует настройки'}];}},
-  {key:'wkind',label:'Тип оружия',rel:'weapon',val:function(c){return c._group==='weapon'&&c.kind?[c.kind]:[];},opts:_dyn('weapon','kind')},
-  {key:'wcat',label:'Класс оружия',rel:'weapon',val:function(c){return c._group==='weapon'&&c.cat?[c.cat]:[];},opts:_dyn('weapon','cat')},
-  {key:'wdt',label:'Тип урона',rel:'weapon',val:function(c){return c._group==='weapon'&&c.dt?[c.dt]:[];},opts:_dyn('weapon','dt')},
-  {key:'wprops',label:'Свойства',rel:'weapon',val:function(c){return c._group==='weapon'&&c.props?(Array.isArray(c.props)?c.props:[c.props]):[];},opts:_dynArr('weapon','props')},
-  {key:'wmastery',label:'Мастерство',rel:'weapon',val:function(c){return c._group==='weapon'&&c.mastery?[c.mastery]:[];},opts:_dyn('weapon','mastery')},
-  {key:'armortype',label:'Категория доспеха',rel:'armor',val:function(c){return c._group==='armor'&&c.armorType?[c.armorType]:[];},opts:_dyn('armor','armorType')},
-  {key:'stealth',label:'Скрытность',rel:'armor',val:function(c){return c._group==='armor'?[c.stealth===true?'dis':'ok']:[];},opts:function(){return [{v:'ok',l:'Без помехи'},{v:'dis',l:'С помехой'}];}}
-];
+function _galOn(){return typeof GAL_SEC!=='undefined';}
+
+/* ── определения фильтров по разделам (только коллекция/шаблоны) ── */
+var GAL_FDEFS={
+  weapon:[['cat','Класс оружия'],['kind','Тип оружия'],['dt','Тип урона'],['props','Свойства'],['mastery','Мастерство'],['_rarity','Редкость'],['_attune','Настройка']],
+  armor:[['armorType','Категория доспеха'],['_stealth','Скрытность'],['_rarity','Редкость'],['_attune','Настройка']],
+  poisons:[['poisonType','Тип яда'],['saveStat','Характеристика спасброска']],
+  tools:[['toolType','Тип инструмента'],['stat','Характеристика']],
+  equipment:[['category','Категория'],['_rarity','Редкость']],
+  custom:[['cardType','Тип карточки']]
+};
+function _galVals(c,f){
+  if(f==='_rarity')return [c.rarity||'common'];
+  if(f==='_attune')return [_attuneState(c)];
+  if(f==='_stealth')return [c.stealth===true?'dis':'ok'];
+  var v=c[f];
+  if(v==null||v==='')return [];
+  if(Array.isArray(v))return v.map(function(x){return String(x).trim();});
+  return String(v).split(',').map(function(x){return x.trim();});
+}
+function _galLabel(f,v){
+  if(f==='_rarity')return _RLABEL[v]||v;
+  if(f==='_attune')return v==='yes'?'Требует настройки':'Не требует настройки';
+  if(f==='_stealth')return v==='dis'?'С помехой':'Без помехи';
+  return v;
+}
+/* Порядок значений книжный, а не алфавитный: иначе «Воинское» встаёт раньше
+   «Простого», а тяжёлый доспех раньше лёгкого. */
+function _galOpts(f){
+  var seen={},vals=[];
+  allCards.forEach(function(c){
+    if(GAL_SEC!=='all'&&c._group!==GAL_SEC)return;
+    _galVals(c,f).forEach(function(v){if(v&&!seen[v]){seen[v]=1;vals.push(v);}});
+  });
+  if(f==='_rarity')vals.sort(function(a,b){return _RSEQ.indexOf(a)-_RSEQ.indexOf(b);});
+  else{
+    var ord=(typeof GAL_VALORDER!=='undefined')?GAL_VALORDER[f]:null;
+    vals.sort(function(a,b){
+      var ra=(typeof galRank==='function')?galRank(ord,a):0,rb=(typeof galRank==='function')?galRank(ord,b):0;
+      return ra!==rb?ra-rb:a.localeCompare(b,'ru');});
+  }
+  return vals.map(function(v){
+    return {v:v,l:_galLabel(f,v),dot:(f==='_rarity'?_RDOT[v]:null)};});
+}
+function _galDefs(){
+  return (GAL_FDEFS[GAL_SEC]||[]).map(function(d){
+    var f=d[0];
+    return {key:f,label:d[1],
+      val:function(c){return _galVals(c,f);},
+      opts:function(){return _galOpts(f);}};
+  });
+}
+
 function getFiltered(){
   return allCards.filter(function(c){
-    /* nameEn есть только у заклинаний; у предметов он пуст и условие просто не сработает */
+    if(_galOn()&&GAL_SEC!=='all'&&c._group!==GAL_SEC)return false;
+    /* nameEn есть у заклинаний и у готовых шаблонов; где пусто — условие не сработает */
     if(FILT.query&&(c.name||'').toLowerCase().indexOf(FILT.query)<0
        &&(c.nameEn||'').toLowerCase().indexOf(FILT.query)<0)return false;
-    for(var i=0;i<FILTER_DEFS.length;i++){var def=FILTER_DEFS[i],sel=FILT[def.key];if(!sel||!sel.size)continue;var vals=def.val(c),ok=false;for(var j=0;j<vals.length;j++){if(sel.has(vals[j])){ok=true;break;}}if(!ok)return false;}
+    for(var i=0;i<FILTER_DEFS.length;i++){
+      var def=FILTER_DEFS[i],sel=FILT[def.key];
+      if(!sel||!sel.size)continue;
+      var vals=def.val(c),ok=false;
+      for(var j=0;j<vals.length;j++){if(sel.has(vals[j])){ok=true;break;}}
+      if(!ok)return false;
+    }
     return true;
   });
 }
+
 function _cbxHTML(on){return on?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" width="11" height="11"><polyline points="20 6 9 17 4 12"/></svg>':'';}
 function _updBtn(btn,def){var sel=FILT[def.key];var c=btn.querySelector('.fdd-cnt');if(sel.size){if(!c){c=document.createElement('span');c.className='fdd-cnt';btn.insertBefore(c,btn.querySelector('.fdd-chev'));}c.textContent=sel.size;btn.classList.add('on');}else{if(c)c.remove();btn.classList.remove('on');}}
+function _closePanels(){[].forEach.call(document.querySelectorAll('.fdd-panel.open'),function(p){p.classList.remove('open');});}
+document.addEventListener('click',function(){_closePanels();});
+
+/* строка разделов: она же переключает указатель/таблицу (только галереи) */
+function buildSections(){
+  var host=document.getElementById('gx-secbar');if(!host||!_galOn())return;
+  host.innerHTML='<span class="gx-blbl">Раздел</span>';
+  function mk(id,label){
+    var b=document.createElement('button');b.type='button';
+    b.className='gx-sec'+(GAL_SEC===id?' on':'');b.textContent=label;
+    b.addEventListener('click',function(){
+      GAL_SEC=id;
+      FILTER_DEFS.forEach(function(d){if(FILT[d.key])FILT[d.key].clear();});
+      galSortF='name';galSortDir=1;galCurrent=null;
+      buildSections();buildFilters();renderGrid();galRenderSide();
+    });
+    host.appendChild(b);
+  }
+  mk('all','Всё');
+  GROUPS.forEach(function(g){
+    if(!allCards.some(function(c){return c._group===g.id;}))return;
+    mk(g.id,g.label);
+  });
+}
+
 function buildFilters(){
-  var host=document.getElementById('fdd-host');if(!host)return;host.innerHTML='';
+  /* в галереях состав фильтров зависит от раздела; книга заклинаний ставит
+     FILTER_DEFS сама и сюда не попадает */
+  if(_galOn())FILTER_DEFS=(GAL_SEC==='all')?[]:_galDefs();
+
+  var host=document.getElementById('fdd-host');if(!host)return;
+  host.innerHTML='';
+  var shown=0;
   FILTER_DEFS.forEach(function(def){
     var opts=def.opts();
+    if(!FILT[def.key])FILT[def.key]=new Set();
     var sel=FILT[def.key];
     /* очистим выбор от значений, которых больше нет */
-    sel.forEach(function(v){if(!opts.some(function(o){return o.v===v;})&&def.key!=='attune'&&def.key!=='stealth')sel.delete(v);});
+    sel.forEach(function(v){if(!opts.some(function(o){return o.v===v;})&&def.key!=='_attune'&&def.key!=='_stealth'&&def.key!=='attune'&&def.key!=='stealth')sel.delete(v);});
+    /* в галереях фильтр с единственным значением бесполезен */
+    if(_galOn()&&opts.length<2)return;
+    shown++;
     var wrap=document.createElement('div');wrap.className='fdd-wrap';wrap.setAttribute('data-fkey',def.key);
     var btn=document.createElement('button');btn.className='fdd'+(sel.size?' on':'');btn.type='button';
     btn.innerHTML='<span>'+def.label+'</span>'+(sel.size?'<span class="fdd-cnt">'+sel.size+'</span>':'')+'<svg class="fdd-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="11" height="11"><polyline points="6 9 12 15 18 9"/></svg>';
@@ -1110,10 +1293,45 @@ function buildFilters(){
     wrap.addEventListener('keydown',function(e){if(e.key==='Escape'&&panel.classList.contains('open')){e.stopPropagation();_closePanels();btn.focus();}});
     wrap.appendChild(btn);wrap.appendChild(panel);host.appendChild(wrap);
   });
+
+  /* строка фильтров и строка сортировки — только в галереях */
+  if(_galOn()){
+    var bar=document.getElementById('filter-bar-row');
+    if(bar)bar.style.display=shown?'':'none';
+    _buildSortBar();
+  }
 }
-function _closePanels(){[].forEach.call(document.querySelectorAll('.fdd-panel.open'),function(p){p.classList.remove('open');});}
-document.addEventListener('click',function(){_closePanels();});
-(function(){var s=document.getElementById('filter-search');if(s)s.addEventListener('input',function(){FILT.query=this.value.toLowerCase().trim();var cl=document.getElementById('filter-search-clear');if(cl)cl.style.display=FILT.query?'':'none';renderGrid();});var sc=document.getElementById('filter-search-clear');if(sc)sc.addEventListener('click',function(){var i=document.getElementById('filter-search');i.value='';FILT.query='';this.style.display='none';renderGrid();});})();
+
+/* сортировка отдельной строкой под фильтрами */
+function _buildSortBar(){
+  var sortBar=document.getElementById('gx-sortbar'),sHost=document.getElementById('gx-sorts');
+  if(!sortBar||!sHost)return;
+  var sorts=(typeof GAL_SORTS!=='undefined')?GAL_SORTS[GAL_SEC]:null;
+  if(!sorts){sortBar.classList.remove('open');sHost.innerHTML='';return;}
+  sortBar.classList.add('open');sHost.innerHTML='';
+  sorts.forEach(function(s){
+    var on=galSortF===s[1];
+    var b=document.createElement('button');b.type='button';
+    b.className='gx-sec'+(on?' on':'');
+    b.textContent=s[0]+(on?(galSortDir>0?' ▲':' ▼'):'');
+    b.addEventListener('click',function(){
+      if(galSortF===s[1])galSortDir=-galSortDir;else{galSortF=s[1];galSortDir=1;}
+      _buildSortBar();renderGrid();});
+    sHost.appendChild(b);
+  });
+}
+
+(function(){
+  var s=document.getElementById('filter-search');
+  if(s)s.addEventListener('input',function(){
+    FILT.query=this.value.toLowerCase().trim();
+    var cl=document.getElementById('filter-search-clear');if(cl)cl.style.display=FILT.query?'':'none';
+    renderGrid();});
+  var sc=document.getElementById('filter-search-clear');
+  if(sc)sc.addEventListener('click',function(){
+    var i=document.getElementById('filter-search');i.value='';FILT.query='';
+    this.style.display='none';renderGrid();});
+})();
 /* Свои ключи вместо оружейных; общий движок читает эти же имена */
 FILT={src:new Set(),level:new Set(),school:new Set(),comp:new Set(),prop:new Set(),cls:new Set(),sub:new Set(),ed:new Set(),query:''};
 /* Сохранение и печать карточек из галерей (collection/templates).
@@ -1322,7 +1540,8 @@ function gaExitSel(clear){gaSelectMode=false;if(clear)gaSelected={};document.bod
   var sSave=document.getElementById('sel-save');if(sSave)sSave.addEventListener('click',function(){saveCards(gaSelectedCards());});
   var sPrint=document.getElementById('sel-print');if(sPrint)sPrint.addEventListener('click',function(){openPrintModal(gaSelectedCards());});
   var sAll=document.getElementById('sel-all');if(sAll)sAll.addEventListener('click',gaSelectAll);
-  var sClear=document.getElementById('sel-clear');if(sClear)sClear.addEventListener('click',function(){gaSelected={};[].forEach.call(document.querySelectorAll('.g-card.gsel'),function(el){el.classList.remove('gsel');});_gaUpdateSelBar();});
+  /* выделение живёт и на плитках книги заклинаний, и на строках указателя/таблицы */
+  var sClear=document.getElementById('sel-clear');if(sClear)sClear.addEventListener('click',function(){gaSelected={};[].forEach.call(document.querySelectorAll('.gsel'),function(el){el.classList.remove('gsel');});_gaUpdateSelBar();});
 })();
 /* gallery-actions снимает .gsel только с .g-card — у нас строки, перерисуем сами */
 document.getElementById('sel-clear').addEventListener('click',renderGrid);
