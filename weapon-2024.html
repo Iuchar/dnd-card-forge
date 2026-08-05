@@ -130,6 +130,21 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .btn-del-img{width:100%;padding:5px 9px;margin-top:4px;font-family:'Cinzel',serif;font-size:10px;font-weight:500;letter-spacing:.08em;cursor:pointer;border:0.5px solid var(--border);border-radius:6px;background:transparent;color:var(--text3);transition:all .14s;display:flex;align-items:center;justify-content:center;gap:5px;}
 .btn-del-img:hover{background:rgba(220,60,60,.1);color:#e08070;border-color:rgba(220,60,60,.3);}
 .field-wrap{position:relative;}
+/* пара узких полей под одной подписью (КБ: базовый + бонус) */
+.sb-pair{display:flex;gap:8px;margin-bottom:2px;}
+.ac-sub{display:flex;flex-direction:column;gap:3px;}
+.ac-sub > span{font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);}
+.ac-sub .si{width:80px;}
+/* подпись половинки парного поля (.row2 > .sf) — та же типографика, что у .ac-sub */
+.sl{font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);}
+/* пара полей в столбик: длинные значения селектов не влезают в половину ширины
+   панели, поэтому такие пары ставим друг под друга, а не в .row2 */
+.sf-col{display:flex;flex-direction:column;gap:7px;}
+/* магический бонус предмета: значений всего четыре, поэтому переключатель, а не поле ввода */
+.magseg{display:flex;gap:5px;}
+.magseg button{flex:1;padding:6px 0;font-family:'Crimson Text',Georgia,serif;font-size:13px;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.05);color:var(--text2);}
+.magseg button:hover{background:rgba(255,255,255,.09);}
+.magseg button.on{border:1px solid var(--gold);background:rgba(200,148,26,.13);color:var(--gold-l);}
 .char-counter{position:absolute;right:0;bottom:-16px;font-family:'Cinzel',serif;font-size:9px;color:var(--text3);}
 .char-counter.warn{color:var(--gold);}
 .char-counter.over{color:#c05040;}
@@ -301,19 +316,9 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .rprow{display:flex;gap:6px;align-items:center;padding:3px 0;}
 .rp{width:20px;height:20px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .12s;flex-shrink:0;}
 .rp:hover{transform:scale(1.15);}
-.rp.on{transform:scale(1.1);}
-.rp[data-r=nonmagic]{background:#f5f5f5;}
-.rp[data-r=common]{background:#888077;}
-.rp[data-r=uncommon]{background:#52aa40;}
-.rp[data-r=rare]{background:#4a8ccc;}
-.rp[data-r=veryrare]{background:#9870cc;}
-.rp[data-r=legendary]{background:#e09820;}
-.rp[data-r=nonmagic].on{box-shadow:0 0 0 3px rgba(245,245,245,.4);}
-.rp[data-r=common].on{box-shadow:0 0 0 3px rgba(136,128,119,.4);}
-.rp[data-r=uncommon].on{box-shadow:0 0 0 3px rgba(82,170,64,.4);}
-.rp[data-r=rare].on{box-shadow:0 0 0 3px rgba(74,140,204,.4);}
-.rp[data-r=veryrare].on{box-shadow:0 0 0 3px rgba(152,112,204,.4);}
-.rp[data-r=legendary].on{box-shadow:0 0 0 3px rgba(224,152,32,.45);}
+.rp.on{transform:scale(1.1);box-shadow:0 0 0 3px var(--rp-glow,rgba(136,128,119,.4));}
+/* Цвет кружков ставит core.js из R (rarities.js). Раньше палитра была продублирована
+   здесь шестью правилами и при её обновлении пикер оставался со старыми цветами. */
 
 .btn-recrop svg{flex-shrink:0;}
 .btn-del-img svg{flex-shrink:0;}
@@ -406,11 +411,23 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 
 /* ═══ СПЕЦИФИКА ОРУЖИЯ (поверх общих правил) ═══ */
 .c-stats{display:flex;flex-wrap:nowrap;gap:0;justify-content:stretch;margin:5px 0 0;height:40px;border-top:1px solid #b89a58;border-bottom:1px solid #b89a58;background:rgba(90,70,20,.05);}
-.cst{flex:1;min-width:0;background:none;border:none;border-right:1px solid rgba(90,72,32,.22);border-radius:0;padding:0 2px;display:flex;flex-direction:column;justify-content:center;}
+.cst{flex:1;min-width:0;background:none;border:none;border-right:1px solid rgba(90,72,32,.22);border-radius:0;padding:0 2px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}
 .c-stats .cst:last-child{border-right:none;}
 .cst-l{font-family:'Cinzel',serif;font-size:7px;letter-spacing:.06em;text-transform:uppercase;color:#8a6b2e;margin-bottom:1px;}
 .cst-v{font-size:15px;font-weight:700;color:#2a1e0a;}
 .dc.no-img .c-stats{margin-top:0;}
+/* знак магического бонуса справа от названия: имя сжимается (_fitName), плашка нет */
+/* Нижний паддинг на 3px — не декор: у Cinzel в строчном боксе резервируется
+   место под выносные элементы, которых у «+N» нет, и знак садится ниже центра
+   плашки. Асимметричный паддинг возвращает его на оптический центр. */
+/* Плашка выведена из потока: во flex-строке она забирала ширину у всего блока,
+   и подпись под названием переносилась на вторую строку. Место под неё резервирует
+   только .c-name — её clientWidth учитывает _fitName, поэтому имя ужимается верно. */
+.c-title-main{position:relative;}
+.c-mag{position:absolute;right:0;top:0;box-sizing:border-box;height:calc(var(--name-fs,16px)*1.2);line-height:calc(var(--name-fs,16px)*1.5 - 5px);font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.02em;color:#6b4a12;border:.5px solid #b89a58;background:rgba(138,96,16,.10);border-radius:3px;padding:0 7px;}
+.c-title-main.has-mag .c-name{padding-right:34px;}
+/* дополнительный урон — плашка того же вида, что «Боеприпас» */
+.c-xdmg{font-size:9.5px;color:#4a3a24;line-height:1.35;margin:5px 0 0;background:rgba(138,96,16,.08);border-radius:5px;padding:3px 9px;overflow:hidden;}
 /* боеприпас + мастерство — одной строкой, кегль обеих подбирает _fitLine */
 .c-amrow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:5px;margin:5px 0 0;overflow:hidden;}
 .c-amrow>div{margin:0;white-space:nowrap;flex:0 0 auto;}
@@ -554,6 +571,14 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     <span class="rname" id="rn">Немагический</span>
   </div>
 
+  <div class="lbl">Магический бонус</div>
+  <div class="magseg" id="magseg" role="radiogroup" aria-label="Магический бонус">
+    <button type="button" class="on" data-v="" role="radio" aria-checked="true" aria-label="без бонуса">—</button>
+    <button type="button" data-v="1" role="radio" aria-checked="false">+1</button>
+    <button type="button" data-v="2" role="radio" aria-checked="false">+2</button>
+    <button type="button" data-v="3" role="radio" aria-checked="false">+3</button>
+  </div>
+
   <label class="lbl" for="fn">Название</label>
   <div class="field-wrap field-mb">
     <input class="si" type="text" id="fn" placeholder="Длинный меч +1" maxlength="34"/>
@@ -630,14 +655,21 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     <div class="sf"><div class="sl">Обычная</div><input class="si" type="text" id="fr1" placeholder="20" maxlength="4" inputmode="numeric"/></div>
     <div class="sf"><div class="sl">Максимальная</div><input class="si" type="text" id="fr2" placeholder="60" maxlength="4" inputmode="numeric"/></div>
   </div>
-  <label class="lbl" for="fd1">Урон (одна рука)</label>
-  <select class="si" id="fd1"><option value="">—</option><option>1</option><option>1d4</option><option>1d6</option><option>1d8</option><option>1d10</option><option>1d12</option><option>2d4</option><option>2d6</option><option>2d8</option><option>2d10</option><option>2d12</option></select>
-  <label class="lbl" for="fd2">Урон (две руки)</label>
-  <select class="si" id="fd2"><option value="">—</option><option>1</option><option>1d4</option><option>1d6</option><option>1d8</option><option>1d10</option><option>1d12</option><option>2d4</option><option>2d6</option><option>2d8</option><option>2d10</option><option>2d12</option></select>
-  <label class="lbl" for="fstr">Бонус урона (сила или ловкость)</label>
-  <input class="si" type="text" id="fstr" placeholder="3" style="width:80px;" maxlength="2" inputmode="numeric"/>
-  <label class="lbl" for="fpr">Бонус владения (мастерства)</label>
-  <input class="si" type="text" id="fpr" placeholder="2" style="width:80px;" maxlength="2" inputmode="numeric"/>
+  <div class="lbl">Урон</div>
+  <div class="row2">
+    <div class="sf"><label class="sl" for="fd1">Одна рука</label><select class="si" id="fd1"><option value="">—</option><option>1</option><option>1d4</option><option>1d6</option><option>1d8</option><option>1d10</option><option>1d12</option><option>2d4</option><option>2d6</option><option>2d8</option><option>2d10</option><option>2d12</option></select></div>
+    <div class="sf"><label class="sl" for="fd2">Две руки</label><select class="si" id="fd2"><option value="">—</option><option>1</option><option>1d4</option><option>1d6</option><option>1d8</option><option>1d10</option><option>1d12</option><option>2d4</option><option>2d6</option><option>2d8</option><option>2d10</option><option>2d12</option></select></div>
+  </div>
+  <div class="lbl">Дополнительный урон</div>
+  <div class="row2">
+    <div class="sf"><label class="sl" for="fxd">Кубики</label><input class="si" type="text" id="fxd" placeholder="2d6" maxlength="5"/></div>
+    <div class="sf"><label class="sl" for="fxt">Тип</label><select class="si" id="fxt"><option value="">—</option><option>Огонь</option><option>Холод</option><option>Электричество</option><option>Кислота</option><option>Яд</option><option>Звук</option><option>Излучение</option><option>Некротическая энергия</option><option>Психическая энергия</option><option>Силовое поле</option></select></div>
+  </div>
+  <div class="lbl">Бонусы владельца</div>
+  <div class="row2">
+    <div class="sf"><label class="sl" for="fstr">Сила / Ловкость</label><input class="si" type="text" id="fstr" placeholder="3" maxlength="2" inputmode="numeric"/></div>
+    <div class="sf"><label class="sl" for="fpr">Владение</label><input class="si" type="text" id="fpr" placeholder="2" maxlength="2" inputmode="numeric"/></div>
+  </div>
 
   <div class="divider"></div>
 
@@ -685,8 +717,11 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
           <div class="c-meta-orn"><svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10 L10 3 L17 10 L10 17 Z" stroke="#5a4820" stroke-width="1.2" fill="#d4c4a0" opacity="0.8"/><circle cx="10" cy="10" r="2" fill="#5a4820" opacity="0.7"/></svg></div>
         </div>
         <div class="c-title">
-          <div class="c-name" id="pnm">Оружие</div>
-          <div class="c-dmgline" id="pdmgl" style="display:none;"></div>
+          <div class="c-title-main">
+            <span class="c-mag" id="pmag" style="display:none;"></span>
+            <div class="c-name" id="pnm">Оружие</div>
+            <div class="c-dmgline" id="pdmgl" style="display:none;"></div>
+          </div>
         </div>
         <div class="c-img" id="cib">
           <div class="c-img-ph" id="img-ph"><svg viewBox="0 0 24 24" fill="none" stroke="#8a7860" stroke-width="1.2"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M2 22l7.5-7.5"/></svg></div>
@@ -698,6 +733,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
             <div class="c-ammo" id="pammo" style="display:none;"></div>
             <div class="c-mastery" id="pmastery" style="display:none;"></div>
           </div>
+          <div class="c-xdmg" id="pxdmg" style="display:none;"></div>
           <div class="c-props" id="pprops" style="display:none;"></div>
           <div class="c-quote" id="pquote" style="display:none;"></div>
           <div class="c-desc" id="pds"></div>
@@ -880,6 +916,23 @@ function applyR(r){
 /* выбор редкости (пикер .rp есть не на всех страницах — где нет, forEach пуст).
    Кружки — это div, поэтому клавиатуре их нужно объявить кнопками: tabindex
    даёт фокус, role/aria-checked озвучивают состояние, Enter и пробел выбирают. */
+/* Красим кружки из общей палитры: цвет — акцент карточки (gem), обводка
+   выбранного — он же полупрозрачным. Раньше все шесть цветов были продублированы
+   в card-styles.css, и обновление палитры до пикера не доходило. */
+(function(){
+  function _rgba(hex,a){
+    var h=String(hex||'').replace('#','');
+    if(h.length!==6)return 'rgba(136,128,119,'+a+')';
+    return 'rgba('+parseInt(h.slice(0,2),16)+','+parseInt(h.slice(2,4),16)+','+parseInt(h.slice(4,6),16)+','+a+')';
+  }
+  document.querySelectorAll('.rp').forEach(function(el){
+    var d=R[el.getAttribute('data-r')];if(!d)return;
+    var col=d.gem||d.a;
+    el.style.background=col;
+    el.style.setProperty('--rp-glow',_rgba(col,.4));
+  });
+})();
+
 document.querySelectorAll('.rp').forEach(function(el){
   function pick(){
     document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');x.setAttribute('aria-checked','false');});
@@ -921,6 +974,22 @@ function mkCounter(inputId,countId,max,lenFn){
 ['fr1','fr2'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9]/g,'').slice(0,4);this.setSelectionRange(p,p);});});
 ['fstr','fpr'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;var v=this.value.replace(/[^0-9-]/g,'');v=v.charAt(0)+v.slice(1).replace(/-/g,'');this.value=v.slice(0,2);this.setSelectionRange(p,p);});});
 mkCounter('fn','cnt-fn',34);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);
+/* магический бонус: кнопки не дают input/change, поэтому ререндер вызываем сами */
+document.querySelectorAll('#magseg button').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('#magseg button').forEach(function(x){x.classList.remove('on');x.setAttribute('aria-checked','false');});
+    b.classList.add('on');b.setAttribute('aria-checked','true');
+    renderCard(readForm());
+  });
+});
+function _magVal(){var b=document.querySelector('#magseg button.on');return b?b.getAttribute('data-v'):'';}
+function _magSet(v){
+  v=String(v||'');
+  document.querySelectorAll('#magseg button').forEach(function(x){
+    var on=x.getAttribute('data-v')===v;
+    x.classList.toggle('on',on);x.setAttribute('aria-checked',on?'true':'false');
+  });
+}
 
 /* Автошрифт названия: одна строка, лестница кеглей 16→10, дальше многоточие
    (по образцу заклинаний). Общий для всех семи генераторов — spells crop.js
@@ -1181,6 +1250,22 @@ CARD_RATIO=282/150;
 
 /* fmtBonus */
 function fmtB(v){var n=parseInt(v,10);return(isNaN(n)||n===0)?'':(n>0?'+'+n:''+n);}
+/* Дополнительный урон оружия («Пламенный язык» — 2d6 огнём, «Убийца драконов» — 3d6).
+   Кубики и тип хранятся раздельно (xDice/xType), чтобы галерея могла фильтровать
+   по типу; строка собирается здесь, иначе формулировка разъедется между
+   генераторами и превью. Тип в форме именительный, на карточке — творительный. */
+var XDMG_INSTR={
+  'Огонь':'огнём','Холод':'холодом','Электричество':'электричеством',
+  'Кислота':'кислотой','Яд':'ядом','Звук':'звуком','Излучение':'излучением',
+  'Некротическая энергия':'некротической энергией',
+  'Психическая энергия':'психической энергией','Силовое поле':'силовым полем'
+};
+function xDmgText(card){
+  var d=String((card&&card.xDice)||'').trim();
+  if(!d)return '';
+  var t=String((card&&card.xType)||'').trim();
+  return t?(d+' '+(XDMG_INSTR[t]||t.toLowerCase())):d;
+}
 
 /* readForm */
 function readForm(){
@@ -1194,6 +1279,9 @@ function readForm(){
     d2:document.getElementById('fd2').value,
     strBonus:document.getElementById('fstr').value.trim(),
     profBonus:document.getElementById('fpr').value.trim(),
+    magicBonus:_magVal(),
+    xDice:document.getElementById('fxd').value.trim(),
+    xType:document.getElementById('fxt').value,
     wgt:document.getElementById('fwgt').value.trim(),
     r1:document.getElementById('fr1').value.trim(),r2:document.getElementById('fr2').value.trim(),
     desc:document.getElementById('fdesc').value,
@@ -1434,9 +1522,27 @@ function _fitProps(el){
 
 function renderCard(data){
   var d=R[data.rarity||'common'];
-  var sb=fmtB(data.strBonus),pb2=fmtB(data.profBonus);
+  /* Магический бонус предмета идёт и в атаку, и в урон; характеристика — только
+     в урон, владение — только в атаку. Строку «Атака» показываем, лишь когда
+     задано хотя бы одно слагаемое, иначе у всех немагических шаблонов был бы «+0». */
+  function _n(v){var n=parseInt(v,10);return isNaN(n)?0:n;}
+  function _has(v){return v!==''&&v!==null&&v!==undefined;}
+  var mg=_n(data.magicBonus);
+  var sb=fmtB(_n(data.strBonus)+mg);
+  var atk=(_has(data.strBonus)||_has(data.profBonus)||mg)
+    ?fmtB(_n(data.strBonus)+_n(data.profBonus)+mg):'';
   document.getElementById('pnm').textContent=data.name||'Оружие';
-  _fitName();document.getElementById('pc').classList.toggle('no-img',!!data.noImg);
+  /* плашку ставим до _fitName: она забирает ширину у строки названия */
+  var mgEl=document.getElementById('pmag');
+  if(mg){mgEl.textContent=fmtB(mg);mgEl.style.display='';}else{mgEl.style.display='none';}
+  var tmEl=document.querySelector('.c-title-main');
+  tmEl.classList.toggle('has-mag',!!mg);
+  _fitName();
+  /* Плашка — сестра .c-name, переменную кегля _fitName ставит на само имя,
+     поэтому дублируем её на родителя: top плашки считается от кегля названия,
+     иначе при ужатом имени плашка не совпадёт со строкой названия по высоте. */
+  tmEl.style.setProperty('--name-fs',getComputedStyle(document.getElementById('pnm')).fontSize);
+document.getElementById('pc').classList.toggle('no-img',!!data.noImg);
   var co=document.getElementById('p-cost');
   if(data.cost){co.textContent=data.cost+' '+(data.coin||'зм');co.style.visibility='visible';}
   else{co.style.visibility='hidden';}
@@ -1445,10 +1551,10 @@ function renderCard(data){
   if(dlp.length){dl.textContent=dlp.join(' · ');dl.style.display='block';}else{dl.style.display='none';}
   var sr=document.getElementById('pst');sr.innerHTML='';
   function addS(l,v){if(!v)return;var el=document.createElement('div');el.className='cst';el.innerHTML='<div class="cst-l">'+l+'</div><div class="cst-v">'+v+'</div>';sr.appendChild(el);}
+  if(atk)addS('Атака',atk);
   if(data.d1)addS('Урон',data.d1+(sb||''));
   if(data.d2)addS('Две руки',data.d2+(sb||''));
   if(data.r1||data.r2)addS('Дист.',(data.r1&&data.r2)?(data.r1+'/'+data.r2):(data.r1||data.r2));
-  if(pb2)addS('Влад.',pb2);
   var atEl=document.getElementById('p-attune');
   if(atEl)atEl.style.display=(data.attune&&data.attune.indexOf('Требует')===0)?'':'none';
   /* боеприпас — плашка как «Материал»; мастерство — как «На высоких уровнях» */
@@ -1462,6 +1568,7 @@ function renderCard(data){
   _plate('pmastery','c-mastery-l','МАСТ.',data.mastery);
   var row=document.getElementById('pamrow');
   if(data.ammo||data.mastery){row.style.display='flex';_fitLine(row);}else{row.style.display='none';}
+  _plate('pxdmg','c-ammo-l','ДОП. УРОН',xDmgText(data));
   /* свойства — теги-пилюли (боеприпас-свойство исключаем, оно уже отдельной строкой) */
   var prEl=document.getElementById('pprops');prEl.innerHTML='';
   var props=(data.props||[]).filter(function(p){return !(data.ammo&&p==='Боеприпас');});
@@ -1490,6 +1597,9 @@ function applyFormData(data){
   document.getElementById('fd2').value=data.d2||'';
   document.getElementById('fstr').value=data.strBonus||'';
   document.getElementById('fpr').value=data.profBonus||'';
+  _magSet(data.magicBonus);
+  document.getElementById('fxd').value=data.xDice||'';
+  document.getElementById('fxt').value=data.xType||'';
   document.getElementById('fwgt').value=data.wgt||'';
   document.getElementById('fr1').value=data.r1||'';
   document.getElementById('fr2').value=data.r2||'';
@@ -1515,10 +1625,11 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');});
   document.querySelector('.rp[data-r="nonmagic"]').classList.add('on');
   document.getElementById('rn').textContent=R.nonmagic.l;
-  ['fn','fc','fstr','fpr','fwgt','fr1','fr2','fdesc','fflv'].forEach(function(id){document.getElementById(id).value='';});
+  _magSet('');
+  ['fn','fc','fstr','fpr','fxd','fwgt','fr1','fr2','fdesc','fflv'].forEach(function(id){document.getElementById(id).value='';});
   document.getElementById('fcoin').value='зм';
   document.getElementById('fmastery').value='';
-  ['fk','fcat','fdt','fd1','fd2','fammo','fattune'].forEach(function(id){document.getElementById(id).selectedIndex=0;});
+  ['fk','fcat','fdt','fd1','fd2','fxt','fammo','fattune'].forEach(function(id){document.getElementById(id).selectedIndex=0;});
   document.getElementById('attune-wrap').style.display='none';
   document.querySelectorAll('#pg input[type=checkbox]').forEach(function(cb){cb.checked=false;});
   imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();
@@ -1536,7 +1647,7 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   document.getElementById('pds').textContent='';
   document.getElementById('pwgt').textContent='';
   document.getElementById('pbk').textContent='';
-  setCardImg(null);applyR('nonmagic');applyPal('nonmagic');var _at=document.getElementById('p-attune');if(_at)_at.style.display='none';['pammo','pmastery','pamrow'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='none';});
+  setCardImg(null);applyR('nonmagic');applyPal('nonmagic');var _at=document.getElementById('p-attune');if(_at)_at.style.display='none';['pammo','pmastery','pamrow','pxdmg','pmag'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='none';});document.querySelector('.c-title-main').classList.remove('has-mag');
   mkCounter('fn','cnt-fn',34);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);
   toast('Поля сброшены');
 });
@@ -1591,7 +1702,7 @@ function makeCollItem(card){
   var item=document.createElement('div');
   item.className='coll-item'+(selMode?' sel-mode':'')+(selectedIds.has(card.id)?' selected':'');
   var cbHtml='<input type="checkbox" class="coll-item-cb"'+(selectedIds.has(card.id)?' checked':'')+'/>';
-  item.innerHTML=cbHtml+'<div class="coll-item-thumb"><div class="coll-item-stripe" style="background:'+d.a+';"></div>'+(card.img?'<img src="'+card.img+'" alt=""/>':'')+'</div><div class="coll-item-info"><div class="coll-item-name">'+(card.name||DEFAULT_NAME)+'</div><div class="coll-item-sub">'+collItemSub(card)+'</div></div>'+(selMode?'':'<button class="coll-item-dup" title="Дублировать"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="coll-item-del">✕</button>');
+  item.innerHTML=cbHtml+'<div class="coll-item-thumb"><div class="coll-item-stripe" style="background:'+(d.gem||d.a)+';"></div>'+(card.img?'<img src="'+card.img+'" alt=""/>':'')+'</div><div class="coll-item-info"><div class="coll-item-name">'+(card.name||DEFAULT_NAME)+'</div><div class="coll-item-sub">'+collItemSub(card)+'</div></div>'+(selMode?'':'<button class="coll-item-dup" title="Дублировать"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button><button class="coll-item-del">✕</button>');
   if(!selMode){
     item.querySelector('.coll-item-del').addEventListener('click',function(e){
       e.stopPropagation();
@@ -1651,7 +1762,7 @@ function renderCollection(){
 
     var head=document.createElement('div');
     head.className='coll-sect-head';
-    head.innerHTML='<div class="coll-sect-dot" style="background:'+d.a+';"></div>'
+    head.innerHTML='<div class="coll-sect-dot" style="background:'+(d.gem||d.a)+';"></div>'
       +'<span class="coll-sect-label">'+d.l+'</span>'
       +'<span class="coll-sect-count">'+cards.length+'</span>'
       +'<div class="coll-sect-line"></div>'
