@@ -286,23 +286,45 @@ table.gx-t{width:100%;border-collapse:collapse;font-size:14px;}
 
 /* панель карточки справа */
 .gx-side{width:216px;flex-shrink:0;border-left:1px solid rgba(90,72,32,.18);background:#e6dfcd;padding:14px;display:flex;flex-direction:column;align-items:center;gap:9px;overflow-y:auto;}
-.gx-card{width:142px;height:198px;border-radius:6px;border:2px solid #888077;background:#e8dcc8;box-shadow:2px 2px 0 #5a5030;display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;}
-.gx-stripe{height:5px;flex-shrink:0;}
-.gx-img{flex:1;background:#cfc0a0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-.gx-img img{width:100%;height:100%;object-fit:cover;display:block;}
-.gx-ph{opacity:.32;color:#2a1e0a;display:flex;}
-.gx-foot{padding:6px 7px;background:rgba(0,0,0,.06);}
-.gx-cn{font-family:'Cinzel',serif;font-size:9.5px;font-weight:700;color:#2a1e0a;line-height:1.25;}
-.gx-ce{font-size:8px;font-style:italic;color:#7a6850;}
+/* Заголовок панели: название и английское имя стоят НАД картинкой — это
+   заголовок карточки, а не подпись на обложке. */
+.gx-head{width:100%;}
+.gx-cn{font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:#2a1e0a;line-height:1.25;}
+.gx-ce{font-size:11px;font-style:italic;color:#7a6850;margin-top:1px;}
+/* Слот картинки повторяет генератор: та же тёмная рамка с внутренним волоском
+   (.c-img в card-new.css) и ровно та пропорция, к которой режет кроп —
+   CARD_RATIO = 296/149 в crop.js. Поэтому изображение из генератора просто
+   уменьшается один в один. object-fit:contain, а не cover: у правильно
+   обрезанной картинки результат тот же, но случайная нестандартная не потеряет
+   края. Нет картинки — остаётся пустой слот. */
+/* box-sizing:content-box намеренно: пропорция должна лечь на саму картинку, а не
+   на рамку вместе с ней, иначе внутри остаются тонкие поля и «уменьшение один
+   в один» перестаёт быть точным. */
+.gx-img{width:100%;aspect-ratio:296/149;box-sizing:content-box;border:2px solid #3a2810;border-radius:3px;background:#cfc0a0;position:relative;overflow:hidden;flex-shrink:0;}
+.gx-img::after{content:'';position:absolute;inset:4px;border:1px solid rgba(160,120,56,.7);border-radius:2px;pointer-events:none;}
+.gx-img img{width:100%;height:100%;object-fit:contain;display:block;}
 .gx-st{width:100%;font-size:13px;}
 .gx-str{display:flex;justify-content:space-between;gap:9px;padding:5px 0;border-bottom:0.5px solid rgba(90,72,32,.16);}
 .gx-str .k{color:#8a7550;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.05em;text-transform:uppercase;align-self:center;white-space:nowrap;}
 .gx-str .v{color:#2a1e0a;text-align:right;}
 .gx-acts{width:100%;display:flex;flex-direction:column;gap:5px;}
-.gx-btn{width:100%;font-family:'Cinzel',serif;font-size:9.5px;font-weight:600;letter-spacing:.06em;text-align:center;color:#5f4d26;border:0.5px solid rgba(90,72,32,.35);border-radius:7px;padding:6px 0;background:rgba(90,72,32,.07);cursor:pointer;transition:background-color .13s;}
+.gx-btn{width:100%;font-family:'Cinzel',serif;font-size:9.5px;font-weight:600;letter-spacing:.06em;text-align:center;color:#5f4d26;border:0.5px solid rgba(90,72,32,.35);border-radius:7px;padding:6px 0;background:rgba(90,72,32,.07);cursor:pointer;transition:background-color .13s,color .13s;}
 .gx-btn:hover{background:rgba(90,72,32,.16);}
+.gx-btn:focus-visible{outline:2px solid var(--gold-l);outline-offset:2px;}
+/* «Открыть в генераторе» — второй по важности: тёплая охра, но всё ещё плашка */
 .gx-btn-main{background:rgba(200,148,26,.2);border-color:rgba(150,110,30,.45);color:#4d3d18;}
-.gx-btn-lite{background:transparent;color:#8a7550;}
+.gx-btn-main:hover{background:rgba(200,148,26,.32);}
+/* «Полное описание» — то, зачем строку и открывают. Тот же тёмный чернильный тон,
+   что у полосы генератора: панель и указатель говорят одним языком, и кнопка
+   читается как корешок книги, а не как ещё одна плашка в стопке. */
+.gx-btn-read{display:flex;align-items:center;justify-content:center;gap:7px;
+  background:#4a3f28;border-color:#4a3f28;color:#f0e4c0;font-size:10.5px;padding:9px 0;
+  letter-spacing:.09em;box-shadow:0 1px 0 rgba(90,72,32,.35);}
+.gx-btn-read svg{width:14px;height:14px;flex-shrink:0;color:#d8c48c;}
+.gx-btn-read:hover{background:#5c4f33;border-color:#5c4f33;color:#fbf1d8;}
+/* экспорт — парой в строку: две тихие кнопки не должны выглядеть как список дел */
+.gx-btn-row{display:flex;gap:5px;width:100%;}
+.gx-btn-row .gx-btn{font-size:9px;}
 .gx-snote{font-size:9.5px;color:#8a7550;text-align:center;line-height:1.45;margin-top:20px;}
 @media (max-width:899px){.gx-side{display:none;}}
 
@@ -677,7 +699,28 @@ function describeCard(card){
   var html=(rows.length?'<div class="cf-rows">'+rows.join('')+'</div>':'')+blocks.join('');
   return html||'<div class="cf-empty">(свойства не заполнены)</div>';
 }
-var R={nonmagic:{l:'Немагический',a:'#f5f5f5'},common:{l:'Обычный',a:'#888077'},uncommon:{l:'Необычный',a:'#52aa40'},rare:{l:'Редкий',a:'#4a8ccc'},veryrare:{l:'Очень редкий',a:'#9870cc'},legendary:{l:'Легендарный',a:'#e09820'}};
+/* Палитра редкостей (общая для генераторов, кроме kits — у него своя
+   единственная «Немагический»). Порядок секций RARITY_ORDER — в collection.js.
+   Поля a/cb/cs — старый дизайн (полоса-акцент, рамка, тень); grad/gem — новый
+   (градиент шапки тёмный→средний→тёмный + акцентный гем). Пока grad/gem читает
+   только weapon-2014; остальные генераторы живут на a/cb/cs до своей очереди. */
+var R={nonmagic:{l:'Немагический',a:'#f5f5f5',cb:'#f5f5f5',cs:'#cdc8be',grad:['#979b99','#d2d5d3','#979b99'],gem:'#b7bab9'},
+  common:   {l:'Обычный',     a:'#888077',cb:'#888077',cs:'#5a5030',grad:['#625b4e','#8a8272','#625b4e'],gem:'#7a7264'},
+  uncommon: {l:'Необычный',   a:'#52aa40',cb:'#52aa40',cs:'#286820',grad:['#356a2b','#5a9a4c','#356a2b'],gem:'#4a8a3c'},
+  rare:     {l:'Редкий',      a:'#4a8ccc',cb:'#4a8ccc',cs:'#1e4c88',grad:['#24557f','#4f92cc','#24557f'],gem:'#3f82c0'},
+  veryrare: {l:'Очень редкий',a:'#9870cc',cb:'#9870cc',cs:'#503888',grad:['#533a86','#9a72cc','#533a86'],gem:'#8a5fbf'},
+  legendary:{l:'Легендарный', a:'#e09820',cb:'#e09820',cs:'#906008',grad:['#8f5f12','#e2a034','#8f5f12'],gem:'#d18a24'}
+};
+
+/* Новый дизайн: градиент шапки (тёмный→средний→тёмный) и акцентный гем ставятся
+   inline, поэтому applyR их не чистит — вызывать при рендере, сбросе и на старте.
+   Полосы ps/pbs и гемы pgm/pbgm есть не на всех страницах: чего нет, то пропускаем. */
+function applyPal(rar){
+  var d=R[rar]||R.common||R[Object.keys(R)[0]];
+  if(d.grad){var g='linear-gradient(90deg,'+d.grad[0]+','+d.grad[1]+','+d.grad[0]+')';
+    ['ps','pbs'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=g;});}
+  if(d.gem){['pgm','pbgm'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=d.gem;});}
+}
 var COLLECTIONS=[
   {key:'dnd_cardforge_weapon2014',src:'weapon2014',group:'weapon',label:'Оружие 2014',gen:'weapon-2014.html',idb:'dnd_weapon2014_imgs'},
   {key:'dnd_cardforge_weapon2024',src:'weapon2024',group:'weapon',label:'Оружие 2024',gen:'weapon-2024.html',idb:'dnd_weapon2024_imgs'},
@@ -820,8 +863,19 @@ function galStealth(c){return c.stealth===true?'помеха':'без помех
 function galSave(c){var s=c.savingThrow;return s?((c.saveStat||'Тел')+' '+s):'';}
 function galWgt(c){return c.wgt?(c.wgt+' фнт'):'—';}
 function galCost(c){return c.cost?(c.cost+' '+(c.coin||'зм')):'—';}
-function galDot(c){var d=R[c.rarity||'common']||R.common||R[Object.keys(R)[0]];
-  return '<span class="gx-dot" style="background:'+(d&&d.a?d.a:'#888077')+'"></span>';}
+/* Цвет карточки. У ядов и произвольных редкости нет вовсе — генератор красит их
+   собственной палитрой (полынь и охра), поэтому она перебивает шкалу редкости.
+   Значения держим здесь же, чтобы галерея не расходилась с генератором:
+   яды — poisons.html (_backPal/applyPoisonPal), произвольные — custom.html (STRIPE). */
+var GAL_GROUPPAL={
+  poisons:{gem:'#63802f',grad:['#3a4a1e','#63802f']},
+  custom:{gem:'#8a6b2e'}
+};
+function galRarity(c){return R[c.rarity||'common']||R.common||R[Object.keys(R)[0]];}
+function galPal(c){return GAL_GROUPPAL[c._group]||galRarity(c);}
+function galRarityColor(c){var d=galPal(c);return (d&&(d.gem||d.a))||'#888077';}
+function galDot(c){
+  return '<span class="gx-dot" style="background:'+galRarityColor(c)+'"></span>';}
 function galNameCell(c){
   return '<div class="gx-tn">'+galDot(c)+galIcon(c)+'<span>'+_gxEsc(c.name||'Без названия')+'</span>'+
     (c.nameEn?'<span class="gx-en">'+_gxEsc(c.nameEn)+'</span>':'')+'</div>';
@@ -978,30 +1032,84 @@ function galRenderSide(){
   var host=document.getElementById('gx-side');if(!host)return;
   var c=galCurrent;
   if(!c){host.innerHTML='<div class="gx-snote">Выберите строку —<br/>карточка появится здесь</div>';return;}
-  var d=R[c.rarity||'common']||R.common||R[Object.keys(R)[0]];
-  var col=(d&&d.a)?d.a:'#888077';
+  var d=galPal(c);
+  /* Панель показывает ВСЕ свойства раздела, кроме описания и цитаты — те живут
+     в полном описании. Пустые поля не выводим: add сам их отсеивает. */
   var rows=[];
-  function add(k,v){if(v&&v!=='—')rows.push([k,v]);}
-  if(c._group==='weapon'){add('Урон',(galDmg(c)||'')+(c.dt?' '+c.dt:''));add('Класс',c.cat);add('Свойства',galProps(c));}
-  else if(c._group==='armor'){add('КБ',c.acDisplay);add('Категория',c.armorType);add('Скрытность',galStealth(c));add('Надевание',c.donnTime);}
-  else if(c._group==='poisons'){add('Тип',c.poisonType);add('Спасбросок',galSave(c));add('Урон',c.damageDice);add('Длительность',c.duration);}
-  else if(c._group==='tools'){add('Тип',c.toolType);add('Характеристика',c.stat);}
-  else if(c._group==='equipment'){add('Категория',c.category);}
-  else{add('Тип',c.cardType);}
+  function add(k,v){
+    if(v===true)v='да';
+    if(v==null)return;
+    v=String(v).trim();
+    if(!v||v==='—'||v==='0')return;
+    rows.push([k,v]);
+  }
+  if(c._group==='weapon'){
+    add('Редакция',c._source==='weapon2024'?'2024':c._source==='weapon2014'?'2014':c.edition);
+    add('Класс',c.cat);
+    add('Тип',c.kind);
+    add('Урон',galDmg(c));
+    add('Тип урона',c.dt);
+    add('Универсальный',c.d1&&c.d2?c.d2:'');
+    add('Дистанция',c.r1?(c.r1+(c.r2?' / '+c.r2:'')):'');
+    add('Свойства',galProps(c));
+    add('Мастерство',c.mastery);
+    add('Боеприпас',c.ammo);
+    add('Бонус к урону',c.strBonus);
+    add('Бонус владения',c.profBonus);
+  }
+  else if(c._group==='armor'){
+    add('Категория',c.armorType);
+    add('КБ',c.acDisplay);
+    add('Материал',c.material);
+    add('Требование Силы',c.strReq);
+    add('Скрытность',galStealth(c));
+    add('Надевание',c.donnTime);
+    add('Снятие',c.doffTime);
+  }
+  else if(c._group==='poisons'){
+    add('Тип',c.poisonType);
+    add('Спасбросок',galSave(c));
+    add('Урон',c.damageDice);
+    add('Длительность',c.duration);
+  }
+  else if(c._group==='tools'){
+    add('Тип инструмента',c.toolType);
+    add('Характеристика',c.stat);
+  }
+  else if(c._group==='equipment'){
+    add('Категория',c.category);
+    add('Материал',c.material);
+  }
+  else{add('Тип карточки',c.cardType);}
+  add('Условие',c.condition);
+  /* настройку показываем, только когда она нужна: «Не требует настройки»
+     стоит у большинства предметов и в списке свойств только шумит */
+  if(typeof _attuneState==='function'&&_attuneState(c)==='yes')add('Настройка',c.attune);
   if(c.wgt)add('Вес',c.wgt+' фнт');
   if(c.cost)add('Цена',c.cost+' '+(c.coin||'зм'));
   if(d&&d.l)add('Редкость',d.l);
-  var img=c.img?'<img src="'+c.img+'" alt=""/>':'<div class="gx-ph">'+galIcon(c,30)+'</div>';
-  host.innerHTML='<div class="gx-card" style="border-color:'+col+'"><div class="gx-stripe" style="background:'+col+'"></div>'+
-    '<div class="gx-img">'+img+'</div><div class="gx-foot"><div class="gx-cn">'+_gxEsc(c.name||'Без названия')+'</div>'+
-    (c.nameEn?'<div class="gx-ce">'+_gxEsc(c.nameEn)+'</div>':'')+'</div></div>'+
+  /* Название стоит НАД картинкой, а не поверх неё: в панели это заголовок, а не
+     подпись на обложке. Слот картинки повторяет генератор — та же тёмная рамка с
+     внутренним волоском и та же пропорция, поэтому изображение просто уменьшается,
+     а не перекадрируется под другую ориентацию. Картинки нет — слота нет вовсе,
+     как у карточки «без картинки» в генераторе (.dc.no-img .c-img). */
+  host.innerHTML='<div class="gx-head"><div class="gx-cn">'+_gxEsc(c.name||'Без названия')+'</div>'+
+    (c.nameEn?'<div class="gx-ce">'+_gxEsc(c.nameEn)+'</div>':'')+'</div>'+
+    (c.img?'<div class="gx-img"><img src="'+c.img+'" alt=""/></div>':'')+
     '<div class="gx-st">'+rows.map(function(r){
       return '<div class="gx-str"><span class="k">'+r[0]+'</span><span class="v">'+_gxEsc(r[1])+'</span></div>';}).join('')+'</div>'+
+    /* Порядок по тому, зачем сюда приходят: сперва прочитать карточку целиком,
+       потом взять её в работу, и лишь затем выгрузить. Экспорт — парой в строку,
+       чтобы стопка кнопок не съедала высоту панели. */
     '<div class="gx-acts">'+
-      '<button class="gx-btn" id="gx-save">Сохранить PNG</button>'+
-      '<button class="gx-btn" id="gx-print">Печать</button>'+
+      '<button class="gx-btn gx-btn-read" id="gx-more">'+
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5.5c3-1.2 6-1.2 9 0v14c-3-1.2-6-1.2-9 0z"/><path d="M21 5.5c-3-1.2-6-1.2-9 0v14c3-1.2 6-1.2 9 0z"/></svg>'+
+        'Полное описание</button>'+
       '<button class="gx-btn gx-btn-main" id="gx-open">Открыть в генераторе</button>'+
-      '<button class="gx-btn gx-btn-lite" id="gx-more">Все поля</button>'+
+      '<div class="gx-btn-row">'+
+        '<button class="gx-btn" id="gx-save">Сохранить</button>'+
+        '<button class="gx-btn" id="gx-print">Печать</button>'+
+      '</div>'+
     '</div>';
   var bs=document.getElementById('gx-save');if(bs)bs.onclick=function(){saveCards([c]);};
   var bp=document.getElementById('gx-print');if(bp)bp.onclick=function(){openPrintModal([c]);};
@@ -1097,8 +1205,12 @@ var toastTimer=null;
    Из страницы нужны: allCards, GROUPS, renderGrid. */
 var FILT={query:''};
 var FILTER_DEFS=[];
-var _RLABEL={nonmagic:'Немагический',common:'Обычный',uncommon:'Необычный',rare:'Редкий',veryrare:'Очень редкий',legendary:'Легендарный'};
-var _RDOT={nonmagic:'#f5f5f5',common:'#888077',uncommon:'#52aa40',rare:'#4a8ccc',veryrare:'#9870cc',legendary:'#e09820'};
+/* Подписи и цвета редкости берём из общего rarities.js, а не держим копию:
+   копия отставала — в галереях оставались старые плоские цвета, пока карточки
+   уже рисовались новой палитрой (grad/gem). Запасные значения нужны книге
+   заклинаний: она rarities.js не подключает и редкостью не оперирует. */
+function _RLBL(v){return (typeof R!=='undefined'&&R[v]&&R[v].l)||v;}
+function _RCOL(v){var d=(typeof R!=='undefined')?R[v]:null;return (d&&(d.gem||d.a))||'#888077';}
 var _RSEQ=['nonmagic','common','uncommon','rare','veryrare','legendary'];
 function _attuneState(c){var a=(c.attune||'').trim().toLowerCase();return(!a||a==='не требуется'||a==='не требует настройки'||a==='нет')?'no':'yes';}
 function _galOn(){return typeof GAL_SEC!=='undefined';}
@@ -1122,7 +1234,7 @@ function _galVals(c,f){
   return String(v).split(',').map(function(x){return x.trim();});
 }
 function _galLabel(f,v){
-  if(f==='_rarity')return _RLABEL[v]||v;
+  if(f==='_rarity')return _RLBL(v);
   if(f==='_attune')return v==='yes'?'Требует настройки':'Не требует настройки';
   if(f==='_stealth')return v==='dis'?'С помехой':'Без помехи';
   return v;
@@ -1143,7 +1255,7 @@ function _galOpts(f){
       return ra!==rb?ra-rb:a.localeCompare(b,'ru');});
   }
   return vals.map(function(v){
-    return {v:v,l:_galLabel(f,v),dot:(f==='_rarity'?_RDOT[v]:null)};});
+    return {v:v,l:_galLabel(f,v),dot:(f==='_rarity'?_RCOL(v):null)};});
 }
 function _galDefs(){
   return (GAL_FDEFS[GAL_SEC]||[]).map(function(d){
@@ -1492,7 +1604,10 @@ function gaExitSel(clear){gaSelectMode=false;if(clear)gaSelected={};document.bod
   /* выделение живёт и на плитках книги заклинаний, и на строках указателя/таблицы */
   var sClear=document.getElementById('sel-clear');if(sClear)sClear.addEventListener('click',function(){gaSelected={};[].forEach.call(document.querySelectorAll('.gsel'),function(el){el.classList.remove('gsel');});_gaUpdateSelBar();});
 })();
-loadAll();buildSections();buildFilters();renderGrid();galRenderSide();loadImages(renderGrid);
+/* картинки лежат в IndexedDB и приезжают позже — перерисовываем и панель,
+   иначе у выбранной до загрузки карточки слот так и останется пустым */
+loadAll();buildSections();buildFilters();renderGrid();galRenderSide();
+loadImages(function(){renderGrid();galRenderSide();});
 })();
 </script>
 <script>
