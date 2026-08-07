@@ -821,6 +821,8 @@ function applyPal(rar){
   if(d.gem){['pgm','pbgm'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=d.gem;});}
 }
 var LS_KEY='dnd_cardforge_tools';
+/* панель коллекции: без секций редкости, полоски латунные (см. collection.js) */
+var COLL_PAL={gem:'#8b6914'};
 var IDB_NAME='dnd_tools_imgs';
 var cr='nonmagic', imgDataUrl=null, collection=[], currentCard=null;
 var IDB_STORE='imgs',_idb=null;
@@ -1453,7 +1455,7 @@ function _useSet(list){
 }
 _useSet([]);_edSync();
 
-function readForm(){return{type:'tool',rarity:cr,toolType:document.getElementById('ftooltype').value,name:document.getElementById('fn').value.trim(),cost:document.getElementById('fc').value.trim(),coin:document.getElementById('fcoin').value,wgt:document.getElementById('fwgt').value.trim(),stat:document.getElementById('fstat').value,edition:_edVal(),use:_useGet(),craft:document.getElementById('fcraft').value.trim(),desc:document.getElementById('fdesc').value,noImg:document.getElementById('f-noimg').checked,
+function readForm(){return{type:'tool',toolType:document.getElementById('ftooltype').value,name:document.getElementById('fn').value.trim(),cost:document.getElementById('fc').value.trim(),coin:document.getElementById('fcoin').value,wgt:document.getElementById('fwgt').value.trim(),stat:document.getElementById('fstat').value,edition:_edVal(),use:_useGet(),craft:document.getElementById('fcraft').value.trim(),desc:document.getElementById('fdesc').value,noImg:document.getElementById('f-noimg').checked,
     img:imgDataUrl,rawImg:rawImgDataUrl};}
 function renderCard(data){document.getElementById('p-type').textContent='Инструмент';document.getElementById('pnm').textContent=data.name||'Инструменты';
   _fitName();document.getElementById('pc').classList.toggle('no-img',!!data.noImg);document.getElementById('pwgt').textContent=data.wgt?data.wgt+' фнт.':'';
@@ -1481,7 +1483,7 @@ function renderCard(data){document.getElementById('p-type').textContent='Инс�
   else{cr2.style.display='none';}
   document.getElementById('prule-desc').style.display=(data.toolType||(ed24&&data.stat)||use.length||crv)?'':'none';
   setCardImg(data.img||null);
-applyR(data.rarity||'common');applyPal(data.rarity||'common');splitDesc(data);}
+applyToolPal();splitDesc(data);}
 /* Оборотная сторона с «рубашкой» (equipment/tools/kits/poisons). */
 function renderBackCard(data){var hasBack=data.back&&data.back.trim();var rubashka=document.getElementById('pb-rubashka');var pbs=document.getElementById('pbs');var pbs2=document.getElementById('pbs2');var pbBody=document.getElementById('pb-body');var pbFoot=document.getElementById('pb-foot');var pbDesc=document.getElementById('pb-desc');var pbgm=document.getElementById('pbgm');if(hasBack){rubashka.style.display='none';pbs.style.display='';pbs2.style.display='';pbBody.style.display='flex';pbFoot.style.display='';pbDesc.textContent=data.back;/* Палитра оборота повторяет лицевую. У генераторов без редкости (яды) она
    фиксированная — там страница объявляет _backPal, и он имеет приоритет. */
@@ -1489,9 +1491,20 @@ if(typeof _backPal==='function'){_backPal(pbs,pbgm);}
 else{var d=R[data.rarity||'common']||R.common||R[Object.keys(R)[0]];
   pbs.style.background=d.grad?'linear-gradient(90deg,'+d.grad[0]+','+d.grad[1]+','+d.grad[0]+')':d.a;
   pbgm.style.background=d.gem||d.a;}}else{rubashka.style.display='block';pbs.style.display='none';pbs2.style.display='none';pbBody.style.display='none';pbFoot.style.display='none';}}
-function applyFormData(data){cr=data.rarity||'nonmagic';document.getElementById('ftooltype').value=data.toolType||'';document.getElementById('fn').value=data.name||'';document.getElementById('fc').value=data.cost||'';document.getElementById('fcoin').value=data.coin||'зм';document.getElementById('fwgt').value=data.wgt||'';document.getElementById('fstat').value=data.stat||'';_edSet(data.edition||'2024');_useSet(data.use);document.getElementById('fcraft').value=data.craft||'';document.getElementById('fdesc').value=data.desc||'';applyImgThumb(data);mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcraft','cnt-craft',120);}
-document.getElementById('btn-reset').addEventListener('click',function(){if(!confirm('Сбросить все поля?'))return;cr='nonmagic';['fn','fc','fwgt','fdesc'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('fcoin').value='зм';document.getElementById('ftooltype').selectedIndex=0;document.getElementById('fstat').selectedIndex=0;document.getElementById('fcraft').value='';_edSet('2024');_useSet([]);imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('f-img').value='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';setCardImg(null);applyR('nonmagic');applyPal('nonmagic');mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcraft','cnt-craft',120);renderCard({rarity:'nonmagic'});toast('Поля сброшены');});
-applyPal(cr);
+/* Редкости у инструментов нет — фирменная латунь, как полынь у ядов.
+   Цвета продублированы в GAL_GROUPPAL.tools (gallery-index.js) — менять парой.
+   _backPal перебивает раскраску оборота по data.rarity в renderback.js. */
+function _backPal(stripe,gem){
+  if(stripe)stripe.style.background='linear-gradient(90deg,#5a430d,#8b6914,#5a430d)';
+  if(gem)gem.style.background='#8b6914';}
+function applyToolPal(){
+  var g='linear-gradient(90deg,#5a430d,#8b6914,#5a430d)';
+  ['ps','pbs'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=g;});
+  ['pgm','pbgm'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background='#8b6914';});
+}
+function applyFormData(data){document.getElementById('ftooltype').value=data.toolType||'';document.getElementById('fn').value=data.name||'';document.getElementById('fc').value=data.cost||'';document.getElementById('fcoin').value=data.coin||'зм';document.getElementById('fwgt').value=data.wgt||'';document.getElementById('fstat').value=data.stat||'';_edSet(data.edition||'2024');_useSet(data.use);document.getElementById('fcraft').value=data.craft||'';document.getElementById('fdesc').value=data.desc||'';applyImgThumb(data);mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcraft','cnt-craft',120);}
+document.getElementById('btn-reset').addEventListener('click',function(){if(!confirm('Сбросить все поля?'))return;['fn','fc','fwgt','fdesc'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('fcoin').value='зм';document.getElementById('ftooltype').selectedIndex=0;document.getElementById('fstat').selectedIndex=0;document.getElementById('fcraft').value='';_edSet('2024');_useSet([]);imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('f-img').value='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';setCardImg(null);mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcraft','cnt-craft',120);renderCard({});toast('Поля сброшены');});
+applyToolPal();
 
 var DEFAULT_NAME='Инструмент';
 function collItemSub(card){return card.toolType||'Инструмент';}
@@ -1598,7 +1611,7 @@ var RARITY_ORDER=['nonmagic','common','uncommon','rare','veryrare','legendary'];
 var collapsedSections={};
 
 function makeCollItem(card){
-  var d=R[card.rarity||'common'];
+  var d=(typeof COLL_PAL!=='undefined'&&COLL_PAL)?COLL_PAL:R[card.rarity||'common'];
   var item=document.createElement('div');
   item.className='coll-item'+(selMode?' sel-mode':'')+(selectedIds.has(card.id)?' selected':'');
   var cbHtml='<input type="checkbox" class="coll-item-cb"'+(selectedIds.has(card.id)?' checked':'')+'/>';
@@ -1641,6 +1654,17 @@ function renderCollection(){
   Array.from(list.children).forEach(function(el){if(el.id!=='coll-empty')el.remove();});
   if(!collection.length){empty.style.display='';updateSelActions();return;}
   empty.style.display='none';
+
+  /* Страницы без редкости (яды, инструменты, произвольные) объявляют COLL_PAL —
+     секции по шкале редкости им не нужны: один плоский список по алфавиту,
+     полоска — фирменный цвет раздела (см. makeCollItem). */
+  if(typeof COLL_PAL!=='undefined'&&COLL_PAL){
+    collection.slice().sort(function(a,b){return(a.name||'').localeCompare(b.name||'','ru');})
+      .forEach(function(card){list.appendChild(makeCollItem(card));});
+    updateSelActions();
+    applyCollSearch();
+    return;
+  }
 
   /* group by rarity */
   var groups={};
@@ -1690,14 +1714,15 @@ var collSearchQuery='';
 function applyCollSearch(){
   var q=collSearchQuery.toLowerCase().trim();
   document.getElementById('coll-search-clear').style.display=q?'':'none';
+  /* элементы ищем по всему списку: на COLL_PAL-страницах они лежат
+     без секций-обёрток, прямо в #coll-list */
+  document.querySelectorAll('#coll-list .coll-item').forEach(function(item){
+    var name=(item.querySelector('.coll-item-name')||{}).textContent||'';
+    item.style.display=(!q||name.toLowerCase().includes(q))?'':'none';
+  });
   document.querySelectorAll('.coll-sect-wrap').forEach(function(wrap){
     var visible=0;
-    wrap.querySelectorAll('.coll-item').forEach(function(item){
-      var name=(item.querySelector('.coll-item-name')||{}).textContent||'';
-      var show=!q||name.toLowerCase().includes(q);
-      item.style.display=show?'':'none';
-      if(show)visible++;
-    });
+    wrap.querySelectorAll('.coll-item').forEach(function(item){if(item.style.display!=='none')visible++;});
     wrap.style.display=visible===0&&q?'none':'';
   });
 }
@@ -1928,6 +1953,9 @@ function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.c
 
 applyR('common');
 loadFromLS();
+/* редкость у инструментов отменена — вычищаем мёртвый ключ из карточек,
+   сохранённых до отмены (loadFromLS выше уже заполнил collection синхронно) */
+(function(){var ch=false;collection.forEach(function(c){if('rarity' in c){delete c.rarity;ch=true;}});if(ch)saveToLS();})();
 /* Внешний рендер карточки для галерей (collection/templates).
    Галерея грузит страницу-генератор в скрытый iframe и вызывает эту функцию,
    переиспользуя applyFormData+renderCard страницы и html2canvas. Отдаёт PNG
