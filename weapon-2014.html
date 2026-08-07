@@ -387,17 +387,19 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .dc-back .c-foot::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   width:42px;height:12px;background:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 42 12'%3E%3Cpath d='M5 6 L8 3 L11 6 L8 9 Z' fill='%234a3a24'/%3E%3Cpath d='M17 6 L21 2 L25 6 L21 10 Z' fill='%234a3a24'/%3E%3Cpath d='M31 6 L34 3 L37 6 L34 9 Z' fill='%234a3a24'/%3E%3C/svg%3E") center/contain no-repeat;}
 
-/* ═══ СПЕЦИФИКА ОРУЖИЯ (поверх общих правил) ═══ */
-/* знак магического бонуса справа от названия: имя сжимается (_fitName), плашка нет */
-/* Нижний паддинг на 3px — не декор: у Cinzel в строчном боксе резервируется
-   место под выносные элементы, которых у «+N» нет, и знак садится ниже центра
-   плашки. Асимметричный паддинг возвращает его на оптический центр. */
-/* Плашка выведена из потока: во flex-строке она забирала ширину у всего блока,
-   и подпись под названием переносилась на вторую строку. Место под неё резервирует
-   только .c-name — её clientWidth учитывает _fitName, поэтому имя ужимается верно. */
+/* Знак магического бонуса «+N» справа от названия (оружие, доспехи).
+   Выведен из потока: во flex-строке он забирал бы ширину у всего блока
+   заголовка, и подпись под названием переносилась на вторую строку. Рамка
+   повторяет коробку строки названия (line-height 1.2 от кегля имени), место
+   резервирует только .c-name — её clientWidth учитывает _fitName. Позицию
+   знака внутри рамки задаёт line-height: у Cinzel в строчном боксе
+   резервируется место под выносные элементы, которых у «+N» нет.
+   Кегль имени дублирует на .c-title-main сам renderCard страницы. */
 .c-title-main{position:relative;}
 .c-mag{position:absolute;right:0;top:0;box-sizing:border-box;height:calc(var(--name-fs,16px)*1.2);line-height:calc(var(--name-fs,16px)*1.5 - 5px);font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.02em;color:#6b4a12;border:.5px solid #b89a58;background:rgba(138,96,16,.10);border-radius:3px;padding:0 7px;}
 .c-title-main.has-mag .c-name{padding-right:34px;}
+
+/* ═══ СПЕЦИФИКА ОРУЖИЯ (поверх общих правил) ═══ */
 /* дополнительный урон — плашка того же вида, что «Боеприпас» */
 .c-xdmg{font-size:9.5px;color:#4a3a24;line-height:1.35;margin:5px 0 0;background:rgba(138,96,16,.08);border-radius:5px;padding:3px 9px;overflow:hidden;}
 /* подзаголовок «класс · тип урона» — стиль в card-new.css */
@@ -937,7 +939,9 @@ function mkCounter(inputId,countId,max,lenFn){
 ['fr1','fr2'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9]/g,'').slice(0,4);this.setSelectionRange(p,p);});});
 ['fstr','fpr'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;var v=this.value.replace(/[^0-9-]/g,'');v=v.charAt(0)+v.slice(1).replace(/-/g,'');this.value=v.slice(0,2);this.setSelectionRange(p,p);});});
 mkCounter('fn','cnt-fn',34);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);
-/* магический бонус: кнопки не дают input/change, поэтому ререндер вызываем сами */
+/* Переключатель магического бонуса предмета (— / +1 / +2 / +3) в панели.
+   Кнопки не дают input/change, поэтому ререндер вызываем сами. Страница
+   читает значение через _magVal() и восстанавливает через _magSet(v). */
 document.querySelectorAll('#magseg button').forEach(function(b){
   b.addEventListener('click',function(){
     document.querySelectorAll('#magseg button').forEach(function(x){x.classList.remove('on');x.setAttribute('aria-checked','false');});

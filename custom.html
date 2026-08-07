@@ -434,6 +434,18 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 /* три ромба — тот же SVG, что в подвале заклинаний: центральный крупнее */
 .dc-back .c-foot::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   width:42px;height:12px;background:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 42 12'%3E%3Cpath d='M5 6 L8 3 L11 6 L8 9 Z' fill='%234a3a24'/%3E%3Cpath d='M17 6 L21 2 L25 6 L21 10 Z' fill='%234a3a24'/%3E%3Cpath d='M31 6 L34 3 L37 6 L34 9 Z' fill='%234a3a24'/%3E%3C/svg%3E") center/contain no-repeat;}
+
+/* Знак магического бонуса «+N» справа от названия (оружие, доспехи).
+   Выведен из потока: во flex-строке он забирал бы ширину у всего блока
+   заголовка, и подпись под названием переносилась на вторую строку. Рамка
+   повторяет коробку строки названия (line-height 1.2 от кегля имени), место
+   резервирует только .c-name — её clientWidth учитывает _fitName. Позицию
+   знака внутри рамки задаёт line-height: у Cinzel в строчном боксе
+   резервируется место под выносные элементы, которых у «+N» нет.
+   Кегль имени дублирует на .c-title-main сам renderCard страницы. */
+.c-title-main{position:relative;}
+.c-mag{position:absolute;right:0;top:0;box-sizing:border-box;height:calc(var(--name-fs,16px)*1.2);line-height:calc(var(--name-fs,16px)*1.5 - 5px);font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.02em;color:#6b4a12;border:.5px solid #b89a58;background:rgba(138,96,16,.10);border-radius:3px;padding:0 7px;}
+.c-title-main.has-mag .c-name{padding-right:34px;}
 </style>
 <link rel="stylesheet" href="mobile.css"/>
 </head>
