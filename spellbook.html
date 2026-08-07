@@ -234,6 +234,8 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 /* строка разделов живёт внутри .filter-bar; фильтры и сортировка — своими строками */
 .gx-secbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;row-gap:6px;}
 .filter-bar-sub{padding:7px 20px;background:rgba(200,148,26,.05);}
+.gx-edbar{display:flex;align-items:center;gap:8px;padding:7px 20px;border-bottom:0.5px solid var(--border);flex-wrap:wrap;row-gap:6px;background:rgba(200,148,26,.05);}
+.gx-ednote{margin-left:auto;font-family:'Crimson Text',Georgia,serif;font-style:italic;font-size:11px;color:var(--text3);white-space:nowrap;}
 .gx-sortbar{display:none;align-items:center;gap:7px;padding:7px 20px;border-bottom:0.5px solid var(--border);flex-wrap:wrap;row-gap:6px;background:rgba(200,148,26,.05);}
 .gx-sortbar.open{display:flex;}
 .gx-blbl{font-family:'Cinzel',serif;font-size:8.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);white-space:nowrap;}
@@ -1240,10 +1242,10 @@ function _galOn(){return typeof GAL_SEC!=='undefined';}
 
 /* ── определения фильтров по разделам (только коллекция/шаблоны) ── */
 var GAL_FDEFS={
-  weapon:[['_edition','Редакция'],['_rarity','Редкость'],['_magic','Магический бонус'],['cat','Класс оружия'],['kind','Тип оружия'],['dt','Тип урона'],['props','Свойства'],['xType','Тип доп. урона'],['mastery','Мастерство'],['ammo','Боеприпас'],['_attune','Настройка']],
+  weapon:[['_rarity','Редкость'],['_magic','Магический бонус'],['cat','Класс оружия'],['kind','Тип оружия'],['dt','Тип урона'],['props','Свойства'],['xType','Тип доп. урона'],['mastery','Мастерство'],['ammo','Боеприпас'],['_attune','Настройка']],
   armor:[['_rarity','Редкость'],['_magic','Магический бонус'],['armorType','Категория доспеха'],['acDisplay','КБ'],['spec','Особое свойство'],['specType','Тип урона (сопротивление)'],['strReq','Требование Силы'],['_stealth','Скрытность'],['_attune','Настройка']],
   poisons:[['poisonType','Тип яда'],['savingThrow','Спасбросок'],['saveStat','Характеристика спасброска']],
-  tools:[['edition','Редакция'],['toolType','Категория'],['stat','Характеристика']],
+  tools:[['toolType','Категория'],['stat','Характеристика']],
   equipment:[['category','Категория'],['_rarity','Редкость']],
   custom:[['cardType','Тип карточки']]
 };
@@ -1304,6 +1306,7 @@ function _galDefs(){
 function getFiltered(){
   return allCards.filter(function(c){
     if(_galOn()&&GAL_SEC!=='all'&&c._group!==GAL_SEC)return false;
+    if(typeof galEdMatch==='function'&&!galEdMatch(c))return false;
     /* nameEn есть у заклинаний и у готовых шаблонов; где пусто — условие не сработает */
     if(FILT.query&&(c.name||'').toLowerCase().indexOf(FILT.query)<0
        &&(c.nameEn||'').toLowerCase().indexOf(FILT.query)<0)return false;

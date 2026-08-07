@@ -234,6 +234,8 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 /* строка разделов живёт внутри .filter-bar; фильтры и сортировка — своими строками */
 .gx-secbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;row-gap:6px;}
 .filter-bar-sub{padding:7px 20px;background:rgba(200,148,26,.05);}
+.gx-edbar{display:flex;align-items:center;gap:8px;padding:7px 20px;border-bottom:0.5px solid var(--border);flex-wrap:wrap;row-gap:6px;background:rgba(200,148,26,.05);}
+.gx-ednote{margin-left:auto;font-family:'Crimson Text',Georgia,serif;font-style:italic;font-size:11px;color:var(--text3);white-space:nowrap;}
 .gx-sortbar{display:none;align-items:center;gap:7px;padding:7px 20px;border-bottom:0.5px solid var(--border);flex-wrap:wrap;row-gap:6px;background:rgba(200,148,26,.05);}
 .gx-sortbar.open{display:flex;}
 .gx-blbl{font-family:'Cinzel',serif;font-size:8.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);white-space:nowrap;}
@@ -479,6 +481,9 @@ table.gx-t{width:100%;min-width:100%;border-collapse:collapse;font-size:14px;tab
 
 <div class="pg-layout">
 
+  <!-- EDITION BAR -->
+  <div class="gx-edbar" id="gx-edbar"></div>
+
   <!-- FILTER BAR -->
   <div class="filter-bar">
     <div class="filter-search-wrap">
@@ -676,6 +681,49 @@ var LS_KEY='dnd_cardforge_templates';
 var GROUPS=[{id:'weapon',label:'Оружие'},{id:'armor',label:'Доспехи'},{id:'equipment',label:'Снаряжение'},{id:'tools',label:'Инструменты'},{id:'poisons',label:'Яды'},{id:'custom',label:'Произвольные'}];
 function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){el.classList.remove('show');},2200);}
 function closePreview(){document.getElementById('prev-bg').classList.remove('open');previewCard=null;}
+/* Редакция как область видимости галереи (не фильтр): 2014 или 2024.
+   Правило: карточка с указанной редакцией видна только в своей, карточка без
+   указания — в обеих. Поэтому доспехи, яды, снаряжение и произвольные общие,
+   а оружие и инструменты расходятся по годам.
+   Оружие несёт редакцию в _edition/_source, инструменты — в поле edition. */
+var GAL_ED_KEY='dnd_gallery_edition';
+var GAL_ED='2014';
+try{var _e=localStorage.getItem(GAL_ED_KEY);if(_e==='2014'||_e==='2024')GAL_ED=_e;}catch(e){}
+
+function galCardEd(c){
+  var e=c._edition;
+  if(e==='2014'||e==='2024')return e;      /* оружие */
+  var s=c._source;
+  if(s==='weapon2014')return '2014';
+  if(s==='weapon2024')return '2024';
+  e=c.edition;
+  if(e==='2014'||e==='2024')return e;      /* инструменты */
+  return '';                                /* общая для обеих */
+}
+function galEdMatch(c){var e=galCardEd(c);return !e||e===GAL_ED;}
+
+function galBuildEdBar(){
+  var host=document.getElementById('gx-edbar');
+  if(!host)return;
+  host.innerHTML='<span class="gx-blbl">Редакция</span>'+
+    ['2014','2024'].map(function(v){
+      return '<button type="button" class="gx-sec'+(v===GAL_ED?' on':'')+'" data-ed="'+v+'">'+v+'</button>';
+    }).join('')+
+    '<span class="gx-ednote">доспехи, яды и снаряжение общие для обеих</span>';
+  host.querySelectorAll('button[data-ed]').forEach(function(b){
+    b.addEventListener('click',function(){
+      var v=b.getAttribute('data-ed');
+      if(v===GAL_ED)return;
+      GAL_ED=v;
+      try{localStorage.setItem(GAL_ED_KEY,v);}catch(e){}
+      galBuildEdBar();
+      /* фильтры пересобираем: набор значений в разделе зависит от редакции */
+      if(typeof buildFilters==='function')buildFilters();
+      if(typeof renderGrid==='function')renderGrid();
+      if(typeof galRenderSide==='function')galRenderSide();
+    });
+  });
+}
 /* Указатель и таблица галерей (collection + templates).
    Включать ВНУТРИ IIFE страницы, после gallery-core.js: опирается на GROUPS,
    getFiltered, R, а также на хуки страницы galCardExtras/openPreview.
@@ -833,10 +881,9 @@ function _gxEsc(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</
    Оружейный». Значения сняты замером самого длинного содержимого колонки.
    0 = ширины нет: такие колонки делят между собой всё, что осталось. */
 var GAL_SCHEMA={
-  weapon:{cols:['Название','Ред.','Маг.','Класс','Тип','Урон','Тип урона','Доп. урон','Дистанция','Свойства','Мастерство','Боеприпас','Вес','Цена'],num:[12,13],
-    w:[0,56,48,92,124,64,102,150,108,0,116,162,82,78],opt:[2,7],
+  weapon:{cols:['Название','Маг.','Класс','Тип','Урон','Тип урона','Доп. урон','Дистанция','Свойства','Мастерство','Боеприпас','Вес','Цена'],num:[11,12],
+    w:[0,48,92,124,64,102,150,108,0,116,162,82,78],opt:[1,6],
     cell:function(c){return [galNameCell(c),
-      c._source==='weapon2024'?'2024':c._source==='weapon2014'?'2014':(c.edition||'—'),
       galMagic(c)||'—',
       c.cat||'—',c.kind||'—',galDmg(c)||'—',c.dt||'—',xDmgText(c)||'—',
       c.r1?(c.r1+(c.r2?' / '+c.r2:'')):'—',
@@ -849,9 +896,9 @@ var GAL_SCHEMA={
   poisons:{cols:['Название','Тип','Спасбросок','Урон','Длительность','Вес','Цена'],num:[5,6],
     w:[0,212,116,160,250,76,78],
     cell:function(c){return [galNameCell(c),c.poisonType||'—',galSave(c)||'—',c.damageDice||'—','<span class="gx-wrap">'+_gxEsc(c.duration||'—')+'</span>',galWgt(c),galCost(c)];}},
-  tools:{cols:['Название','Ред.','Категория','Характеристика','Использование','Изготовление','Вес','Цена'],num:[6,7],
-    w:[0,56,196,146,0,170,64,66],opt:[4,5],
-    cell:function(c){var u=galToolUse(c);return [galNameCell(c),c.edition||'—',c.toolType||'—',c.stat||'—',
+  tools:{cols:['Название','Категория','Характеристика','Использование','Изготовление','Вес','Цена'],num:[5,6],
+    w:[0,196,146,0,170,64,66],opt:[3,4],
+    cell:function(c){var u=galToolUse(c);return [galNameCell(c),c.toolType||'—',c.stat||'—',
       u?'<span class="gx-wrap">'+_gxEsc(u)+'</span>':'—',
       c.craft?'<span class="gx-wrap">'+_gxEsc(c.craft)+'</span>':'—',galWgt(c),galCost(c)];}},
   equipment:{cols:['Название','Категория','Вес','Цена'],num:[2,3],
@@ -866,7 +913,7 @@ var GAL_SORTS={
   weapon:[['Название','name'],['Класс','cat'],['Тип урона','dt'],['Редкость','_rar']],
   armor:[['Название','name'],['Категория','armorType'],['КБ','_ac'],['Редкость','_rar']],
   poisons:[['Название','name'],['Тип','_pt1'],['Спасбросок','_dc']],
-  tools:[['Название','name'],['Ред.','edition'],['Категория','toolType'],['Характеристика','stat']],
+  tools:[['Название','name'],['Категория','toolType'],['Характеристика','stat']],
   equipment:[['Название','name'],['Категория','category']],
   custom:[['Название','name'],['Тип карточки','cardType']]
 };
@@ -1046,7 +1093,6 @@ function galFields(c){
     rows.push([k,v]);
   }
   if(c._group==='weapon'){
-    add('Редакция',c._source==='weapon2024'?'2024':c._source==='weapon2014'?'2014':c.edition);
     add('Магический бонус',galMagic(c));
     add('Класс',c.cat);
     add('Тип',c.kind);
@@ -1079,7 +1125,6 @@ function galFields(c){
     add('Длительность',c.duration);
   }
   else if(c._group==='tools'){
-    add('Редакция',c.edition);
     add('Категория',c.toolType);
     add('Характеристика',c.stat);
     add('Использование',galToolUse(c));
@@ -1290,10 +1335,10 @@ function _galOn(){return typeof GAL_SEC!=='undefined';}
 
 /* ── определения фильтров по разделам (только коллекция/шаблоны) ── */
 var GAL_FDEFS={
-  weapon:[['_edition','Редакция'],['_rarity','Редкость'],['_magic','Магический бонус'],['cat','Класс оружия'],['kind','Тип оружия'],['dt','Тип урона'],['props','Свойства'],['xType','Тип доп. урона'],['mastery','Мастерство'],['ammo','Боеприпас'],['_attune','Настройка']],
+  weapon:[['_rarity','Редкость'],['_magic','Магический бонус'],['cat','Класс оружия'],['kind','Тип оружия'],['dt','Тип урона'],['props','Свойства'],['xType','Тип доп. урона'],['mastery','Мастерство'],['ammo','Боеприпас'],['_attune','Настройка']],
   armor:[['_rarity','Редкость'],['_magic','Магический бонус'],['armorType','Категория доспеха'],['acDisplay','КБ'],['spec','Особое свойство'],['specType','Тип урона (сопротивление)'],['strReq','Требование Силы'],['_stealth','Скрытность'],['_attune','Настройка']],
   poisons:[['poisonType','Тип яда'],['savingThrow','Спасбросок'],['saveStat','Характеристика спасброска']],
-  tools:[['edition','Редакция'],['toolType','Категория'],['stat','Характеристика']],
+  tools:[['toolType','Категория'],['stat','Характеристика']],
   equipment:[['category','Категория'],['_rarity','Редкость']],
   custom:[['cardType','Тип карточки']]
 };
@@ -1354,6 +1399,7 @@ function _galDefs(){
 function getFiltered(){
   return allCards.filter(function(c){
     if(_galOn()&&GAL_SEC!=='all'&&c._group!==GAL_SEC)return false;
+    if(typeof galEdMatch==='function'&&!galEdMatch(c))return false;
     /* nameEn есть у заклинаний и у готовых шаблонов; где пусто — условие не сработает */
     if(FILT.query&&(c.name||'').toLowerCase().indexOf(FILT.query)<0
        &&(c.nameEn||'').toLowerCase().indexOf(FILT.query)<0)return false;
@@ -1715,7 +1761,7 @@ if(!allCards.length){
   document.getElementById('empty-sub').textContent='';
   fetch('templates-data.json',{cache:'no-cache'}).then(function(r){return r.json();}).then(function(seed){
     window.SEED_TEMPLATES=seed;
-    if(!allCards.length){loadAll();buildSections();buildFilters();renderGrid();galRenderSide();}
+    if(!allCards.length){galBuildEdBar();loadAll();buildSections();buildFilters();renderGrid();galRenderSide();}
   }).catch(function(){document.getElementById('empty-title').textContent='Шаблонов пока нет';});
 }
 })();
