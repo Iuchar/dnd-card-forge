@@ -1626,7 +1626,7 @@ var RARITY_ORDER=['nonmagic','common','uncommon','rare','veryrare','legendary'];
 var collapsedSections={};
 
 function makeCollItem(card){
-  var d=R[card.rarity||'common'];
+  var d=(typeof COLL_PAL!=='undefined'&&COLL_PAL)?COLL_PAL:R[card.rarity||'common'];
   var item=document.createElement('div');
   item.className='coll-item'+(selMode?' sel-mode':'')+(selectedIds.has(card.id)?' selected':'');
   var cbHtml='<input type="checkbox" class="coll-item-cb"'+(selectedIds.has(card.id)?' checked':'')+'/>';
@@ -1669,6 +1669,17 @@ function renderCollection(){
   Array.from(list.children).forEach(function(el){if(el.id!=='coll-empty')el.remove();});
   if(!collection.length){empty.style.display='';updateSelActions();return;}
   empty.style.display='none';
+
+  /* Страницы без редкости (яды, инструменты, произвольные) объявляют COLL_PAL —
+     секции по шкале редкости им не нужны: один плоский список по алфавиту,
+     полоска — фирменный цвет раздела (см. makeCollItem). */
+  if(typeof COLL_PAL!=='undefined'&&COLL_PAL){
+    collection.slice().sort(function(a,b){return(a.name||'').localeCompare(b.name||'','ru');})
+      .forEach(function(card){list.appendChild(makeCollItem(card));});
+    updateSelActions();
+    applyCollSearch();
+    return;
+  }
 
   /* group by rarity */
   var groups={};
@@ -1718,14 +1729,15 @@ var collSearchQuery='';
 function applyCollSearch(){
   var q=collSearchQuery.toLowerCase().trim();
   document.getElementById('coll-search-clear').style.display=q?'':'none';
+  /* элементы ищем по всему списку: на COLL_PAL-страницах они лежат
+     без секций-обёрток, прямо в #coll-list */
+  document.querySelectorAll('#coll-list .coll-item').forEach(function(item){
+    var name=(item.querySelector('.coll-item-name')||{}).textContent||'';
+    item.style.display=(!q||name.toLowerCase().includes(q))?'':'none';
+  });
   document.querySelectorAll('.coll-sect-wrap').forEach(function(wrap){
     var visible=0;
-    wrap.querySelectorAll('.coll-item').forEach(function(item){
-      var name=(item.querySelector('.coll-item-name')||{}).textContent||'';
-      var show=!q||name.toLowerCase().includes(q);
-      item.style.display=show?'':'none';
-      if(show)visible++;
-    });
+    wrap.querySelectorAll('.coll-item').forEach(function(item){if(item.style.display!=='none')visible++;});
     wrap.style.display=visible===0&&q?'none':'';
   });
 }

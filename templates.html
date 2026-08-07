@@ -853,7 +853,10 @@ function galCost(c){return c.cost?(c.cost+' '+(c.coin||'зм')):'—';}
    яды — poisons.html (_backPal/applyPoisonPal), произвольные — custom.html (STRIPE). */
 var GAL_GROUPPAL={
   poisons:{gem:'#63802f',grad:['#3a4a1e','#63802f']},
-  custom:{gem:'#8a6b2e'}
+  custom:{gem:'#8a6b2e'},
+  /* латунь, повторяет applyToolPal в tools.html — менять парой;
+     подзаголовок карточки #8a6b2e не берём — он занят охрой произвольных */
+  tools:{gem:'#8b6914',grad:['#5a430d','#8b6914']}
 };
 function galRarity(c){return R[c.rarity||'common']||R.common||R[Object.keys(R)[0]];}
 function galPal(c){return GAL_GROUPPAL[c._group]||galRarity(c);}
