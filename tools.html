@@ -595,8 +595,8 @@ button:focus:not(:focus-visible){outline:none;}
 
     <label class="lbl" for="fcraft">Изготовление</label>
     <div class="field-wrap field-mb">
-      <input class="si" type="text" id="fcraft" placeholder="кислота, масло, духи…" maxlength="120"/>
-      <span class="char-counter" id="cnt-craft">0/120</span>
+      <input class="si" type="text" id="fcraft" placeholder="кислота, масло, духи…" maxlength="600"/>
+      <span class="char-counter" id="cnt-craft">0/600</span>
     </div>
   </div>
 
@@ -915,7 +915,7 @@ function mkCounter(inputId,countId,max,lenFn){
   }
   if(!inp._cbound){inp.addEventListener('input',upd);inp._cbound=true;}upd();
 }
-mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcraft','cnt-craft',120);
+mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcraft','cnt-craft',600);
 
 /* Автошрифт названия: одна строка, лестница кеглей 16→10, дальше многоточие
    (по образцу заклинаний). Общий для всех семи генераторов — spells crop.js
@@ -1502,8 +1502,8 @@ function applyToolPal(){
   ['ps','pbs'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=g;});
   ['pgm','pbgm'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background='#8b6914';});
 }
-function applyFormData(data){document.getElementById('ftooltype').value=data.toolType||'';document.getElementById('fn').value=data.name||'';document.getElementById('fc').value=data.cost||'';document.getElementById('fcoin').value=data.coin||'зм';document.getElementById('fwgt').value=data.wgt||'';document.getElementById('fstat').value=data.stat||'';_edSet(data.edition||'2024');_useSet(data.use);document.getElementById('fcraft').value=data.craft||'';document.getElementById('fdesc').value=data.desc||'';applyImgThumb(data);mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcraft','cnt-craft',120);}
-document.getElementById('btn-reset').addEventListener('click',function(){if(!confirm('Сбросить все поля?'))return;['fn','fc','fwgt','fdesc'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('fcoin').value='зм';document.getElementById('ftooltype').selectedIndex=0;document.getElementById('fstat').selectedIndex=0;document.getElementById('fcraft').value='';_edSet('2024');_useSet([]);imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('f-img').value='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';setCardImg(null);mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcraft','cnt-craft',120);renderCard({});toast('Поля сброшены');});
+function applyFormData(data){document.getElementById('ftooltype').value=data.toolType||'';document.getElementById('fn').value=data.name||'';document.getElementById('fc').value=data.cost||'';document.getElementById('fcoin').value=data.coin||'зм';document.getElementById('fwgt').value=data.wgt||'';document.getElementById('fstat').value=data.stat||'';_edSet(data.edition||'2024');_useSet(data.use);document.getElementById('fcraft').value=data.craft||'';document.getElementById('fdesc').value=data.desc||'';applyImgThumb(data);mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcraft','cnt-craft',600);}
+document.getElementById('btn-reset').addEventListener('click',function(){if(!confirm('Сбросить все поля?'))return;['fn','fc','fwgt','fdesc'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('fcoin').value='зм';document.getElementById('ftooltype').selectedIndex=0;document.getElementById('fstat').selectedIndex=0;document.getElementById('fcraft').value='';_edSet('2024');_useSet([]);imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('f-img').value='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';setCardImg(null);mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcraft','cnt-craft',600);renderCard({});toast('Поля сброшены');});
 applyToolPal();
 
 var DEFAULT_NAME='Инструмент';

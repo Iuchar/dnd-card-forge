@@ -170,7 +170,16 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .pv-stat{font-size:12.5px;}
 .pv-strow{display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-bottom:0.5px solid rgba(90,72,32,.16);}
 .pv-strow .k{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#8a7550;align-self:center;white-space:nowrap;}
-.pv-strow .v{color:#2a1e0a;text-align:right;}
+/* min-width:0 обязателен: без него флекс-элемент не даёт слову перенестись и
+   длинное слово вылезает за край столбца («продолжительного» в длительности) */
+.pv-strow .v{color:#2a1e0a;text-align:right;min-width:0;overflow-wrap:break-word;}
+/* перечень остался в столбце, но во всю ширину: подпись сверху, текст слева */
+.pv-strow.wide{display:block;}
+.pv-strow.wide .k{display:block;margin-bottom:2px;}
+.pv-strow.wide .v{display:block;text-align:left;line-height:1.45;}
+/* перечень переехал в тело окна (pvBodyFields): мельче прозы — это перечень,
+   а не текст, но крупнее справочного столбца, потому что его читают */
+.pv-text.pv-list{font-size:15px;line-height:1.6;}
 
 /* проза — то, ради чего окно и открывают */
 .pv-quote{margin:0 0 18px;padding:0 0 0 16px;border-left:2px solid rgba(150,110,30,.45);
@@ -330,13 +339,19 @@ table.gx-t{width:100%;min-width:100%;border-collapse:collapse;font-size:14px;tab
 /* box-sizing:content-box намеренно: пропорция должна лечь на саму картинку, а не
    на рамку вместе с ней, иначе внутри остаются тонкие поля и «уменьшение один
    в один» перестаёт быть точным. */
-.gx-img{width:100%;aspect-ratio:296/149;box-sizing:content-box;border:2px solid #3a2810;border-radius:3px;background:#cfc0a0;position:relative;overflow:hidden;flex-shrink:0;}
+/* border-box, иначе рамка в 2px прибавляется к 100% ширины: слот вылезал на
+   4px шире строк свойств и панель получала горизонтальную прокрутку */
+.gx-img{width:100%;aspect-ratio:296/149;box-sizing:border-box;border:2px solid #3a2810;border-radius:3px;background:#cfc0a0;position:relative;overflow:hidden;flex-shrink:0;}
 .gx-img::after{content:'';position:absolute;inset:4px;border:1px solid rgba(160,120,56,.7);border-radius:2px;pointer-events:none;}
 .gx-img img{width:100%;height:100%;object-fit:contain;display:block;}
 .gx-st{width:100%;font-size:13px;}
 .gx-str{display:flex;justify-content:space-between;gap:9px;padding:5px 0;border-bottom:0.5px solid rgba(90,72,32,.16);}
 .gx-str .k{color:#8a7550;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.05em;text-transform:uppercase;align-self:center;white-space:nowrap;}
-.gx-str .v{color:#2a1e0a;text-align:right;}
+.gx-str .v{color:#2a1e0a;text-align:right;min-width:0;overflow-wrap:break-word;}
+/* перечень: подпись сверху, текст слева во всю ширину панели */
+.gx-str.wide{display:block;}
+.gx-str.wide .k{display:block;margin-bottom:3px;}
+.gx-str.wide .v{display:block;text-align:left;line-height:1.4;}
 .gx-acts{width:100%;display:flex;flex-direction:column;gap:5px;}
 .gx-btn{width:100%;font-family:'Cinzel',serif;font-size:9.5px;font-weight:600;letter-spacing:.06em;text-align:center;color:#5f4d26;border:0.5px solid rgba(90,72,32,.35);border-radius:7px;padding:6px 0;background:rgba(90,72,32,.07);cursor:pointer;transition:background-color .13s,color .13s;}
 .gx-btn:hover{background:rgba(90,72,32,.16);}
@@ -1184,7 +1199,21 @@ function galSelect(card,el){
 /* Окно «Полное описание» переехало в shared/preview-full.js — им пользуется
    и книга заклинаний, а тянуть туда весь этот файл со значками и указателем
    было бы незачем. Ниже хуки, которыми галереи его настраивают. */
+/* Поля-перечни по разделам (см. preview-full.js). В панели они всегда идут во
+   всю ширину, потому что в столбце 216px рвутся по словам при любой длине.
+   В теле окна оставляем только те, ради которых окно и открывают: у
+   инструментов описания обычно нет вовсе, и «Использование» с «Изготовлением»
+   там главный текст. У оружия и ядов проза своя, поэтому их перечни остаются
+   в столбце свойств — просто во всю его ширину. */
+var GAL_WIDEF={
+  tools:['Использование','Изготовление'],
+  weapon:['Свойства'],
+  poisons:['Длительность']
+};
+var GAL_BODYF={tools:['Использование','Изготовление']};
 function pvFields(c){return galFields(c);}
+function pvWideFields(c){return GAL_WIDEF[c._group]||[];}
+function pvBodyFields(c){return GAL_BODYF[c._group]||[];}
 function pvImage(c){return c.img;}
 function pvAccent(c){
   var d=galPal(c),dot=galRarityColor(c);
@@ -1277,7 +1306,11 @@ function galRenderSide(){
     (c.nameEn?'<div class="gx-ce">'+_gxEsc(c.nameEn)+'</div>':'')+'</div>'+
     (c.img?'<div class="gx-img"><img src="'+c.img+'" alt=""/></div>':'')+
     '<div class="gx-st">'+rows.map(function(r){
-      return '<div class="gx-str"><span class="k">'+r[0]+'</span><span class="v">'+_gxEsc(r[1])+'</span></div>';}).join('')+'</div>'+
+      /* перечень прижимать вправо некуда — подпись сверху, текст слева на всю
+         ширину панели; список полей общий с окном (GAL_WIDEF) */
+      var _wf=(GAL_WIDEF[c._group]||[]).concat(GAL_BODYF[c._group]||[]);
+      var w=_wf.indexOf(r[0])>-1?' wide':'';
+      return '<div class="gx-str'+w+'"><span class="k">'+r[0]+'</span><span class="v">'+_gxEsc(r[1])+'</span></div>';}).join('')+'</div>'+
     /* Порядок по тому, зачем сюда приходят: сперва прочитать карточку целиком,
        потом взять её в работу, и лишь затем выгрузить. Экспорт — парой в строку,
        чтобы стопка кнопок не съедала высоту панели. */
@@ -1346,6 +1379,17 @@ function pvProse(c){
   return out;
 }
 
+/* Поля-перечни: значение через запятую читается как текст, а не как справка.
+   В столбце 210px (в панели 216px) оно рвётся по словам — «Железные шипы,
+   Шест (10 фут.)» ломается так же, как список кузнеца на 41 позицию, поэтому
+   список полей, а не порог по длине: короткое значение рвёт колонку ничуть
+   не меньше длинного.
+   pvBodyFields — что уезжает в тело окна отдельным разделом (перед прозой),
+   pvWideFields — что остаётся в столбце, но разворачивается на всю ширину.
+   Оба хука объявляет страница: окно есть и там, где нет указателя
+   (spellbook.html). */
+function _pvIn(list,label){return list.indexOf(label)>-1;}
+
 function pvHTML(c){
   var fields=(typeof pvFields==='function')?pvFields(c):[];
   var accent=(typeof pvAccent==='function')?pvAccent(c):{};
@@ -1354,14 +1398,24 @@ function pvHTML(c){
   var dot=accent.dot||'#888077',stripe=accent.stripe||dot;
   var prose=pvProse(c);
 
+  var toBody=(typeof pvBodyFields==='function')?(pvBodyFields(c)||[]):[];
+  var toWide=(typeof pvWideFields==='function')?(pvWideFields(c)||[]):[];
+  var asideF=[],bodyF=[];
+  fields.forEach(function(r){(_pvIn(toBody,r[0])?bodyF:asideF).push(r);});
+
   var img=imgUrl?'<div class="pv-img"><img src="'+imgUrl+'" alt=""/></div>':'';
-  var stat=fields.length?('<div class="pv-stat">'+fields.map(function(r){
-      return '<div class="pv-strow"><span class="k">'+pvEsc(r[0])+'</span><span class="v">'+pvEsc(r[1])+'</span></div>';
+  var stat=asideF.length?('<div class="pv-stat">'+asideF.map(function(r){
+      var w=_pvIn(toWide,r[0])?' wide':'';
+      return '<div class="pv-strow'+w+'"><span class="k">'+pvEsc(r[0])+'</span><span class="v">'+pvEsc(r[1])+'</span></div>';
     }).join('')+'</div>'):'';
-  var body=prose.length?prose.map(function(p){
+  /* перечни идут перед прозой: это свойства предмета, а не рассказ о нём */
+  var body=bodyF.map(function(r){
+      return '<section class="pv-sec"><h3>'+pvEsc(r[0])+'</h3><div class="pv-text pv-list">'+pvEsc(r[1])+'</div></section>';
+    }).join('')+
+    (prose.length?prose.map(function(p){
       if(p.q)return '<blockquote class="pv-quote">'+pvRuns(p.t)+'</blockquote>';
       return '<section class="pv-sec"><h3>'+pvEsc(p.l)+'</h3><div class="pv-text">'+pvRuns(p.t)+'</div></section>';
-    }).join(''):'<div class="pv-empty">У этой карточки нет описания.</div>';
+    }).join(''):'<div class="pv-empty">У этой карточки нет описания.</div>');
 
   return '<div class="pv-stripe" style="background:'+stripe+'"></div>'+
     '<div class="pv-page">'+
