@@ -1614,6 +1614,41 @@ applyPal(cr);
 
 var DEFAULT_NAME='Доспехи';
 function collItemSub(card){return (card.armorType||'Доспех')+(card.acDisplay?' · КБ '+card.acDisplay:'');}
+/* Раскладка печатного PDF (A4, карта 63×89 мм) — единственная реализация,
+   общая для генераторов (collection.js) и галерей (gallery-actions.js).
+   items: [{front,back}] — data-URL сторон, уже в печатном качестве.
+   'single' — 3 пары «лицо+оборот» на лист; 'duplex' — лицевые 3×3, оборотные
+   зеркально по колонкам для переворота по длинной стороне. */
+function buildPrintPDF(mode,items){
+  var n=items.length,cW=63,cH=89;
+  var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
+  var pageW=210,pageH=297,first=true;
+  function newPage(){if(first){first=false;}else{doc.addPage();}}
+  if(mode==='single'){
+    /* зазор рядов 2мм: 3*89+2*2=271мм оставляют поля 13мм — лист не ужимается */
+    var margin=10,rows=3,gap=2;
+    var pairW=cW*2+10,lx=margin+(pageW-2*margin-pairW)/2,rx=lx+cW+10;
+    var totalH=rows*cH+(rows-1)*gap,startY=margin+(pageH-2*margin-totalH)/2,stepY=cH+gap,perPage=rows;
+    for(var p=0;p<Math.ceil(n/perPage);p++){
+      newPage();
+      for(var r=0;r<rows;r++){var idx=p*perPage+r;if(idx>=n)break;var y=startY+r*stepY;
+        doc.addImage(items[idx].front,'JPEG',lx,y,cW,cH);doc.addImage(items[idx].back,'JPEG',rx,y,cW,cH);}
+    }
+  }else{
+    var margin2=7,gap2=3,vgap2=2,cols=3,rows2=3,perPage2=cols*rows2;
+    var totalW=cols*cW+(cols-1)*gap2,totalH2=rows2*cH+(rows2-1)*vgap2;
+    var startX=margin2+(pageW-2*margin2-totalW)/2,startY2=margin2+(pageH-2*margin2-totalH2)/2;
+    var stepX=cW+gap2,stepY2=cH+vgap2,pageCount=Math.ceil(n/perPage2);
+    for(var p2=0;p2<pageCount;p2++){newPage();
+      for(var r3=0;r3<rows2;r3++)for(var c=0;c<cols;c++){var i1=p2*perPage2+r3*cols+c;if(i1>=n)continue;doc.addImage(items[i1].front,'JPEG',startX+c*stepX,startY2+r3*stepY2,cW,cH);}}
+    for(var p3=0;p3<pageCount;p3++){doc.addPage();
+      for(var r4=0;r4<rows2;r4++)for(var c2=0;c2<cols;c2++){var i2=p3*perPage2+r4*cols+(cols-1-c2);if(i2>=n)continue;doc.addImage(items[i2].back,'JPEG',startX+c2*stepX,startY2+r4*stepY2,cW,cH);}}
+  }
+  var d=new Date(),p_=function(x){return(x<10?'0':'')+x;};
+  var stamp=d.getFullYear()+'-'+p_(d.getMonth()+1)+'-'+p_(d.getDate())+'_'+p_(d.getHours())+'-'+p_(d.getMinutes())+'-'+p_(d.getSeconds());
+  doc.save('dnd_print_'+stamp+(mode==='single'?'_1стор':'_2стор')+'.pdf');
+  toast('✦ PDF для печати скачан');
+}
 var editingId=null;
 function _stamp(){var d=new Date(),p=function(n){return(n<10?'0':'')+n;};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'_'+p(d.getHours())+'-'+p(d.getMinutes())+'-'+p(d.getSeconds());}
 function updateBuildBtn(){var g=document.getElementById('gbtn'),n=document.getElementById('gbtn-new');if(!g)return;if(editingId){g.textContent='✦ Сохранить изменения';if(n)n.style.display='';}else{g.textContent='✦ Создать карточку';if(n)n.style.display='none';}}
@@ -1863,7 +1898,7 @@ document.getElementById('btn-print-cancel').addEventListener('click',function(){
 });
 
 function startPrintCapture(mode,cards){
-  var frontImgs=[],backImgs=[],printCards=[];
+  var items=[];
   var savedCard=currentCard?JSON.parse(JSON.stringify(currentCard)):null;
   var i=0;
   toast('Подготовка к печати ('+cards.length+' карт.)...');
@@ -1880,7 +1915,7 @@ function startPrintCapture(mode,cards){
   function captureNext(){
     if(i>=cards.length){
       if(savedCard){applyFormData(savedCard);renderCard(savedCard);currentCard=savedCard;}
-      buildPrintWindow(mode,printCards,frontImgs,backImgs);
+      buildPrintPDF(mode,items);
       return;
     }
     var card=cards[i];i++;
@@ -1891,11 +1926,8 @@ function startPrintCapture(mode,cards){
       (function shot(){
         if(k>=els.length){
           /* пара сторон = одна физическая карта: продолжение даёт ещё одну */
-          for(var j=0;j<shots.length;j+=2){
-            frontImgs.push(shots[j]);
-            backImgs.push(shots[j+1]||shots[j]);
-            printCards.push(card);
-          }
+          for(var j=0;j<shots.length;j+=2)
+            items.push({front:shots[j],back:shots[j+1]||shots[j]});
           captureNext();return;
         }
         /* печать: 2.4 = 300 dpi при ширине карты 63мм, JPEG 92% вместо PNG —
@@ -1908,75 +1940,6 @@ function startPrintCapture(mode,cards){
     },80);
   }
   captureNext();
-}
-
-function buildPrintWindow(mode,cards,frontImgs,backImgs){
-  var n=cards.length;
-  var cW=63,cH=89;
-  var doc=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'portrait'});
-  var pageW=210,pageH=297;
-  var first=true;
-
-  function newPage(){if(first){first=false;}else{doc.addPage();}}
-
-  if(mode==='single'){
-    /* 3 пары на лист, зазор рядов 2мм: 3*89+2*2=271мм оставляют поля 13мм
-       сверху и снизу — лист влезает в печатаемую область и не ужимается. */
-    var margin=10,rows=3,gap=2;
-    var pairW=cW*2+10; /* 136mm, 10mm gap between front and back */
-    var lx=margin+(pageW-2*margin-pairW)/2;  /* centre horizontally */
-    var rx=lx+cW+10;
-    var totalH=rows*cH+(rows-1)*gap;          /* 271мм */
-    var startY=margin+(pageH-2*margin-totalH)/2;
-    var stepY=cH+gap;
-    var perPage=rows;
-    for(var p=0;p<Math.ceil(n/perPage);p++){
-      newPage();
-      for(var r=0;r<rows;r++){
-        var idx=p*perPage+r;
-        if(idx>=n)break;
-        var y=startY+r*stepY;
-        doc.addImage(frontImgs[idx],'JPEG',lx,y,cW,cH);
-        doc.addImage(backImgs[idx],'JPEG',rx,y,cW,cH);
-      }
-    }
-  } else {
-    /* сетка 3×3: по горизонтали зазор 3мм, ряды вплотную — поля 15мм сверху
-       и снизу, лист не выходит за печатаемую область и не ужимается. */
-    var margin=7,gap=3,vgap=2,cols=3,rows=3,perPage=cols*rows;
-    var totalW=cols*cW+(cols-1)*gap;   /* 195мм */
-    var totalH=rows*cH+(rows-1)*vgap;  /* 271мм */
-    var startX=margin+(pageW-2*margin-totalW)/2;  /* 7.5мм */
-    var startY=margin+(pageH-2*margin-totalH)/2;  /* 13мм */
-    var stepX=cW+gap,stepY=cH+vgap;
-    var pageCount=Math.ceil(n/perPage);
-
-    for(var p=0;p<pageCount;p++){
-      newPage();
-      for(var r=0;r<rows;r++){
-        for(var c=0;c<cols;c++){
-          var idx=p*perPage+r*cols+c;
-          if(idx>=n)continue;
-          doc.addImage(frontImgs[idx],'JPEG',startX+c*stepX,startY+r*stepY,cW,cH);
-        }
-      }
-    }
-    /* back pages — columns mirrored for long-edge duplex flip */
-    for(var p=0;p<pageCount;p++){
-      doc.addPage();
-      for(var r=0;r<rows;r++){
-        for(var c=0;c<cols;c++){
-          var idx=p*perPage+r*cols+(cols-1-c);
-          if(idx>=n)continue;
-          doc.addImage(backImgs[idx],'JPEG',startX+c*stepX,startY+r*stepY,cW,cH);
-        }
-      }
-    }
-  }
-
-  var suffix=mode==='single'?'_1стор':'_2стор';
-  doc.save('dnd_print_'+_stamp()+suffix+'.pdf');
-  toast('✦ PDF для печати скачан');
 }
 
 /* PNG */
