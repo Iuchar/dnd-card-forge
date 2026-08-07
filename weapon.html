@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>D&amp;D Card Forge — Доспехи</title>
-<meta name="description" content="Генератор карточек доспехов D&D 5e: лёгкие, средние, тяжёлые, щиты. КБ считается автоматически. Печать в размере игральной карты."/>
+<title>D&amp;D Card Forge — Оружие 5e</title>
+<meta name="description" content="Генератор карточек оружия D&D 5e (редакции 2014 и 2024): урон, свойства, мастерство, магические эффекты. Создайте и распечатайте карточку за минуту."/>
 <meta name="theme-color" content="#111009"/>
 <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"/>
 <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
 <meta property="og:type" content="website"/>
-<meta property="og:url" content="https://iuchar.github.io/dnd-card-forge/armor.html"/>
-<meta property="og:title" content="D&D Card Forge — Доспехи"/>
-<meta property="og:description" content="Генератор карточек доспехов D&D 5e: лёгкие, средние, тяжёлые, щиты. КБ считается автоматически. Печать в размере игральной карты."/>
+<meta property="og:url" content="https://iuchar.github.io/dnd-card-forge/weapon.html"/>
+<meta property="og:title" content="D&D Card Forge — Оружие 5e"/>
+<meta property="og:description" content="Генератор карточек оружия D&D 5e (редакции 2014 и 2024): урон, свойства, мастерство, магические эффекты."/>
 <meta property="og:image" content="https://iuchar.github.io/dnd-card-forge/og-image.jpg"/>
 <meta property="og:image:width" content="1200"/>
 <meta property="og:image:height" content="630"/>
@@ -283,7 +283,8 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 /* миниатюра карточки в панели «Коллекция» — единый размер и фон */
 .coll-item-thumb{width:30px;height:42px;border-radius:4px;flex-shrink:0;background:var(--bg4);overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.08);}
 
-.pcb{display:flex;align-items:center;gap:5px;cursor:pointer;padding:3px 0;}
+.props-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;}
+.pcb{display:flex;align-items:center;gap:5px;cursor:pointer;padding:2px 0;}
 .pcb input[type=checkbox]{accent-color:var(--gold);width:13px;height:13px;cursor:pointer;flex-shrink:0;}
 .pcb span{font-size:13px;color:var(--text2);}
 /* Общие стили карточки и пикера редкости (7 генераторов).
@@ -319,17 +320,11 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   font-family:'Crimson Text',Georgia,serif;
   position:relative;transition:border-color .2s;
 }
-.c-info-row{display:flex;align-items:stretch;flex-shrink:0;}
-.c-infolist{flex:1;display:flex;flex-direction:column;gap:3px;min-width:0;padding-right:10px;border-right:.5px solid rgba(0,0,0,.13);}
-.c-info-item{display:flex;align-items:baseline;gap:6px;font-size:12px;color:#2e2010;line-height:1.35;}
-.c-info-icon{width:13px;text-align:center;font-size:11px;color:#8a7a60;flex-shrink:0;line-height:1.35;}
-.c-timing-line{display:flex;gap:0;font-size:11px;color:#6a5838;padding-left:19px;}
-.c-timing-line span+span::before{content:' · ';}
-.c-ac-col{width:68px;flex-shrink:0;padding-left:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;}
-.c-ac-lbl{font-family:'Cinzel',serif;font-size:7px;letter-spacing:.12em;color:#a09070;text-transform:uppercase;text-align:center;}
-.c-ac-num{font-family:'Cinzel',serif;font-size:32px;font-weight:700;color:#2a1e0a;line-height:1;}
-.c-ac-mod{font-size:10px;color:#5a4828;text-align:center;line-height:1.25;white-space:pre-line;}
-.c-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);line-height:1.5;color:#2a1e0a;flex:1;overflow:hidden;white-space:pre-wrap;}
+.c-stripe{height:10px;flex-shrink:0;background:var(--ca,#888077);transition:background .2s;}
+.c-dmgline{font-family:'Cinzel',serif;font-size:10px;color:#7a6850;margin-bottom:1px;letter-spacing:.04em;flex-shrink:0;}
+.c-props{font-family:'Cinzel',serif;font-size:10px;color:#5a4830;line-height:1.35;margin-bottom:1px;flex-shrink:0;}
+.c-quote{font-family:'Crimson Text',Georgia,serif;font-size:11px;font-weight:700;font-style:italic;text-align:center;color:#4a3820;line-height:1.4;margin-bottom:1px;padding:0 4px;flex-shrink:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;}
+.c-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);line-height:1.5;color:#2a1e0a;font-style:normal;flex:1;overflow:hidden;white-space:pre-wrap;}
 .dc-back{
   width:310px;height:437px;
   border-radius:12px;overflow:hidden;
@@ -339,11 +334,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   font-family:'Crimson Text',Georgia,serif;
   transition:border-color .2s;
 }
-.crop-area img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;}
-.coll-empty svg{opacity:.2;display:block;margin:0 auto 10px;}
-.coll-sel-info{font-family:'Cinzel',serif;font-size:10px;color:var(--text3);text-align:center;letter-spacing:.06em;}
-.coll-full-link svg{flex-shrink:0;}
-
 /* ═══ ОБЩИЕ ПРАВИЛА НОВОГО ДИЗАЙНА КАРТОЧЕК ═══
    Подключается ПОСЛЕ локальных стилей страницы (перебивает их порядком).
    Включён во все генераторы, кроме заклинаний — у них свой дизайн.
@@ -410,6 +400,34 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-mag{position:absolute;right:0;top:0;box-sizing:border-box;height:calc(var(--name-fs,16px)*1.2);line-height:calc(var(--name-fs,16px)*1.5 - 5px);font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.02em;color:#6b4a12;border:.5px solid #b89a58;background:rgba(138,96,16,.10);border-radius:3px;padding:0 7px;}
 .c-title-main.has-mag .c-name{padding-right:34px;}
 .c-stripe-wrap{flex-shrink:0;}
+
+/* Специфика карточки оружия (поверх общих правил) — общая для 2014 и 2024.
+   Правила мастерства (.c-mastery, .c-amrow) в 2014 спят: селекта там нет. */
+.c-stats{display:flex;flex-wrap:nowrap;gap:0;justify-content:stretch;margin:5px 0 0;height:40px;border-top:1px solid #b89a58;border-bottom:1px solid #b89a58;background:rgba(90,70,20,.05);}
+.cst{flex:1;min-width:0;background:none;border:none;border-right:1px solid rgba(90,72,32,.22);border-radius:0;padding:0 2px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}
+.c-stats .cst:last-child{border-right:none;}
+.cst-l{font-family:'Cinzel',serif;font-size:7px;letter-spacing:.06em;text-transform:uppercase;color:#8a6b2e;margin-bottom:1px;}
+.cst-v{font-size:15px;font-weight:700;color:#2a1e0a;}
+.dc.no-img .c-stats{margin-top:0;}
+/* дополнительный урон — плашка того же вида, что «Боеприпас» */
+.c-xdmg{font-size:9.5px;color:#4a3a24;line-height:1.35;margin:5px 0 0;background:rgba(138,96,16,.08);border-radius:5px;padding:3px 9px;overflow:hidden;}
+/* боеприпас + мастерство — одной строкой, кегль обеих подбирает _fitLine */
+.c-amrow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:5px;margin:5px 0 0;overflow:hidden;}
+.c-amrow>div{margin:0;white-space:nowrap;flex:0 0 auto;}
+/* боеприпас — плашка как «Материал» у заклинаний (без курсива) */
+.c-ammo{font-size:9.5px;color:#4a3a24;line-height:1.35;margin:5px 0 0;background:rgba(138,96,16,.08);border-radius:5px;padding:3px 9px;overflow:hidden;}
+.c-ammo-l{font-family:'Cinzel',serif;font-size:7.5px;font-weight:700;letter-spacing:.1em;color:#8a6010;}
+/* мастерство — как «На высоких уровнях» школы Воплощения, но в одну строку */
+.c-mastery{margin:5px 0 0;border-left:3px solid #c04030;background:rgba(138,96,16,.08);border-radius:0 7px 7px 0;padding:3px 9px;font-size:9.5px;color:#241a08;line-height:1.35;overflow:hidden;}
+.c-mastery-l{font-family:'Cinzel',serif;font-size:8px;font-weight:700;letter-spacing:.12em;color:#8d2a20;}
+/* свойства — теги-пилюли (кегль подбирает _fitProps) */
+.c-props{display:flex;flex-wrap:wrap;justify-content:center;gap:3px 4px;margin:4px 0 0;font-family:inherit;color:inherit;font-size:9px;line-height:normal;}
+.c-prop-tag{font-size:inherit;color:#4a3820;border:.5px solid #b6a06a;background:rgba(255,255,255,.4);border-radius:20px;padding:1px 5px;}
+/* кроп и панель коллекции (правила общие, из бывшего page-local) */
+.crop-area img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;}
+.coll-empty svg{opacity:.2;display:block;margin:0 auto 10px;}
+.coll-sel-info{font-family:'Cinzel',serif;font-size:10px;color:var(--text3);text-align:center;letter-spacing:.06em;}
+.coll-full-link svg{flex-shrink:0;}
 </style>
 <link rel="stylesheet" href="mobile.css"/>
 </head>
@@ -485,7 +503,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
       </span>
     </div>
   </div>
-  <h1 style="font-size:12px;color:var(--text2);font-family:'Crimson Text',serif;font-style:italic;font-weight:400;margin:0;">— Доспехи</h1>
+  <h1 style="font-size:12px;color:var(--text2);font-family:'Crimson Text',serif;font-style:italic;font-weight:400;margin:0;">— Оружие 5e</h1>
   </div>
 <!-- Кнопки шапки генератора: PNG, печать, операции с выбранными, проект -->
 <div class="header-btns">
@@ -526,6 +544,13 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 <div class="layout">
 
 <aside class="sb">
+  <div class="lbl" style="margin-top:0;">Редакция</div>
+  <div class="magseg" id="edseg" role="radiogroup" aria-label="Редакция">
+    <button type="button" data-v="2014" role="radio" aria-checked="false">2014</button>
+    <button type="button" data-v="2024" role="radio" aria-checked="false">2024</button>
+  </div>
+
+<!-- Панель оружия, часть A (до «Мастерства») — общая для 2014 и 2024 -->
   <div class="lbl">Редкость</div>
   <div class="rprow" role="radiogroup" aria-label="Редкость">
     <div class="rp on" data-r="nonmagic" title="Немагический"></div>
@@ -547,7 +572,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 
   <label class="lbl" for="fn">Название</label>
   <div class="field-wrap field-mb">
-    <input class="si" type="text" id="fn" placeholder="Латные доспехи +1" maxlength="34"/>
+    <input class="si" type="text" id="fn" placeholder="Длинный меч +1" maxlength="34"/>
     <span class="char-counter" id="cnt-fn">0/30</span>
   </div>
 
@@ -569,7 +594,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   </button>
 
   <div class="row2" style="margin-top:13px;">
-    <div class="sf"><label class="lbl" style="margin:0 0 5px;" for="fc">Цена</label><input class="si" type="text" id="fc" placeholder="1500" maxlength="7" inputmode="decimal"/></div>
+    <div class="sf"><label class="lbl" style="margin:0 0 5px;" for="fc">Цена</label><input class="si" type="text" id="fc" placeholder="15" maxlength="7" inputmode="decimal"/></div>
     <div class="sf"><label class="lbl" style="margin:0 0 5px;" for="fcoin">Монеты</label>
       <select class="si" id="fcoin">
         <option>мм</option><option>см</option><option>эм</option><option selected>зм</option><option>пм</option>
@@ -577,7 +602,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     </div>
   </div>
   <div class="row2" style="margin-top:7px;">
-    <div class="sf"><label class="lbl" style="margin:0 0 5px;" for="fwgt">Вес (фунтов)</label><input class="si" type="text" id="fwgt" placeholder="65" maxlength="7" inputmode="decimal"/></div>
+    <div class="sf"><label class="lbl" style="margin:0 0 5px;" for="fwgt">Вес (фунтов)</label><input class="si" type="text" id="fwgt" placeholder="3" maxlength="7" inputmode="decimal"/></div>
     <div class="sf"></div>
   </div>
 
@@ -592,51 +617,75 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     </select>
   </div>
 
-  <label class="lbl" for="farmortype">Тип доспеха</label>
-  <select class="si" id="farmortype">
-    <option value="">— выбрать —</option>
-    <option>Лёгкий</option>
-    <option>Средний</option>
-    <option>Тяжёлый</option>
-    <option>Щит</option>
-  </select>
-  <label class="pcb" style="margin-top:7px;">
-    <input type="checkbox" id="fstealth"/>
-    <span>Помеха скрытности</span>
+  <label class="lbl" for="fk">Тип оружия</label>
+  <select class="si" id="fk"><option value="">— выбрать —</option><option>Рукопашное</option><option>Дальнобойное</option></select>
+  <label class="lbl" for="fcat">Класс</label>
+  <select class="si" id="fcat"><option value="">— выбрать —</option><option>Простое</option><option>Воинское</option><option>Импровизированное</option></select>
+  <label class="lbl" for="fdt">Тип урона</label>
+  <select class="si" id="fdt"><option value="">— выбрать —</option><option>Рубящий</option><option>Дробящий</option><option>Колющий</option></select>
+  <div id="ammo-wrap">
+    <label class="lbl" for="fammo">Тип боеприпаса</label>
+    <select class="si" id="fammo"><option value="">—</option><option>Стрелы</option><option>Болты</option><option>Болты (обойма×6)</option><option>Снаряды для пращи</option><option>Иглы</option></select>
+  </div>
+  <div class="lbl">Свойства</div>
+  <div class="props-grid" id="pg"></div>
+  <label class="pcb" id="osoboe-wrap" style="margin-top:3px;">
+    <input type="checkbox" id="pg-osoboe" value="Особое"/><span>Особое</span>
   </label>
 
-  <label class="lbl" for="fmaterial">Материал</label>
-  <div class="field-wrap field-mb">
-    <input class="si" type="text" id="fmaterial" placeholder="Сталь, мифрил…" maxlength="26"/>
-    <span class="char-counter" id="cnt-material">0/26</span>
+  <div id="mastery-wrap">
+  <label class="lbl" for="fmastery">Мастерство</label>
+  <select class="si" id="fmastery">
+    <option value="">— нет —</option>
+    <option>Быстрое</option>
+    <option>Замедляющее</option>
+    <option>Опрокидывающее</option>
+    <option>Ослабляющее</option>
+    <option>Отвлекающее</option>
+    <option>Прорубающее</option>
+    <option>Сбивающее</option>
+    <option>Толкающее</option>
+  </select>
   </div>
-
+<!-- Панель оружия, часть B (после «Мастерства») — общая для 2014 и 2024 -->
+  <label class="lbl" for="fr1">Дистанция (обычная / макс.)</label>
   <div class="row2">
-    <div class="sf"><label class="lbl" style="margin:0 0 5px;" for="facbase">КБ</label>
-      <input class="si" type="text" id="facbase" placeholder="18" maxlength="2" inputmode="numeric"/></div>
-    <div class="sf"><label class="lbl" style="margin:0 0 5px;" for="fstrreq">Треб. Силы</label>
-      <input class="si" type="text" id="fstrreq" placeholder="13" maxlength="2" inputmode="numeric"/></div>
+    <div class="sf"><div class="sl">Обычная</div><input class="si" type="text" id="fr1" placeholder="20" maxlength="4" inputmode="numeric"/></div>
+    <div class="sf"><div class="sl">Максимальная</div><input class="si" type="text" id="fr2" placeholder="60" maxlength="4" inputmode="numeric"/></div>
   </div>
-
-  <div class="lbl">Особое свойство</div>
-  <div class="sf-col">
-    <div class="sf"><label class="sl" for="fspec">Эффект</label><select class="si" id="fspec"><option value="">—</option><option>Сопротивление</option><option>Адамантин</option><option>Иммунитет к немагическому</option></select></div>
-    <div class="sf"><label class="sl" for="fspectype">Тип урона</label><select class="si" id="fspectype"><option value="">—</option><option>Огонь</option><option>Холод</option><option>Электричество</option><option>Кислота</option><option>Яд</option><option>Звук</option><option>Излучение</option><option>Некротическая энергия</option><option>Психическая энергия</option><option>Силовое поле</option><option>Дробящий</option><option>Колющий</option><option>Рубящий</option></select></div>
+  <div class="lbl">Урон</div>
+  <div class="row2">
+    <div class="sf"><label class="sl" for="fd1">Одна рука</label><select class="si" id="fd1"><option value="">—</option><option>1</option><option>1d4</option><option>1d6</option><option>1d8</option><option>1d10</option><option>1d12</option><option>2d4</option><option>2d6</option><option>2d8</option><option>2d10</option><option>2d12</option></select></div>
+    <div class="sf"><label class="sl" for="fd2">Две руки</label><select class="si" id="fd2"><option value="">—</option><option>1</option><option>1d4</option><option>1d6</option><option>1d8</option><option>1d10</option><option>1d12</option><option>2d4</option><option>2d6</option><option>2d8</option><option>2d10</option><option>2d12</option></select></div>
+  </div>
+  <div class="lbl">Дополнительный урон</div>
+  <div class="row2">
+    <div class="sf"><label class="sl" for="fxd">Кубики</label><input class="si" type="text" id="fxd" placeholder="2d6" maxlength="5"/></div>
+    <div class="sf"><label class="sl" for="fxt">Тип</label><select class="si" id="fxt"><option value="">—</option><option>Огонь</option><option>Холод</option><option>Электричество</option><option>Кислота</option><option>Яд</option><option>Звук</option><option>Излучение</option><option>Некротическая энергия</option><option>Психическая энергия</option><option>Силовое поле</option></select></div>
+  </div>
+  <div class="lbl">Бонусы владельца</div>
+  <div class="row2">
+    <div class="sf"><label class="sl" for="fstr">Сила / Ловкость</label><input class="si" type="text" id="fstr" placeholder="3" maxlength="2" inputmode="numeric"/></div>
+    <div class="sf"><label class="sl" for="fpr">Владение</label><input class="si" type="text" id="fpr" placeholder="2" maxlength="2" inputmode="numeric"/></div>
   </div>
 
   <div class="divider"></div>
 
+  <label class="lbl" for="fflv">Атмосферная фраза</label>
+  <div class="field-wrap field-mb">
+    <textarea class="si" id="fflv" maxlength="70" placeholder="Сталь не знает усталости…" style="height:80px;"></textarea>
+    <span class="char-counter" id="cnt-flv">0/70</span>
+  </div>
+
   <div class="lbl">Описание / Эффект</div>
-<!-- Панель форматирования описания (Ж/К/П); копия живёт в weapon-form-b.html,
-     т.к. вложенные включения build.py не разворачивает -->
-<div class="fmt-bar" role="group" aria-label="Форматирование описания">
+  <div class="fmt-bar" role="group" aria-label="Форматирование описания">
     <button type="button" class="fmt-btn" data-fmt="**" title="Полужирный (Ctrl+B)" aria-label="Полужирный"><b>Ж</b></button>
     <button type="button" class="fmt-btn" data-fmt="*" title="Курсив (Ctrl+I)" aria-label="Курсив"><i>К</i></button>
     <button type="button" class="fmt-btn" data-fmt="__" title="Подчёркнутый (Ctrl+U)" aria-label="Подчёркнутый"><u>П</u></button>
   </div>
   <div class="field-wrap field-mb">
-  <textarea class="si" id="fprops" maxlength="2400" placeholder="Описание, эффекты, лор… (перенос на оборот — автоматически)" style="height:350px;"></textarea>
-  <span class="char-counter" id="cnt-props">0/2000</span>
+    <textarea class="si" id="fdesc" maxlength="2400" placeholder="Описание, эффекты, лор… (перенос на оборот — автоматически)" style="height:350px;"></textarea>
+    <span class="char-counter" id="cnt-desc">0/2000</span>
     <div class="fmt-warn" id="desc-warn" role="status" aria-live="polite" style="display:none;"></div>
   </div>
 
@@ -648,6 +697,8 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   </button>
 </aside>
 
+<!-- Предпросмотр, панель коллекции и модалки оружия — общие для 2014 и 2024.
+     pmastery в 2014 всегда скрыт: селекта нет, data.mastery пуст. -->
 <main class="cv">
   <div class="cv-label">Предпросмотр</div>
   <div class="cards-row" id="cards-row">
@@ -668,32 +719,28 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
         <div class="c-title">
           <div class="c-title-main">
             <span class="c-mag" id="pmag" style="display:none;"></span>
-            <div class="c-name" id="pnm">Доспехи</div>
+            <div class="c-name" id="pnm">Оружие</div>
+            <div class="c-dmgline" id="pdmgl" style="display:none;"></div>
           </div>
         </div>
         <div class="c-img" id="cib">
-          <div class="c-img-ph" id="img-ph">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#8a7860" stroke-width="1.2" width="48" height="48"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          </div>
+          <div class="c-img-ph" id="img-ph"><svg viewBox="0 0 24 24" fill="none" stroke="#8a7860" stroke-width="1.2"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M2 22l7.5-7.5"/></svg></div>
 
         </div>
         <div class="c-body">
-          <div class="c-info-row">
-            <div class="c-infolist" id="pinfolist">
-              <div class="c-info-item"><span class="c-info-icon">✦</span><span></span></div>
-            </div>
-            <div class="c-ac-col">
-              <div class="c-ac-lbl">КБ</div>
-              <div class="c-ac-num" id="pac-num">—</div>
-              <div class="c-ac-mod" id="pac-mod"></div>
-            </div>
+          <div class="c-stats" id="pst"></div>
+          <div class="c-amrow" id="pamrow" style="display:none;">
+            <div class="c-ammo" id="pammo" style="display:none;"></div>
+            <div class="c-mastery" id="pmastery" style="display:none;"></div>
           </div>
-          <div class="c-rule" id="psep-props" style="display:none;"></div>
+          <div class="c-xdmg" id="pxdmg" style="display:none;"></div>
+          <div class="c-props" id="pprops" style="display:none;"></div>
+          <div class="c-quote" id="pquote" style="display:none;"></div>
           <div class="c-desc" id="pds"></div>
         </div>
         <div class="c-foot">
           <span class="c-wgt" id="pwgt"></span>
-          <span class="c-typeframe"><svg class="c-tfsvg" viewBox="0 0 210 28" xmlns="http://www.w3.org/2000/svg"><polygon points="40,14 51,3 159,3 170,14 159,25 51,25" fill="#fbf4e2" stroke="#5a4820" stroke-width="1.4"/><line x1="23" y1="14" x2="40" y2="14" stroke="#5a4820" stroke-width="1.3"/><line x1="170" y1="14" x2="187" y2="14" stroke="#5a4820" stroke-width="1.3"/><polygon points="15,6 23,14 15,22 7,14" fill="#d4c4a0" stroke="#5a4820" stroke-width="1.3"/><circle cx="15" cy="14" r="2" fill="#5a4820"/><polygon points="195,6 203,14 195,22 187,14" fill="#d4c4a0" stroke="#5a4820" stroke-width="1.3"/><circle cx="195" cy="14" r="2" fill="#5a4820"/><text x="105" y="18.5" text-anchor="middle" font-family="Crimson Text,Georgia,serif" font-style="italic" font-size="13" fill="#3a2810">Доспехи</text></svg></span><div class="c-gem" id="pgm"></div>
+          <span class="c-typeframe"><svg class="c-tfsvg" viewBox="0 0 210 28" xmlns="http://www.w3.org/2000/svg"><polygon points="40,14 51,3 159,3 170,14 159,25 51,25" fill="#fbf4e2" stroke="#5a4820" stroke-width="1.4"/><line x1="23" y1="14" x2="40" y2="14" stroke="#5a4820" stroke-width="1.3"/><line x1="170" y1="14" x2="187" y2="14" stroke="#5a4820" stroke-width="1.3"/><polygon points="15,6 23,14 15,22 7,14" fill="#d4c4a0" stroke="#5a4820" stroke-width="1.3"/><circle cx="15" cy="14" r="2" fill="#5a4820"/><polygon points="195,6 203,14 195,22 187,14" fill="#d4c4a0" stroke="#5a4820" stroke-width="1.3"/><circle cx="195" cy="14" r="2" fill="#5a4820"/><text x="105" y="18.5" text-anchor="middle" font-family="Crimson Text,Georgia,serif" font-style="italic" font-size="13" fill="#3a2810">Оружие</text></svg></span><div class="c-gem" id="pgm"></div>
         </div>
       </div>
     </div>
@@ -733,13 +780,14 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   </div>
   <div class="coll-list" id="coll-list">
     <div class="coll-empty" id="coll-empty">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
       Коллекция пуста.<br/>Создайте карточку.
     </div>
   </div>
 </aside>
 
-<!-- PRINT MODE MODAL -->
+</div>
+
 <!-- Выбор режима печати — общий для всех генераторов -->
 <div class="conf-modal-bg" id="print-modal-bg">
   <div class="conf-modal">
@@ -767,8 +815,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
       <button class="conf-keep" id="conf-keep">Оставить</button>
     </div>
   </div>
-</div>
-
 </div>
 
 <!-- Кроп картинки — общий для всех генераторов с загрузкой изображения -->
@@ -800,6 +846,17 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 
 <script>
 (function(){
+var PROPS=['Двуручное','Досягаемость','Лёгкое','Метательное','Перезарядка','Тяжёлое','Универсальное','Фехтовальное'];
+var pg=document.getElementById('pg');
+PROPS.forEach(function(p){
+  var l=document.createElement('label');l.className='pcb';
+  l.innerHTML='<input type="checkbox" value="'+p+'"><span>'+p+'</span>';
+  pg.appendChild(l);
+});
+
+/* Настройка (attunement): у «Немагический» блок скрыт и значение очищается. */
+function updateAttuneWrap(){document.getElementById('attune-wrap').style.display=cr==='nonmagic'?'none':'block';if(cr==='nonmagic')document.getElementById('fattune').value='';}
+
 /* Палитра редкостей (общая для генераторов, кроме kits — у него своя
    единственная «Немагический»). Порядок секций RARITY_ORDER — в collection.js.
    Поля a/cb/cs — старый дизайн (полоса-акцент, рамка, тень); grad/gem — новый
@@ -822,31 +879,84 @@ function applyPal(rar){
     ['ps','pbs'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=g;});}
   if(d.gem){['pgm','pbgm'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=d.gem;});}
 }
-var LS_KEY='dnd_cardforge_armor';
-var IDB_NAME='dnd_armor_imgs';
-/* Настройка (attunement): у «Немагический» блок скрыт и значение очищается. */
-function updateAttuneWrap(){document.getElementById('attune-wrap').style.display=cr==='nonmagic'?'none':'block';if(cr==='nonmagic')document.getElementById('fattune').value='';}
-function computeAcDisplay(){
-  var type=document.getElementById('farmortype').value;
-  var raw=document.getElementById('facbase').value.trim();
-  if(!raw)return '';
-  /* бонус (кольчуга +1 и прочие артефакты) складывается с базовым: на карточке
-     нужен итоговый КБ, а слагаемые остаются в данных для сортировки и правки */
-  var bonus=parseInt(_magVal(),10)||0;
-  var base=String((parseInt(raw,10)||0)+bonus);
-  if(type==='Лёгкий')return base+' + Лов';
-  if(type==='Средний')return base+' + Лов (макс. +2)';
-  if(type==='Щит')return '+'+base+' к КБ';
-  return base;
+/* Слияние двух коллекций оружия (2014/2024) в одну с полем edition.
+   LS-часть синхронная и выполняется ДО core.js/collection.js, чтобы loadFromLS
+   уже читал новый ключ. Картинки переезжают между IndexedDB асинхронно; когда
+   копия закончится, вызывается afterImgs (страница дергает loadFromLS ещё раз).
+   Старые LS-ключи удаляются после переноса, старые IDB остаются как мусор —
+   безопаснее, чем удалять. Коллизии id решаются переномеровкой 2024-пачки. */
+var WEAPON_LS='dnd_cardforge_weapon';
+var WEAPON_IDB='dnd_weapon_imgs';
+var _WM_OLD=[
+  {key:'dnd_cardforge_weapon2014',idb:'dnd_weapon2014_imgs',ed:'2014'},
+  {key:'dnd_cardforge_weapon2024',idb:'dnd_weapon2024_imgs',ed:'2024'}
+];
+function weaponMigrateLS(){
+  var moved=[];/* [{idb,oldId,newId}] для копии картинок */
+  var cur=[];
+  try{var d=localStorage.getItem(WEAPON_LS);if(d){var a=JSON.parse(d);if(Array.isArray(a))cur=a;}}catch(e){}
+  var seen={};cur.forEach(function(c){seen[String(c.id)]=1;});
+  var changed=false;
+  _WM_OLD.forEach(function(src){
+    var raw=null;
+    try{raw=localStorage.getItem(src.key);}catch(e){}
+    if(!raw)return;
+    var arr=[];try{arr=JSON.parse(raw)||[];}catch(e){arr=[];}
+    arr.forEach(function(c){
+      if(!c||typeof c!=='object')return;
+      if(!c.edition)c.edition=src.ed;
+      var oldId=c.id,id=String(c.id);
+      while(seen[id]){c.id=(+c.id||Date.now())+1;id=String(c.id);}
+      seen[id]=1;
+      moved.push({idb:src.idb,oldId:oldId,newId:c.id});
+      cur.push(c);
+    });
+    try{localStorage.removeItem(src.key);}catch(e){}
+    changed=true;
+  });
+  if(changed){try{localStorage.setItem(WEAPON_LS,JSON.stringify(cur));}catch(e){}}
+  return moved;
 }
-function computeTiming(){
-  var type=document.getElementById('farmortype').value;
-  if(type==='Лёгкий')return{on:'1 мин.',off:'1 мин.'};
-  if(type==='Средний')return{on:'5 мин.',off:'1 мин.'};
-  if(type==='Тяжёлый')return{on:'10 мин.',off:'5 мин.'};
-  if(type==='Щит')return{on:'1 действие',off:'1 действие'};
-  return{on:'',off:''};
+function weaponMigrateImgs(moved,afterImgs){
+  if(!moved.length){if(afterImgs)afterImgs(0);return;}
+  var byDb={};moved.forEach(function(m){(byDb[m.idb]=byDb[m.idb]||[]).push(m);});
+  var names=Object.keys(byDb),pending=names.length,copied=0;
+  function done(){if(--pending===0&&afterImgs)afterImgs(copied);}
+  names.forEach(function(name){
+    var req=indexedDB.open(name,1);
+    req.onupgradeneeded=function(e){try{e.target.result.createObjectStore('imgs');}catch(_){}};
+    req.onerror=done;
+    req.onsuccess=function(e){
+      var db=e.target.result,list=byDb[name],out={};
+      try{
+        var cur=db.transaction('imgs','readonly').objectStore('imgs').openCursor();
+        cur.onsuccess=function(ev){
+          var c=ev.target.result;
+          if(c){out[String(c.key)]=c.value;c.continue();return;}
+          /* всё прочитано — пишем в новую базу под новыми id */
+          var w=indexedDB.open(WEAPON_IDB,1);
+          w.onupgradeneeded=function(we){try{we.target.result.createObjectStore('imgs');}catch(_){}};
+          w.onerror=done;
+          w.onsuccess=function(we){
+            var wdb=we.target.result;
+            try{
+              var tx=wdb.transaction('imgs','readwrite'),st=tx.objectStore('imgs');
+              list.forEach(function(m){
+                var im=out[String(m.oldId)];
+                if(im){st.put(im,String(m.newId));copied++;}
+              });
+              tx.oncomplete=done;tx.onerror=done;
+            }catch(_){done();}
+          };
+        };
+        cur.onerror=done;
+      }catch(_){done();}
+    };
+  });
 }
+var LS_KEY=WEAPON_LS;
+var IDB_NAME=WEAPON_IDB;
+var _wmMoved=weaponMigrateLS();
 var cr='nonmagic', imgDataUrl=null, collection=[], currentCard=null;
 var IDB_STORE='imgs',_idb=null;
 function _openIDB(cb){if(_idb){cb(_idb);return;}var r=indexedDB.open(IDB_NAME,1);r.onupgradeneeded=function(e){e.target.result.createObjectStore(IDB_STORE);};r.onsuccess=function(e){_idb=e.target.result;cb(_idb);};r.onerror=function(){cb(null);};}
@@ -938,7 +1048,34 @@ function mkCounter(inputId,countId,max,lenFn){
   }
   if(!inp._cbound){inp.addEventListener('input',upd);inp._cbound=true;}upd();
 }
-mkCounter('fn','cnt-fn',34);mkCounter('fmaterial','cnt-material',26);mkCounter('fprops','cnt-props',2000,visLen);
+['fr1','fr2'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9]/g,'').slice(0,4);this.setSelectionRange(p,p);});});
+['fstr','fpr'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;var v=this.value.replace(/[^0-9-]/g,'');v=v.charAt(0)+v.slice(1).replace(/-/g,'');this.value=v.slice(0,2);this.setSelectionRange(p,p);});});
+mkCounter('fn','cnt-fn',34);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);
+/* Редакция страницы. Дефолт — глобальный выбор галереи (dnd_gallery_edition),
+   параметр ?ed=2014|2024 (редиректы со старых адресов) перебивает. */
+function _edVal(){var b=document.querySelector('#edseg button.on');return b?b.getAttribute('data-v'):'2014';}
+function _edSet(v){
+  v=(v==='2024')?'2024':'2014';
+  document.querySelectorAll('#edseg button').forEach(function(x){
+    var on=x.getAttribute('data-v')===v;
+    x.classList.toggle('on',on);x.setAttribute('aria-checked',on?'true':'false');
+  });
+  _edSync();
+}
+function _edSync(){
+  var on=_edVal()==='2024';
+  document.getElementById('mastery-wrap').style.display=on?'':'none';
+  document.getElementById('osoboe-wrap').style.display=on?'none':'';
+}
+document.querySelectorAll('#edseg button').forEach(function(b){
+  b.addEventListener('click',function(){_edSet(b.getAttribute('data-v'));renderCard(readForm());});
+});
+(function(){
+  var v=null;
+  try{v=new URLSearchParams(location.search).get('ed');}catch(e){}
+  if(v!=='2014'&&v!=='2024'){try{v=localStorage.getItem('dnd_gallery_edition');}catch(e){}}
+  _edSet(v||'2014');
+})();
 /* Переключатель магического бонуса предмета (— / +1 / +2 / +3) в панели.
    Кнопки не дают input/change, поэтому ререндер вызываем сами. Страница
    читает значение через _magVal() и восстанавливает через _magSet(v). */
@@ -957,14 +1094,6 @@ function _magSet(v){
     x.classList.toggle('on',on);x.setAttribute('aria-checked',on?'true':'false');
   });
 }
-/* тип урона имеет смысл только у сопротивления: у адамантина и иммунитета его нет */
-function _specSync(){
-  var sp=document.getElementById('fspec'),st=document.getElementById('fspectype');
-  var on=sp.value==='Сопротивление';
-  st.disabled=!on; if(!on)st.value='';
-}
-document.getElementById('fspec').addEventListener('change',_specSync);
-['facbase','fstrreq'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9]/g,'').slice(0,2);this.setSelectionRange(p,p);});});
 
 /* Автошрифт названия: одна строка, лестница кеглей 16→10, дальше многоточие
    (по образцу заклинаний). Общий для всех семи генераторов — spells crop.js
@@ -1239,39 +1368,59 @@ function applyImgThumb(data){
 }
 CARD_RATIO=282/150;
 
-function splitAcDisplay(str){
-  if(!str||str==='—')return{num:'—',mod:''};
-  if(/^\+/.test(str)){var m=str.match(/^(\+\d+)\s*(.*)/);return m?{num:m[1],mod:m[2].trim()}:{num:str,mod:''};}
-  var m=str.match(/^(\d+)\s*(.*)/);
-  return m?{num:m[1],mod:m[2].trim()}:{num:str,mod:''};
+/* Дополнительный урон оружия («Пламенный язык» — 2d6 огнём, «Убийца драконов» — 3d6).
+   Кубики и тип хранятся раздельно (xDice/xType), чтобы галерея могла фильтровать
+   по типу; строка собирается здесь, иначе формулировка разъедется между
+   генераторами и превью. Тип в форме именительный, на карточке — творительный. */
+var XDMG_INSTR={
+  'Огонь':'огнём','Холод':'холодом','Электричество':'электричеством',
+  'Кислота':'кислотой','Яд':'ядом','Звук':'звуком','Излучение':'излучением',
+  'Некротическая энергия':'некротической энергией',
+  'Психическая энергия':'психической энергией','Силовое поле':'силовым полем'
+};
+function xDmgText(card){
+  var d=String((card&&card.xDice)||'').trim();
+  if(!d)return '';
+  var t=String((card&&card.xType)||'').trim();
+  return t?(d+' '+(XDMG_INSTR[t]||t.toLowerCase())):d;
 }
 
-/* readForm */
+/* fmtBonus: «+3»/«−1», ноль и пусто — пустая строка */
+function fmtB(v){var n=parseInt(v,10);return(isNaN(n)||n===0)?'':(n>0?'+'+n:''+n);}
+
+/* readForm оружия — общий для 2014 и 2024; в 2014 селекта мастерства нет */
 function readForm(){
+  var props=[];
+  document.querySelectorAll('#pg input:checked').forEach(function(x){props.push(x.value);});
+  /* «Особое» (2014) живёт отдельным чекбоксом под сеткой */
+  var os=document.getElementById('pg-osoboe');
+  if(os&&os.checked)props.push('Особое');
   return {
-    rarity:cr,
+    rarity:cr,edition:(typeof _edVal==='function'?_edVal():'2014'),
     name:document.getElementById('fn').value.trim(),
     cost:document.getElementById('fc').value.trim(),coin:document.getElementById('fcoin').value,
-    armorType:document.getElementById('farmortype').value,
-    acBase:document.getElementById('facbase').value.trim(),
+    kind:document.getElementById('fk').value,cat:document.getElementById('fcat').value,
+    dt:document.getElementById('fdt').value,d1:document.getElementById('fd1').value,
+    d2:document.getElementById('fd2').value,
+    strBonus:document.getElementById('fstr').value.trim(),
+    profBonus:document.getElementById('fpr').value.trim(),
     magicBonus:_magVal(),
-    spec:document.getElementById('fspec').value,
-    specType:document.getElementById('fspectype').value,
-    acDisplay:computeAcDisplay(),
-    material:document.getElementById('fmaterial').value.trim(),
-    strReq:document.getElementById('fstrreq').value.trim(),
-    stealth:document.getElementById('fstealth').checked,
-    attune:document.getElementById('fattune').value,
-    donnTime:computeTiming().on,
-    doffTime:computeTiming().off,
+    xDice:document.getElementById('fxd').value.trim(),
+    xType:document.getElementById('fxt').value,
     wgt:document.getElementById('fwgt').value.trim(),
-    desc:document.getElementById('fprops').value,
+    r1:document.getElementById('fr1').value.trim(),r2:document.getElementById('fr2').value.trim(),
+    desc:document.getElementById('fdesc').value,
+    flv:document.getElementById('fflv').value.trim(),
+    props:props,ammo:document.getElementById('fammo').value,
+    /* в 2014 селекта мастерства нет — поле остаётся пустым */
+    mastery:(function(){var e=document.getElementById('fmastery');return e?e.value:'';})(),
+    attune:document.getElementById('fattune').value,
     noImg:document.getElementById('f-noimg').checked,
     img:imgDataUrl,rawImg:rawImgDataUrl
   };
 }
 
-/* единое описание: заполняет лицо, излишек — на оборот */
+/* renderCard */
 /* ── Разметка описания: **полужирный** *курсив* __подчёркнутый__ ──
    Текст без маркеров даёт один ран, поэтому старые карточки, импорт и шаблоны
    рендерятся ровно как прежде — миграция не нужна.
@@ -1471,79 +1620,106 @@ function splitDesc(data){
     _descWarn(vis.length-bcut);
   });
 }
-/* renderCard */
-/* Особое свойство доспеха («Доспех сопротивления», адамантин, иммунитет).
-   Эффект и тип урона хранятся раздельно (spec/specType), чтобы галерея могла
-   фильтровать по типу; строка собирается здесь, иначе формулировка разъедется
-   между карточкой, таблицей и превью. Тип в форме именительный, в строке —
-   дательный: «Сопротивление огню». */
-var SPEC_DAT={'Огонь':'огню','Холод':'холоду','Электричество':'электричеству',
-  'Кислота':'кислоте','Яд':'яду','Звук':'звуку','Излучение':'излучению',
-  'Некротическая энергия':'некротической энергии','Психическая энергия':'психической энергии',
-  'Силовое поле':'силовому полю','Дробящий':'дробящему урону',
-  'Колющий':'колющему урону','Рубящий':'рубящему урону'};
-function specText(card){
-  var sp=String((card&&card.spec)||'').trim();
-  if(!sp)return '';
-  if(sp!=='Сопротивление')return sp;
-  var t=String((card&&card.specType)||'').trim();
-  return t?('Сопротивление '+(SPEC_DAT[t]||t.toLowerCase())):sp;
+/* Рендер, applyFormData и сброс оружия — общие для 2014 и 2024. */
+/* подбор кегля строки «боеприпас + мастерство»: ужимаем обе плашки, пока не влезут */
+function _fitLine(row){
+  var steps=[[9.5,'3px 9px','3px 9px'],[9.5,'3px 7px','3px 7px'],[9.5,'3px 5px','3px 5px'],
+             [9,'3px 5px','3px 5px'],[8.5,'3px 4px','3px 4px'],[8,'3px 4px','3px 4px']];
+  var am=document.getElementById('pammo'),ma=document.getElementById('pmastery');
+  for(var i=0;i<steps.length;i++){
+    [am,ma].forEach(function(e,n){if(e){e.style.fontSize=steps[i][0]+'px';e.style.padding=steps[i][1+n];}});
+    var fits=row.scrollWidth<=row.clientWidth;
+    [am,ma].forEach(function(e){if(e&&getComputedStyle(e).display!=='none'&&e.scrollWidth>e.clientWidth+1)fits=false;});
+    if(fits)return;
+  }
+}
+
+/* подбор кегля тегов-пилюль: ужимаем шрифт/отступы, пока не влезут в 2 строки */
+function _fitProps(el){
+  if(!el||!el.children.length)return;
+  var steps=[[9,'3px 4px','1px 5px'],[8.5,'3px 3px','1px 5px'],[8,'2px 3px','0 5px'],
+             [7.5,'2px 3px','0 4px'],[7,'2px 2px','0 4px'],[6.5,'1px 2px','0 3px']];
+  for(var i=0;i<steps.length;i++){
+    el.style.fontSize=steps[i][0]+'px';el.style.gap=steps[i][1];
+    [].forEach.call(el.children,function(c){c.style.padding=steps[i][2];});
+    var one=el.children[0].offsetHeight,rowGap=parseFloat(steps[i][1])||2;
+    if(el.offsetHeight<=one*2+rowGap+1)return;
+  }
+}
+
+/* Редакция карточки — из данных, а не из формы: iframe-мост галерей рендерит
+   смешанные пачки 2014+2024 без прогонов через переключатель. */
+function _cardEdOf(data){
+  var e=data.edition;
+  if(e==='2014'||e==='2024')return e;
+  e=data._edition;
+  if(e==='2014'||e==='2024')return e;
+  var s=data._source;
+  if(s==='weapon2014')return '2014';
+  if(s==='weapon2024')return '2024';
+  return (typeof _edVal==='function')?_edVal():'2014';
 }
 function renderCard(data){
-  document.getElementById('pnm').textContent=data.name||'Доспехи';
+  var _ced=_cardEdOf(data);
+  var d=R[data.rarity||'common'];
+  /* Магический бонус предмета идёт и в атаку, и в урон; характеристика — только
+     в урон, владение — только в атаку. Строку «Атака» показываем, лишь когда
+     задано хотя бы одно слагаемое, иначе у всех немагических шаблонов был бы «+0». */
+  function _n(v){var n=parseInt(v,10);return isNaN(n)?0:n;}
+  function _has(v){return v!==''&&v!==null&&v!==undefined;}
+  var mg=_n(data.magicBonus);
+  var sb=fmtB(_n(data.strBonus)+mg);
+  var atk=(_has(data.strBonus)||_has(data.profBonus)||mg)
+    ?fmtB(_n(data.strBonus)+_n(data.profBonus)+mg):'';
+  document.getElementById('pnm').textContent=data.name||'Оружие';
   /* плашку ставим до _fitName: она забирает ширину у строки названия */
-  var mg=parseInt(data.magicBonus,10)||0;
-  var mgEl=document.getElementById('pmag'),tmEl=document.querySelector('.c-title-main');
-  if(mg){mgEl.textContent='+'+mg;mgEl.style.display='';}else{mgEl.style.display='none';}
+  var mgEl=document.getElementById('pmag');
+  if(mg){mgEl.textContent=fmtB(mg);mgEl.style.display='';}else{mgEl.style.display='none';}
+  var tmEl=document.querySelector('.c-title-main');
   tmEl.classList.toggle('has-mag',!!mg);
   _fitName();
-  /* плашка — сестра .c-name, переменную кегля _fitName ставит на само имя */
-  tmEl.style.setProperty('--name-fs',getComputedStyle(document.getElementById('pnm')).fontSize);document.getElementById('pc').classList.toggle('no-img',!!data.noImg);
+  /* Плашка — сестра .c-name, переменную кегля _fitName ставит на само имя,
+     поэтому дублируем её на родителя: top плашки считается от кегля названия,
+     иначе при ужатом имени плашка не совпадёт со строкой названия по высоте. */
+  tmEl.style.setProperty('--name-fs',getComputedStyle(document.getElementById('pnm')).fontSize);
+document.getElementById('pc').classList.toggle('no-img',!!data.noImg);
   var co=document.getElementById('p-cost');
   if(data.cost){co.textContent=data.cost+' '+(data.coin||'зм');co.style.visibility='visible';}
   else{co.style.visibility='hidden';}
-
-  /* AC column */
-  var ac=splitAcDisplay(data.acDisplay||'');
-  document.getElementById('pac-num').textContent=ac.num;
-  var modEl=document.getElementById('pac-mod');
-  if(ac.mod){modEl.textContent=ac.mod.replace(' (','\n(');modEl.style.display='';}
-  else{modEl.textContent='';modEl.style.display='none';}
-
-  /* infolist */
-  var il=document.getElementById('pinfolist');
-  il.innerHTML='';
-  function addInfo(icon,text){
-    var row=document.createElement('div');row.className='c-info-item';
-    var ic=document.createElement('span');ic.className='c-info-icon';ic.textContent=icon;
-    var tx=document.createElement('span');tx.textContent=text;
-    row.appendChild(ic);row.appendChild(tx);il.appendChild(row);
-  }
-  if(data.armorType)addInfo('✦',data.armorType==='Щит'?'Щит':data.armorType+' доспех');
-  if(data.material)addInfo('◈',data.material);
-  var spTxt=specText(data);
-  if(spTxt)addInfo('◇',spTxt);
-  if(data.strReq)addInfo('♦','Требует Силы: '+data.strReq);
-  if(data.stealth)addInfo('⊙','Помеха скрытности');
+  var dl=document.getElementById('pdmgl');
+  var dlp=[];if(data.kind)dlp.push(data.kind);if(data.cat)dlp.push(data.cat);if(data.dt)dlp.push(data.dt);
+  if(dlp.length){dl.textContent=dlp.join(' · ');dl.style.display='block';}else{dl.style.display='none';}
+  var sr=document.getElementById('pst');sr.innerHTML='';
+  function addS(l,v){if(!v)return;var el=document.createElement('div');el.className='cst';el.innerHTML='<div class="cst-l">'+l+'</div><div class="cst-v">'+v+'</div>';sr.appendChild(el);}
+  if(atk)addS('Атака',atk);
+  if(data.d1)addS('Урон',data.d1+(sb||''));
+  if(data.d2)addS('Две руки',data.d2+(sb||''));
+  if(data.r1||data.r2)addS('Дист.',(data.r1&&data.r2)?(data.r1+'/'+data.r2):(data.r1||data.r2));
   var atEl=document.getElementById('p-attune');
   if(atEl)atEl.style.display=(data.attune&&data.attune.indexOf('Требует')===0)?'':'none';
-  var timParts=[];
-  if(data.donnTime&&data.doffTime&&data.donnTime===data.doffTime){
-    timParts.push('Надевание/снятие: '+data.donnTime);
-  }else{
-    if(data.donnTime)timParts.push('Надевание: '+data.donnTime);
-    if(data.doffTime)timParts.push('Снятие: '+data.doffTime);
+  /* боеприпас — плашка как «Материал»; мастерство — как «На высоких уровнях» */
+  function _plate(id,cls,lbl,val){
+    var el=document.getElementById(id);
+    if(!val){el.style.display='none';return;}
+    el.innerHTML='';var l=document.createElement('span');l.className=cls;l.textContent=lbl+'  ';
+    el.appendChild(l);el.appendChild(document.createTextNode(val));el.style.display='block';
   }
-  if(timParts.length){
-    var tl=document.createElement('div');tl.className='c-timing-line';
-    timParts.forEach(function(p){var s=document.createElement('span');s.textContent=p;tl.appendChild(s);});
-    il.appendChild(tl);
-  }
-
-  /* описание (авто-перенос лицо→оборот) */
-  document.getElementById('psep-props').style.display=data.desc?'':'none';
+  _plate('pammo','c-ammo-l','БОЕП.',data.ammo);
+  _plate('pmastery','c-mastery-l','МАСТ.',_ced==='2024'?data.mastery:'');
+  var row=document.getElementById('pamrow');
+  if(data.ammo||(_ced==='2024'&&data.mastery)){row.style.display='flex';_fitLine(row);}else{row.style.display='none';}
+  _plate('pxdmg','c-ammo-l','ДОП. УРОН',xDmgText(data));
+  /* свойства — теги-пилюли (боеприпас-свойство исключаем, оно уже отдельной строкой) */
+  var prEl=document.getElementById('pprops');prEl.innerHTML='';
+  var props=(data.props||[]).filter(function(p){
+    if(data.ammo&&p==='Боеприпас')return false;
+    if(_ced==='2024'&&p==='Особое')return false; /* скрытое поле 2014 не всплывает */
+    return true;
+  });
+  if(props.length){props.forEach(function(p){var t=document.createElement('span');t.className='c-prop-tag';t.textContent=p;prEl.appendChild(t);});prEl.style.display='flex';_fitProps(prEl);}else{prEl.style.display='none';}
+  var qEl=document.getElementById('pquote');
+  if(data.flv){qEl.textContent='«'+data.flv.replace(/^[«"]/,'').replace(/[»"]$/,'')+'»';qEl.style.display='block';}else{qEl.style.display='none';}
   splitDesc(data);
-
   document.getElementById('pwgt').textContent=data.wgt?data.wgt+' фнт.':'';
   setCardImg(data.img||null);
   applyR(data.rarity||'common');applyPal(data.rarity||'common');
@@ -1558,21 +1734,31 @@ function applyFormData(data){
   document.getElementById('fn').value=data.name||'';
   document.getElementById('fc').value=data.cost||'';
   document.getElementById('fcoin').value=data.coin||'зм';
-  document.getElementById('farmortype').value=data.armorType||'';
-  document.getElementById('facbase').value=data.acBase||'';
+  document.getElementById('fk').value=data.kind||'';
+  document.getElementById('fcat').value=data.cat||'';
+  document.getElementById('fdt').value=data.dt||'';
+  document.getElementById('fd1').value=data.d1||'';
+  document.getElementById('fd2').value=data.d2||'';
+  document.getElementById('fstr').value=data.strBonus||'';
+  document.getElementById('fpr').value=data.profBonus||'';
   _magSet(data.magicBonus);
-  document.getElementById('fspec').value=data.spec||'';
-  document.getElementById('fspectype').value=data.specType||'';
-  _specSync();
-  document.getElementById('fmaterial').value=data.material||'';
-  document.getElementById('fstrreq').value=data.strReq||'';
-  document.getElementById('fstealth').checked=!!data.stealth;
-  document.getElementById('fattune').value=data.attune||'';
+  if(typeof _edSet==='function')_edSet(_cardEdOf(data));
+  document.getElementById('fxd').value=data.xDice||'';
+  document.getElementById('fxt').value=data.xType||'';
   document.getElementById('fwgt').value=data.wgt||'';
-  document.getElementById('fprops').value=data.desc||'';
+  document.getElementById('fr1').value=data.r1||'';
+  document.getElementById('fr2').value=data.r2||'';
+  document.getElementById('fammo').value=data.ammo||'';
+  var _fm=document.getElementById('fmastery');if(_fm)_fm.value=data.mastery||'';
+  document.getElementById('fattune').value=data.attune||'';
+  document.getElementById('fdesc').value=data.desc||'';
+  document.getElementById('fflv').value=data.flv||'';
+  document.querySelectorAll('#pg input[type=checkbox]').forEach(function(cb){cb.checked=(data.props||[]).indexOf(cb.value)>-1;});
+  var _os=document.getElementById('pg-osoboe');
+  if(_os)_os.checked=(data.props||[]).indexOf('Особое')>-1;
   updateAttuneWrap();
   applyImgThumb(data);
-  mkCounter('fn','cnt-fn',34);mkCounter('fmaterial','cnt-material',26);mkCounter('fprops','cnt-props',2000,visLen);
+  mkCounter('fn','cnt-fn',34);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);
 }
 
 /* reset */
@@ -1582,42 +1768,44 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');});
   document.querySelector('.rp[data-r="nonmagic"]').classList.add('on');
   document.getElementById('rn').textContent=R.nonmagic.l;
-  ['fn','fc','fmaterial','fstrreq','fwgt','fprops','facbase'].forEach(function(id){document.getElementById(id).value='';});
   _magSet('');
-  document.getElementById('fspec').selectedIndex=0;
-  document.getElementById('fspectype').selectedIndex=0;_specSync();
+  if(typeof _edSet==='function'){
+    var _gv=null;try{_gv=localStorage.getItem('dnd_gallery_edition');}catch(e){}
+    _edSet(_gv||'2014');
+  }
+  var _os2=document.getElementById('pg-osoboe');
+  if(_os2)_os2.checked=false;
+  ['fn','fc','fstr','fpr','fxd','fwgt','fr1','fr2','fdesc','fflv'].forEach(function(id){document.getElementById(id).value='';});
   document.getElementById('fcoin').value='зм';
-  document.getElementById('farmortype').selectedIndex=0;
-  document.getElementById('fattune').selectedIndex=0;
-  document.getElementById('fstealth').checked=false;
+  var _fm2=document.getElementById('fmastery');if(_fm2)_fm2.value='';
+  ['fk','fcat','fdt','fd1','fd2','fxt','fammo','fattune'].forEach(function(id){document.getElementById(id).selectedIndex=0;});
   document.getElementById('attune-wrap').style.display='none';
+  document.querySelectorAll('#pg input[type=checkbox]').forEach(function(cb){cb.checked=false;});
   imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();
   var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';
   document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';
   document.getElementById('f-img').value='';
   document.getElementById('btn-recrop').style.display='none';
-  document.getElementById('btn-del-img').style.display='none';
-  document.getElementById('pnm').textContent='Доспехи';
-  document.getElementById('pmag').style.display='none';
-  document.querySelector('.c-title-main').classList.remove('has-mag');
+  /* reset preview to empty */
+  document.getElementById('pnm').textContent='Оружие';
   document.getElementById('p-cost').style.visibility='hidden';
-  document.getElementById('pac-num').textContent='—';
-  document.getElementById('pac-mod').textContent='';
-  document.getElementById('pinfolist').innerHTML='';
-  document.getElementById('psep-props').style.display='none';
+  document.getElementById('pdmgl').style.display='none';
+  document.getElementById('pst').innerHTML='';
+  document.getElementById('pprops').style.display='none';
+  document.getElementById('pquote').style.display='none';
   document.getElementById('pds').textContent='';
-
   document.getElementById('pwgt').textContent='';
   document.getElementById('pbk').textContent='';
-  setCardImg(null);applyR('nonmagic');applyPal('nonmagic');var _at=document.getElementById('p-attune');if(_at)_at.style.display='none';
-  mkCounter('fn','cnt-fn',34);mkCounter('fmaterial','cnt-material',26);mkCounter('fprops','cnt-props',2000,visLen);
+  setCardImg(null);applyR('nonmagic');applyPal('nonmagic');var _at=document.getElementById('p-attune');if(_at)_at.style.display='none';['pammo','pmastery','pamrow','pxdmg','pmag'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='none';});document.querySelector('.c-title-main').classList.remove('has-mag');
+  mkCounter('fn','cnt-fn',34);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);
   toast('Поля сброшены');
 });
 
 applyPal(cr);
 
-var DEFAULT_NAME='Доспехи';
-function collItemSub(card){return (card.armorType||'Доспех')+(card.acDisplay?' · КБ '+card.acDisplay:'');}
+var DEFAULT_NAME='Оружие';
+function collItemSub(card){return card.cat||'';}
+
 /* Для PDF: PNG со скейлом 3 (375 dpi) → JPEG 92% при 300 dpi. Рендер общий с
    ZIP, поэтому конвертируем только на входе в печать — мастер-копии не портим. */
 function _pdfImage(src,cb){
@@ -2086,6 +2274,8 @@ window.__dndRenderCard=function(card,cb){
   });
 };
 window.__dndReady=true;
+/* картинки старых коллекций доезжают в новую базу асинхронно */
+weaponMigrateImgs(_wmMoved,function(copied){if(copied)loadFromLS();});
 })();
 </script>
 <script>
