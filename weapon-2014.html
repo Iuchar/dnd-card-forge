@@ -280,11 +280,13 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
    при табуляции, мышь его не показывает — вид при обычной работе не меняется.
    У полей ввода своя индикация (рамка золотеет), поэтому им обводка не нужна:
    иначе получалось два кольца. */
+/* миниатюра карточки в панели «Коллекция» — единый размер и фон */
+.coll-item-thumb{width:30px;height:42px;border-radius:4px;flex-shrink:0;background:var(--bg4);overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.08);}
 
 .props-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;}
 .pcb{display:flex;align-items:center;gap:5px;cursor:pointer;padding:2px 0;}
-.pcb input[type=checkbox]{accent-color:var(--gold);width:12px;height:12px;cursor:pointer;flex-shrink:0;}
-.pcb span{font-size:12px;color:var(--text2);}
+.pcb input[type=checkbox]{accent-color:var(--gold);width:13px;height:13px;cursor:pointer;flex-shrink:0;}
+.pcb span{font-size:13px;color:var(--text2);}
 /* Общие стили карточки и пикера редкости (7 генераторов).
    Байт-идентичные правила, вынесены из страниц 2026-07-04. */
 .c-body{flex:1;min-height:0;padding:5px 14px 3px;display:flex;flex-direction:column;overflow:hidden;}
@@ -316,7 +318,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   background:#e8dcc8;
   display:flex;flex-direction:column;
   font-family:'Crimson Text',Georgia,serif;
-  transition:border-color .2s;
+  position:relative;transition:border-color .2s;
 }
 .c-stripe{height:10px;flex-shrink:0;background:var(--ca,#888077);transition:background .2s;}
 .c-dmgline{font-family:'Cinzel',serif;font-size:10px;color:#7a6850;margin-bottom:1px;letter-spacing:.04em;flex-shrink:0;}
@@ -332,10 +334,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   font-family:'Crimson Text',Georgia,serif;
   transition:border-color .2s;
 }
-.cb-body{flex:1;min-height:0;padding:11px 11px 6px;display:flex;flex-direction:column;overflow:hidden;}
-.cb-lbl{font-family:'Cinzel',serif;font-size:8px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:#8a7860;margin-bottom:6px;display:flex;align-items:center;gap:6px;flex-shrink:0;}
-.cb-lbl::after{content:'';flex:1;height:.5px;background:rgba(0,0,0,.15);}
-.cb-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);line-height:1.5;color:#2a1e0a;flex:1;overflow:hidden;white-space:pre-wrap;}
 
 /* ═══ ОБЩИЕ ПРАВИЛА НОВОГО ДИЗАЙНА КАРТОЧЕК ═══
    Подключается ПОСЛЕ локальных стилей страницы (перебивает их порядком).
@@ -372,16 +370,17 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 
 /* единые боковые отступы 11px */
 .c-body{padding:5px 11px 3px;}
-.cb-body{padding:11px 11px 6px;}
+.cb-body{flex:1;min-height:0;padding:11px 11px 6px;display:flex;flex-direction:column;overflow:hidden;}
 .c-foot{padding:0 11px;border-top:.5px solid rgba(90,72,32,.2);}
 
 .c-quote{margin:6px 0 2px;line-height:1.3;}
 /* межстрочный интервал описания: 1.4 — как у заклинаний (было 1.5) */
-.c-desc,.cb-desc{line-height:1.4;}
+.c-desc{line-height:1.4;}
+.cb-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);line-height:1.4;color:#2a1e0a;flex:1;overflow:hidden;white-space:pre-wrap;}
 .c-gem{opacity:1;}
 
 /* оборот: заголовок «Описание» золотой с чертой, подвал с ромбами */
-.cb-lbl{color:#8a6b2e;letter-spacing:.16em;font-size:8.5px;gap:8px;
+.cb-lbl{font-family:'Cinzel',serif;font-size:8.5px;font-weight:700;color:#8a6b2e;letter-spacing:.16em;gap:8px;
   display:flex;align-items:center;text-align:left;text-transform:uppercase;
   border-bottom:none;padding:0;margin-bottom:6px;flex-shrink:0;}
 .cb-lbl::after{content:'';flex:1;height:1px;background:rgba(160,120,56,.5);}
@@ -428,7 +427,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 /* кроп и панель коллекции (правила общие, из бывшего page-local) */
 .crop-area img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;}
 .coll-empty svg{opacity:.2;display:block;margin:0 auto 10px;}
-.coll-item-thumb{width:36px;height:50px;border-radius:5px;flex-shrink:0;background:var(--bg4);overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.08);}
 .coll-sel-info{font-family:'Cinzel',serif;font-size:10px;color:var(--text3);text-align:center;letter-spacing:.06em;}
 .coll-full-link svg{flex-shrink:0;}
 </style>
