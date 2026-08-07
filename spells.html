@@ -1487,6 +1487,32 @@ document.getElementById('btn-reset').addEventListener('click',function(){
 /* ── create card ── */
 var DEFAULT_NAME='Заклинание';
 function collItemSub(card){var lv=card.level==='0'?'Заговор':(card.level||'?')+'-й ур.';return lv;}
+/* Для PDF: PNG со скейлом 3 (375 dpi) → JPEG 92% при 300 dpi. Рендер общий с
+   ZIP, поэтому конвертируем только на входе в печать — мастер-копии не портим. */
+function _pdfImage(src,cb){
+  if(!src){cb(null);return;}
+  var im=new Image();
+  im.onload=function(){
+    var w=Math.round(im.width*0.8),h=Math.round(im.height*0.8); /* 3 → 2.4 */
+    var cv=document.createElement('canvas');cv.width=w;cv.height=h;
+    var ctx=cv.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,w,h);
+    ctx.drawImage(im,0,0,w,h);
+    cb(cv.toDataURL('image/jpeg',0.92));
+  };
+  im.onerror=function(){cb(src);};
+  im.src=src;
+}
+function _pdfImages(items,done){
+  var i=0,out=[];
+  (function next(){
+    if(i>=items.length){done(out);return;}
+    var it=items[i++];
+    _pdfImage(it.front,function(f){_pdfImage(it.back,function(b){
+      out.push({card:it.card,front:f,back:b});next();
+    });});
+  })();
+}
+
 /* Раскладка печатного PDF (A4, карта 63×89 мм) — единственная реализация,
    общая для генераторов (collection.js) и галерей (gallery-actions.js).
    items: [{front,back}] — data-URL сторон, уже в печатном качестве.
@@ -1771,48 +1797,31 @@ document.getElementById('btn-print-cancel').addEventListener('click',function(){
 });
 
 function startPrintCapture(mode,cards){
-  var items=[];
+  /* Захват общий с галереями: __dndRenderCard (renderapi.js) прогоняет карту
+     через форму этой же страницы и отдаёт мастер-PNG (scale 3); _pdfImages
+     ужимает его в печатное качество. Карты-продолжения renderapi уже разбил
+     по парам сторон. Форму в конце возвращаем к текущей карточке. */
+  var items=[],i=0;
   var savedCard=currentCard?JSON.parse(JSON.stringify(currentCard)):null;
-  var i=0;
   toast('Подготовка к печати ('+cards.length+' карт.)...');
-  /* Стороны берём у страницы, если она их объявила: у заклинаний с продолжением
-     их больше двух. Остальные генераторы хука не имеют — там ровно #pc и #pb. */
-  function sidesOf(){
-    if(typeof _cardSides==='function'){
-      var a=_cardSides();
-      if(a&&a.length)return a;
-    }
-    var f=document.getElementById('pc'),b=document.getElementById('pb');
-    return (f&&b)?[f,b]:[];
-  }
-  function captureNext(){
+  (function next(){
     if(i>=cards.length){
       if(savedCard){applyFormData(savedCard);renderCard(savedCard);currentCard=savedCard;}
-      buildPrintPDF(mode,items);
+      if(!items.length){toast('⚠ Ошибка рендера');return;}
+      _pdfImages(items,function(light){buildPrintPDF(mode,light);});
       return;
     }
     var card=cards[i];i++;
-    applyFormData(card);renderCard(card);
-    setTimeout(function(){
-      var els=sidesOf();
-      var shots=[],k=0;
-      (function shot(){
-        if(k>=els.length){
-          /* пара сторон = одна физическая карта: продолжение даёт ещё одну */
-          for(var j=0;j<shots.length;j+=2)
-            items.push({front:shots[j],back:shots[j+1]||shots[j]});
-          captureNext();return;
-        }
-        /* печать: 2.4 = 300 dpi при ширине карты 63мм, JPEG 92% вместо PNG —
-           PDF легче примерно в 7 раз, на бумаге разницы не видно. ZIP и
-           «Сохранить PNG» остаются без потерь. */
-        html2canvas(els[k++],{scale:2.4,useCORS:true,allowTaint:true,logging:false})
-          .then(function(cv){shots.push(cv.toDataURL('image/jpeg',0.92));shot();})
-          .catch(function(){captureNext();});
-      })();
-    },80);
-  }
-  captureNext();
+    window.__dndRenderCard(card,function(res){
+      if(res&&res.sides&&res.sides.length>2){
+        for(var k=0;k<res.sides.length;k+=2)
+          items.push({front:res.sides[k],back:res.sides[k+1]||res.sides[k]});
+      }else if(res&&res.front){
+        items.push({front:res.front,back:res.back||res.front});
+      }
+      next();
+    });
+  })();
 }
 
 /* PNG */
