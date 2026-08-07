@@ -314,12 +314,29 @@ button:focus:not(:focus-visible){outline:none;}
 
 .cv{flex:1;background:#f0ece2;display:flex;flex-direction:column;align-items:center;padding:20px 16px 16px;overflow:auto;}
 .dc{width:310px;height:437px;border-radius:12px;overflow:hidden;border:3px solid var(--cb,#a09080);background:#e8dcc8;display:flex;flex-direction:column;font-family:'Crimson Text',Georgia,serif;transition:border-color .2s;position:relative;}
-.c-ttype{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:#8a7860;margin:1px 0 2px;flex-shrink:0;}
+.c-ttype{font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;color:#8a6b2e;margin:1px 0 2px;flex-shrink:0;}
 .c-stat-wrap{display:flex;align-items:center;gap:7px;margin:2px 0 1px;flex-shrink:0;}
 .c-stat-label{font-family:'Cinzel',serif;font-size:7.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8b6914;border:0.7px solid rgba(139,105,20,.45);border-radius:3px;padding:1.5px 5px;background:rgba(139,105,20,.09);flex-shrink:0;}
 .c-stat-value{font-family:'Cinzel',serif;font-size:11px;font-weight:700;color:#2a1e0a;}
+/* «Использование»: пара «действие + Сл», строки отращиваются по мере заполнения */
+.use-row{display:flex;gap:7px;margin-bottom:6px;}
+.use-row .use-a{flex:1;min-width:0;}
+.use-row .use-d{width:62px;flex-shrink:0;text-align:center;}
+.use-row.ghost .si{background:rgba(255,255,255,.03);border-style:dashed;}
+.use-head{display:flex;gap:7px;margin:0 0 4px;}
+.use-head-a{flex:1;font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);}
+.use-head-d{width:62px;flex-shrink:0;text-align:center;font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);}
+/* блок «Использование» на карточке: заголовок-капитель с линией, Сл выключена вправо */
+.c-use{margin:2px 0 0;flex-shrink:0;}
+.c-use-h{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-family:'Cinzel',serif;font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8a6b2e;}
+.c-use-h::after{content:'';flex:1;height:1px;background:rgba(160,120,56,.5);}
+.c-use-row{display:flex;align-items:baseline;gap:6px;font-size:11px;color:#2a1e0a;line-height:1.4;}
+.c-use-row .lead{flex:1;border-bottom:1px dotted rgba(90,72,32,.35);min-width:8px;}
+.c-use-val{font-family:'Cinzel',serif;font-size:10.5px;font-weight:700;color:#2a1e0a;white-space:nowrap;}
+/* изготовление — плашка как «Боеприпас» у оружия */
+.c-craft{font-size:9.5px;color:#4a3a24;line-height:1.35;margin:5px 0 0;background:rgba(138,96,16,.08);border-radius:5px;padding:3px 9px;overflow:hidden;flex-shrink:0;}
+.c-craft-l{font-family:'Cinzel',serif;font-size:7.5px;font-weight:700;letter-spacing:.1em;color:#8a6010;}
 .c-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);color:#2a1e0a;line-height:1.5;flex:1;overflow:hidden;white-space:pre-wrap;}
-#attune-wrap{display:none;}
 
 /* ═══ ОБЩИЕ ПРАВИЛА НОВОГО ДИЗАЙНА КАРТОЧЕК ═══
    Подключается ПОСЛЕ локальных стилей страницы (перебивает их порядком).
@@ -506,15 +523,11 @@ button:focus:not(:focus-visible){outline:none;}
 
 <div class="layout">
 <aside class="sb">
-  <div class="lbl">Редкость</div>
-  <div class="rprow" role="radiogroup" aria-label="Редкость">
-    <div class="rp on" data-r="nonmagic" title="Немагический"></div>
-    <div class="rp" data-r="common" title="Обычный"></div>
-    <div class="rp" data-r="uncommon" title="Необычный"></div>
-    <div class="rp" data-r="rare" title="Редкий"></div>
-    <div class="rp" data-r="veryrare" title="Очень редкий"></div>
-    <div class="rp" data-r="legendary" title="Легендарный"></div>
-    <span class="rname" id="rn">Немагический</span>
+
+  <div class="lbl">Редакция</div>
+  <div class="magseg" id="edseg" role="radiogroup" aria-label="Редакция">
+    <button type="button" class="on" data-v="2024" role="radio" aria-checked="true">2024</button>
+    <button type="button" data-v="2014" role="radio" aria-checked="false">2014</button>
   </div>
 
   <label class="lbl" for="fn">Название</label>
@@ -555,35 +568,44 @@ button:focus:not(:focus-visible){outline:none;}
 
   <div class="divider"></div>
 
-  <div id="attune-wrap" style="display:none;">
-    <label class="lbl" for="fattune">Настройка</label>
-    <select class="si" id="fattune"><option value="">— не указано —</option><option value="Требует настройки">Требует настройки</option><option value="Не требует настройки">Не требует настройки</option></select>
-  </div>
+  
 
   <label class="lbl" for="ftooltype">Тип инструмента</label>
   <select class="si" id="ftooltype">
     <option value="">— выбрать —</option>
-    <option>Ремесленный набор</option>
+    <option>Ремесленные инструменты</option>
     <option>Музыкальный инструмент</option>
     <option>Игровой набор</option>
-    <option>Набор воровских инструментов</option>
-    <option>Транспортное средство (земля)</option>
-    <option>Транспортное средство (вода)</option>
     <option>Прочее</option>
   </select>
 
-  <label class="lbl" for="fstat">Характеристика</label>
-  <select class="si" id="fstat">
-    <option value="">— не указано —</option>
-    <option>Сила</option>
-    <option>Ловкость</option>
-    <option>Телосложение</option>
-    <option>Интеллект</option>
-    <option>Мудрость</option>
-    <option>Харизма</option>
-  </select>
+  <div id="ed24-wrap">
+    <label class="lbl" for="fstat">Характеристика</label>
+    <select class="si" id="fstat">
+      <option value="">— не указано —</option>
+      <option>Сила</option>
+      <option>Ловкость</option>
+      <option>Телосложение</option>
+      <option>Интеллект</option>
+      <option>Мудрость</option>
+      <option>Харизма</option>
+    </select>
 
-  <div class="lbl">Что даёт владение</div>
+    <div class="lbl">Использование</div>
+    <div class="use-head">
+      <span class="use-head-a">действие</span>
+      <span class="use-head-d">Сл</span>
+    </div>
+    <div id="use-rows"></div>
+
+    <label class="lbl" for="fcraft">Изготовление</label>
+    <div class="field-wrap field-mb">
+      <input class="si" type="text" id="fcraft" placeholder="кислота, масло, духи…" maxlength="120"/>
+      <span class="char-counter" id="cnt-craft">0/120</span>
+    </div>
+  </div>
+
+  <div class="lbl">Описание</div>
 <!-- Панель форматирования описания (Ж/К/П); копия живёт в weapon-form-b.html,
      т.к. вложенные включения build.py не разворачивает -->
 <div class="fmt-bar" role="group" aria-label="Форматирование описания">
@@ -613,16 +635,6 @@ button:focus:not(:focus-visible){outline:none;}
   <div class="dc" id="pc">
     <div class="c-stripe" id="ps"></div>
     <div class="c-stripe-under"></div>
-    <div class="c-meta">
-      <div class="c-meta-orn"><svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10 L10 3 L17 10 L10 17 Z" stroke="#5a4820" stroke-width="1.2" fill="#d4c4a0" opacity="0.8"/><circle cx="10" cy="10" r="2" fill="#5a4820" opacity="0.7"/></svg></div>
-      <div class="c-meta-inner">
-        <span class="c-meta-item cost" id="p-cost" style="visibility:hidden;">—</span>
-        <span class="c-meta-item" id="p-rar">Немагический</span>
-            <span class="c-meta-attune" id="p-attune" style="display:none;">Настройка</span>
-        
-      </div>
-      <div class="c-meta-orn"><svg viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 10 L10 3 L17 10 L10 17 Z" stroke="#5a4820" stroke-width="1.2" fill="#d4c4a0" opacity="0.8"/><circle cx="10" cy="10" r="2" fill="#5a4820" opacity="0.7"/></svg></div>
-    </div>
         <div class="c-title">
           <div class="c-name" id="pnm">Инструменты</div>
           <div class="c-ttype" id="ptooltype" style="display:none;"></div>
@@ -635,6 +647,8 @@ button:focus:not(:focus-visible){outline:none;}
     </div>
     <div class="c-body">
       <div class="c-stat-wrap" id="pstat" style="display:none;"><span class="c-stat-label">Характеристика</span><span class="c-stat-value" id="pstat-val"></span></div>
+      <div class="c-use" id="puse" style="display:none;"><div class="c-use-h">Использование</div><div id="puse-rows"></div></div>
+      <div class="c-craft" id="pcraft" style="display:none;"></div>
       <div class="c-rule" id="prule-desc" style="display:none;"></div>
       <div class="c-desc" id="pdesc"></div>
     </div>
@@ -813,8 +827,6 @@ function applyPal(rar){
 }
 var LS_KEY='dnd_cardforge_tools';
 var IDB_NAME='dnd_tools_imgs';
-/* Настройка (attunement): у «Немагический» блок скрыт и значение очищается. */
-function updateAttuneWrap(){document.getElementById('attune-wrap').style.display=cr==='nonmagic'?'none':'block';if(cr==='nonmagic')document.getElementById('fattune').value='';}
 var cr='nonmagic', imgDataUrl=null, collection=[], currentCard=null;
 var IDB_STORE='imgs',_idb=null;
 function _openIDB(cb){if(_idb){cb(_idb);return;}var r=indexedDB.open(IDB_NAME,1);r.onupgradeneeded=function(e){e.target.result.createObjectStore(IDB_STORE);};r.onsuccess=function(e){_idb=e.target.result;cb(_idb);};r.onerror=function(){cb(null);};}
@@ -906,7 +918,7 @@ function mkCounter(inputId,countId,max,lenFn){
   }
   if(!inp._cbound){inp.addEventListener('input',upd);inp._cbound=true;}upd();
 }
-mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);
+mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcraft','cnt-craft',120);
 
 /* Автошрифт названия: одна строка, лестница кеглей 16→10, дальше многоточие
    (по образцу заклинаний). Общий для всех семи генераторов — spells crop.js
@@ -1379,11 +1391,101 @@ function splitDesc(data){
     _descWarn(vis.length-bcut);
   });
 }
-function readForm(){return{type:'tool',rarity:cr,toolType:document.getElementById('ftooltype').value,name:document.getElementById('fn').value.trim(),cost:document.getElementById('fc').value.trim(),coin:document.getElementById('fcoin').value,wgt:document.getElementById('fwgt').value.trim(),stat:document.getElementById('fstat').value,desc:document.getElementById('fdesc').value,attune:document.getElementById('fattune').value,noImg:document.getElementById('f-noimg').checked,
+/* Редакция: в 2014 у инструментов нет ни характеристики, ни «Использования»,
+   ни «Изготовления» — это свойства таблицы 2024, поэтому блок скрываем целиком. */
+function _edVal(){var b=document.querySelector('#edseg button.on');return b?b.getAttribute('data-v'):'2024';}
+function _edSet(v){
+  v=String(v||'2024');
+  document.querySelectorAll('#edseg button').forEach(function(x){
+    var on=x.getAttribute('data-v')===v;
+    x.classList.toggle('on',on);x.setAttribute('aria-checked',on?'true':'false');
+  });
+  _edSync();
+}
+function _edSync(){
+  var on=_edVal()==='2024';
+  document.getElementById('ed24-wrap').style.display=on?'':'none';
+}
+document.querySelectorAll('#edseg button').forEach(function(b){
+  b.addEventListener('click',function(){_edSet(b.getAttribute('data-v'));renderCard(readForm());});
+});
+
+/* Строки «Использования» отращиваются: всегда одна пустая в конце, максимум 10.
+   Пустые при чтении формы отбрасываются, поэтому чистить их вручную не нужно. */
+var USE_MAX=10;
+function _useRows(){return [].slice.call(document.querySelectorAll('#use-rows .use-row'));}
+function _useAdd(a,d){
+  var wrap=document.getElementById('use-rows');
+  var row=document.createElement('div');row.className='use-row';
+  row.innerHTML='<input class="si use-a" type="text" maxlength="46" placeholder="Вскрыть замок"/>'+
+                '<input class="si use-d" type="text" maxlength="2" inputmode="numeric" placeholder="15"/>';
+  var ia=row.children[0],id_=row.children[1];
+  ia.value=a||'';id_.value=d||'';
+  id_.addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9]/g,'');this.setSelectionRange(p,p);});
+  row.addEventListener('input',function(){_useGrow();renderCard(readForm());});
+  wrap.appendChild(row);
+  return row;
+}
+function _rowEmpty(r){return !(r.children[0].value.trim()||r.children[1].value.trim());}
+function _useGrow(){
+  /* пустые строки убираем (кроме той, где стоит фокус), затем следим,
+     чтобы в конце была ровно одна пустая — и не больше USE_MAX всего */
+  var focus=document.activeElement;
+  _useRows().forEach(function(r){
+    if(_rowEmpty(r)&&!r.contains(focus))r.remove();
+  });
+  var rows=_useRows();
+  var last=rows[rows.length-1];
+  if((!last||!_rowEmpty(last))&&rows.length<USE_MAX)_useAdd();
+  _useRows().forEach(function(r,i,all){r.classList.toggle('ghost',i===all.length-1&&_rowEmpty(r));});
+}
+document.getElementById('use-rows').addEventListener('focusout',function(){
+  setTimeout(function(){_useGrow();renderCard(readForm());},0);
+});
+function _useGet(){
+  var out=[];
+  _useRows().forEach(function(r){
+    var a=r.children[0].value.trim(),d=r.children[1].value.trim();
+    if(a||d)out.push({a:a,dc:d});
+  });
+  return out;
+}
+function _useSet(list){
+  document.getElementById('use-rows').innerHTML='';
+  (list||[]).forEach(function(u){_useAdd(u.a,u.dc);});
+  _useAdd();
+  _useGrow();
+}
+_useSet([]);_edSync();
+
+function readForm(){return{type:'tool',rarity:cr,toolType:document.getElementById('ftooltype').value,name:document.getElementById('fn').value.trim(),cost:document.getElementById('fc').value.trim(),coin:document.getElementById('fcoin').value,wgt:document.getElementById('fwgt').value.trim(),stat:document.getElementById('fstat').value,edition:_edVal(),use:_useGet(),craft:document.getElementById('fcraft').value.trim(),desc:document.getElementById('fdesc').value,noImg:document.getElementById('f-noimg').checked,
     img:imgDataUrl,rawImg:rawImgDataUrl};}
-function renderCard(data){var d=R[data.rarity||'common'];document.getElementById('p-rar').textContent=d.l;document.getElementById('p-type').textContent='Инструмент';document.getElementById('pnm').textContent=data.name||'Инструменты';
-  _fitName();document.getElementById('pc').classList.toggle('no-img',!!data.noImg);var cm=document.getElementById('p-cost');if(cm){if(data.cost){cm.textContent=data.cost+' '+(data.coin||'зм');cm.style.visibility='visible';}else{cm.style.visibility='hidden';}}document.getElementById('pwgt').textContent=data.wgt?data.wgt+' фнт.':'';var tt=document.getElementById('ptooltype');if(data.toolType){tt.textContent=data.toolType;tt.style.display='';}else{tt.style.display='none';}var st=document.getElementById('pstat');if(data.stat){document.getElementById('pstat-val').textContent=data.stat;st.style.display='';}else{st.style.display='none';}document.getElementById('prule-desc').style.display=(data.toolType||data.stat)?'':'none';setCardImg(data.img||null);  var atEl=document.getElementById('p-attune');
-  if(atEl)atEl.style.display=(data.attune&&data.attune.indexOf('Требует')===0)?'':'none';
+function renderCard(data){document.getElementById('p-type').textContent='Инструмент';document.getElementById('pnm').textContent=data.name||'Инструменты';
+  _fitName();document.getElementById('pc').classList.toggle('no-img',!!data.noImg);document.getElementById('pwgt').textContent=data.wgt?data.wgt+' фнт.':'';
+  /* подзаголовок как у ядов: «Категория · Цена» */
+  var tt=document.getElementById('ptooltype');
+  var sub=[data.toolType,data.cost?(data.cost+' '+(data.coin||'зм')):''].filter(Boolean).join(' · ');
+  if(sub){tt.textContent=sub;tt.style.display='';}else{tt.style.display='none';}
+  var ed24=(data.edition||'2024')==='2024';
+  var st=document.getElementById('pstat');
+  if(ed24&&data.stat){document.getElementById('pstat-val').textContent=data.stat;st.style.display='';}else{st.style.display='none';}
+  /* «Использование»: строка на действие, Сл выключена вправо точечным лидером */
+  var use=ed24?(data.use||[]).filter(function(u){return u.a||u.dc;}):[];
+  var ub=document.getElementById('puse'),ur=document.getElementById('puse-rows');
+  ur.innerHTML='';
+  use.forEach(function(u){
+    var r=document.createElement('div');r.className='c-use-row';
+    var a=document.createElement('span');a.textContent=u.a||'';
+    var l=document.createElement('span');l.className='lead';
+    var d=document.createElement('span');d.className='c-use-val';d.textContent=u.dc?('Сл '+u.dc):'';
+    r.appendChild(a);r.appendChild(l);r.appendChild(d);ur.appendChild(r);
+  });
+  ub.style.display=use.length?'':'none';
+  var cr2=document.getElementById('pcraft'),crv=ed24?(data.craft||''):'';
+  if(crv){cr2.innerHTML='';var cl=document.createElement('span');cl.className='c-craft-l';cl.textContent='ИЗГОТОВЛЕНИЕ  ';cr2.appendChild(cl);cr2.appendChild(document.createTextNode(crv));cr2.style.display='block';}
+  else{cr2.style.display='none';}
+  document.getElementById('prule-desc').style.display=(data.toolType||(ed24&&data.stat)||use.length||crv)?'':'none';
+  setCardImg(data.img||null);
 applyR(data.rarity||'common');applyPal(data.rarity||'common');splitDesc(data);}
 /* Оборотная сторона с «рубашкой» (equipment/tools/kits/poisons). */
 function renderBackCard(data){var hasBack=data.back&&data.back.trim();var rubashka=document.getElementById('pb-rubashka');var pbs=document.getElementById('pbs');var pbs2=document.getElementById('pbs2');var pbBody=document.getElementById('pb-body');var pbFoot=document.getElementById('pb-foot');var pbDesc=document.getElementById('pb-desc');var pbgm=document.getElementById('pbgm');if(hasBack){rubashka.style.display='none';pbs.style.display='';pbs2.style.display='';pbBody.style.display='flex';pbFoot.style.display='';pbDesc.textContent=data.back;/* Палитра оборота повторяет лицевую. У генераторов без редкости (яды) она
@@ -1392,8 +1494,8 @@ if(typeof _backPal==='function'){_backPal(pbs,pbgm);}
 else{var d=R[data.rarity||'common']||R.common||R[Object.keys(R)[0]];
   pbs.style.background=d.grad?'linear-gradient(90deg,'+d.grad[0]+','+d.grad[1]+','+d.grad[0]+')':d.a;
   pbgm.style.background=d.gem||d.a;}}else{rubashka.style.display='block';pbs.style.display='none';pbs2.style.display='none';pbBody.style.display='none';pbFoot.style.display='none';}}
-function applyFormData(data){cr=data.rarity||'nonmagic';document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');});var rEl=document.querySelector('.rp[data-r="'+cr+'"]');if(rEl)rEl.classList.add('on');document.getElementById('rn').textContent=R[cr].l;document.getElementById('ftooltype').value=data.toolType||'';document.getElementById('fn').value=data.name||'';document.getElementById('fc').value=data.cost||'';document.getElementById('fcoin').value=data.coin||'зм';document.getElementById('fwgt').value=data.wgt||'';document.getElementById('fstat').value=data.stat||'';document.getElementById('fdesc').value=data.desc||'';document.getElementById('fattune').value=data.attune||'';updateAttuneWrap();applyImgThumb(data);mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);}
-document.getElementById('btn-reset').addEventListener('click',function(){if(!confirm('Сбросить все поля?'))return;cr='nonmagic';document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');});document.querySelector('.rp[data-r="nonmagic"]').classList.add('on');document.getElementById('rn').textContent=R.nonmagic.l;['fn','fc','fwgt','fdesc'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('fcoin').value='зм';document.getElementById('ftooltype').selectedIndex=0;document.getElementById('fstat').selectedIndex=0;document.getElementById('fattune').selectedIndex=0;document.getElementById('attune-wrap').style.display='none';imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('f-img').value='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';setCardImg(null);applyR('nonmagic');applyPal('nonmagic');var _at=document.getElementById('p-attune');if(_at)_at.style.display='none';renderCard({rarity:'nonmagic'});toast('Поля сброшены');});
+function applyFormData(data){cr=data.rarity||'nonmagic';document.getElementById('ftooltype').value=data.toolType||'';document.getElementById('fn').value=data.name||'';document.getElementById('fc').value=data.cost||'';document.getElementById('fcoin').value=data.coin||'зм';document.getElementById('fwgt').value=data.wgt||'';document.getElementById('fstat').value=data.stat||'';_edSet(data.edition||'2024');_useSet(data.use);document.getElementById('fcraft').value=data.craft||'';document.getElementById('fdesc').value=data.desc||'';applyImgThumb(data);mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcraft','cnt-craft',120);}
+document.getElementById('btn-reset').addEventListener('click',function(){if(!confirm('Сбросить все поля?'))return;cr='nonmagic';['fn','fc','fwgt','fdesc'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('fcoin').value='зм';document.getElementById('ftooltype').selectedIndex=0;document.getElementById('fstat').selectedIndex=0;document.getElementById('fcraft').value='';_edSet('2024');_useSet([]);imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('f-img').value='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';setCardImg(null);applyR('nonmagic');applyPal('nonmagic');mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcraft','cnt-craft',120);renderCard({rarity:'nonmagic'});toast('Поля сброшены');});
 applyPal(cr);
 
 var DEFAULT_NAME='Инструмент';
