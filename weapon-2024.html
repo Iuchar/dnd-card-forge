@@ -333,12 +333,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .cb-lbl{font-family:'Cinzel',serif;font-size:8px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:#8a7860;margin-bottom:6px;display:flex;align-items:center;gap:6px;flex-shrink:0;}
 .cb-lbl::after{content:'';flex:1;height:.5px;background:rgba(0,0,0,.15);}
 .cb-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);line-height:1.5;color:#2a1e0a;flex:1;overflow:hidden;white-space:pre-wrap;}
-.crop-area img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;}
-.coll-empty svg{opacity:.2;display:block;margin:0 auto 10px;}
-.coll-item-thumb{width:36px;height:50px;border-radius:5px;flex-shrink:0;background:var(--bg4);overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.08);}
-.coll-sel-info{font-family:'Cinzel',serif;font-size:10px;color:var(--text3);text-align:center;letter-spacing:.06em;}
-.coll-full-link svg{flex-shrink:0;}
-
 /* ═══ ОБЩИЕ ПРАВИЛА НОВОГО ДИЗАЙНА КАРТОЧЕК ═══
    Подключается ПОСЛЕ локальных стилей страницы (перебивает их порядком).
    Включён во все генераторы, кроме заклинаний — у них свой дизайн.
@@ -404,7 +398,8 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-mag{position:absolute;right:0;top:0;box-sizing:border-box;height:calc(var(--name-fs,16px)*1.2);line-height:calc(var(--name-fs,16px)*1.5 - 5px);font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.02em;color:#6b4a12;border:.5px solid #b89a58;background:rgba(138,96,16,.10);border-radius:3px;padding:0 7px;}
 .c-title-main.has-mag .c-name{padding-right:34px;}
 
-/* ═══ СПЕЦИФИКА ОРУЖИЯ (поверх общих правил) ═══ */
+/* Специфика карточки оружия (поверх общих правил) — общая для 2014 и 2024.
+   Правила мастерства (.c-mastery, .c-amrow) в 2014 спят: селекта там нет. */
 .c-stats{display:flex;flex-wrap:nowrap;gap:0;justify-content:stretch;margin:5px 0 0;height:40px;border-top:1px solid #b89a58;border-bottom:1px solid #b89a58;background:rgba(90,70,20,.05);}
 .cst{flex:1;min-width:0;background:none;border:none;border-right:1px solid rgba(90,72,32,.22);border-radius:0;padding:0 2px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}
 .c-stats .cst:last-child{border-right:none;}
@@ -425,6 +420,12 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 /* свойства — теги-пилюли (кегль подбирает _fitProps) */
 .c-props{display:flex;flex-wrap:wrap;justify-content:center;gap:3px 4px;margin:4px 0 0;font-family:inherit;color:inherit;font-size:9px;line-height:normal;}
 .c-prop-tag{font-size:inherit;color:#4a3820;border:.5px solid #b6a06a;background:rgba(255,255,255,.4);border-radius:20px;padding:1px 5px;}
+/* кроп и панель коллекции (правила общие, из бывшего page-local) */
+.crop-area img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;}
+.coll-empty svg{opacity:.2;display:block;margin:0 auto 10px;}
+.coll-item-thumb{width:36px;height:50px;border-radius:5px;flex-shrink:0;background:var(--bg4);overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.08);}
+.coll-sel-info{font-family:'Cinzel',serif;font-size:10px;color:var(--text3);text-align:center;letter-spacing:.06em;}
+.coll-full-link svg{flex-shrink:0;}
 </style>
 <link rel="stylesheet" href="mobile.css"/>
 </head>
@@ -545,6 +546,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 <div class="layout">
 
 <aside class="sb">
+<!-- Панель оружия, часть A (до «Мастерства») — общая для 2014 и 2024 -->
   <div class="lbl">Редкость</div>
   <div class="rprow" role="radiogroup" aria-label="Редкость">
     <div class="rp on" data-r="nonmagic" title="Немагический"></div>
@@ -635,6 +637,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     <option>Сбивающее</option>
     <option>Толкающее</option>
   </select>
+<!-- Панель оружия, часть B (после «Мастерства») — общая для 2014 и 2024 -->
   <label class="lbl" for="fr1">Дистанция (обычная / макс.)</label>
   <div class="row2">
     <div class="sf"><div class="sl">Обычная</div><input class="si" type="text" id="fr1" placeholder="20" maxlength="4" inputmode="numeric"/></div>
@@ -684,6 +687,8 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   </button>
 </aside>
 
+<!-- Предпросмотр, панель коллекции и модалки оружия — общие для 2014 и 2024.
+     pmastery в 2014 всегда скрыт: селекта нет, data.mastery пуст. -->
 <main class="cv">
   <div class="cv-label">Предпросмотр</div>
   <div class="cards-row" id="cards-row">
@@ -1254,7 +1259,7 @@ function xDmgText(card){
   return t?(d+' '+(XDMG_INSTR[t]||t.toLowerCase())):d;
 }
 
-/* readForm */
+/* readForm оружия — общий для 2014 и 2024; в 2014 селекта мастерства нет */
 function readForm(){
   var props=[];
   document.querySelectorAll('#pg input:checked').forEach(function(x){props.push(x.value);});
@@ -1274,7 +1279,8 @@ function readForm(){
     desc:document.getElementById('fdesc').value,
     flv:document.getElementById('fflv').value.trim(),
     props:props,ammo:document.getElementById('fammo').value,
-    mastery:document.getElementById('fmastery').value,
+    /* в 2014 селекта мастерства нет — поле остаётся пустым */
+    mastery:(function(){var e=document.getElementById('fmastery');return e?e.value:'';})(),
     attune:document.getElementById('fattune').value,
     noImg:document.getElementById('f-noimg').checked,
     img:imgDataUrl,rawImg:rawImgDataUrl
@@ -1481,6 +1487,7 @@ function splitDesc(data){
     _descWarn(vis.length-bcut);
   });
 }
+/* Рендер, applyFormData и сброс оружия — общие для 2014 и 2024. */
 /* подбор кегля строки «боеприпас + мастерство»: ужимаем обе плашки, пока не влезут */
 function _fitLine(row){
   var steps=[[9.5,'3px 9px','3px 9px'],[9.5,'3px 7px','3px 7px'],[9.5,'3px 5px','3px 5px'],
@@ -1591,7 +1598,7 @@ function applyFormData(data){
   document.getElementById('fr1').value=data.r1||'';
   document.getElementById('fr2').value=data.r2||'';
   document.getElementById('fammo').value=data.ammo||'';
-  document.getElementById('fmastery').value=data.mastery||'';
+  var _fm=document.getElementById('fmastery');if(_fm)_fm.value=data.mastery||'';
   document.getElementById('fattune').value=data.attune||'';
   document.getElementById('fdesc').value=data.desc||'';
   document.getElementById('fflv').value=data.flv||'';
@@ -1615,7 +1622,7 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   _magSet('');
   ['fn','fc','fstr','fpr','fxd','fwgt','fr1','fr2','fdesc','fflv'].forEach(function(id){document.getElementById(id).value='';});
   document.getElementById('fcoin').value='зм';
-  document.getElementById('fmastery').value='';
+  var _fm2=document.getElementById('fmastery');if(_fm2)_fm2.value='';
   ['fk','fcat','fdt','fd1','fd2','fxt','fammo','fattune'].forEach(function(id){document.getElementById(id).selectedIndex=0;});
   document.getElementById('attune-wrap').style.display='none';
   document.querySelectorAll('#pg input[type=checkbox]').forEach(function(cb){cb.checked=false;});
@@ -1643,6 +1650,7 @@ applyPal(cr);
 
 var DEFAULT_NAME='Оружие';
 function collItemSub(card){return card.cat||'';}
+
 /* Для PDF: PNG со скейлом 3 (375 dpi) → JPEG 92% при 300 dpi. Рендер общий с
    ZIP, поэтому конвертируем только на входе в печать — мастер-копии не портим. */
 function _pdfImage(src,cb){
