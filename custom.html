@@ -128,7 +128,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .btn-del-img{width:100%;padding:5px 9px;margin-top:4px;font-family:'Cinzel',serif;font-size:10px;font-weight:500;letter-spacing:.08em;cursor:pointer;border:0.5px solid var(--border);border-radius:6px;background:transparent;color:var(--text3);transition:all .14s;display:flex;align-items:center;justify-content:center;gap:5px;}
 .btn-del-img:hover{background:rgba(220,60,60,.1);color:#e08070;border-color:rgba(220,60,60,.3);}
 .field-wrap{position:relative;}
-/* подпись половинки парного поля (.row2 > .sf) — та же типографика, что у .ac-sub */
+/* подпись половинки парного поля (.row2 > .sf) */
 .sl{font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);}
 /* пара полей в столбик: длинные значения селектов не влезают в половину ширины
    панели, поэтому такие пары ставим друг под друга, а не в .row2 */
@@ -635,6 +635,8 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 </main>
 
 <!-- COLLECTION PANEL -->
+<!-- Панель «Коллекция» генератора, часть A. После неё страница даёт СВОЙ
+     значок пустой коллекции (одна строка <svg>), затем часть B. -->
 <aside class="coll-panel">
   <div class="coll-head">
     <span class="coll-title">Коллекция</span>
@@ -650,8 +652,8 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   </a>
   <div class="coll-search-wrap">
     <svg class="coll-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input class="coll-search" id="coll-search" type="text" placeholder="Поиск…" autocomplete="off"/>
-    <button class="coll-search-clear" id="coll-search-clear">✕</button>
+    <input class="coll-search" id="coll-search" type="text" placeholder="Поиск по коллекции…" autocomplete="off"/>
+    <button class="coll-search-clear" id="coll-search-clear" title="Очистить">✕</button>
   </div>
   <div class="coll-list" id="coll-list">
     <div class="coll-empty" id="coll-empty">
@@ -663,7 +665,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 
 </div><!-- /.layout -->
 
-<!-- CROP MODAL -->
+<!-- Кроп картинки — общий для всех генераторов с загрузкой изображения -->
 <div class="crop-modal-bg" id="crop-modal-bg">
   <div class="crop-modal">
     <div class="crop-modal-title">Выберите область картинки</div>
@@ -688,17 +690,24 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   </div>
 </div>
 
+<!-- Выбор режима печати — общий для всех генераторов -->
 <div class="conf-modal-bg" id="print-modal-bg">
   <div class="conf-modal">
-    <h3>Параметры печати</h3>
+    <h3>Режим печати</h3>
     <div class="conf-modal-btns" style="flex-direction:column;gap:8px;">
-      <button class="conf-keep" id="btn-print-single" style="padding:10px 20px;text-align:left;"><div style="font-size:11px;margin-bottom:2px;">Пары 2×3 (односторонняя)</div><div style="font-size:10px;opacity:.6;font-family:'Crimson Text',serif;font-style:italic;">3 пары лицо+оборот на листе A4</div></button>
-      <button class="conf-keep" id="btn-print-duplex" style="padding:10px 20px;text-align:left;"><div style="font-size:11px;margin-bottom:2px;">Двусторонняя печать</div><div style="font-size:10px;opacity:.6;font-family:'Crimson Text',serif;font-style:italic;">Лицевые + оборотные стороны, PDF для дуплекса</div></button>
+      <button class="conf-keep" id="btn-print-single" style="padding:10px 20px;text-align:left;">
+        <div style="font-size:11px;margin-bottom:2px;">Пары 2×3 (односторонняя)</div>
+        <div style="font-size:10px;opacity:.6;font-family:'Crimson Text',serif;font-style:italic;">3 пары лицо+оборот на листе A4</div>
+      </button>
+      <button class="conf-keep" id="btn-print-duplex" style="padding:10px 20px;text-align:left;">
+        <div style="font-size:11px;margin-bottom:2px;">Двусторонняя печать</div>
+        <div style="font-size:10px;opacity:.6;font-family:'Crimson Text',serif;font-style:italic;">Листы лицевых и оборотных отдельно</div>
+      </button>
       <button class="conf-keep" id="btn-print-cancel" style="opacity:.5;">Отмена</button>
     </div>
   </div>
 </div>
-<!-- CONFIRM DELETE MODAL -->
+<!-- Подтверждение удаления — общее; текст в h3 подставляет showConfirmDelete -->
 <div class="conf-modal-bg" id="conf-modal-bg">
   <div class="conf-modal">
     <h3 id="conf-modal-h">Удалить карточку?</h3>
@@ -1085,6 +1094,22 @@ document.getElementById('crop-apply').addEventListener('click',function(){
   document.getElementById('crop-modal-bg').classList.remove('open');
   toast('✦ Картинка применена');
 });
+
+/* Состояние зоны загрузки по данным карточки (для applyFormData): миниатюра
+   и кнопки «Перекроить»/«Удалить» видимы, только когда картинка есть.
+   Заодно ставит imgDataUrl/rawImgDataUrl и галку «Без картинки». */
+function applyImgThumb(data){
+  imgDataUrl=data.img||null;rawImgDataUrl=data.rawImg||data.img||null;
+  var _ni=document.getElementById('f-noimg');if(_ni)_ni.checked=!!data.noImg;
+  if(typeof _applyNoImgForm==='function')_applyNoImgForm(!!data.noImg);
+  var th=document.getElementById('img-thumb'),on=!!imgDataUrl;
+  th.style.display=on?'block':'none';
+  th.style.backgroundImage=on?'url('+imgDataUrl+')':'';
+  document.getElementById('img-icon').style.display=on?'none':'';
+  document.getElementById('img-lbl').style.display=on?'none':'';
+  document.getElementById('btn-recrop').style.display=on?'flex':'none';
+  document.getElementById('btn-del-img').style.display=on?'flex':'none';
+}
 CARD_RATIO=282/150;
 
 var STRIPE='#8a6b2e';
@@ -1502,22 +1527,7 @@ function applyFormData(data){
   blocks=Array.isArray(data.blocks)?JSON.parse(JSON.stringify(data.blocks)):[];
   blocks.forEach(_migrateTable);
   renderBlocksEditor();
-  imgDataUrl=data.img||null;rawImgDataUrl=data.rawImg||data.img||null;
-  var _ni=document.getElementById('f-noimg');if(_ni)_ni.checked=!!data.noImg;if(typeof _applyNoImgForm==='function')_applyNoImgForm(!!data.noImg);
-  var th=document.getElementById('img-thumb');
-  if(imgDataUrl){
-    th.style.backgroundImage='url('+imgDataUrl+')';th.style.display='block';
-    document.getElementById('img-icon').style.display='none';
-    document.getElementById('img-lbl').style.display='none';
-    document.getElementById('btn-recrop').style.display='flex';
-    document.getElementById('btn-del-img').style.display='flex';
-  }else{
-    th.style.display='none';
-    document.getElementById('img-icon').style.display='';
-    document.getElementById('img-lbl').style.display='';
-    document.getElementById('btn-recrop').style.display='none';
-    document.getElementById('btn-del-img').style.display='none';
-  }
+  applyImgThumb(data);
   mkCounter('fn','cnt-fn',34);mkCounter('ftype','cnt-type',40);
 }
 
