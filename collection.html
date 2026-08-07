@@ -63,6 +63,15 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .si:focus-visible{border-color:var(--gold-l,#f0b830);border-width:1.5px;}
 .coll-search:focus-visible{border-color:var(--accent-l);border-width:1.5px;}
 .rp:focus-visible{outline-offset:3px;}
+/* Кнопки шапки (.hbtn) — общие для генераторов и галерей; text-decoration
+   нужен галереям, где .hbtn висит на ссылках */
+.hbtn{padding:7px 13px;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);transition:all .14s;display:flex;align-items:center;gap:6px;white-space:nowrap;text-decoration:none;}
+.hbtn.gold{border-color:var(--gold);background:rgba(200,148,26,.1);color:var(--gold-l);}
+.hbtn.gold:hover{background:rgba(200,148,26,.2);}
+.hbtn:disabled{opacity:.3;cursor:default;pointer-events:none;}
+.hbtn.danger{border-color:rgba(220,60,60,.25);color:#c07060;}
+.hbtn.danger:not(:disabled):hover{background:rgba(220,60,60,.1);color:#e08070;border-color:rgba(220,60,60,.4);}
+.hbtn-sep{width:0.5px;height:20px;background:var(--border);margin:0 2px;flex-shrink:0;}
 /* Общие стили галерей (collection + templates): фильтр-бар, сетка,
    карточки-миниатюры, превью-модалка, шапки групп, тосты. */
 
@@ -374,11 +383,6 @@ table.gx-t{width:100%;min-width:100%;border-collapse:collapse;font-size:14px;tab
    при табуляции, мышь его не показывает — вид при обычной работе не меняется.
    У полей ввода своя индикация (рамка золотеет), поэтому им обводка не нужна:
    иначе получалось два кольца. */
-.hbtn{padding:7px 13px;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);transition:all .14s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
-.hbtn.danger{border-color:rgba(220,60,60,.25);color:#c07060;}
-.hbtn.danger:not(:disabled):hover{background:rgba(220,60,60,.1);color:#e08070;border-color:rgba(220,60,60,.4);}
-.hbtn:disabled{opacity:.3;cursor:default;pointer-events:none;}
-.hbtn-sep{width:0.5px;height:20px;background:var(--border);margin:0 2px;flex-shrink:0;}
 
 /* GRID WRAP */
 /* Стили плиток убраны: коллекция рисуется указателем и таблицей, а не сеткой.
