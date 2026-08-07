@@ -284,6 +284,8 @@ button:focus:not(:focus-visible){outline:none;}
    при табуляции, мышь его не показывает — вид при обычной работе не меняется.
    У полей ввода своя индикация (рамка золотеет), поэтому им обводка не нужна:
    иначе получалось два кольца. */
+/* миниатюра карточки в панели «Коллекция» — единый размер и фон */
+.coll-item-thumb{width:30px;height:42px;border-radius:4px;flex-shrink:0;background:var(--bg4);overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.08);}
 
 .sb>.lbl:first-child{margin-top:0;}
 /* Общие стили карточки и пикера редкости (7 генераторов).
@@ -311,16 +313,12 @@ button:focus:not(:focus-visible){outline:none;}
 .cb-rubashka{position:absolute;inset:0;z-index:2;}
 
 .cv{flex:1;background:#f0ece2;display:flex;flex-direction:column;align-items:center;padding:20px 16px 16px;overflow:auto;}
-.cb-body{flex:1;min-height:0;padding:2px 16px 5px;display:flex;flex-direction:column;overflow:hidden;}
-.cb-lbl{font-family:'Cinzel',serif;font-size:12px;font-weight:700;color:#3a2200;margin-bottom:5px;text-align:center;letter-spacing:.1em;border-bottom:.5px solid rgba(90,72,32,.3);padding:2px 0;}
-.cb-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);color:#2a1e0a;line-height:1.5;flex:1;overflow:hidden;white-space:pre-wrap;}
 .dc{width:310px;height:437px;border-radius:12px;overflow:hidden;border:3px solid var(--cb,#a09080);background:#e8dcc8;display:flex;flex-direction:column;font-family:'Crimson Text',Georgia,serif;transition:border-color .2s;position:relative;}
 .c-ttype{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:#8a7860;margin:1px 0 2px;flex-shrink:0;}
 .c-stat-wrap{display:flex;align-items:center;gap:7px;margin:2px 0 1px;flex-shrink:0;}
 .c-stat-label{font-family:'Cinzel',serif;font-size:7.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8b6914;border:0.7px solid rgba(139,105,20,.45);border-radius:3px;padding:1.5px 5px;background:rgba(139,105,20,.09);flex-shrink:0;}
 .c-stat-value{font-family:'Cinzel',serif;font-size:11px;font-weight:700;color:#2a1e0a;}
 .c-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);color:#2a1e0a;line-height:1.5;flex:1;overflow:hidden;white-space:pre-wrap;}
-.coll-item-thumb{width:30px;height:42px;border-radius:4px;flex-shrink:0;background:var(--bg4);overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.08);}
 #attune-wrap{display:none;}
 
 /* ═══ ОБЩИЕ ПРАВИЛА НОВОГО ДИЗАЙНА КАРТОЧЕК ═══
@@ -358,16 +356,17 @@ button:focus:not(:focus-visible){outline:none;}
 
 /* единые боковые отступы 11px */
 .c-body{padding:5px 11px 3px;}
-.cb-body{padding:11px 11px 6px;}
+.cb-body{flex:1;min-height:0;padding:11px 11px 6px;display:flex;flex-direction:column;overflow:hidden;}
 .c-foot{padding:0 11px;border-top:.5px solid rgba(90,72,32,.2);}
 
 .c-quote{margin:6px 0 2px;line-height:1.3;}
 /* межстрочный интервал описания: 1.4 — как у заклинаний (было 1.5) */
-.c-desc,.cb-desc{line-height:1.4;}
+.c-desc{line-height:1.4;}
+.cb-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);line-height:1.4;color:#2a1e0a;flex:1;overflow:hidden;white-space:pre-wrap;}
 .c-gem{opacity:1;}
 
 /* оборот: заголовок «Описание» золотой с чертой, подвал с ромбами */
-.cb-lbl{color:#8a6b2e;letter-spacing:.16em;font-size:8.5px;gap:8px;
+.cb-lbl{font-family:'Cinzel',serif;font-size:8.5px;font-weight:700;color:#8a6b2e;letter-spacing:.16em;gap:8px;
   display:flex;align-items:center;text-align:left;text-transform:uppercase;
   border-bottom:none;padding:0;margin-bottom:6px;flex-shrink:0;}
 .cb-lbl::after{content:'';flex:1;height:1px;background:rgba(160,120,56,.5);}
@@ -537,7 +536,7 @@ button:focus:not(:focus-visible){outline:none;}
     Изменить область
   </button>
   <button class="btn-del-img" id="btn-del-img" style="display:none;">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
     Удалить изображение
   </button>
 
@@ -556,7 +555,7 @@ button:focus:not(:focus-visible){outline:none;}
 
   <div class="divider"></div>
 
-  <div id="attune-wrap">
+  <div id="attune-wrap" style="display:none;">
     <label class="lbl" for="fattune">Настройка</label>
     <select class="si" id="fattune"><option value="">— не указано —</option><option value="Требует настройки">Требует настройки</option><option value="Не требует настройки">Не требует настройки</option></select>
   </div>
