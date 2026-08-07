@@ -435,14 +435,9 @@ table.gx-t{width:100%;min-width:100%;border-collapse:collapse;font-size:14px;tab
       </a>
       <div class="nav-sep"></div>
       <div class="nav-section-lbl">Генераторы</div>
-      <a class="nav-item" href="weapon-2014.html">
+      <a class="nav-item" href="weapon.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M2 22l7.5-7.5"/></svg>
-        Оружие D&D 5e (2014)
-      </a>
-      <a class="nav-item" href="weapon-2024.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M2 22l7.5-7.5"/></svg>
-        Оружие D&D 5e (2024)
-      </a>
+        Оружие 5e</a>
       <a class="nav-item" href="armor.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         Доспехи
@@ -541,8 +536,7 @@ table.gx-t{width:100%;min-width:100%;border-collapse:collapse;font-size:14px;tab
       <div class="empty-state-title">Коллекция пуста</div>
       <div class="empty-state-sub">Создайте карточку в генераторе<br/>и добавьте её в коллекцию.</div>
       <div class="empty-state-links">
-        <a class="empty-state-link" href="weapon-2014.html">Оружие 2014</a>
-        <a class="empty-state-link" href="weapon-2024.html">Оружие 2024</a>
+        <a class="empty-state-link" href="weapon.html">Оружие</a>
         <a class="empty-state-link" href="armor.html">Доспехи</a>
       </div>
     </div>
@@ -711,13 +705,87 @@ function applyPal(rar){
   if(d.gem){['pgm','pbgm'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=d.gem;});}
 }
 var COLLECTIONS=[
-  {key:'dnd_cardforge_weapon2014',src:'weapon2014',group:'weapon',label:'Оружие 2014',gen:'weapon-2014.html',idb:'dnd_weapon2014_imgs'},
-  {key:'dnd_cardforge_weapon2024',src:'weapon2024',group:'weapon',label:'Оружие 2024',gen:'weapon-2024.html',idb:'dnd_weapon2024_imgs'},
+  {key:'dnd_cardforge_weapon',src:'weapon',group:'weapon',label:'Оружие',gen:'weapon.html',idb:'dnd_weapon_imgs'},
   {key:'dnd_cardforge_armor',src:'armor',group:'armor',label:'Доспехи',gen:'armor.html',idb:'dnd_armor_imgs'},
   {key:'dnd_cardforge_equipment',src:'equipment',group:'equipment',label:'Снаряжение',gen:'equipment.html',idb:'dnd_equipment_imgs'},
   {key:'dnd_cardforge_tools',src:'tools',group:'tools',label:'Инструменты',gen:'tools.html',idb:'dnd_tools_imgs'},
   {key:'dnd_cardforge_poisons',src:'poisons',group:'poisons',label:'Яды',gen:'poisons.html',idb:'dnd_poisons_imgs'}
 ];
+/* Слияние двух коллекций оружия (2014/2024) в одну с полем edition.
+   LS-часть синхронная и выполняется ДО core.js/collection.js, чтобы loadFromLS
+   уже читал новый ключ. Картинки переезжают между IndexedDB асинхронно; когда
+   копия закончится, вызывается afterImgs (страница дергает loadFromLS ещё раз).
+   Старые LS-ключи удаляются после переноса, старые IDB остаются как мусор —
+   безопаснее, чем удалять. Коллизии id решаются переномеровкой 2024-пачки. */
+var WEAPON_LS='dnd_cardforge_weapon';
+var WEAPON_IDB='dnd_weapon_imgs';
+var _WM_OLD=[
+  {key:'dnd_cardforge_weapon2014',idb:'dnd_weapon2014_imgs',ed:'2014'},
+  {key:'dnd_cardforge_weapon2024',idb:'dnd_weapon2024_imgs',ed:'2024'}
+];
+function weaponMigrateLS(){
+  var moved=[];/* [{idb,oldId,newId}] для копии картинок */
+  var cur=[];
+  try{var d=localStorage.getItem(WEAPON_LS);if(d){var a=JSON.parse(d);if(Array.isArray(a))cur=a;}}catch(e){}
+  var seen={};cur.forEach(function(c){seen[String(c.id)]=1;});
+  var changed=false;
+  _WM_OLD.forEach(function(src){
+    var raw=null;
+    try{raw=localStorage.getItem(src.key);}catch(e){}
+    if(!raw)return;
+    var arr=[];try{arr=JSON.parse(raw)||[];}catch(e){arr=[];}
+    arr.forEach(function(c){
+      if(!c||typeof c!=='object')return;
+      if(!c.edition)c.edition=src.ed;
+      var oldId=c.id,id=String(c.id);
+      while(seen[id]){c.id=(+c.id||Date.now())+1;id=String(c.id);}
+      seen[id]=1;
+      moved.push({idb:src.idb,oldId:oldId,newId:c.id});
+      cur.push(c);
+    });
+    try{localStorage.removeItem(src.key);}catch(e){}
+    changed=true;
+  });
+  if(changed){try{localStorage.setItem(WEAPON_LS,JSON.stringify(cur));}catch(e){}}
+  return moved;
+}
+function weaponMigrateImgs(moved,afterImgs){
+  if(!moved.length){if(afterImgs)afterImgs(0);return;}
+  var byDb={};moved.forEach(function(m){(byDb[m.idb]=byDb[m.idb]||[]).push(m);});
+  var names=Object.keys(byDb),pending=names.length,copied=0;
+  function done(){if(--pending===0&&afterImgs)afterImgs(copied);}
+  names.forEach(function(name){
+    var req=indexedDB.open(name,1);
+    req.onupgradeneeded=function(e){try{e.target.result.createObjectStore('imgs');}catch(_){}};
+    req.onerror=done;
+    req.onsuccess=function(e){
+      var db=e.target.result,list=byDb[name],out={};
+      try{
+        var cur=db.transaction('imgs','readonly').objectStore('imgs').openCursor();
+        cur.onsuccess=function(ev){
+          var c=ev.target.result;
+          if(c){out[String(c.key)]=c.value;c.continue();return;}
+          /* всё прочитано — пишем в новую базу под новыми id */
+          var w=indexedDB.open(WEAPON_IDB,1);
+          w.onupgradeneeded=function(we){try{we.target.result.createObjectStore('imgs');}catch(_){}};
+          w.onerror=done;
+          w.onsuccess=function(we){
+            var wdb=we.target.result;
+            try{
+              var tx=wdb.transaction('imgs','readwrite'),st=tx.objectStore('imgs');
+              list.forEach(function(m){
+                var im=out[String(m.oldId)];
+                if(im){st.put(im,String(m.newId));copied++;}
+              });
+              tx.oncomplete=done;tx.onerror=done;
+            }catch(_){done();}
+          };
+        };
+        cur.onerror=done;
+      }catch(_){done();}
+    };
+  });
+}
 /* Общее ядро галерей (collection + templates). Включать ВНУТРИ IIFE страницы
    (замыкание: previewCard/toastTimer определяются страницей).
    Отрисовка живёт в gallery-index.js: указатель и таблица заменили сетку
@@ -1837,7 +1905,11 @@ function gaExitSel(clear){gaSelectMode=false;if(clear)gaSelected={};document.bod
 })();
 /* картинки лежат в IndexedDB и приезжают позже — перерисовываем и панель,
    иначе у выбранной до загрузки карточки слот так и останется пустым */
-galBuildEdBar();loadAll();buildSections();buildFilters();renderGrid();galRenderSide();
+galBuildEdBar();
+var _wmMoved=weaponMigrateLS();
+loadAll();
+weaponMigrateImgs(_wmMoved,function(copied){if(copied)loadImages(function(){renderGrid();galRenderSide();});});
+buildSections();buildFilters();renderGrid();galRenderSide();
 loadImages(function(){renderGrid();galRenderSide();});
 })();
 </script>

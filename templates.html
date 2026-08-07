@@ -418,14 +418,9 @@ table.gx-t{width:100%;min-width:100%;border-collapse:collapse;font-size:14px;tab
       </a>
       <div class="nav-sep"></div>
       <div class="nav-section-lbl">Генераторы</div>
-      <a class="nav-item" href="weapon-2014.html">
+      <a class="nav-item" href="weapon.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M2 22l7.5-7.5"/></svg>
-        Оружие D&D 5e (2014)
-      </a>
-      <a class="nav-item" href="weapon-2024.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M2 22l7.5-7.5"/></svg>
-        Оружие D&D 5e (2024)
-      </a>
+        Оружие 5e</a>
       <a class="nav-item" href="armor.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         Доспехи
@@ -1271,7 +1266,7 @@ function pvOpen(card){
   if(t)t.textContent='Полное описание';
   document.getElementById('prev-bg').classList.add('open');
 }
-var GENPAGE={weapon:'weapon-2014.html',armor:'armor.html',equipment:'equipment.html',tools:'tools.html',poisons:'poisons.html',custom:'custom.html'};
+var GENPAGE={weapon:'weapon.html',armor:'armor.html',equipment:'equipment.html',tools:'tools.html',poisons:'poisons.html',custom:'custom.html'};
 function grpLabel(id){for(var i=0;i<GROUPS.length;i++)if(GROUPS[i].id===id)return GROUPS[i].label;return id;}
 function grpOf(t){var e=t._group||t._edition||'2014';if(e==='2014'||e==='2024')return 'weapon';return e;}
 function srcOf(t){var e=t._edition||'2014';if(e==='2014')return 'weapon2014';if(e==='2024')return 'weapon2024';return e;}
@@ -1300,8 +1295,11 @@ function renderGrid(){
 }
 /* открыть шаблон в генераторе: карточка уходит через sessionStorage как НОВАЯ */
 function galOpenInGen(card){
-  var pg=card._source==='weapon2024'?'weapon-2024.html':card._source==='weapon2014'?'weapon-2014.html':(GENPAGE[card._group]||'weapon-2014.html');
-  try{var cc=Object.assign({},card);delete cc._group;delete cc._source;delete cc._edition;delete cc.id;
+  var pg=GENPAGE[card._group]||'weapon.html';
+  try{var cc=Object.assign({},card);
+    /* редакцию оружия кодировала страница — теперь переносим полем */
+    if(!cc.edition&&(cc._edition==='2014'||cc._edition==='2024'))cc.edition=cc._edition;
+    delete cc._group;delete cc._source;delete cc._edition;delete cc.id;
     sessionStorage.setItem('dnd_prefill',JSON.stringify(cc));}catch(e){}
   location.href=pg+'?prefill=1';
 }

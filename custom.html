@@ -484,14 +484,9 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
       </a>
       <div class="nav-sep"></div>
       <div class="nav-section-lbl">Генераторы</div>
-      <a class="nav-item" href="weapon-2014.html">
+      <a class="nav-item" href="weapon.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M2 22l7.5-7.5"/></svg>
-        Оружие D&D 5e (2014)
-      </a>
-      <a class="nav-item" href="weapon-2024.html">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M2 22l7.5-7.5"/></svg>
-        Оружие D&D 5e (2024)
-      </a>
+        Оружие 5e</a>
       <a class="nav-item" href="armor.html">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="11" height="11"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         Доспехи
@@ -1943,8 +1938,7 @@ document.getElementById('btn-png').addEventListener('click',function(){
 
 /* ── Общий проект: экспорт/импорт ВСЕХ 7 коллекций одним файлом ── */
 var ALL_COLLECTIONS=[
-  {key:'dnd_cardforge_weapon2014',idb:'dnd_weapon2014_imgs'},
-  {key:'dnd_cardforge_weapon2024',idb:'dnd_weapon2024_imgs'},
+  {key:'dnd_cardforge_weapon',idb:'dnd_weapon_imgs'},
   {key:'dnd_cardforge_armor',idb:'dnd_armor_imgs'},
   {key:'dnd_cardforge_equipment',idb:'dnd_equipment_imgs'},
   {key:'dnd_cardforge_tools',idb:'dnd_tools_imgs'},
@@ -1997,6 +1991,12 @@ document.getElementById('btn-import-json').addEventListener('change',function(){
         if(i>=keys.length){toast('✦ Проект загружен ('+total+' карт.). Обновляю…');setTimeout(function(){location.reload();},900);return;}
         var key=keys[i++],cards=data.collections[key]||[],pg=null;
         ALL_COLLECTIONS.forEach(function(x){if(x.key===key)pg=x;});
+        /* файлы проектов до слияния оружия: старые ключи кладём как есть,
+           страница оружия смигрирует их в новый при следующем открытии */
+        if(!pg){
+          var LEGACY={'dnd_cardforge_weapon2014':'dnd_weapon2014_imgs','dnd_cardforge_weapon2024':'dnd_weapon2024_imgs'};
+          if(LEGACY[key])pg={key:key,idb:LEGACY[key]};
+        }
         var slim=cards.map(function(c){var o=Object.assign({},c);delete o.rawImg;delete o.img;return o;});
         try{localStorage.setItem(key,JSON.stringify(slim));}catch(_){}
         total+=cards.length;
