@@ -128,7 +128,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .btn-del-img{width:100%;padding:5px 9px;margin-top:4px;font-family:'Cinzel',serif;font-size:10px;font-weight:500;letter-spacing:.08em;cursor:pointer;border:0.5px solid var(--border);border-radius:6px;background:transparent;color:var(--text3);transition:all .14s;display:flex;align-items:center;justify-content:center;gap:5px;}
 .btn-del-img:hover{background:rgba(220,60,60,.1);color:#e08070;border-color:rgba(220,60,60,.3);}
 .field-wrap{position:relative;}
-/* подпись половинки парного поля (.row2 > .sf) — та же типографика, что у .ac-sub */
+/* подпись половинки парного поля (.row2 > .sf) */
 .sl{font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);}
 /* пара полей в столбик: длинные значения селектов не влезают в половину ширины
    панели, поэтому такие пары ставим друг под друга, а не в .row2 */
@@ -329,8 +329,6 @@ button:focus:not(:focus-visible){outline:none;}
 .c-prow-l{font-family:'Cinzel',serif;font-weight:700;font-size:7px;letter-spacing:.08em;text-transform:uppercase;color:#8a6b2e;}
 .c-prow-v{font-size:10px;color:#241a08;line-height:1.35;white-space:pre-wrap;}
 
-.c-costrow b{font-weight:600;color:#1a0e00;}
-.c-poison-grid b{font-weight:600;color:#1a0e00;}
 .c-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);color:#2a1e0a;line-height:1.5;flex:1;overflow:hidden;white-space:pre-wrap;}
 .coll-item-thumb{width:30px;height:42px;border-radius:4px;flex-shrink:0;background:linear-gradient(135deg,#5a2a5a,#3a1a3a);overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.08);}
 
@@ -727,6 +725,8 @@ button:focus:not(:focus-visible){outline:none;}
   </div><!-- /.cards-row -->
 </main>
 
+<!-- Панель «Коллекция» генератора, часть A. После неё страница даёт СВОЙ
+     значок пустой коллекции (одна строка <svg>), затем часть B. -->
 <aside class="coll-panel">
   <div class="coll-head">
     <span class="coll-title">Коллекция</span>
@@ -736,11 +736,14 @@ button:focus:not(:focus-visible){outline:none;}
       <span class="coll-count" id="coll-count">0</span>
     </div>
   </div>
-  <a class="coll-full-link" href="collection.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>Перейти в полную коллекцию</a>
+  <a class="coll-full-link" href="collection.html">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    Перейти в полную коллекцию
+  </a>
   <div class="coll-search-wrap">
     <svg class="coll-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input class="coll-search" id="coll-search" type="text" placeholder="Поиск…" autocomplete="off"/>
-    <button class="coll-search-clear" id="coll-search-clear">✕</button>
+    <input class="coll-search" id="coll-search" type="text" placeholder="Поиск по коллекции…" autocomplete="off"/>
+    <button class="coll-search-clear" id="coll-search-clear" title="Очистить">✕</button>
   </div>
   <div class="coll-list" id="coll-list">
     <div class="coll-empty" id="coll-empty">
@@ -751,19 +754,24 @@ button:focus:not(:focus-visible){outline:none;}
 </aside>
 </div>
 
+<!-- Кроп картинки — общий для всех генераторов с загрузкой изображения -->
 <div class="crop-modal-bg" id="crop-modal-bg">
   <div class="crop-modal">
     <div class="crop-modal-title">Выберите область картинки</div>
     <div class="crop-area" id="crop-area">
       <canvas id="crop-canvas"></canvas>
-      <div class="cov" id="cov-t"></div><div class="cov" id="cov-b"></div>
-      <div class="cov" id="cov-l"></div><div class="cov" id="cov-r"></div>
+      <div class="cov" id="cov-t"></div>
+      <div class="cov" id="cov-b"></div>
+      <div class="cov" id="cov-l"></div>
+      <div class="cov" id="cov-r"></div>
       <div class="crop-rect" id="crop-rect">
-        <div class="ch tl" data-h="tl"></div><div class="ch tr" data-h="tr"></div>
-        <div class="ch bl" data-h="bl"></div><div class="ch br" data-h="br"></div>
+        <div class="ch tl" data-h="tl"></div>
+        <div class="ch tr" data-h="tr"></div>
+        <div class="ch bl" data-h="bl"></div>
+        <div class="ch br" data-h="br"></div>
       </div>
     </div>
-    <div id="crop-coords-lbl" style="font-size:11px;color:var(--text3);margin-top:6px;font-family:'Cinzel',serif;"></div>
+    <div id="crop-coords-lbl" style="font-size:11px;color:var(--text3);margin-top:6px;font-family:'Cinzel',serif;letter-spacing:.06em;"></div>
     <div class="crop-actions">
       <button class="crop-btn secondary" id="crop-cancel">Отмена</button>
       <button class="crop-btn primary" id="crop-apply">✦ Применить</button>
@@ -771,16 +779,24 @@ button:focus:not(:focus-visible){outline:none;}
   </div>
 </div>
 
+<!-- Выбор режима печати — общий для всех генераторов -->
 <div class="conf-modal-bg" id="print-modal-bg">
   <div class="conf-modal">
-    <h3>Параметры печати</h3>
+    <h3>Режим печати</h3>
     <div class="conf-modal-btns" style="flex-direction:column;gap:8px;">
-      <button class="conf-keep" id="btn-print-single" style="padding:10px 20px;text-align:left;"><div style="font-size:11px;margin-bottom:2px;">Пары 2×3 (односторонняя)</div><div style="font-size:10px;opacity:.6;font-family:'Crimson Text',serif;font-style:italic;">3 пары лицо+оборот на листе A4</div></button>
-      <button class="conf-keep" id="btn-print-duplex" style="padding:10px 20px;text-align:left;"><div style="font-size:11px;margin-bottom:2px;">Двусторонняя печать</div><div style="font-size:10px;opacity:.6;font-family:'Crimson Text',serif;font-style:italic;">Лицевые + оборотные стороны, PDF для дуплекса</div></button>
+      <button class="conf-keep" id="btn-print-single" style="padding:10px 20px;text-align:left;">
+        <div style="font-size:11px;margin-bottom:2px;">Пары 2×3 (односторонняя)</div>
+        <div style="font-size:10px;opacity:.6;font-family:'Crimson Text',serif;font-style:italic;">3 пары лицо+оборот на листе A4</div>
+      </button>
+      <button class="conf-keep" id="btn-print-duplex" style="padding:10px 20px;text-align:left;">
+        <div style="font-size:11px;margin-bottom:2px;">Двусторонняя печать</div>
+        <div style="font-size:10px;opacity:.6;font-family:'Crimson Text',serif;font-style:italic;">Листы лицевых и оборотных отдельно</div>
+      </button>
       <button class="conf-keep" id="btn-print-cancel" style="opacity:.5;">Отмена</button>
     </div>
   </div>
 </div>
+<!-- Подтверждение удаления — общее; текст в h3 подставляет showConfirmDelete -->
 <div class="conf-modal-bg" id="conf-modal-bg">
   <div class="conf-modal">
     <h3 id="conf-modal-h">Удалить карточку?</h3>
@@ -1167,6 +1183,22 @@ document.getElementById('crop-apply').addEventListener('click',function(){
   document.getElementById('crop-modal-bg').classList.remove('open');
   toast('✦ Картинка применена');
 });
+
+/* Состояние зоны загрузки по данным карточки (для applyFormData): миниатюра
+   и кнопки «Перекроить»/«Удалить» видимы, только когда картинка есть.
+   Заодно ставит imgDataUrl/rawImgDataUrl и галку «Без картинки». */
+function applyImgThumb(data){
+  imgDataUrl=data.img||null;rawImgDataUrl=data.rawImg||data.img||null;
+  var _ni=document.getElementById('f-noimg');if(_ni)_ni.checked=!!data.noImg;
+  if(typeof _applyNoImgForm==='function')_applyNoImgForm(!!data.noImg);
+  var th=document.getElementById('img-thumb'),on=!!imgDataUrl;
+  th.style.display=on?'block':'none';
+  th.style.backgroundImage=on?'url('+imgDataUrl+')':'';
+  document.getElementById('img-icon').style.display=on?'none':'';
+  document.getElementById('img-lbl').style.display=on?'none':'';
+  document.getElementById('btn-recrop').style.display=on?'flex':'none';
+  document.getElementById('btn-del-img').style.display=on?'flex':'none';
+}
 CARD_RATIO=282/150;
 function readForm(){return{type:'poison',poisonType:Array.from(document.querySelectorAll('#fptype-wrap input:checked')).map(function(o){return o.value;}).join(', '),name:document.getElementById('fn').value.trim(),cost:document.getElementById('fc').value.trim(),coin:document.getElementById('fcoin').value,wgt:document.getElementById('fwgt').value.trim(),savingThrow:document.getElementById('fsb').value.trim(),saveStat:document.getElementById('fsbstat').value,damageDice:document.getElementById('fdice').value.trim(),duration:document.getElementById('fdur').value.trim(),desc:document.getElementById('fdesc').value,noImg:document.getElementById('f-noimg').checked,
     img:imgDataUrl,rawImg:rawImgDataUrl};}
@@ -1404,8 +1436,7 @@ if(typeof _backPal==='function'){_backPal(pbs,pbgm);}
 else{var d=R[data.rarity||'common']||R.common||R[Object.keys(R)[0]];
   pbs.style.background=d.grad?'linear-gradient(90deg,'+d.grad[0]+','+d.grad[1]+','+d.grad[0]+')':d.a;
   pbgm.style.background=d.gem||d.a;}}else{rubashka.style.display='block';pbs.style.display='none';pbs2.style.display='none';pbBody.style.display='none';pbFoot.style.display='none';}}
-function applyFormData(data){var ptVals=(data.poisonType||'').split(', ');document.querySelectorAll('#fptype-wrap input[type=checkbox]').forEach(function(cb){cb.checked=ptVals.indexOf(cb.value)!==-1;});document.getElementById('fn').value=data.name||'';document.getElementById('fc').value=data.cost||'';document.getElementById('fcoin').value=data.coin||'зм';document.getElementById('fwgt').value=data.wgt||'';document.getElementById('fsb').value=data.savingThrow||'';document.getElementById('fsbstat').value=data.saveStat||'';document.getElementById('fdice').value=data.damageDice||'';document.getElementById('fdur').value=data.duration||'';document.getElementById('fdesc').value=data.desc||'';imgDataUrl=data.img||null;rawImgDataUrl=data.rawImg||data.img||null;
-  var _ni=document.getElementById('f-noimg');if(_ni)_ni.checked=!!data.noImg;if(typeof _applyNoImgForm==='function')_applyNoImgForm(!!data.noImg);var th=document.getElementById('img-thumb');if(imgDataUrl){th.style.backgroundImage='url('+imgDataUrl+')';th.style.display='block';document.getElementById('img-icon').style.display='none';document.getElementById('img-lbl').style.display='none';document.getElementById('btn-recrop').style.display='flex';document.getElementById('btn-del-img').style.display='flex';}else{th.style.display='none';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';}mkCounter('fn','cnt-fn',34);mkCounter('fdice','cnt-dice',80);mkCounter('fdur','cnt-dur',80);mkCounter('fdesc','cnt-desc',2000,visLen);}
+function applyFormData(data){var ptVals=(data.poisonType||'').split(', ');document.querySelectorAll('#fptype-wrap input[type=checkbox]').forEach(function(cb){cb.checked=ptVals.indexOf(cb.value)!==-1;});document.getElementById('fn').value=data.name||'';document.getElementById('fc').value=data.cost||'';document.getElementById('fcoin').value=data.coin||'зм';document.getElementById('fwgt').value=data.wgt||'';document.getElementById('fsb').value=data.savingThrow||'';document.getElementById('fsbstat').value=data.saveStat||'';document.getElementById('fdice').value=data.damageDice||'';document.getElementById('fdur').value=data.duration||'';document.getElementById('fdesc').value=data.desc||'';applyImgThumb(data);mkCounter('fn','cnt-fn',34);mkCounter('fdice','cnt-dice',80);mkCounter('fdur','cnt-dur',80);mkCounter('fdesc','cnt-desc',2000,visLen);}
 document.getElementById('btn-reset').addEventListener('click',function(){if(!confirm('Сбросить все поля?'))return;['fn','fc','fwgt','fsb','fdice','fdur','fdesc'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('fsbstat').selectedIndex=0;document.getElementById('fcoin').value='зм';document.querySelectorAll('#fptype-wrap input[type=checkbox]').forEach(function(cb){cb.checked=false;});imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('f-img').value='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';setCardImg(null);renderCard({});toast('Поля сброшены');});
 applyPoisonPal();
 
