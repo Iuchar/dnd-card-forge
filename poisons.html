@@ -325,6 +325,10 @@ button:focus:not(:focus-visible){outline:none;}
 .sb-pair input{flex:1;min-width:0;}
 /* подзаголовок под именем: тип и цена (мета-бара у ядов нет) */
 .c-psub{font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;color:#8a6b2e;margin:4px 0 0;}
+/* цена по правилам мета-бара остальных генераторов (.c-meta-item.cost в
+   styles.css): тёмное золото и жирное начертание, иначе в светлой капители
+   подзаголовка её не разглядеть */
+.c-psub .cost{font-size:9px;font-weight:700;letter-spacing:.09em;color:#8a6010;}
 /* две плашки: спасбросок и урон; при пустом уроне спасбросок занимает всю ширину */
 .c-pduo{display:flex;gap:6px;margin:0;flex-shrink:0;}
 .c-pcell{flex:1;min-width:0;border:1px solid #b89a58;border-radius:5px;background:rgba(90,70,20,.05);padding:4px 6px;text-align:center;}
@@ -1233,8 +1237,11 @@ function readForm(){return{type:'poison',poisonType:Array.from(document.querySel
     img:imgDataUrl,rawImg:rawImgDataUrl};}
 function renderCard(data){document.getElementById('pnm').textContent=data.name||'Яды';
   _fitName();document.getElementById('pc').classList.toggle('no-img',!!data.noImg);document.getElementById('pwgt-foot').textContent=data.wgt?data.wgt+' фнт.':'';/* подзаголовок: тип и цена через разделитель */
-  var _sub=[data.poisonType,data.cost?(data.cost+' '+(data.coin||'зм')):''].filter(Boolean).join(' · ');
-  document.getElementById('psub').textContent=_sub;
+  var _ps=document.getElementById('psub');_ps.innerHTML='';
+  if(data.poisonType)_ps.appendChild(document.createTextNode(data.poisonType));
+  if(data.cost){if(data.poisonType)_ps.appendChild(document.createTextNode(' · '));
+    var _co=document.createElement('span');_co.className='cost';
+    _co.textContent=data.cost+' '+(data.coin||'зм');_ps.appendChild(_co);}
   document.getElementById('psb-val').textContent=data.savingThrow?((data.saveStat||'Тел')+' '+data.savingThrow):'—';
   /* урон есть не у всех ядов: пустую плашку прячем, спасбросок растягивается */
   var _dmg=(data.damageDice||'').trim(),_dc=document.getElementById('pdice-cell');

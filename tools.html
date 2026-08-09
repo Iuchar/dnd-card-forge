@@ -315,6 +315,10 @@ button:focus:not(:focus-visible){outline:none;}
 .cv{flex:1;background:#f0ece2;display:flex;flex-direction:column;align-items:center;padding:20px 16px 16px;overflow:auto;}
 .dc{width:310px;height:437px;border-radius:12px;overflow:hidden;border:3px solid var(--cb,#a09080);background:#e8dcc8;display:flex;flex-direction:column;font-family:'Crimson Text',Georgia,serif;transition:border-color .2s;position:relative;}
 .c-ttype{font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;color:#8a6b2e;margin:1px 0 2px;flex-shrink:0;}
+/* цена по правилам мета-бара остальных генераторов (.c-meta-item.cost в
+   styles.css): тёмное золото и жирное начертание, иначе в светлой капители
+   подзаголовка её не разглядеть */
+.c-ttype .cost{font-size:9px;font-weight:700;letter-spacing:.09em;color:#8a6010;}
 .c-stat-wrap{display:flex;align-items:center;gap:7px;margin:2px 0 1px;flex-shrink:0;}
 .c-stat-label{font-family:'Cinzel',serif;font-size:7.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8b6914;border:0.7px solid rgba(139,105,20,.45);border-radius:3px;padding:1.5px 5px;background:rgba(139,105,20,.09);flex-shrink:0;}
 .c-stat-value{font-family:'Cinzel',serif;font-size:11px;font-weight:700;color:#2a1e0a;}
@@ -327,15 +331,29 @@ button:focus:not(:focus-visible){outline:none;}
 .use-head-a{flex:1;font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);}
 .use-head-d{width:62px;flex-shrink:0;text-align:center;font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);}
 /* блок «Использование» на карточке: заголовок-капитель с линией, Сл выключена вправо */
-.c-use{margin:2px 0 0;flex-shrink:0;}
-.c-use-h{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-family:'Cinzel',serif;font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8a6b2e;}
-.c-use-h::after{content:'';flex:1;height:1px;background:rgba(160,120,56,.5);}
+/* Отступы над заголовками разные (4px и 3px), потому что выравниваем не коробки,
+   а краску: над «Использованием» стоит плашка характеристики со своей границей,
+   над «Изготовлением» — строка действия с полуинтерлиньяжем в 2.2px. По замеру
+   пикселей обе отбивки дают на карточке одинаковые 9px. */
+.c-use{margin:4px 0 0;flex-shrink:0;}
+/* один заголовок на оба блока: капитель, волосяная линейка на остаток строки,
+   отбивка 4px до содержимого — иначе «Изготовление» читалось как вставка в текст,
+   а «Использование» как раздел */
+.c-use-h,.c-craft-h{display:flex;align-items:center;gap:8px;margin-bottom:4px;font-family:'Cinzel',serif;font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8a6b2e;}
+.c-use-h::after,.c-craft-h::after{content:'';flex:1;height:1px;background:rgba(160,120,56,.5);}
 .c-use-row{display:flex;align-items:baseline;gap:6px;font-size:11px;color:#2a1e0a;line-height:1.4;}
 .c-use-row .lead{flex:1;border-bottom:1px dotted rgba(90,72,32,.35);min-width:8px;}
 .c-use-val{font-family:'Cinzel',serif;font-size:10.5px;font-weight:700;color:#2a1e0a;white-space:nowrap;}
-/* изготовление — плашка как «Боеприпас» у оружия */
-.c-craft{font-size:9.5px;color:#4a3a24;line-height:1.35;margin:5px 0 0;background:rgba(138,96,16,.08);border-radius:5px;padding:3px 9px;overflow:hidden;flex-shrink:0;}
-.c-craft-l{font-family:'Cinzel',serif;font-size:7.5px;font-weight:700;letter-spacing:.1em;color:#8a6010;}
+/* Изготовление — книжный набор, а не плашка: у кузнеца перечень на 41 позицию,
+   и залитый прямоугольник занимал половину тела карточки. Перечень мельче прозы
+   и выключен по формату, разделитель — точка: запятые в списке из двух слов
+   читаются как продолжение. Заголовок общий с «Использованием» (.c-craft-h). */
+.c-craft{margin:3px 0 0;overflow:hidden;flex-shrink:0;}
+/* перечень набран с интерлиньяжем 1.5 против 1.4 у строки действия, поэтому под
+   его заголовком отбивку срезаем на 1px — иначе краска расходится на 1.5px */
+.c-craft-h{margin-bottom:3px;}
+.c-craft-list{font-size:9.5px;color:#4a3a24;line-height:1.5;text-align:justify;}
+.c-craft-sep{color:rgba(138,96,16,.5);}
 .c-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);color:#2a1e0a;line-height:1.5;flex:1;overflow:hidden;white-space:pre-wrap;}
 
 /* ═══ ОБЩИЕ ПРАВИЛА НОВОГО ДИЗАЙНА КАРТОЧЕК ═══
@@ -521,8 +539,8 @@ button:focus:not(:focus-visible){outline:none;}
 
   <div class="lbl">Редакция</div>
   <div class="magseg" id="edseg" role="radiogroup" aria-label="Редакция">
-    <button type="button" class="on" data-v="2024" role="radio" aria-checked="true">2024</button>
-    <button type="button" data-v="2014" role="radio" aria-checked="false">2014</button>
+    <button type="button" class="on" data-v="2014" role="radio" aria-checked="true">2014</button>
+    <button type="button" data-v="2024" role="radio" aria-checked="false">2024</button>
   </div>
 
   <label class="lbl" for="fn">Название</label>
@@ -595,7 +613,8 @@ button:focus:not(:focus-visible){outline:none;}
 
     <label class="lbl" for="fcraft">Изготовление</label>
     <div class="field-wrap field-mb">
-      <input class="si" type="text" id="fcraft" placeholder="кислота, масло, духи…" maxlength="600"/>
+      <!-- перечень бывает на 40 позиций: в одну строку его не прочитать и не выправить -->
+      <textarea class="si" id="fcraft" placeholder="кислота, масло, духи…" maxlength="600" style="height:120px;"></textarea>
       <span class="char-counter" id="cnt-craft">0/600</span>
     </div>
   </div>
@@ -915,6 +934,15 @@ function mkCounter(inputId,countId,max,lenFn){
   }
   if(!inp._cbound){inp.addEventListener('input',upd);inp._cbound=true;}upd();
 }
+/* «Изготовление» — многострочное поле ради удобства правки, но значение остаётся
+   перечнем через запятую: перевод строки (Enter или вставка из таблицы) склеиваем,
+   иначе он уедет в данные и на карточку. Вешаем ДО счётчика и живого предпросмотра —
+   их обработчики на том же событии должны увидеть уже склеенное значение. */
+(function(){var f=document.getElementById('fcraft');
+  f.addEventListener('input',function(){if(this.value.indexOf('\n')<0)return;
+    var before=this.value.slice(0,this.selectionStart).replace(/\s*\n+\s*/g,', ');
+    this.value=this.value.replace(/\s*\n+\s*/g,', ');
+    this.selectionStart=this.selectionEnd=before.length;});})();
 mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcraft','cnt-craft',600);
 
 /* Автошрифт названия: одна строка, лестница кеглей 16→10, дальше многоточие
@@ -1390,9 +1418,9 @@ function splitDesc(data){
 }
 /* Редакция: в 2014 у инструментов нет ни характеристики, ни «Использования»,
    ни «Изготовления» — это свойства таблицы 2024, поэтому блок скрываем целиком. */
-function _edVal(){var b=document.querySelector('#edseg button.on');return b?b.getAttribute('data-v'):'2024';}
+function _edVal(){var b=document.querySelector('#edseg button.on');return b?b.getAttribute('data-v'):'2014';}
 function _edSet(v){
-  v=String(v||'2024');
+  v=(v==='2024')?'2024':'2014';
   document.querySelectorAll('#edseg button').forEach(function(x){
     var on=x.getAttribute('data-v')===v;
     x.classList.toggle('on',on);x.setAttribute('aria-checked',on?'true':'false');
@@ -1461,9 +1489,13 @@ function renderCard(data){document.getElementById('p-type').textContent='Инс�
   _fitName();document.getElementById('pc').classList.toggle('no-img',!!data.noImg);document.getElementById('pwgt').textContent=data.wgt?data.wgt+' фнт.':'';
   /* подзаголовок как у ядов: «Категория · Цена» */
   var tt=document.getElementById('ptooltype');
-  var sub=[data.toolType,data.cost?(data.cost+' '+(data.coin||'зм')):''].filter(Boolean).join(' · ');
-  if(sub){tt.textContent=sub;tt.style.display='';}else{tt.style.display='none';}
-  var ed24=(data.edition||'2024')==='2024';
+  tt.innerHTML='';
+  if(data.toolType)tt.appendChild(document.createTextNode(data.toolType));
+  if(data.cost){if(data.toolType)tt.appendChild(document.createTextNode(' · '));
+    var _co=document.createElement('span');_co.className='cost';
+    _co.textContent=data.cost+' '+(data.coin||'зм');tt.appendChild(_co);}
+  tt.style.display=(data.toolType||data.cost)?'':'none';
+  var ed24=(data.edition||'2014')==='2024';
   var st=document.getElementById('pstat');
   if(ed24&&data.stat){document.getElementById('pstat-val').textContent=data.stat;st.style.display='';}else{st.style.display='none';}
   /* «Использование»: строка на действие, Сл выключена вправо точечным лидером */
@@ -1479,7 +1511,15 @@ function renderCard(data){document.getElementById('p-type').textContent='Инс�
   });
   ub.style.display=use.length?'':'none';
   var cr2=document.getElementById('pcraft'),crv=ed24?(data.craft||''):'';
-  if(crv){cr2.innerHTML='';var cl=document.createElement('span');cl.className='c-craft-l';cl.textContent='ИЗГОТОВЛЕНИЕ  ';cr2.appendChild(cl);cr2.appendChild(document.createTextNode(crv));cr2.style.display='block';}
+  if(crv){cr2.innerHTML='';
+    var ch=document.createElement('div');ch.className='c-craft-h';ch.textContent='Изготовление';cr2.appendChild(ch);
+    var cls=document.createElement('div');cls.className='c-craft-list';
+    /* позиции разделяем точкой: имена из двух слов («Снаряды для пращи») через
+       запятую сливаются в одно перечисление и список перестаёт члениться */
+    crv.split(/\s*,\s*/).filter(function(s){return s;}).forEach(function(it,i){
+      if(i){var sp=document.createElement('span');sp.className='c-craft-sep';sp.textContent=' · ';cls.appendChild(sp);}
+      cls.appendChild(document.createTextNode(it));});
+    cr2.appendChild(cls);cr2.style.display='block';}
   else{cr2.style.display='none';}
   document.getElementById('prule-desc').style.display=(data.toolType||(ed24&&data.stat)||use.length||crv)?'':'none';
   setCardImg(data.img||null);
@@ -1502,8 +1542,8 @@ function applyToolPal(){
   ['ps','pbs'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=g;});
   ['pgm','pbgm'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background='#8b6914';});
 }
-function applyFormData(data){document.getElementById('ftooltype').value=data.toolType||'';document.getElementById('fn').value=data.name||'';document.getElementById('fc').value=data.cost||'';document.getElementById('fcoin').value=data.coin||'зм';document.getElementById('fwgt').value=data.wgt||'';document.getElementById('fstat').value=data.stat||'';_edSet(data.edition||'2024');_useSet(data.use);document.getElementById('fcraft').value=data.craft||'';document.getElementById('fdesc').value=data.desc||'';applyImgThumb(data);mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcraft','cnt-craft',600);}
-document.getElementById('btn-reset').addEventListener('click',function(){if(!confirm('Сбросить все поля?'))return;['fn','fc','fwgt','fdesc'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('fcoin').value='зм';document.getElementById('ftooltype').selectedIndex=0;document.getElementById('fstat').selectedIndex=0;document.getElementById('fcraft').value='';_edSet('2024');_useSet([]);imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('f-img').value='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';setCardImg(null);mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcraft','cnt-craft',600);renderCard({});toast('Поля сброшены');});
+function applyFormData(data){document.getElementById('ftooltype').value=data.toolType||'';document.getElementById('fn').value=data.name||'';document.getElementById('fc').value=data.cost||'';document.getElementById('fcoin').value=data.coin||'зм';document.getElementById('fwgt').value=data.wgt||'';document.getElementById('fstat').value=data.stat||'';_edSet(data.edition||'2014');_useSet(data.use);document.getElementById('fcraft').value=data.craft||'';document.getElementById('fdesc').value=data.desc||'';applyImgThumb(data);mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcraft','cnt-craft',600);}
+document.getElementById('btn-reset').addEventListener('click',function(){if(!confirm('Сбросить все поля?'))return;['fn','fc','fwgt','fdesc'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('fcoin').value='зм';document.getElementById('ftooltype').selectedIndex=0;document.getElementById('fstat').selectedIndex=0;document.getElementById('fcraft').value='';/* редакцию сброс не трогает — см. weapon-render.js */_useSet([]);imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('f-img').value='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';setCardImg(null);mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcraft','cnt-craft',600);renderCard({});toast('Поля сброшены');});
 applyToolPal();
 
 var DEFAULT_NAME='Инструмент';

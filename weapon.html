@@ -1051,8 +1051,9 @@ function mkCounter(inputId,countId,max,lenFn){
 ['fr1','fr2'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9]/g,'').slice(0,4);this.setSelectionRange(p,p);});});
 ['fstr','fpr'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;var v=this.value.replace(/[^0-9-]/g,'');v=v.charAt(0)+v.slice(1).replace(/-/g,'');this.value=v.slice(0,2);this.setSelectionRange(p,p);});});
 mkCounter('fn','cnt-fn',34);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);
-/* Редакция страницы. Дефолт — глобальный выбор галереи (dnd_gallery_edition),
-   параметр ?ed=2014|2024 (редиректы со старых адресов) перебивает. */
+/* Редакция страницы. Дефолт — 2014; параметр ?ed=2014|2024, которым приходят
+   редиректы со старых адресов weapon-2014/2024.html, перебивает.
+   За выбором галереи страница НЕ следует: генератор — своё рабочее место. */
 function _edVal(){var b=document.querySelector('#edseg button.on');return b?b.getAttribute('data-v'):'2014';}
 function _edSet(v){
   v=(v==='2024')?'2024':'2014';
@@ -1073,7 +1074,6 @@ document.querySelectorAll('#edseg button').forEach(function(b){
 (function(){
   var v=null;
   try{v=new URLSearchParams(location.search).get('ed');}catch(e){}
-  if(v!=='2014'&&v!=='2024'){try{v=localStorage.getItem('dnd_gallery_edition');}catch(e){}}
   _edSet(v||'2014');
 })();
 /* Переключатель магического бонуса предмета (— / +1 / +2 / +3) в панели.
@@ -1769,10 +1769,8 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   document.querySelector('.rp[data-r="nonmagic"]').classList.add('on');
   document.getElementById('rn').textContent=R.nonmagic.l;
   _magSet('');
-  if(typeof _edSet==='function'){
-    var _gv=null;try{_gv=localStorage.getItem('dnd_gallery_edition');}catch(e){}
-    _edSet(_gv||'2014');
-  }
+  /* редакцию сброс НЕ трогает: она выбрана пользователем под задачу, а не введена
+     в карточку, и перекидывать его на 2014 посреди работы с 2024 — потеря места */
   var _os2=document.getElementById('pg-osoboe');
   if(_os2)_os2.checked=false;
   ['fn','fc','fstr','fpr','fxd','fwgt','fr1','fr2','fdesc','fflv'].forEach(function(id){document.getElementById(id).value='';});
