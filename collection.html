@@ -16,7 +16,7 @@
 <meta property="og:image" content="https://iuchar.github.io/dnd-card-forge/og-image.jpg"/>
 <meta property="og:image:width" content="1200"/>
 <meta property="og:image:height" content="630"/>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700;800&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,700&display=swap" rel="stylesheet"/>
 <script src="lib/jszip.min.js" defer></script>
 <script src="lib/jspdf.umd.min.js" defer></script>
 <style>
@@ -30,7 +30,7 @@
 html{font-size:15px;height:100%;overflow:hidden;}
 body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,serif;height:100%;display:flex;flex-direction:column;overflow:hidden;}
 .header{padding:13px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--border);background:linear-gradient(to bottom,rgba(200,148,26,.06),transparent);gap:12px;flex-wrap:wrap;flex-shrink:0;}
-.logo{font-family:'Cinzel',serif;font-size:17px;font-weight:700;letter-spacing:.12em;color:var(--gold-l);white-space:nowrap;}
+.logo{font-family:'EB Garamond',serif;font-size:17px;font-weight:700;letter-spacing:.12em;color:var(--gold-l);white-space:nowrap;}
 .logo span{color:var(--text2);font-weight:400;}
 .hbtn:hover{background:rgba(255,255,255,.09);color:var(--text);}
 .hbtn svg{width:13px;height:13px;flex-shrink:0;}
@@ -39,7 +39,7 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .nav-toggle:hover,.nav-toggle.open{background:rgba(255,255,255,.09);color:var(--text);}
 .nav-menu{position:absolute;top:calc(100% + 8px);left:0;width:230px;background:var(--bg2);border:0.5px solid var(--border2);border-radius:10px;padding:6px;box-shadow:0 8px 32px rgba(0,0,0,.55);z-index:300;display:none;max-height:460px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
 .nav-menu.open{display:block;}
-.nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.07em;color:var(--text2);cursor:pointer;transition:all .13s;text-decoration:none;}
+.nav-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;font-family:'EB Garamond',serif;font-size:10px;letter-spacing:.07em;color:var(--text2);cursor:pointer;transition:all .13s;text-decoration:none;}
 .nav-item > svg{flex-shrink:0;}
 .nav-item:hover{background:rgba(255,255,255,.06);color:var(--text);}
 .nav-item.nav-active{background:rgba(200,148,26,.12);color:var(--gold-l);border:0.5px solid rgba(200,148,26,.2);}
@@ -56,8 +56,8 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
   --ca:#f5f5f5;
   --r:10px;
 }
-.nav-toggle{padding:7px 13px;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);transition:all .14s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
-.nav-section-lbl{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);padding:5px 10px 3px;pointer-events:none;}
+.nav-toggle{padding:7px 13px;font-family:'EB Garamond',serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);transition:all .14s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
+.nav-section-lbl{font-family:'EB Garamond',serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);padding:5px 10px 3px;pointer-events:none;}
 :focus-visible{outline:2px solid var(--gold-l,#f0b830);outline-offset:2px;border-radius:3px;}
 .si:focus-visible,.coll-search:focus-visible,textarea:focus-visible{outline:none;}
 .si:focus-visible{border-color:var(--gold-l,#f0b830);border-width:1.5px;}
@@ -65,7 +65,7 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .rp:focus-visible{outline-offset:3px;}
 /* Кнопки шапки (.hbtn) — общие для генераторов и галерей; text-decoration
    нужен галереям, где .hbtn висит на ссылках */
-.hbtn{padding:7px 13px;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);transition:all .14s;display:flex;align-items:center;gap:6px;white-space:nowrap;text-decoration:none;}
+.hbtn{padding:7px 13px;font-family:'EB Garamond',serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);transition:all .14s;display:flex;align-items:center;gap:6px;white-space:nowrap;text-decoration:none;}
 .hbtn.gold{border-color:var(--gold);background:rgba(200,148,26,.1);color:var(--gold-l);}
 .hbtn.gold:hover{background:rgba(200,148,26,.2);}
 .hbtn:disabled{opacity:.3;cursor:default;pointer-events:none;}
@@ -94,7 +94,7 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .filter-search::placeholder{color:#5a5040;}
 .filter-search-clear{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:13px;line-height:1;padding:2px;display:none;}
 .filter-search-clear:hover{color:var(--text2);}
-.filter-stats{font-family:'Cinzel',serif;font-size:10px;color:var(--text3);white-space:nowrap;margin-left:auto;}
+.filter-stats{font-family:'EB Garamond',serif;font-size:10px;color:var(--text3);white-space:nowrap;margin-left:auto;}
 .filter-stats b{color:var(--text2);}
 .grid-wrap::-webkit-scrollbar{width:5px;}
 .grid-wrap::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px;}
@@ -103,20 +103,20 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 /* EMPTY STATE */
 .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:40px 20px;gap:16px;background:#efe9db;margin:16px;border-radius:12px;}
 .empty-state svg{opacity:.15;}
-.empty-state-title{font-family:'Cinzel',serif;font-size:13px;font-weight:600;color:var(--text3);letter-spacing:.1em;}
+.empty-state-title{font-family:'EB Garamond',serif;font-size:13px;font-weight:600;color:var(--text3);letter-spacing:.1em;}
 .empty-state-sub{font-family:'Crimson Text',Georgia,serif;font-size:13px;color:var(--text3);text-align:center;line-height:1.7;max-width:320px;}
 /* PREVIEW MODAL */
 .prev-bg{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;display:none;align-items:center;justify-content:center;padding:16px;}
 .prev-bg.open{display:flex;}
 .prev-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:14px;padding:20px;width:min(750px,94vw);max-width:min(750px,94vw);max-height:95vh;overflow-y:auto;display:flex;flex-direction:column;gap:16px;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
 .prev-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;}
-.prev-title{font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:var(--gold-l);letter-spacing:.07em;}
+.prev-title{font-family:'EB Garamond',serif;font-size:13px;font-weight:700;color:var(--gold-l);letter-spacing:.07em;}
 .prev-close{width:28px;height:28px;background:rgba(255,255,255,.05);border:0.5px solid var(--border2);border-radius:50%;color:var(--text2);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .13s;flex-shrink:0;}
-.side-lbl{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#b0a890;}
+.side-lbl{font-family:'EB Garamond',serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#b0a890;}
 .prev-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;flex-shrink:0;}
 .c-meta-item.cost{color:#8a6010;}
 .cst{background:rgba(0,0,0,.07);border:.5px solid rgba(0,0,0,.12);border-radius:4px;padding:2px 6px;display:flex;flex-direction:column;align-items:center;min-width:40px;}
-.cst-l{font-family:'Cinzel',serif;font-size:7.5px;color:#8a7860;letter-spacing:.05em;text-transform:uppercase;margin-bottom:1px;}
+.cst-l{font-family:'EB Garamond',serif;font-size:7.5px;color:#8a7860;letter-spacing:.05em;text-transform:uppercase;margin-bottom:1px;}
 .cst-v{font-size:13px;font-weight:700;color:#2a1e0a;}
 /* armor info-row */
 .c-info-row{display:flex;align-items:stretch;flex-shrink:0;}
@@ -126,14 +126,14 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important;}
 }
 /* TOAST */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:9px 18px;font-family:'Cinzel',serif;font-size:11px;color:var(--text);letter-spacing:.06em;z-index:500;transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:9px 18px;font-family:'EB Garamond',serif;font-size:11px;color:var(--text);letter-spacing:.06em;z-index:500;transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
 
 /* группы галереи */
 #grid-area{display:block;padding:0;background:#efe9db;margin:16px;border-radius:12px;overflow:hidden;min-height:calc(100% - 32px);}
 .gal-section{padding-bottom:14px;}
 .gal-section-head{display:flex;align-items:center;gap:10px;padding:9px 20px;background:#ddd2b6;border-top:1px solid rgba(200,148,26,.22);border-bottom:2px solid rgba(200,148,26,.42);}
-.gal-section-title{font-family:'Cinzel',serif;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#5f4d26;}
-.gal-section-count{font-family:'Cinzel',serif;font-size:10px;color:#6e5a2e;background:rgba(200,148,26,.16);border:0.5px solid rgba(200,148,26,.3);border-radius:20px;padding:2px 9px;}
+.gal-section-title{font-family:'EB Garamond',serif;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#5f4d26;}
+.gal-section-count{font-family:'EB Garamond',serif;font-size:10px;color:#6e5a2e;background:rgba(200,148,26,.16);border:0.5px solid rgba(200,148,26,.3);border-radius:20px;padding:2px 9px;}
 /* ═══ ПОЛНОЕ ОПИСАНИЕ ═══
    Окно перестало быть вторым списком свойств — он есть в панели справа. Здесь
    разворот компендиума: пергаментный лист на тёмной подложке, проза набрана
@@ -152,9 +152,9 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
    надзаголовке (как в строке указателя). У ядов и произвольных здесь их
    собственная палитра: цвет ставит galPal, а не шкала редкости. */
 .pv-stripe{height:4px;flex-shrink:0;}
-.pv-eyebrow{display:flex;align-items:center;gap:7px;font-family:'Cinzel',serif;font-size:9.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#8a7550;margin-bottom:5px;}
+.pv-eyebrow{display:flex;align-items:center;gap:7px;font-family:'EB Garamond',serif;font-size:9.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:#8a7550;margin-bottom:5px;}
 .pv-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;border:0.5px solid rgba(0,0,0,.25);}
-.pv-name{font-family:'Cinzel',serif;font-size:24px;font-weight:700;color:#2a1e0a;margin:0;line-height:1.15;text-wrap:balance;}
+.pv-name{font-family:'EB Garamond',serif;font-size:24px;font-weight:700;color:#2a1e0a;margin:0;line-height:1.15;text-wrap:balance;}
 .pv-en{font-size:14px;font-style:italic;color:#8a7550;margin-top:3px;}
 
 .pv-cols{display:flex;gap:26px;align-items:flex-start;}
@@ -169,7 +169,7 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 /* справочный столбец: мельче прозы, он для сверки, а не для чтения */
 .pv-stat{font-size:12.5px;}
 .pv-strow{display:flex;justify-content:space-between;gap:10px;padding:4px 0;border-bottom:0.5px solid rgba(90,72,32,.16);}
-.pv-strow .k{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#8a7550;align-self:center;white-space:nowrap;}
+.pv-strow .k{font-family:'EB Garamond',serif;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#8a7550;align-self:center;white-space:nowrap;}
 /* min-width:0 обязателен: без него флекс-элемент не даёт слову перенестись и
    длинное слово вылезает за край столбца («продолжительного» в длительности) */
 .pv-strow .v{color:#2a1e0a;text-align:right;min-width:0;overflow-wrap:break-word;}
@@ -185,7 +185,7 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .pv-quote{margin:0 0 18px;padding:0 0 0 16px;border-left:2px solid rgba(150,110,30,.45);
   font-size:16px;font-style:italic;line-height:1.6;color:#5f4d26;}
 .pv-sec{margin-bottom:18px;}
-.pv-sec h3{font-family:'Cinzel',serif;font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
+.pv-sec h3{font-family:'EB Garamond',serif;font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
   color:#8a6b2e;margin:0 0 6px;}
 .pv-text{font-size:16px;line-height:1.7;color:#241a08;white-space:pre-wrap;overflow-wrap:break-word;}
 .pv-text u{text-decoration:underline;text-underline-offset:2px;}
@@ -202,7 +202,7 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .gp-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:500;display:none;align-items:center;justify-content:center;}
 .gp-bg.open{display:flex;}
 .gp-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:12px;padding:22px 22px 18px;width:360px;box-shadow:0 8px 32px rgba(0,0,0,.5);}
-.gp-box h3{font-family:'Cinzel',serif;font-size:15px;color:var(--text);margin:0 0 4px;text-align:center;}
+.gp-box h3{font-family:'EB Garamond',serif;font-size:15px;color:var(--text);margin:0 0 4px;text-align:center;}
 .gp-box p{font-size:12px;color:var(--text2);margin:0 0 14px;text-align:center;}
 .gp-btns{display:flex;flex-direction:column;gap:8px;}
 .gp-btns .hbtn{justify-content:center;}
@@ -213,12 +213,12 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .hbtn.active{background:rgba(200,148,26,.15);color:var(--gold-l);border-color:rgba(200,148,26,.3);}
 .sel-bar{display:none;align-items:center;gap:8px;padding:8px 20px;border-bottom:0.5px solid var(--border);background:rgba(200,148,26,.06);flex-wrap:wrap;}
 .sel-bar.open{display:flex;}
-.sel-info{font-family:'Cinzel',serif;font-size:11px;color:var(--text2);margin-right:auto;}
+.sel-info{font-family:'EB Garamond',serif;font-size:11px;color:var(--text2);margin-right:auto;}
 .sel-info b{color:var(--gold-l);}
 /* выпадающие фильтры */
 .fdd-host{display:flex;flex-wrap:wrap;gap:6px;align-items:center;}
 .fdd-wrap{position:relative;}
-.fdd{display:inline-flex;align-items:center;gap:5px;font-family:'Cinzel',serif;font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);background:transparent;border:0.5px solid var(--border2);border-radius:20px;padding:5px 11px;cursor:pointer;transition:all .14s;}
+.fdd{display:inline-flex;align-items:center;gap:5px;font-family:'EB Garamond',serif;font-size:9px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);background:transparent;border:0.5px solid var(--border2);border-radius:20px;padding:5px 11px;cursor:pointer;transition:all .14s;}
 .fdd:hover{color:var(--text2);background:rgba(255,255,255,.05);}
 .fdd.on{color:var(--gold-l);border-color:rgba(200,148,26,.4);background:rgba(200,148,26,.1);}
 .fdd-cnt{background:var(--gold);color:#1a1208;border-radius:10px;font-size:8px;padding:0 5px;min-width:14px;text-align:center;}
@@ -226,7 +226,7 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .fdd-panel{position:absolute;top:calc(100% + 6px);left:0;min-width:185px;max-height:340px;overflow-y:auto;background:var(--bg2);border:0.5px solid var(--border2);border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.55);z-index:350;display:none;padding-bottom:4px;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
 .fdd-panel.open{display:block;}
 .fdd-pedals{display:flex;gap:6px;padding:8px 10px;border-bottom:0.5px solid var(--border);position:sticky;top:0;background:var(--bg2);}
-.fdd-pedal{flex:1;font-family:'Cinzel',serif;font-size:9px;letter-spacing:.04em;color:var(--text3);background:transparent;border:none;border-radius:6px;padding:6px 0;cursor:pointer;transition:all .12s;}
+.fdd-pedal{flex:1;font-family:'EB Garamond',serif;font-size:9px;letter-spacing:.04em;color:var(--text3);background:transparent;border:none;border-radius:6px;padding:6px 0;cursor:pointer;transition:all .12s;}
 .fdd-pedal:hover{color:var(--gold-l);background:rgba(200,148,26,.13);}
 .fdd-opt{display:flex;align-items:center;gap:9px;padding:7px 12px;font-size:13px;color:var(--text);cursor:pointer;white-space:nowrap;}
 .fdd-opt:hover{background:linear-gradient(90deg,rgba(255,255,255,.13),rgba(255,255,255,0));}
@@ -247,17 +247,23 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .gx-ednote{margin-left:auto;font-family:'Crimson Text',Georgia,serif;font-style:italic;font-size:11px;color:var(--text3);white-space:nowrap;}
 .gx-sortbar{display:none;align-items:center;gap:7px;padding:7px 20px;border-bottom:0.5px solid var(--border);flex-wrap:wrap;row-gap:6px;background:rgba(200,148,26,.05);}
 .gx-sortbar.open{display:flex;}
-.gx-blbl{font-family:'Cinzel',serif;font-size:8.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);white-space:nowrap;}
-.gx-sec{font-family:'Cinzel',serif;font-size:9.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);border:0.5px solid var(--border2);border-radius:20px;padding:5px 11px;cursor:pointer;background:transparent;transition:background-color .14s,color .14s,border-color .14s;white-space:nowrap;}
+.gx-blbl{font-family:'EB Garamond',serif;font-size:8.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);white-space:nowrap;}
+.gx-sec{font-family:'EB Garamond',serif;font-size:9.5px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);border:0.5px solid var(--border2);border-radius:20px;padding:5px 11px;cursor:pointer;background:transparent;transition:background-color .14s,color .14s,border-color .14s;white-space:nowrap;}
 .gx-sec:hover{color:var(--text2);background:rgba(255,255,255,.05);}
 .gx-sec.on{color:var(--gold-l);border-color:rgba(200,148,26,.4);background:rgba(200,148,26,.1);}
 
 /* светлая область: список + панель */
 .gx-stage{display:flex;flex:1;min-height:0;background:#efe9db;margin:16px;border-radius:12px;overflow:hidden;}
-.gx-main{flex:1;min-width:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
+/* Прокрутка обеих осей ЗДЕСЬ, а не на .gx-tw вокруг таблицы. Пока горизонталь
+   висела на .gx-tw, полоса прокрутки оказывалась под таблицей, то есть внизу
+   всего списка: до неё приходилось листать сотню строк. Заодно .gx-tw был
+   скролл-контейнером без ограничения по высоте, и sticky-шапка таблицы липла
+   к нему, а не к экрану — то есть не липла вовсе. Одно место прокрутки чинит
+   и полосу, и шапку. */
+.gx-main{flex:1;min-width:0;overflow:auto;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
 /* #grid-area из старой сетки живёт ниже и по ID перебивает .gx-main — гасим его
    здесь. Само правило не трогаем: по нему до сих пор рисуется книга заклинаний. */
-.gx-stage > #grid-area{display:block;padding:0;margin:0;background:transparent;border-radius:0;min-height:0;overflow-y:auto;}
+.gx-stage > #grid-area{display:block;padding:0;margin:0;background:transparent;border-radius:0;min-height:0;overflow:auto;}
 .gx-main::-webkit-scrollbar{width:5px;}
 .gx-main::-webkit-scrollbar-thumb{background:rgba(90,72,32,.35);border-radius:3px;}
 
@@ -268,13 +274,13 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
    говорит редкость, и второй цветовой язык с ней бы спорил. */
 .gx-h1{display:flex;align-items:center;gap:10px;padding:10px 16px;background:#4a3f28;border-top:1px solid rgba(0,0,0,.3);border-bottom:1px solid rgba(0,0,0,.25);position:sticky;top:0;z-index:3;}
 .gx-h1 > svg{width:16px;height:16px;color:#e8d9ae;flex-shrink:0;}
-.gx-h1 .t{font-family:'Cinzel',serif;font-size:13px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#f0e4c0;}
-.gx-h1 .c{font-family:'Cinzel',serif;font-size:11px;color:#4a3f28;background:#d8c48c;border-radius:20px;padding:2px 9px;}
+.gx-h1 .t{font-family:'EB Garamond',serif;font-size:13px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#f0e4c0;}
+.gx-h1 .c{font-family:'EB Garamond',serif;font-size:11px;color:#4a3f28;background:#d8c48c;border-radius:20px;padding:2px 9px;}
 /* кнопки группы лежат на этой полосе — на тёмном их прежняя охра не видна */
 .gx-h1 .gal-grp-save,.gx-h1 .gal-grp-print{border-color:rgba(232,217,174,.3);background:rgba(232,217,174,.1);color:#e8d9ae;}
 .gx-h1 .gal-grp-save:hover,.gx-h1 .gal-grp-print:hover{background:rgba(232,217,174,.22);border-color:rgba(232,217,174,.5);color:#fbf1d8;}
 .gx-h2{display:flex;align-items:center;gap:9px;padding:7px 16px 7px 24px;background:#ddd2b6;border-bottom:0.5px solid rgba(200,148,26,.32);position:sticky;top:41px;z-index:2;}
-.gx-h2 .t{font-family:'Cinzel',serif;font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#5f4d26;}
+.gx-h2 .t{font-family:'EB Garamond',serif;font-size:11.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#5f4d26;}
 .gx-h2 .c{font-size:11px;color:#7d6835;}
 
 /* Строки указателя. Ширина колонки фиксированная, число колонок считает сам
@@ -303,17 +309,23 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .gx-e{font-size:12px;font-style:italic;color:#9a8a6c;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;line-height:1.25;}
 
 /* таблица раздела */
-.gx-tw{overflow-x:auto;}
+/* обёртка больше не скроллит: и горизонталь, и вертикаль на .gx-main */
+.gx-tw{overflow:visible;}
 /* fixed: ширины из colgroup должны соблюдаться. При auto браузер раздавал
    место по содержимому и «Цена» с «Весом» получали столько же, сколько
    название, хотя в них десяток знаков. min-width держит таблицу читаемой на
    узком экране — дальше включается горизонтальная прокрутка .gx-tw. */
-table.gx-t{width:100%;min-width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed;}
-.gx-t thead th{position:sticky;top:0;z-index:2;background:#ddd2b6;color:#5f4d26;font-family:'Cinzel',serif;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-align:left;padding:9px 12px;border-bottom:1px solid rgba(200,148,26,.4);white-space:nowrap;}
+/* Кегль общий с книгой заклинаний: строка 12.5px, заголовок 10px. У раздела
+   до десяти колонок, и на 14px они не помещались по ширине. Плотный указатель
+   «Всё» живёт на своей шкале (.gx-n/.gx-e) и сюда не входит. */
+table.gx-t{width:100%;min-width:100%;border-collapse:collapse;font-size:12.5px;table-layout:fixed;}
+.gx-t thead th{position:sticky;top:0;z-index:2;background:#ddd2b6;color:#5f4d26;font-family:'EB Garamond',serif;font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;text-align:left;padding:9px 12px;border-bottom:1px solid rgba(200,148,26,.4);white-space:nowrap;}
 .gx-t thead th.num{text-align:right;}
 .gx-t tbody td{padding:8px 12px;border-bottom:0.5px solid rgba(90,72,32,.16);color:#7a6850;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 /* «Свойства» — единственная колонка со списком: ей перенос, а не многоточие */
 .gx-t tbody td .gx-dim,.gx-t tbody td .gx-wrap{white-space:normal;display:block;line-height:1.35;}
+/* «Использование»: каждое действие своей строкой */
+.gx-t tbody td .gx-uline{display:block;}
 .gx-t tbody td.num{text-align:right;font-variant-numeric:tabular-nums;}
 .gx-t tbody tr{cursor:pointer;position:relative;}
 .gx-t tbody tr:hover{background:rgba(200,148,26,.09);}
@@ -328,7 +340,7 @@ table.gx-t{width:100%;min-width:100%;border-collapse:collapse;font-size:14px;tab
 /* Заголовок панели: название и английское имя стоят НАД картинкой — это
    заголовок карточки, а не подпись на обложке. */
 .gx-head{width:100%;}
-.gx-cn{font-family:'Cinzel',serif;font-size:13px;font-weight:700;color:#2a1e0a;line-height:1.25;}
+.gx-cn{font-family:'EB Garamond',serif;font-size:13px;font-weight:700;color:#2a1e0a;line-height:1.25;}
 .gx-ce{font-size:11px;font-style:italic;color:#7a6850;margin-top:1px;}
 /* Слот картинки повторяет генератор: та же тёмная рамка с внутренним волоском
    (.c-img в card-new.css) и ровно та пропорция, к которой режет кроп —
@@ -346,14 +358,14 @@ table.gx-t{width:100%;min-width:100%;border-collapse:collapse;font-size:14px;tab
 .gx-img img{width:100%;height:100%;object-fit:contain;display:block;}
 .gx-st{width:100%;font-size:13px;}
 .gx-str{display:flex;justify-content:space-between;gap:9px;padding:5px 0;border-bottom:0.5px solid rgba(90,72,32,.16);}
-.gx-str .k{color:#8a7550;font-family:'Cinzel',serif;font-size:10px;letter-spacing:.05em;text-transform:uppercase;align-self:center;white-space:nowrap;}
+.gx-str .k{color:#8a7550;font-family:'EB Garamond',serif;font-size:10px;letter-spacing:.05em;text-transform:uppercase;align-self:center;white-space:nowrap;}
 .gx-str .v{color:#2a1e0a;text-align:right;min-width:0;overflow-wrap:break-word;}
 /* перечень: подпись сверху, текст слева во всю ширину панели */
 .gx-str.wide{display:block;}
 .gx-str.wide .k{display:block;margin-bottom:3px;}
 .gx-str.wide .v{display:block;text-align:left;line-height:1.4;}
 .gx-acts{width:100%;display:flex;flex-direction:column;gap:5px;}
-.gx-btn{width:100%;font-family:'Cinzel',serif;font-size:9.5px;font-weight:600;letter-spacing:.06em;text-align:center;color:#5f4d26;border:0.5px solid rgba(90,72,32,.35);border-radius:7px;padding:6px 0;background:rgba(90,72,32,.07);cursor:pointer;transition:background-color .13s,color .13s;}
+.gx-btn{width:100%;font-family:'EB Garamond',serif;font-size:9.5px;font-weight:600;letter-spacing:.06em;text-align:center;color:#5f4d26;border:0.5px solid rgba(90,72,32,.35);border-radius:7px;padding:6px 0;background:rgba(90,72,32,.07);cursor:pointer;transition:background-color .13s,color .13s;}
 .gx-btn:hover{background:rgba(90,72,32,.16);}
 .gx-btn:focus-visible{outline:2px solid var(--gold-l);outline-offset:2px;}
 /* «Открыть в генераторе» — второй по важности: тёплая охра, но всё ещё плашка */
@@ -406,7 +418,7 @@ table.gx-t{width:100%;min-width:100%;border-collapse:collapse;font-size:14px;tab
    Кнопку удаления оформляет .gx-row .g-card-del в gallery-styles.css — здешнее
    правило переопределяло её opacity:0 и кнопка была не видна. */
 .empty-state-links{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;justify-content:center;}
-.empty-state-link{padding:7px 16px;font-family:'Cinzel',serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);text-decoration:none;transition:all .14s;}
+.empty-state-link{padding:7px 16px;font-family:'EB Garamond',serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);text-decoration:none;transition:all .14s;}
 .empty-state-link:hover{background:rgba(255,255,255,.09);color:var(--text);}
 .prev-close:hover{background:rgba(220,60,60,.15);color:#e08070;border-color:rgba(220,60,60,.3);}
 
@@ -416,9 +428,9 @@ table.gx-t{width:100%;min-width:100%;border-collapse:collapse;font-size:14px;tab
 .conf-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:400;display:none;align-items:center;justify-content:center;}
 .conf-bg.open{display:flex;}
 .conf-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:12px;padding:26px 24px 20px;width:290px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.5);}
-.conf-box h3{font-family:'Cinzel',serif;font-size:12px;font-weight:600;color:var(--text);margin:0 0 18px;letter-spacing:.04em;line-height:1.5;}
+.conf-box h3{font-family:'EB Garamond',serif;font-size:12px;font-weight:600;color:var(--text);margin:0 0 18px;letter-spacing:.04em;line-height:1.5;}
 .conf-btns{display:flex;gap:8px;justify-content:center;}
-.conf-btns button{padding:7px 20px;font-family:'Cinzel',serif;font-size:11px;cursor:pointer;border-radius:6px;border:0.5px solid var(--border2);background:transparent;color:var(--text2);transition:all .14s;letter-spacing:.06em;}
+.conf-btns button{padding:7px 20px;font-family:'EB Garamond',serif;font-size:11px;cursor:pointer;border-radius:6px;border:0.5px solid var(--border2);background:transparent;color:var(--text2);transition:all .14s;letter-spacing:.06em;}
 .conf-del{border-color:rgba(220,60,60,.4)!important;color:#e08070!important;}
 .conf-del:hover{background:rgba(220,60,60,.15)!important;}
 .conf-keep:hover{background:rgba(255,255,255,.06);}
@@ -812,9 +824,10 @@ function toast(msg){var el=document.getElementById('toast');el.textContent=msg;e
 function closePreview(){document.getElementById('prev-bg').classList.remove('open');previewCard=null;}
 /* Редакция как область видимости галереи (не фильтр): 2014 или 2024.
    Правило: карточка с указанной редакцией видна только в своей, карточка без
-   указания — в обеих. Поэтому доспехи, яды, снаряжение и произвольные общие,
-   а оружие и инструменты расходятся по годам.
-   Оружие несёт редакцию в _edition/_source, инструменты — в поле edition. */
+   указания — в обеих. По годам расходится ТОЛЬКО оружие: у него отличается сама
+   карточка (мастерство против «Особого»). Остальные разделы, включая
+   инструменты, общие — там 2024 просто добавляет полей к тому же предмету.
+   Оружие несёт редакцию в _edition/_source. */
 var GAL_ED_KEY='dnd_gallery_edition';
 var GAL_ED='2014';
 try{var _e=localStorage.getItem(GAL_ED_KEY);if(_e==='2014'||_e==='2024')GAL_ED=_e;}catch(e){}
@@ -825,8 +838,6 @@ function galCardEd(c){
   var s=c._source;
   if(s==='weapon2014')return '2014';
   if(s==='weapon2024')return '2024';
-  e=c.edition;
-  if(e==='2014'||e==='2024')return e;      /* инструменты */
   return '';                                /* общая для обеих */
 }
 function galEdMatch(c){var e=galCardEd(c);return !e||e===GAL_ED;}
@@ -838,7 +849,7 @@ function galBuildEdBar(){
     ['2014','2024'].map(function(v){
       return '<button type="button" class="gx-sec'+(v===GAL_ED?' on':'')+'" data-ed="'+v+'">'+v+'</button>';
     }).join('')+
-    '<span class="gx-ednote">доспехи, яды и снаряжение общие для обеих</span>';
+    '<span class="gx-ednote">по годам различается только оружие, остальные разделы общие</span>';
   host.querySelectorAll('button[data-ed]').forEach(function(b){
     b.addEventListener('click',function(){
       var v=b.getAttribute('data-ed');
@@ -969,11 +980,20 @@ function galRank(list,v){if(!list)return 500;var i=list.indexOf(v);return i<0?49
 
 /* ── значения ячеек ── */
 function galDmg(c){return c.d1||c.d2||'';}
-/* «Использование» инструмента одной строкой: «Вскрыть замок (15), …» */
-function galToolUse(c){
-  var u=c.use;if(!Array.isArray(u)||!u.length)return '';
+/* «Использование» инструмента одной строкой: «Вскрыть замок (15), …».
+   Годится для панели и окна, где значение читается как фраза. */
+function _toolUseList(c){
+  var u=c.use;if(!Array.isArray(u))return [];
   return u.filter(function(x){return x&&(x.a||x.dc);})
-          .map(function(x){return (x.a||'?')+(x.dc?' ('+x.dc+')':'');}).join(', ');
+          .map(function(x){return (x.a||'?')+(x.dc?' ('+x.dc+')':'');});
+}
+function galToolUse(c){return _toolUseList(c).join(', ');}
+/* В таблице то же самое, но каждое действие своей строкой: в колонке 130px
+   перечень через запятую рвётся по словам и перестаёт читаться списком. */
+function galToolUseCell(c){
+  var l=_toolUseList(c);if(!l.length)return '';
+  return '<span class="gx-wrap">'+l.map(function(s){
+    return '<span class="gx-uline">'+_gxEsc(s)+'</span>';}).join('')+'</span>';
 }
 function galMagic(c){var n=parseInt(c.magicBonus,10);return(isNaN(n)||n===0)?'':'+'+n;}
 function galProps(c){var p=c.props;return Array.isArray(p)?p.join(', '):(p||'');}
@@ -1014,7 +1034,7 @@ function _gxEsc(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</
    0 = ширины нет: такие колонки делят между собой всё, что осталось. */
 var GAL_SCHEMA={
   weapon:{cols:['Название','Маг.','Класс','Тип','Урон','Тип урона','Доп. урон','Дистанция','Свойства','Мастерство','Боеприпас','Вес','Цена'],num:[11,12],
-    w:[0,48,92,124,64,102,150,108,0,116,162,82,78],opt:[1,6],
+    w:[0,48,92,124,64,102,150,108,0,116,162,0,0],opt:[1,6],
     cell:function(c){return [galNameCell(c),
       galMagic(c)||'—',
       c.cat||'—',c.kind||'—',galDmg(c)||'—',c.dt||'—',xDmgText(c)||'—',
@@ -1022,24 +1042,41 @@ var GAL_SCHEMA={
       '<span class="gx-dim">'+(galProps(c)||'—')+'</span>',
       c.mastery||'—',c.ammo||'—',galWgt(c),galCost(c)];}},
   armor:{cols:['Название','Маг.','Категория','КБ','Материал','Особое свойство','Треб. Силы','Скрытность','Надевание','Снятие','Вес','Цена'],num:[6,10,11],
-    w:[0,48,104,146,156,196,106,118,106,98,72,76],opt:[1,5],
+    /* тянется «Материал», а не «Особое свойство»: второе необязательное и в
+       пустом разделе выпадает, оставляя таблицу вовсе без гибкой колонки */
+    w:[0,48,104,146,0,196,106,118,106,98,0,0],wmin:[0,0,0,0,156,0,0,0,0,0,0,0],opt:[1,5],
     cell:function(c){return [galNameCell(c),galMagic(c)||'—',c.armorType||'—',c.acDisplay||'—',c.material||'—',
       specText(c)||'—',c.strReq||'—',galStealth(c),c.donnTime||'—',c.doffTime||'—',galWgt(c),galCost(c)];}},
   poisons:{cols:['Название','Тип','Спасбросок','Урон','Длительность','Вес','Цена'],num:[5,6],
-    w:[0,212,116,160,250,76,78],
+    w:[0,212,116,160,0,0,0],wmin:[0,0,0,0,250,0,0],
     cell:function(c){return [galNameCell(c),c.poisonType||'—',galSave(c)||'—',c.damageDice||'—','<span class="gx-wrap">'+_gxEsc(c.duration||'—')+'</span>',galWgt(c),galCost(c)];}},
-  tools:{cols:['Название','Категория','Характеристика','Использование','Изготовление','Вес','Цена'],num:[5,6],
-    w:[0,196,146,0,170,64,66],opt:[3,4],
-    cell:function(c){var u=galToolUse(c);return [galNameCell(c),c.toolType||'—',c.stat||'—',
-      u?'<span class="gx-wrap">'+_gxEsc(u)+'</span>':'—',
+  tools:{cols:['Название','Категория','Хар.','Использование','Изготовление','Вес','Цена'],num:[5,6],
+    /* фиксированы все, кроме «Использования» и «Изготовления»: при расширении
+       окна место достаётся только этим двум */
+    w:[380,190,110,0,0,95,90],wmin:[0,0,0,100,170,0,0],opt:[3,4],
+    cell:function(c){var u=galToolUseCell(c);return [galNameCell(c),c.toolType||'—',c.stat||'—',
+      u||'—',
       c.craft?'<span class="gx-wrap">'+_gxEsc(c.craft)+'</span>':'—',galWgt(c),galCost(c)];}},
   equipment:{cols:['Название','Категория','Вес','Цена'],num:[2,3],
-    w:[0,104,64,66],
+    w:[0,0,0,0],wmin:[0,104,0,0],
     cell:function(c){return [galNameCell(c),c.category||'—',galWgt(c),galCost(c)];}},
   custom:{cols:['Название','Тип карточки'],num:[],
-    w:[0,154],
+    w:[0,0],wmin:[0,154],
     cell:function(c){return [galNameCell(c),c.cardType||'—'];}}
 };
+
+/* Общие ширины: «Название», «Вес» и «Цена» одинаковы во ВСЕХ разделах обеих
+   галерей. Правило живёт здесь, а не в каждой схеме, чтобы значения не разошлись
+   при следующей правке: в схемах эти три колонки стоят нулём и заполняются
+   отсюда по имени, куда бы столбец ни переехал.
+   Раз имя стало фиксированным, тянуться в каждом разделе должно что-то другое —
+   самая многословная колонка (свойства, особое свойство, длительность,
+   категория, тип карточки), её минимум задан через wmin в самой схеме. */
+var GAL_WSHARED={'Название':380,'Вес':95,'Цена':90};
+Object.keys(GAL_SCHEMA).forEach(function(k){
+  var s=GAL_SCHEMA[k];s.w=s.w||[];
+  s.cols.forEach(function(h,i){if(GAL_WSHARED[h]!=null)s.w[i]=GAL_WSHARED[h];});
+});
 
 var GAL_SORTS={
   weapon:[['Название','name'],['Класс','cat'],['Тип урона','dt'],['Редкость','_rar']],
@@ -1156,14 +1193,28 @@ function galRenderTable(cards,host,gid){
       s.opt.forEach(function(i){if(r[i]&&r[i]!=='—')filled[i]=1;});});
     idx=idx.filter(function(i){return s.opt.indexOf(i)<0||filled[i];});
   }
+  /* Страховка общего правила ширин: если после отсева необязательных колонок
+     не осталось ни одной гибкой, браузер растянет ВСЕ пропорционально, и
+     «Название», «Вес», «Цена» разъедутся против GAL_WSHARED. Отпускаем самую
+     широкую из оставшихся, кроме этих трёх. */
+  if(!idx.some(function(i){return !((s.w&&s.w[i])||0);})){
+    var free=-1,fw=-1;
+    idx.forEach(function(i){
+      if(GAL_WSHARED[s.cols[i]]!=null)return;
+      var x=(s.w&&s.w[i])||0;if(x>fw){fw=x;free=i;}});
+    if(free>=0){s.wmin=s.wmin||[];s.wmin[free]=s.w[free];s.w[free]=0;}
+  }
   var minW=34;
   var cg='<colgroup>'+idx.map(function(i){
       var h=s.cols[i],w=(s.w&&s.w[i])||0;
-      /* Без своей ширины остаются «Название» и «Свойства»: они делят остаток.
-         В минимум таблицы название входит по самому длинному имени с английским
-         (замер: 344px), иначе на узком экране его сожмёт до многоточия. Свойствам
-         хватает меньше — они переносятся по словам, а не обрезаются. */
-      minW+=w||(h==='Название'?424:180);
+      /* Колонка без своей ширины делит остаток — при расширении окна растут
+         только такие. Её вклад в минимум таблицы берём из s.wmin, а без него
+         по старому правилу: имени нужно 424 (самое длинное с английским),
+         остальным хватает 180, они переносятся по словам, а не обрезаются.
+         Оговорка фикс-раскладки: на самой узкой ширине браузер делит остаток
+         между авто-колонками ПОРОВНУ, поэтому разные wmin там сойдутся в одно
+         число; работают они начиная с первого же лишнего пикселя. */
+      minW+=w||(s.wmin&&s.wmin[i])||(h==='Название'?424:180);
       return '<col'+(w?' style="width:'+w+'px"':'')+'/>';}).join('')+
     '<col style="width:34px"/></colgroup>';
   var html='<table class="gx-t" style="min-width:'+minW+'px">'+cg+'<thead><tr>'+idx.map(function(i){
