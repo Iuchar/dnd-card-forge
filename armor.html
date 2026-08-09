@@ -1983,14 +1983,18 @@ document.getElementById('btn-png').addEventListener('click',function(){
   }).catch(function(){toast('⚠ Ошибка экспорта');});
 });
 
-/* ── Общий проект: экспорт/импорт ВСЕХ 7 коллекций одним файлом ── */
+/* ── Общий проект: экспорт/импорт ВСЕХ коллекций одним файлом ──
+   Список обязан покрывать все LS_KEY генераторов: чего здесь нет, то не попадёт
+   в файл проекта и потеряется при переносе (так до 2026-08-09 терялись
+   произвольные карточки). Сверяться с `var LS_KEY=` в src/pages/*.html. */
 var ALL_COLLECTIONS=[
   {key:'dnd_cardforge_weapon',idb:'dnd_weapon_imgs'},
   {key:'dnd_cardforge_armor',idb:'dnd_armor_imgs'},
   {key:'dnd_cardforge_equipment',idb:'dnd_equipment_imgs'},
   {key:'dnd_cardforge_tools',idb:'dnd_tools_imgs'},
   {key:'dnd_cardforge_poisons',idb:'dnd_poisons_imgs'},
-  {key:'dnd_cardforge_spells',idb:'dnd_spells_imgs'}
+  {key:'dnd_cardforge_spells',idb:'dnd_spells_imgs'},
+  {key:'dnd_cardforge_custom',idb:'dnd_custom_imgs'}
 ];
 function _idbReadAll(name,cb){
   var req=indexedDB.open(name,1);
@@ -2033,9 +2037,11 @@ document.getElementById('btn-import-json').addEventListener('change',function(){
     var data;try{data=JSON.parse(e.target.result);}catch(err){toast('⚠ Ошибка чтения файла');return;}
     if(data&&data.type==='dnd-all'&&data.collections){
       if(!confirm('Загрузить проект? Это ЗАМЕНИТ коллекции на ВСЕХ 7 страницах.'))return;
-      var keys=Object.keys(data.collections),i=0,total=0;
+      var keys=Object.keys(data.collections),i=0,total=0,skipped=0;
       (function next(){
-        if(i>=keys.length){toast('✦ Проект загружен ('+total+' карт.). Обновляю…');setTimeout(function(){location.reload();},900);return;}
+        if(i>=keys.length){
+          toast('✦ Проект загружен ('+total+' карт.)'+(skipped?', пропущено '+skipped+' из упразднённых разделов':'')+'. Обновляю…');
+          setTimeout(function(){location.reload();},skipped?1800:900);return;}
         var key=keys[i++],cards=data.collections[key]||[],pg=null;
         ALL_COLLECTIONS.forEach(function(x){if(x.key===key)pg=x;});
         /* файлы проектов до слияния оружия: старые ключи кладём как есть,
@@ -2044,10 +2050,14 @@ document.getElementById('btn-import-json').addEventListener('change',function(){
           var LEGACY={'dnd_cardforge_weapon2014':'dnd_weapon2014_imgs','dnd_cardforge_weapon2024':'dnd_weapon2024_imgs'};
           if(LEGACY[key])pg={key:key,idb:LEGACY[key]};
         }
+        /* Ключ упразднённого раздела (например dnd_cardforge_kits из старых
+           файлов) не пишем вовсе: его никто не читает, а в localStorage он
+           осядет мёртвым грузом и будет вечно занимать квоту. */
+        if(!pg){skipped+=cards.length;next();return;}
         var slim=cards.map(function(c){var o=Object.assign({},c);delete o.rawImg;delete o.img;return o;});
         try{localStorage.setItem(key,JSON.stringify(slim));}catch(_){}
         total+=cards.length;
-        if(pg)_idbWriteAll(pg.idb,cards,next);else next();
+        _idbWriteAll(pg.idb,cards,next);
       })();
     }else{
       var cards=Array.isArray(data)?data:(data.cards||[]);
