@@ -16,7 +16,7 @@
 <meta property="og:image" content="https://iuchar.github.io/dnd-card-forge/og-image.jpg"/>
 <meta property="og:image:width" content="1200"/>
 <meta property="og:image:height" content="630"/>
-<link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@400;500;600;700;800&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -38,12 +38,12 @@ a{color:inherit;}
 .hero-text{flex:1 1 400px;min-width:0;}
 .kicker{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
 .diamond{width:7px;height:7px;background:var(--gold);transform:rotate(45deg);flex-shrink:0;}
-.kicker-lbl{font-family:'EB Garamond',serif;font-size:11px;letter-spacing:.28em;color:var(--text3);}
-h1{font-family:'EB Garamond',serif;font-weight:800;/* у EB Garamond нет 900, браузер и так берёт 800 */font-size:clamp(36px,4.7vw,56px);line-height:1.04;color:var(--gold-xl);}
+.kicker-lbl{font-family:'Times New Roman',Times,serif;font-size:11px;letter-spacing:.28em;color:var(--text3);}
+h1{font-family:'Times New Roman',Times,serif;font-weight:700;/* у Times New Roman нет весов между 400 и 700 */font-size:clamp(36px,4.7vw,56px);line-height:1.04;color:var(--gold-xl);}
 h1 span{font-weight:400;color:#cbb98f;}
 .tagline{margin-top:20px;font-style:italic;font-size:19px;line-height:1.5;color:var(--text2);max-width:420px;}
 .cta-row{display:flex;flex-wrap:wrap;gap:14px;margin-top:30px;}
-.btn{display:inline-flex;align-items:center;gap:10px;font-family:'EB Garamond',serif;font-size:14px;letter-spacing:.08em;
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:'Times New Roman',Times,serif;font-size:14px;letter-spacing:.08em;
   padding:14px 26px;text-decoration:none;transition:all .15s;}
 .btn-gold{background:linear-gradient(180deg,#d9ad2e,#b8891a);color:#1c1608;font-weight:700;border:1px solid var(--gold-l);}
 .btn-gold:hover{filter:brightness(1.12);}
@@ -75,7 +75,7 @@ h1 span{font-weight:400;color:#cbb98f;}
 .sect-lbl{display:flex;align-items:center;gap:14px;margin:0 0 16px;}
 .sect-lbl .diamond{width:6px;height:6px;}
 .sect-lbl .diamond.violet{background:var(--accent);}
-.sect-name{font-family:'EB Garamond',serif;font-size:12px;font-weight:600;letter-spacing:.24em;color:var(--text3);}
+.sect-name{font-family:'Times New Roman',Times,serif;font-size:12px;font-weight:600;letter-spacing:.24em;color:var(--text3);}
 .sect-rule{flex:1;height:1px;background:linear-gradient(90deg,rgba(201,162,39,.35),transparent);}
 .sect-rule.violet{background:linear-gradient(90deg,rgba(139,124,232,.35),transparent);}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px;}
@@ -87,7 +87,7 @@ h1 span{font-weight:400;color:#cbb98f;}
 .tile .ic{width:44px;height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;
   border:1px solid rgba(201,162,39,.4);color:var(--gold-l);transform:rotate(45deg);}
 .tile .ic svg{width:22px;height:22px;transform:rotate(-45deg);}
-.tile-name{font-family:'EB Garamond',serif;font-size:13.5px;font-weight:600;color:var(--text);}
+.tile-name{font-family:'Times New Roman',Times,serif;font-size:13.5px;font-weight:600;color:var(--text);}
 .tile-badge{font-family:'Crimson Text',Georgia,serif;font-size:9px;font-weight:400;color:#c88a4a;border:0.5px solid rgba(200,138,74,.4);border-radius:4px;padding:1px 6px;margin-left:7px;white-space:nowrap;vertical-align:middle;text-transform:lowercase;}
 .tile-desc{font-size:13px;font-style:italic;color:var(--text3);margin-top:2px;}
 .tile.alt{background:rgba(139,124,232,.05);border-color:rgba(139,124,232,.3);}
@@ -98,8 +98,8 @@ h1 span{font-weight:400;color:#cbb98f;}
 .steps{border-top:1px solid rgba(201,162,39,.2);padding-top:34px;margin-bottom:40px;
   display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:28px 32px;}
 .step{display:flex;gap:16px;align-items:baseline;}
-.step-num{font-family:'EB Garamond',serif;font-size:30px;color:rgba(201,162,39,.65);}
-.step-name{font-family:'EB Garamond',serif;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--text);}
+.step-num{font-family:'Times New Roman',Times,serif;font-size:30px;color:rgba(201,162,39,.65);}
+.step-name{font-family:'Times New Roman',Times,serif;font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--text);}
 .step-desc{font-size:14px;font-style:italic;color:var(--text3);margin-top:4px;line-height:1.4;}
 
 .foot{text-align:center;font-size:13px;font-style:italic;color:var(--text4);line-height:1.7;}
@@ -107,7 +107,7 @@ h1 span{font-weight:400;color:#cbb98f;}
 /* ---- feedback ---- */
 .fb{border:1px solid rgba(201,162,39,.28);background:rgba(255,255,255,.02);padding:clamp(20px,3.5vw,34px);}
 .fb-row{margin-bottom:18px;}
-.fb-lbl{display:block;font-family:'EB Garamond',serif;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);margin-bottom:9px;}
+.fb-lbl{display:block;font-family:'Times New Roman',Times,serif;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);margin-bottom:9px;}
 .fb-field{width:100%;background:rgba(0,0,0,.28);border:1px solid rgba(201,162,39,.3);color:var(--text);font-family:'Crimson Text',Georgia,serif;font-size:15px;padding:12px 14px;outline:none;transition:border-color .15s;}
 .fb-field:focus{border-color:var(--gold-l);}
 .fb-field::placeholder{color:var(--text4);font-style:italic;}
@@ -131,9 +131,9 @@ button.btn{cursor:pointer;}
 .fb-note{margin-top:18px;font-size:13px;font-style:italic;color:var(--text4);line-height:1.5;}
 .fb-thanks{text-align:center;padding:34px 16px;}
 .fb-thanks-i{font-size:30px;color:var(--gold-l);line-height:1;}
-.fb-thanks-t{font-family:'EB Garamond',serif;font-size:22px;color:var(--gold-xl);margin-top:12px;}
+.fb-thanks-t{font-family:'Times New Roman',Times,serif;font-size:22px;color:var(--gold-xl);margin-top:12px;}
 .fb-thanks-s{font-style:italic;font-size:15px;color:var(--text2);margin-top:8px;}
-.fb-thanks-timer{margin-top:16px;font-family:'EB Garamond',serif;font-size:11px;letter-spacing:.1em;color:var(--text4);}
+.fb-thanks-timer{margin-top:16px;font-family:'Times New Roman',Times,serif;font-size:11px;letter-spacing:.1em;color:var(--text4);}
 .fb-thanks-timer b{color:var(--gold-l);font-weight:600;}
 
 @media (prefers-reduced-motion:reduce){
