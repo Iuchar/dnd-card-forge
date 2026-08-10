@@ -628,8 +628,10 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     </div>
   </div>
 
-  <!-- заряды: подписи в одну строку, восстановление отдельно — оно длинное -->
-  <div class="row2">
+  <!-- заряды: подписи в одну строку, восстановление отдельно, оно длинное.
+       margin-top руками: заголовка над строкой нет, а подписи внутри .sf
+       обнуляют свой верхний отступ, и блок прилипал к переключателю бонуса -->
+  <div class="row2" style="margin-top:13px;">
     <div class="sf"><label class="lbl" style="margin:0 0 5px;" for="fchg">Зарядов всего</label>
       <input class="si" type="text" id="fchg" placeholder="36" maxlength="3" inputmode="numeric"/></div>
     <div class="sf"><label class="lbl" style="margin:0 0 5px;" for="fchgu">Расход</label>
