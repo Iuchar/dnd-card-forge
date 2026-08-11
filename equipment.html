@@ -307,17 +307,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 /* рубашка оборота (общая; страницы без рубашки правило не используют) */
 .cb-rubashka{position:absolute;inset:0;z-index:2;}
 
-.cv{flex:1;background:#f0ece2;display:flex;flex-direction:column;align-items:center;padding:20px 16px 16px;overflow:auto;}
-.dc{
-  width:310px;height:437px;
-  border-radius:12px;overflow:hidden;
-  border:3px solid var(--cb,#a09080);
-  background:#e8dcc8;
-  display:flex;flex-direction:column;
-  font-family:'Crimson Text',Georgia,serif;
-  transition:border-color .2s;
-  position:relative;
-}
 /* Блоки новых полей на карточке: плашка-значение как «Характеристика» у
    инструментов, заголовок с линейкой как их же «Использование». */
 .c-eqrow{display:flex;align-items:center;gap:7px;margin:3px 0 1px;flex-shrink:0;}
@@ -333,7 +322,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
    (замер: 276.5px при 282 доступных). Специфичность с .dc — чтобы перебить
    общее правило card-new.css (8.5px/.13em), которое включается ниже. */
 .dc .c-title .c-eqtype{font-family:'Times New Roman',Times,serif;font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:#8a7860;margin:4px 0 0;flex-shrink:0;white-space:nowrap;overflow:hidden;}
-.c-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);color:#2a1e0a;line-height:1.5;flex:1;overflow:hidden;white-space:pre-wrap;}
 #attune-wrap{display:none;}
 
 /* ═══ ОБЩИЕ ПРАВИЛА НОВОГО ДИЗАЙНА КАРТОЧЕК ═══
@@ -341,6 +329,13 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
    Включён во все генераторы, кроме заклинаний — у них свой дизайн.
    Специфика конкретного генератора (статблок, пилюли свойств и т.п.)
    остаётся в самой странице после этого include. */
+
+/* Геометрия лицевой стороны. Была продублирована слово в слово в шести
+   генераторах, причём объявленные там border-color и background всё равно
+   перебивались правилом ниже — то есть половина копии была мертва. */
+.dc{width:310px;height:437px;border-radius:12px;overflow:hidden;
+    border:3px solid var(--cb,#a09080);display:flex;flex-direction:column;
+    font-family:'Crimson Text',Georgia,serif;transition:border-color .2s;position:relative;}
 
 /* рамка и фон — как у заклинаний, а не по редкости */
 .dc,.dc-back{border-color:#8a7860;background:linear-gradient(160deg,#f3ecdb,#ece2cd);}
@@ -375,8 +370,10 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-foot{padding:0 11px;border-top:.5px solid rgba(90,72,32,.2);}
 
 .c-quote{margin:6px 0 2px;line-height:1.3;}
-/* межстрочный интервал описания: 1.4 — как у заклинаний (было 1.5) */
-.c-desc{line-height:1.4;}
+/* межстрочный интервал описания: 1.4 — как у заклинаний (было 1.5).
+   Остальные свойства пришли сюда из пяти одинаковых локальных копий; там
+   стояло line-height:1.5, которое это правило и так перебивало. */
+.c-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);line-height:1.4;color:#2a1e0a;flex:1;overflow:hidden;white-space:pre-wrap;}
 .cb-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);line-height:1.4;color:#2a1e0a;flex:1;overflow:hidden;white-space:pre-wrap;}
 .c-gem{opacity:1;}
 
@@ -1044,6 +1041,19 @@ function _applyNoImgForm(on){
 }
 var _noImgCb=document.getElementById('f-noimg');
 if(_noImgCb)_noImgCb.addEventListener('change',function(){_applyNoImgForm(_noImgCb.checked);});
+/* «Сбросить все поля» обязан снять и этот флаг. Без него форма говорила «без
+   картинки», а карточка показывала пустой слот: readForm читает галку, и слот
+   исчезал сам собой при первом же вводе. Живёт здесь, чтобы шесть генераторов
+   не заводили шесть копий (аудит 2026-08-11). */
+function resetNoImg(){
+  var cb=document.getElementById('f-noimg');
+  if(cb)cb.checked=false;
+  if(typeof _applyNoImgForm==='function')_applyNoImgForm(false);
+  /* и сама карточка: у оружия, доспехов и снаряжения сброс не перерисовывает
+     её целиком, поэтому класс «без картинки» иначе остаётся висеть */
+  var pc=document.getElementById('pc');
+  if(pc)pc.classList.remove('no-img');
+}
 
 /* image upload & crop */
 var fImgInput=document.getElementById('f-img');
@@ -1639,7 +1649,7 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   document.getElementById('f-img').value='';
   document.getElementById('btn-recrop').style.display='none';
   document.getElementById('btn-del-img').style.display='none';
-  setCardImg(null);applyR('nonmagic');applyPal('nonmagic');var _at=document.getElementById('p-attune');if(_at)_at.style.display='none';
+  setCardImg(null);resetNoImg();applyR('nonmagic');applyPal('nonmagic');var _at=document.getElementById('p-attune');if(_at)_at.style.display='none';
   document.getElementById('p-rar').textContent=R.nonmagic.l;document.getElementById('p-type').textContent='Снаряжение';
   document.getElementById('pnm').textContent='Снаряжение';
   document.getElementById('pwgt').textContent='';
