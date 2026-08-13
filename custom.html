@@ -1024,13 +1024,11 @@ function _fadeEdges(src,cb){
       var g=c.getContext('2d');
       g.drawImage(im,0,0,W,H);
       /* SMOOTHSTEP (3t^2-2t^3): вход и выход с нулевой скоростью, середина
-         крутая. Совмещает достоинства двух прежних кривых: у линейной старт
-         с изломом, и глаз ловил границу начала растушёвки (бутылочный
-         эталон); у куба старт гладкий, но 50% лишь на 27px, и чёткая зона
-         сужалась (пейзажный эталон). Smoothstep: старт невидим, 50% на
-         эталонных 17px. Зона 9% ширины (была 14%): на пейзаже растворение
-         залезало слишком глубоко к центру выделения. Градиент интерполирует
-         между стопами линейно, поэтому кривая набрана девятью точками. */
+         крутая — старт растушёвки невидим, 50% на 17px, зона 9% ширины.
+         Градиент интерполирует между стопами линейно, поэтому кривая
+         набрана девятью точками на каждую сторону. Рваная кромка (сдвиг
+         окна шумом по строкам) пробовалась и откатана: прямую линию на
+         однотонных фонах давала не кромка, а рампа обработки подложки. */
       var f=0.09;
       var gr=g.createLinearGradient(0,0,W,0);
       for(var k=0;k<=8;k++){
@@ -1089,10 +1087,45 @@ function _blurBg(src,cb){
       g0.drawImage(c0,mx+FW-1,my,1,FH, mx+FW,my,W-mx-FW,FH); /* правое */
       g0.drawImage(c0,0,my,W,1, 0,0,W,my);              /* верхнее */
       g0.drawImage(c0,0,my+FH-1,W,1, 0,my+FH,W,H-my-FH);/* нижнее */
+      /* Обесцвечивание — ГРАДИЕНТОМ по расстоянию от кадра, а не разом.
+         saturate(.65)+brightness(1.04) делают дальние поля бледным фоном, но
+         применённые ступенькой они стыковались с необработанным кадром прямо
+         на границе: на однотонных картинках, где размытие ничего не меняет,
+         тональная полоса кроссфейда была единственным и заметным сигналом.
+         Теперь у самого шва подложка — чистая размытая копия (цвет совпадает
+         с кадром по построению), а бледность нарастает к краям карточки.
+         Пейзажам это тоже на пользу: непрерывность у шва полная. */
+      var bOrig=document.createElement('canvas');bOrig.width=W;bOrig.height=H;
+      var gO=bOrig.getContext('2d');
+      if('filter' in gO)gO.filter='blur(18px)';
+      gO.drawImage(c0,0,0);
+      var bProc=document.createElement('canvas');bProc.width=W;bProc.height=H;
+      var gP=bProc.getContext('2d');
+      if('filter' in gP)gP.filter='blur(18px) saturate(0.65) brightness(1.04)';
+      gP.drawImage(c0,0,0);
+      /* маска чистой копии: 1 над кадром, smoothstep вниз к краям.
+         Горизонтальный спад 28px, вертикальный 14 (поля там уже). */
+      gO.globalCompositeOperation='destination-in';
+      var Rh=28,Rv=14;
+      var mh=gO.createLinearGradient(0,0,W,0);
+      for(var k=0;k<=4;k++){
+        var t=k/4,sst=t*t*(3-2*t);
+        mh.addColorStop(Math.max(0,(mx-Rh+Rh*t))/W,'rgba(0,0,0,'+sst+')');
+        mh.addColorStop(Math.min(W,(mx+FW+Rh-Rh*t))/W,'rgba(0,0,0,'+sst+')');
+      }
+      gO.fillStyle=mh;gO.fillRect(0,0,W,H);
+      var mv=gO.createLinearGradient(0,0,0,H);
+      for(var k2=0;k2<=4;k2++){
+        var t2=k2/4,ss2=t2*t2*(3-2*t2);
+        mv.addColorStop(Math.max(0,(my-Rv+Rv*t2))/H,'rgba(0,0,0,'+ss2+')');
+        mv.addColorStop(Math.min(H,(my+FH+Rv-Rv*t2))/H,'rgba(0,0,0,'+ss2+')');
+      }
+      gO.fillStyle=mv;gO.fillRect(0,0,W,H);
+      /* сборка: бледная везде, чистая — поверх, с маской */
       var c=document.createElement('canvas');c.width=W;c.height=H;
       var g=c.getContext('2d');
-      if('filter' in g)g.filter='blur(18px) saturate(0.65) brightness(1.04)';
-      g.drawImage(c0,0,0);
+      g.drawImage(bProc,0,0);
+      g.drawImage(bOrig,0,0);
       /* PNG, а не JPEG: у вырезанных картинок фон прозрачный, JPEG альфу
          не хранит и заливал его чёрным — вся полоса выходила чёрной, а
          растушёвка на чёрном читалась ребром. PNG сохраняет прозрачность,
