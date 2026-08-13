@@ -162,7 +162,7 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .pv-body{flex:1;min-width:0;max-width:62ch;}
 
 .pv-img{border:2px solid #3a2810;border-radius:3px;background:#cfc0a0;position:relative;overflow:hidden;
-  width:100%;aspect-ratio:296/149;box-sizing:content-box;margin-bottom:14px;}
+  width:100%;aspect-ratio:16/9;box-sizing:content-box;margin-bottom:14px;}
 .pv-img::after{content:'';position:absolute;inset:4px;border:1px solid rgba(160,120,56,.7);border-radius:2px;pointer-events:none;}
 .pv-img img{width:100%;height:100%;object-fit:contain;display:block;}
 
@@ -344,7 +344,7 @@ table.gx-t{width:100%;min-width:100%;border-collapse:collapse;font-size:12.5px;t
 .gx-ce{font-size:11px;font-style:italic;color:#7a6850;margin-top:1px;}
 /* Слот картинки повторяет генератор: та же тёмная рамка с внутренним волоском
    (.c-img в card-new.css) и ровно та пропорция, к которой режет кроп —
-   CARD_RATIO = 296/149 в crop.js. Поэтому изображение из генератора просто
+   CARD_RATIO = 16/9 в crop.js. Поэтому изображение из генератора просто
    уменьшается один в один. object-fit:contain, а не cover: у правильно
    обрезанной картинки результат тот же, но случайная нестандартная не потеряет
    края. Нет картинки — остаётся пустой слот. */
@@ -353,7 +353,7 @@ table.gx-t{width:100%;min-width:100%;border-collapse:collapse;font-size:12.5px;t
    в один» перестаёт быть точным. */
 /* border-box, иначе рамка в 2px прибавляется к 100% ширины: слот вылезал на
    4px шире строк свойств и панель получала горизонтальную прокрутку */
-.gx-img{width:100%;aspect-ratio:296/149;box-sizing:border-box;border:2px solid #3a2810;border-radius:3px;background:#cfc0a0;position:relative;overflow:hidden;flex-shrink:0;}
+.gx-img{width:100%;aspect-ratio:16/9;box-sizing:border-box;border:2px solid #3a2810;border-radius:3px;background:#cfc0a0;position:relative;overflow:hidden;flex-shrink:0;}
 .gx-img::after{content:'';position:absolute;inset:4px;border:1px solid rgba(160,120,56,.7);border-radius:2px;pointer-events:none;}
 .gx-img img{width:100%;height:100%;object-fit:contain;display:block;}
 .gx-st{width:100%;font-size:13px;}
@@ -714,7 +714,11 @@ function specText(card){
    Поля a/cb/cs — старый дизайн (полоса-акцент, рамка, тень); grad/gem — новый
    (градиент шапки тёмный→средний→тёмный + акцентный гем). Пока grad/gem читает
    только weapon-2014; остальные генераторы живут на a/cb/cs до своей очереди. */
-var R={nonmagic:{l:'Немагический',a:'#f5f5f5',cb:'#f5f5f5',cs:'#cdc8be',grad:['#979b99','#d2d5d3','#979b99'],gem:'#b7bab9'},
+/* Немагический — «холодная сталь» (2026-08-13). Был чистый серый #979b99/
+   #d2d5d3/#b7bab9: хромы ноль, и он сталкивался с тёплым серо-коричневым
+   «Обычным» — на полосе в 3px они различались только светлотой. Холодный
+   оттенок разводит их по температуре, остальные редкости не тронуты. */
+var R={nonmagic:{l:'Немагический',a:'#f5f5f5',cb:'#f5f5f5',cs:'#cdc8be',grad:['#7f8f99','#c3d0d7','#7f8f99'],gem:'#93a4ae'},
   common:   {l:'Обычный',     a:'#888077',cb:'#888077',cs:'#5a5030',grad:['#625b4e','#8a8272','#625b4e'],gem:'#7a7264'},
   uncommon: {l:'Необычный',   a:'#52aa40',cb:'#52aa40',cs:'#286820',grad:['#356a2b','#5a9a4c','#356a2b'],gem:'#4a8a3c'},
   rare:     {l:'Редкий',      a:'#4a8ccc',cb:'#4a8ccc',cs:'#1e4c88',grad:['#24557f','#4f92cc','#24557f'],gem:'#3f82c0'},
@@ -730,6 +734,51 @@ function applyPal(rar){
   if(d.grad){var g='linear-gradient(90deg,'+d.grad[0]+','+d.grad[1]+','+d.grad[0]+')';
     ['ps','pbs'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=g;});}
   if(d.gem){['pgm','pbgm'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=d.gem;});}
+}
+/* ═══ ЦВЕТА СЕКЦИЙ — ЭТО НЕ РЕДКОСТЬ ═══
+   Инструменты, яды и произвольные карточки редкости не имеют вовсе: у них
+   один фиксированный цвет на всю секцию. Раньше он лежал россыпью — в
+   applyToolPal, _backPal, COLL_PAL, STRIPE и GAL_GROUPPAL — и описывался
+   теми же полями grad/gem, что и палитра редкостей в rarities.js. При беглом
+   чтении «gem» у инструментов было не отличить от «gem» у легендарного
+   предмета, а одно и то же значение приходилось править в трёх-четырёх
+   местах. Здесь оно одно, и названия полей намеренно другие:
+
+     label  — как называется цвет, для человека
+     dark   — тёмный конец полосы
+     light  — светлый конец полосы и цвет метки
+     mark   — гем, точка в галерее, засечка в панели коллекции
+
+   Ключ — это _group карточки (он же ключ GAL_GROUPPAL). Добавили генератор
+   без редкости — добавьте строку сюда, и больше нигде. */
+var SECTION_PAL={
+  tools:  {label:'латунь', dark:'#5a430d', light:'#8b6914', mark:'#8b6914'},
+  poisons:{label:'полынь', dark:'#3a4a1e', light:'#63802f', mark:'#63802f'},
+  /* у произвольных полоса одноцветная: охра без затемнённых концов */
+  custom: {label:'охра',   dark:'#8a6b2e', light:'#8a6b2e', mark:'#8a6b2e'}
+};
+
+/* Полоса шапки. У custom оба конца одинаковые, поэтому градиент вырождается
+   в ровную заливку — так и было до выноса в общий файл. */
+function sectionGrad(key){
+  var p=SECTION_PAL[key];if(!p)return '';
+  return (p.dark===p.light)?p.light
+    :('linear-gradient(90deg,'+p.dark+','+p.light+','+p.dark+')');
+}
+/* Раскраска карточки в генераторе: полосы ps/pbs и гемы pgm/pbgm.
+   Заменяет применявшиеся раньше applyToolPal / applyPoisonPal / applyPal. */
+function applySectionPal(key){
+  var p=SECTION_PAL[key];if(!p)return;
+  var g=sectionGrad(key);
+  ['ps','pbs'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=g;});
+  ['pgm','pbgm'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=p.mark;});
+}
+/* Хук _backPal, который зовёт renderback.js: оборот не должен краситься по
+   data.rarity, у секции свой цвет. */
+function sectionBackPal(key,stripe,gem){
+  var p=SECTION_PAL[key];if(!p)return;
+  if(stripe)stripe.style.background=sectionGrad(key);
+  if(gem)gem.style.background=p.mark;
 }
 var COLLECTIONS=[
   {key:'dnd_cardforge_weapon',src:'weapon',group:'weapon',label:'Оружие',gen:'weapon.html',idb:'dnd_weapon_imgs'},
@@ -1005,13 +1054,21 @@ function galCost(c){return c.cost?(c.cost+' '+(c.coin||'зм')):'—';}
    собственной палитрой (полынь и охра), поэтому она перебивает шкалу редкости.
    Значения держим здесь же, чтобы галерея не расходилась с генератором:
    яды — poisons.html (_backPal/applyPoisonPal), произвольные — custom.html (STRIPE). */
-var GAL_GROUPPAL={
-  poisons:{gem:'#63802f',grad:['#3a4a1e','#63802f']},
-  custom:{gem:'#8a6b2e'},
-  /* латунь, повторяет applyToolPal в tools.html — менять парой;
-     подзаголовок карточки #8a6b2e не берём — он занят охрой произвольных */
-  tools:{gem:'#8b6914',grad:['#5a430d','#8b6914']}
-};
+/* Секции без редкости берут цвет из SECTION_PAL (shared/sectionpal.js) —
+   единственное место, где он объявлен. Поля здесь называются как у редкостей
+   (gem/grad), потому что galPal подставляет запись вместо записи из R; сама
+   таблица секций пользуется другими именами, чтобы одно не путали с другим.
+   Записи намеренно без поля l: по его отсутствию модал прячет строку
+   «Редкость» у карточек, у которых редкости нет. */
+var GAL_GROUPPAL=(function(){
+  var o={};
+  for(var k in SECTION_PAL){
+    var p=SECTION_PAL[k];
+    o[k]={gem:p.mark};
+    if(p.dark!==p.light)o[k].grad=[p.dark,p.light];
+  }
+  return o;
+})();
 function galRarity(c){return R[c.rarity||'common']||R.common||R[Object.keys(R)[0]];}
 function galPal(c){return GAL_GROUPPAL[c._group]||galRarity(c);}
 function galRarityColor(c){var d=galPal(c);return (d&&(d.gem||d.a))||'#888077';}

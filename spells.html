@@ -157,7 +157,12 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-meta-inner{flex:1;position:relative;display:flex;align-items:center;justify-content:center;padding:0 10px;min-width:0;}
 .c-meta-item{font-family:'Times New Roman',Times,serif;font-size:9px;font-weight:700;letter-spacing:.09em;color:#5a4830;text-transform:uppercase;white-space:nowrap;}
 .c-meta-item.cost{color:#8a6010;position:absolute;left:10px;}
-.c-img-el{position:absolute;top:7px;left:7px;width:calc(100% - 14px);height:calc(100% - 14px);object-fit:fill;border-radius:2px;display:block;}
+/* Фон, а не <img>: html2canvas игнорирует object-fit и растягивает кадр в
+   PNG-экспорте, background-size:cover же отрабатывает верно (см. setCardImg).
+   cover, а не 100% 100%: кадры из старых коллекций сняты под прежнюю
+   пропорцию, и срезать им края лучше, чем растягивать по вертикали на 12%.
+   Новые кадры выходят из кадровщика ровно 16:9 — для них разницы нет. */
+.c-img-el{position:absolute;top:7px;left:7px;width:calc(100% - 14px);height:calc(100% - 14px);background-size:cover;background-position:center;background-repeat:no-repeat;border-radius:2px;display:block;}
 .c-foot{height:26px;flex-shrink:0;padding:0 14px;display:flex;align-items:center;justify-content:space-between;position:relative;}
 .c-wgt{font-family:'Times New Roman',Times,serif;font-size:10px;color:#8a7860;letter-spacing:.04em;}
 /* рамка типа в подвале карточки (ромбы + линии) */

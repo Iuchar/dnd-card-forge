@@ -157,7 +157,12 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-meta-inner{flex:1;position:relative;display:flex;align-items:center;justify-content:center;padding:0 10px;min-width:0;}
 .c-meta-item{font-family:'Times New Roman',Times,serif;font-size:9px;font-weight:700;letter-spacing:.09em;color:#5a4830;text-transform:uppercase;white-space:nowrap;}
 .c-meta-item.cost{color:#8a6010;position:absolute;left:10px;}
-.c-img-el{position:absolute;top:7px;left:7px;width:calc(100% - 14px);height:calc(100% - 14px);object-fit:fill;border-radius:2px;display:block;}
+/* Фон, а не <img>: html2canvas игнорирует object-fit и растягивает кадр в
+   PNG-экспорте, background-size:cover же отрабатывает верно (см. setCardImg).
+   cover, а не 100% 100%: кадры из старых коллекций сняты под прежнюю
+   пропорцию, и срезать им края лучше, чем растягивать по вертикали на 12%.
+   Новые кадры выходят из кадровщика ровно 16:9 — для них разницы нет. */
+.c-img-el{position:absolute;top:7px;left:7px;width:calc(100% - 14px);height:calc(100% - 14px);background-size:cover;background-position:center;background-repeat:no-repeat;border-radius:2px;display:block;}
 .c-foot{height:26px;flex-shrink:0;padding:0 14px;display:flex;align-items:center;justify-content:space-between;position:relative;}
 .c-wgt{font-family:'Times New Roman',Times,serif;font-size:10px;color:#8a7860;letter-spacing:.04em;}
 /* рамка типа в подвале карточки (ромбы + линии) */
@@ -387,8 +392,11 @@ button:focus:not(:focus-visible){outline:none;}
   font-family:'Times New Roman',Times,serif;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;
   color:#8a6b2e;margin:4px 0 0;}
 
-/* картинка: пропорция 1.88 (282×150), двойная рамка через CSS */
-.c-img{height:150px;margin:0 11px;width:auto;border:2px solid #3a2810;border-radius:3px;background:#cfc0a0;}
+/* картинка: слот 282×167, кадр 16:9, двойная рамка через CSS */
+/* 167px = кадр 264x149 + по 7px отступа + 2px рамки с каждой стороны.
+   Чистые 16:9 требовали бы 148.5 — полпиксела съедает background-size:cover,
+   искажения нет. Пропорцию держит CARD_RATIO в shared/crop.js: менять парой. */
+.c-img{height:167px;margin:0 11px;width:auto;border:2px solid #3a2810;border-radius:3px;background:#cfc0a0;}
 .c-img::after{content:'';position:absolute;inset:4px;border:1px solid rgba(160,120,56,.7);border-radius:2px;pointer-events:none;}
 .dc.no-img .c-img{display:none;}
 .dc.no-img .c-title{padding-bottom:0;}
@@ -820,7 +828,11 @@ button:focus:not(:focus-visible){outline:none;}
    Поля a/cb/cs — старый дизайн (полоса-акцент, рамка, тень); grad/gem — новый
    (градиент шапки тёмный→средний→тёмный + акцентный гем). Пока grad/gem читает
    только weapon-2014; остальные генераторы живут на a/cb/cs до своей очереди. */
-var R={nonmagic:{l:'Немагический',a:'#f5f5f5',cb:'#f5f5f5',cs:'#cdc8be',grad:['#979b99','#d2d5d3','#979b99'],gem:'#b7bab9'},
+/* Немагический — «холодная сталь» (2026-08-13). Был чистый серый #979b99/
+   #d2d5d3/#b7bab9: хромы ноль, и он сталкивался с тёплым серо-коричневым
+   «Обычным» — на полосе в 3px они различались только светлотой. Холодный
+   оттенок разводит их по температуре, остальные редкости не тронуты. */
+var R={nonmagic:{l:'Немагический',a:'#f5f5f5',cb:'#f5f5f5',cs:'#cdc8be',grad:['#7f8f99','#c3d0d7','#7f8f99'],gem:'#93a4ae'},
   common:   {l:'Обычный',     a:'#888077',cb:'#888077',cs:'#5a5030',grad:['#625b4e','#8a8272','#625b4e'],gem:'#7a7264'},
   uncommon: {l:'Необычный',   a:'#52aa40',cb:'#52aa40',cs:'#286820',grad:['#356a2b','#5a9a4c','#356a2b'],gem:'#4a8a3c'},
   rare:     {l:'Редкий',      a:'#4a8ccc',cb:'#4a8ccc',cs:'#1e4c88',grad:['#24557f','#4f92cc','#24557f'],gem:'#3f82c0'},
@@ -837,9 +849,54 @@ function applyPal(rar){
     ['ps','pbs'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=g;});}
   if(d.gem){['pgm','pbgm'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=d.gem;});}
 }
+/* ═══ ЦВЕТА СЕКЦИЙ — ЭТО НЕ РЕДКОСТЬ ═══
+   Инструменты, яды и произвольные карточки редкости не имеют вовсе: у них
+   один фиксированный цвет на всю секцию. Раньше он лежал россыпью — в
+   applyToolPal, _backPal, COLL_PAL, STRIPE и GAL_GROUPPAL — и описывался
+   теми же полями grad/gem, что и палитра редкостей в rarities.js. При беглом
+   чтении «gem» у инструментов было не отличить от «gem» у легендарного
+   предмета, а одно и то же значение приходилось править в трёх-четырёх
+   местах. Здесь оно одно, и названия полей намеренно другие:
+
+     label  — как называется цвет, для человека
+     dark   — тёмный конец полосы
+     light  — светлый конец полосы и цвет метки
+     mark   — гем, точка в галерее, засечка в панели коллекции
+
+   Ключ — это _group карточки (он же ключ GAL_GROUPPAL). Добавили генератор
+   без редкости — добавьте строку сюда, и больше нигде. */
+var SECTION_PAL={
+  tools:  {label:'латунь', dark:'#5a430d', light:'#8b6914', mark:'#8b6914'},
+  poisons:{label:'полынь', dark:'#3a4a1e', light:'#63802f', mark:'#63802f'},
+  /* у произвольных полоса одноцветная: охра без затемнённых концов */
+  custom: {label:'охра',   dark:'#8a6b2e', light:'#8a6b2e', mark:'#8a6b2e'}
+};
+
+/* Полоса шапки. У custom оба конца одинаковые, поэтому градиент вырождается
+   в ровную заливку — так и было до выноса в общий файл. */
+function sectionGrad(key){
+  var p=SECTION_PAL[key];if(!p)return '';
+  return (p.dark===p.light)?p.light
+    :('linear-gradient(90deg,'+p.dark+','+p.light+','+p.dark+')');
+}
+/* Раскраска карточки в генераторе: полосы ps/pbs и гемы pgm/pbgm.
+   Заменяет применявшиеся раньше applyToolPal / applyPoisonPal / applyPal. */
+function applySectionPal(key){
+  var p=SECTION_PAL[key];if(!p)return;
+  var g=sectionGrad(key);
+  ['ps','pbs'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=g;});
+  ['pgm','pbgm'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=p.mark;});
+}
+/* Хук _backPal, который зовёт renderback.js: оборот не должен краситься по
+   data.rarity, у секции свой цвет. */
+function sectionBackPal(key,stripe,gem){
+  var p=SECTION_PAL[key];if(!p)return;
+  if(stripe)stripe.style.background=sectionGrad(key);
+  if(gem)gem.style.background=p.mark;
+}
 var LS_KEY='dnd_cardforge_tools';
 /* панель коллекции: без секций редкости, полоски латунные (см. collection.js) */
-var COLL_PAL={gem:'#8b6914'};
+var COLL_PAL={gem:SECTION_PAL.tools.mark};
 var IDB_NAME='dnd_tools_imgs';
 var cr='nonmagic', imgDataUrl=null, collection=[], currentCard=null;
 var IDB_STORE='imgs',_idb=null;
@@ -1009,8 +1066,11 @@ function setCardImg(src){
   var ci=document.getElementById('cib');
   var ex=ci.querySelector('.c-img-el');
   if(src){
-    if(!ex){ex=document.createElement('img');ex.className='c-img-el';ci.insertBefore(ex,ci.firstChild);}
-    ex.src=src;
+    /* div с фоном, а НЕ <img>: html2canvas игнорирует object-fit и растягивает
+       картинку в PNG-экспорте, а background-size:cover отрабатывает верно.
+       Проверено кругом в кадре 2:1 — через <img> он давал эллипс 0.88. */
+    if(!ex){ex=document.createElement('div');ex.className='c-img-el';ci.insertBefore(ex,ci.firstChild);}
+    ex.style.backgroundImage='url("'+src.replace(/"/g,'\\"')+'")';
     document.getElementById('img-ph').style.display='none';
     document.getElementById('btn-recrop').style.display='flex';
     document.getElementById('btn-del-img').style.display='flex';
@@ -1034,8 +1094,11 @@ var cropState = null;
 
 function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
 
-/* Card image slot ratio: 310px wide : 163px tall */
-var CARD_RATIO = 296 / 149;
+/* Пропорция слота картинки — 16:9 (2026-08-11). Раньше здесь стояло 296/149,
+   то есть 1.9866, а слот рисовал ровно 2.0, и каждое фото растягивалось на 1%.
+   Число обязано совпадать с .c-img в shared/card-new.css: там высота 167px на
+   фиксированной ширине 282, что даёт кадру 264x149. */
+var CARD_RATIO = 16 / 9;
 
 function openCrop(src){
   cropImg = new Image();
@@ -1188,7 +1251,9 @@ document.getElementById('crop-apply').addEventListener('click',function(){
   var nh = Math.ceil((sel.y + sel.h) * scaleY) - ny;
   nx=Math.max(0,nx); ny=Math.max(0,ny);
   nw=Math.min(nw,cropNW-nx); nh=Math.min(nh,cropNH-ny);
-  var maxW=900, maxH=450, dw=nw, dh=nh;
+  /* потолок хранимого кадра: 900x506 — это 16:9 и вдвое больше того, что нужно
+     PNG-экспорту (264x149 CSS при scale:3 = 792x447), запас на печать */
+  var maxW=900, maxH=506, dw=nw, dh=nh;
   if(dw>maxW){ dh=Math.round(dh*maxW/dw); dw=maxW; }
   if(dh>maxH){ dw=Math.round(dw*maxH/dh); dh=maxH; }
   var out = document.createElement('canvas');
@@ -1227,7 +1292,6 @@ function applyImgThumb(data){
   document.getElementById('btn-recrop').style.display=on?'flex':'none';
   document.getElementById('btn-del-img').style.display=on?'flex':'none';
 }
-CARD_RATIO=282/150;
 /* ── Разметка описания: **полужирный** *курсив* __подчёркнутый__ ──
    Текст без маркеров даёт один ран, поэтому старые карточки, импорт и шаблоны
    рендерятся ровно как прежде — миграция не нужна.
@@ -1540,17 +1604,10 @@ if(typeof _backPal==='function'){_backPal(pbs,pbgm);}
 else{var d=R[data.rarity||'common']||R.common||R[Object.keys(R)[0]];
   pbs.style.background=d.grad?'linear-gradient(90deg,'+d.grad[0]+','+d.grad[1]+','+d.grad[0]+')':d.a;
   pbgm.style.background=d.gem||d.a;}}else{rubashka.style.display='block';pbs.style.display='none';pbs2.style.display='none';pbBody.style.display='none';pbFoot.style.display='none';}}
-/* Редкости у инструментов нет — фирменная латунь, как полынь у ядов.
-   Цвета продублированы в GAL_GROUPPAL.tools (gallery-index.js) — менять парой.
+/* Редкости у инструментов нет — цвет секции «латунь» из shared/sectionpal.js.
    _backPal перебивает раскраску оборота по data.rarity в renderback.js. */
-function _backPal(stripe,gem){
-  if(stripe)stripe.style.background='linear-gradient(90deg,#5a430d,#8b6914,#5a430d)';
-  if(gem)gem.style.background='#8b6914';}
-function applyToolPal(){
-  var g='linear-gradient(90deg,#5a430d,#8b6914,#5a430d)';
-  ['ps','pbs'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=g;});
-  ['pgm','pbgm'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background='#8b6914';});
-}
+function _backPal(stripe,gem){sectionBackPal('tools',stripe,gem);}
+function applyToolPal(){applySectionPal('tools');}
 function applyFormData(data){document.getElementById('ftooltype').value=data.toolType||'';document.getElementById('fn').value=data.name||'';document.getElementById('fc').value=data.cost||'';document.getElementById('fcoin').value=data.coin||'зм';document.getElementById('fwgt').value=data.wgt||'';document.getElementById('fstat').value=data.stat||'';_useSet(data.use);document.getElementById('fcraft').value=data.craft||'';document.getElementById('fdesc').value=data.desc||'';applyImgThumb(data);mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcraft','cnt-craft',600);}
 document.getElementById('btn-reset').addEventListener('click',function(){if(!confirm('Сбросить все поля?'))return;['fn','fc','fwgt','fdesc'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('fcoin').value='зм';document.getElementById('ftooltype').selectedIndex=0;document.getElementById('fstat').selectedIndex=0;document.getElementById('fcraft').value='';_useSet([]);imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('f-img').value='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';setCardImg(null);resetNoImg();mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcraft','cnt-craft',600);renderCard({});toast('Поля сброшены');});
 applyToolPal();

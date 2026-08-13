@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>D&amp;D Card Forge — Произвольная карточка</title>
-<meta name="description" content="Конструктор произвольной карточки D&D: свой тип, название и содержимое из блоков — заголовки, текст, списки, статблоки, таблицы. Создайте и распечатайте за минуту."/>
+<title>D&amp;D Card Forge — Снаряжение тест</title>
+<meta name="description" content="Генератор карточек снаряжения D&D 5e: предметы авантюриста с описанием и эффектами. Создайте и распечатайте карточку за минуту."/>
 <meta name="theme-color" content="#111009"/>
 <link rel="icon" type="image/svg+xml" href="favicon.svg"/>
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png"/>
 <link rel="apple-touch-icon" href="apple-touch-icon.png"/>
 <meta property="og:type" content="website"/>
-<meta property="og:url" content="https://iuchar.github.io/dnd-card-forge/custom.html"/>
-<meta property="og:title" content="D&D Card Forge — Произвольная карточка"/>
-<meta property="og:description" content="Конструктор произвольной карточки D&D: свой тип, название и содержимое из блоков."/>
+<meta property="og:url" content="https://iuchar.github.io/dnd-card-forge/equipment-test.html"/>
+<meta property="og:title" content="D&D Card Forge — Снаряжение тест"/>
+<meta property="og:description" content="Генератор карточек снаряжения D&D 5e: предметы авантюриста с описанием и эффектами. Создайте и распечатайте карточку за минуту."/>
 <meta property="og:image" content="https://iuchar.github.io/dnd-card-forge/og-image.jpg"/>
 <meta property="og:image:width" content="1200"/>
 <meta property="og:image:height" content="630"/>
@@ -312,77 +312,22 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 /* рубашка оборота (общая; страницы без рубашки правило не используют) */
 .cb-rubashka{position:absolute;inset:0;z-index:2;}
 
-
-/* подвал: плашка-картуш авто-ширины по центру, гем справа */
-.c-foot{justify-content:center;}
-.c-typeplate{position:relative;max-width:236px;font-family:'Crimson Text',Georgia,serif;font-style:italic;font-size:9.5px;line-height:1.3;color:#3a2810;background:#fbf4e2;border:1px solid #5a4820;padding:3px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;clip-path:polygon(4px 0,calc(100% - 4px) 0,100% 4px,100% calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,0 calc(100% - 4px),0 4px);}
-.c-typeplate:empty{display:none;}
-.c-foot .c-gem{position:absolute;right:11px;top:50%;transform:translateY(-50%);}
-.dc-back .c-foot .c-gem{right:auto;left:11px;}
-
-/* ── рендер блоков на карточке ── */
-.c-blocks{display:flex;flex-direction:column;}
-.blk{margin-bottom:6px;}
-.blk:last-child{margin-bottom:0;}
-.blk-h{font-family:'Times New Roman',Times,serif;font-weight:700;font-size:8.5px;letter-spacing:.16em;color:#8a6b2e;text-transform:uppercase;display:flex;align-items:center;gap:8px;}
-.blk-h::after{content:'';flex:1;height:1px;background:rgba(160,120,56,.5);}
-.blk-t{font-family:'Crimson Text',Georgia,serif;color:#241a08;line-height:1.4;white-space:pre-wrap;}
-.blk-list{margin:0;padding-left:1.5em;font-family:'Crimson Text',Georgia,serif;color:#241a08;line-height:1.45;}
-.blk-list li{margin:0;}
-.blk-chip{display:inline-block;background:rgba(138,96,16,.08);border-radius:5px;padding:3px 9px;font-family:'Crimson Text',Georgia,serif;font-size:10px;color:#4a3a24;line-height:1.3;}
-.blk-chip.red{border-left:3px solid #c04030;border-radius:0 5px 5px 0;}
-.blk-chip-l{font-family:'Times New Roman',Times,serif;font-weight:700;font-size:7.5px;letter-spacing:.08em;color:#8a6010;text-transform:uppercase;}
-.blk-chip.red .blk-chip-l{color:#8d2a20;}
-.blk-stats{display:flex;border-top:1px solid #b89a58;border-bottom:1px solid #b89a58;background:rgba(90,70,20,.05);height:40px;}
-.blk-st{flex:1;min-width:0;border-right:1px solid rgba(90,72,32,.22);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:0 2px;}
-.blk-st:last-child{border-right:none;}
-.blk-st-l{font-family:'Times New Roman',Times,serif;font-weight:700;font-size:7px;letter-spacing:.06em;color:#8a6b2e;text-transform:uppercase;}
-.blk-st-v{font-size:15px;font-weight:700;color:#2a1e0a;}
-.blk-table{width:100%;border-collapse:collapse;font-family:'Crimson Text',Georgia,serif;font-size:10px;color:#241a08;}
-.blk-table th{font-family:'Times New Roman',Times,serif;font-weight:700;font-size:7.5px;letter-spacing:.06em;text-transform:uppercase;color:#8a6b2e;padding:3px 6px;text-align:left;border-bottom:1.5px solid #b89a58;}
-.blk-table td{padding:3px 6px;}
-.blk-table th:not(:last-child),.blk-table td:not(:last-child){border-right:.5px solid rgba(160,120,56,.4);}
-.blk-table tbody tr:nth-child(even) td{background:rgba(138,96,16,.07);}
-.blk-div{height:1px;background:rgba(160,120,56,.5);margin:1px 0;}
-
-/* ── редактор блоков в сайдбаре ── */
-.add-bar{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
-.add-bar button{font-family:'Times New Roman',Times,serif;font-size:9px;letter-spacing:.03em;padding:5px 8px;border:0.5px solid var(--border2);border-radius:6px;background:rgba(255,255,255,.04);color:var(--text2);cursor:pointer;transition:all .13s;}
-.add-bar button:hover{background:rgba(255,255,255,.09);color:var(--text);}
-.blk-ed{border:0.5px solid var(--border2);border-radius:8px;margin-bottom:8px;background:var(--bg2);overflow:hidden;}
-.blk-ed-head{display:flex;align-items:center;justify-content:space-between;padding:5px 7px;border-bottom:0.5px solid var(--border);background:var(--bg3);}
-.blk-ed-title{font-family:'Times New Roman',Times,serif;font-size:9.5px;color:var(--text);letter-spacing:.05em;}
-.blk-ed-ctrls{display:flex;gap:3px;}
-.blk-ed-ctrls button{min-width:22px;height:22px;border:0.5px solid var(--border2);border-radius:5px;background:transparent;color:var(--text2);cursor:pointer;font-size:11px;display:flex;align-items:center;justify-content:center;padding:0 4px;transition:all .13s;}
-.blk-ed-ctrls button:hover{color:var(--text);background:rgba(255,255,255,.07);}
-.blk-ed-ctrls button.on{color:var(--gold-l);border-color:var(--gold);}
-.blk-ed-ctrls .side-btn{font-family:'Times New Roman',Times,serif;font-size:8px;letter-spacing:.03em;}
-.blk-ed-body{padding:7px;display:flex;flex-direction:column;gap:6px;}
-.blk-ed-body textarea.si{height:56px;resize:vertical;}
-.blk-fmt{display:flex;gap:4px;align-items:center;}
-.fs-step{display:flex;align-items:center;gap:5px;margin-left:auto;}
-.fs-step button{width:20px;height:20px;border:0.5px solid var(--border2);border-radius:4px;background:transparent;color:var(--text2);cursor:pointer;font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;}
-.fs-step button:hover{color:var(--text);}
-.fs-step .fs-val{font-family:'Times New Roman',Times,serif;font-size:9.5px;color:var(--text2);min-width:26px;text-align:center;}
-.blk-row2{display:flex;gap:6px;}
-.blk-row2 .si{flex:1;min-width:0;}
-.blk-cell-row{display:flex;gap:5px;align-items:center;}
-.blk-cell-row .si{flex:1;min-width:0;}
-.blk-cell-row button{width:22px;height:22px;flex-shrink:0;border:0.5px solid var(--border2);border-radius:5px;background:transparent;color:var(--text2);cursor:pointer;font-size:12px;padding:0;}
-.blk-mini{font-family:'Times New Roman',Times,serif;font-size:9px;letter-spacing:.03em;padding:4px 8px;border:0.5px solid var(--border2);border-radius:6px;background:rgba(255,255,255,.04);color:var(--text2);cursor:pointer;align-self:flex-start;}
-.blk-mini:hover{background:rgba(255,255,255,.09);color:var(--text);}
-.blk-ck{display:flex;align-items:center;gap:6px;font-family:'Crimson Text',serif;font-size:12px;color:var(--text2);cursor:pointer;}
-.blk-hint{font-family:'Crimson Text',serif;font-size:11px;font-style:italic;color:var(--text3);}
-.tbl-top{display:flex;align-items:center;gap:5px;}
-.tbl-lbl{font-family:'Times New Roman',Times,serif;font-size:9px;letter-spacing:.04em;color:var(--text2);}
-.tbl-top button{width:20px;height:20px;border:0.5px solid var(--border2);border-radius:4px;background:transparent;color:var(--text2);cursor:pointer;font-size:12px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;}
-.tbl-top button:hover{color:var(--text);}
-.tbl-cols{font-family:'Times New Roman',Times,serif;font-size:9.5px;color:var(--text);min-width:12px;text-align:center;}
-.tbl-grid{display:grid;gap:4px;align-items:center;}
-.tbl-grid .si{min-width:0;padding:4px 6px;font-size:11.5px;}
-.tbl-grid .si.hdr{color:var(--gold-l);font-family:'Times New Roman',Times,serif;font-size:9.5px;letter-spacing:.04em;}
-.tbl-grid button{width:20px;height:20px;border:0.5px solid var(--border2);border-radius:5px;background:transparent;color:var(--text2);cursor:pointer;font-size:11px;padding:0;justify-self:center;}
-.tbl-grid button:hover{color:var(--text);background:rgba(255,255,255,.07);}
+/* Блоки новых полей на карточке: плашка-значение как «Характеристика» у
+   инструментов, заголовок с линейкой как их же «Использование». */
+.c-eqrow{display:flex;align-items:center;gap:7px;margin:3px 0 1px;flex-shrink:0;}
+.c-eqlbl{font-family:'Times New Roman',Times,serif;font-size:7.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#8b6914;border:.7px solid rgba(139,105,20,.45);border-radius:3px;padding:1.5px 5px;background:rgba(139,105,20,.09);flex-shrink:0;}
+.c-eqval{font-family:'Times New Roman',Times,serif;font-size:11px;font-weight:700;color:#2a1e0a;}
+/* проклятие — та же плашка, но винная: статус, а не свойство со значением */
+.c-eqlbl-bad{color:#8d2a20;border-color:rgba(141,42,32,.45);background:rgba(141,42,32,.07);}
+.c-eqh{display:flex;align-items:center;gap:8px;margin:5px 0 3px;font-family:'Times New Roman',Times,serif;font-size:8px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#8a6b2e;}
+.c-eqh::after{content:'';flex:1;height:1px;background:rgba(160,120,56,.5);}
+.c-eqline{font-size:10.5px;color:#2a1e0a;line-height:1.4;}
+/* Подзаголовок всегда в одну строку: худшее сочетание «Заклинательные
+   фокусировки · Чудесный предмет» на 9px входит только с трекингом .05em
+   (замер: 276.5px при 282 доступных). Специфичность с .dc — чтобы перебить
+   общее правило card-new.css (8.5px/.13em), которое включается ниже. */
+.dc .c-title .c-eqtype{font-family:'Times New Roman',Times,serif;font-size:9px;letter-spacing:.05em;text-transform:uppercase;color:#8a7860;margin:4px 0 0;flex-shrink:0;white-space:nowrap;overflow:hidden;}
+#attune-wrap{display:none;}
 
 /* ═══ ОБЩИЕ ПРАВИЛА НОВОГО ДИЗАЙНА КАРТОЧЕК ═══
    Подключается ПОСЛЕ локальных стилей страницы (перебивает их порядком).
@@ -462,6 +407,156 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-mag{position:absolute;right:0;top:0;box-sizing:border-box;height:calc(var(--name-fs,16px)*1.2);line-height:calc(var(--name-fs,16px)*1.5 - 5px);font-family:'Times New Roman',Times,serif;font-size:11px;font-weight:700;letter-spacing:.02em;color:#6b4a12;border:.5px solid #b89a58;background:rgba(138,96,16,.10);border-radius:3px;padding:0 7px;}
 .c-title-main.has-mag .c-name{padding-right:34px;}
 .c-stripe-wrap{flex-shrink:0;}
+
+/* ═══════════ ТЕСТ: карточка снаряжения, вариант 5a-Б ═══════════
+   Перенос макета «макеты/card-5a-B.html». Блок идёт последним в <style>,
+   поэтому перебивает card-new.css — старые .dc/.c-img тут не участвуют.
+   Cinzel из макета заменён на Times New Roman: у Cinzel нет кириллицы, и
+   в самом макете эти надписи уже отрисовывались подстановкой Times.
+   Цвет редкости — три переменные (--rar-1/--rar-2/--gem) из R.grad/R.gem. */
+/* дефолт совпадает с R.nonmagic: иначе при загрузке страницы на миг
+   показывался старый серый, пока не отработал первый рендер */
+.cf-card{
+  --rar-1:#7f8f99; --rar-2:#c3d0d7; --gem:#93a4ae;
+  width:310px; height:437px; box-sizing:border-box;
+  border:2.5px solid #8a7860; border-radius:12px; overflow:hidden;
+  background:linear-gradient(160deg,#f3ecdb,#ece2cd);
+  display:flex; flex-direction:column; position:relative;
+  font-family:'Crimson Text',Georgia,serif; color:#241a08;
+}
+.cf-rar{ flex:0 0 auto; height:3px;
+  background:linear-gradient(90deg,var(--rar-1),var(--rar-2),var(--rar-1)); }
+.cf-rar--back{ height:7px; }
+
+.cf-head{ flex:0 0 auto; padding:4px 11px 6px;
+  background:rgba(90,72,32,.12); border-bottom:.5px solid rgba(90,72,32,.3); }
+.cf-name{ font-family:'Times New Roman',Times,serif; font-size:15px; font-weight:600;
+  letter-spacing:.01em; line-height:1.16; color:#141414; white-space:nowrap;
+  overflow:hidden; }
+.cf-sub{ font-family:'Times New Roman',Times,serif; font-size:9px;
+  letter-spacing:.03em; text-transform:uppercase; color:#6f6045;
+  margin-top:3px; white-space:nowrap; overflow:hidden; }
+
+/* Арт. Высота постоянная: кадр внутри — ровно 240x135, то есть 16:9, и при
+   сжатии блока он переставал помещаться и обрезался сверху и снизу.
+   Пустое место по бокам закрывает размытая заливка. */
+.cf-art{ flex:0 0 auto; height:136px; position:relative;
+  overflow:hidden; background:#e6dcc6; }
+.cf-art__bleed{ position:absolute; inset:-18px; z-index:0;
+  background-position:center; background-size:cover;
+  filter:blur(18px) saturate(.65) brightness(1.04); }
+/* Кадр. Это div с фоном, а не <img>: html2canvas игнорирует object-fit и
+   растягивает картинку в PNG-экспорте (проверено кругом). Класс .c-img-el —
+   тот, что создаёт setCardImg из shared/crop.js, поэтому правила
+   styles.css перебиваются здесь целиком. */
+.cf-art .c-img-el{ position:absolute; z-index:1;
+  left:50%; top:50%; transform:translate(-50%,-50%);
+  width:240px; height:135px; border-radius:0;
+  background-size:cover; background-position:center; background-repeat:no-repeat;
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 14%,#000 86%,transparent);
+          mask-image:linear-gradient(to right,transparent,#000 14%,#000 86%,transparent); }
+.cf-art .c-img-ph{ position:absolute; inset:0; z-index:1; opacity:.25;
+  display:flex; align-items:center; justify-content:center; }
+.cf-pennant{ position:absolute; left:16px; top:0; width:26px; height:72px; z-index:2;
+  background:linear-gradient(180deg,var(--gem),rgba(0,0,0,.28)),var(--gem);
+  clip-path:polygon(0 0,100% 0,100% 100%,50% 78%,0 100%);
+  box-shadow:0 5px 12px rgba(31,23,6,.5); }
+.cf-art__foot{ position:absolute; left:0; right:0; bottom:0; z-index:2;
+  display:flex; flex-direction:column; }
+/* Угловая метка справа над строкой цены: не делит картинку надвое,
+   полупрозрачность сохранена, метка по-прежнему лежит поверх арта. */
+.cf-cursed{ position:absolute; right:0; bottom:100%; left:auto;
+  padding:2px 9px; border-radius:3px 0 0 0; background:rgba(124,35,26,.72);
+  display:flex; align-items:center; justify-content:center; }
+.cf-cursed span{ font-family:'Times New Roman',Times,serif; font-size:9.5px; font-weight:600;
+  letter-spacing:.2em; text-transform:uppercase; color:#fdf3e4; }
+.cf-artline{ position:relative; padding:2.5px 11px; display:flex; align-items:center;
+  justify-content:space-between; gap:8px; background:rgba(224,214,189,.92); }
+.cf-price{ font-family:'Times New Roman',Times,serif; font-size:9.5px;
+  letter-spacing:.06em; text-transform:uppercase; color:#6b4a0c;
+  font-variant-numeric:tabular-nums; white-space:nowrap; }
+/* строго по центру полосы: при space-between середина уезжала от длины
+   цены и названия редкости */
+/* Настройка — как в мета-баре боевой страницы: Crimson, курсив, строчными.
+   Редкость остаётся капителью Times: разведены начертанием, а не размером. */
+.cf-attune{ position:absolute; left:50%; transform:translateX(-50%);
+  font-family:'Crimson Text',Georgia,serif; font-style:italic; font-weight:400;
+  font-size:11px; letter-spacing:0; text-transform:none; color:#6a5236; white-space:nowrap; }
+.cf-rarname{ font-family:'Times New Roman',Times,serif; font-size:9.5px; font-weight:600;
+  letter-spacing:.16em; text-transform:uppercase; color:#6f6045; white-space:nowrap; }
+
+.cf-props{ flex:0 0 auto; padding:5px 11px; display:flex;
+  flex-direction:column; gap:4px; background:rgba(90,72,32,.055);
+  border-top:.5px solid rgba(90,72,32,.24);
+  border-bottom:.5px solid rgba(90,72,32,.24); }
+.cf-lbl{ font-family:'Times New Roman',Times,serif; font-size:8.5px; font-weight:600;
+  letter-spacing:.16em; text-transform:uppercase; color:#7a6440; }
+.cf-val{ font-size:12px; font-weight:400; line-height:1.25; color:#241a08; }
+/* Подпись идёт в строку со значением, а не отдельным этажом: при полном
+   заполнении «Бонус» и «Восстановление» занимают две строки вместо трёх.
+   В счётчиках (.cf-cell) подпись остаётся сверху — там она блочная. */
+/* Кегль на самой строке обязателен: без него распорка строки берётся от
+   унаследованных 16px, и строка раздувается до 20px вместо 13-14. */
+.cf-row{ line-height:1.25; }
+.cf-row--b{ font-size:12px; }
+.cf-row--r{ font-size:12px; }
+/* Кружок-разделитель между подписью и значением. Цвет чернильно-золотой и
+   не зависит от редкости: у немагического предмета gem бледный и на светлой
+   подложке давал контраст 2.13, то есть не читался. */
+.cf-row .cf-lbl{ margin-right:7px; }
+.cf-row .cf-lbl::after{ content:''; display:inline-block; vertical-align:middle;
+  width:3px; height:3px; border-radius:50%; margin-left:7px;
+  background:#8a6b2e; position:relative; top:-1px; }
+.cf-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:9px; }
+.cf-cell{ border-left:2px solid var(--gem); padding-left:6px; }
+.cf-cell .cf-lbl{ font-size:8.5px; letter-spacing:.16em; margin-bottom:2px; }
+.cf-num{ font-family:'Times New Roman',Times,serif; font-size:12.5px; font-weight:700;
+  line-height:1.05; color:#241a08; font-variant-numeric:tabular-nums; }
+.cf-restore{ font-size:12px; line-height:1.25; color:#4a3b1f; }
+
+/* Описание. Кегль и интерлиньяж двигает подгонщик через --desc-fs/--desc-lh. */
+.cf-body{ flex:1 1 auto; min-height:0; padding:6px 11px 0;
+  display:flex; flex-direction:column; overflow:hidden; }
+.cf-body p+p{ margin-top:1px; }
+.cf-body p{ margin:0; font-size:var(--desc-fs,10px); line-height:var(--desc-lh,1.3);
+  text-indent:12px; text-wrap:pretty; }
+.cf-body--back{ padding:5px 11px 0; }
+/* Текст оборота обязан быть ограничен по высоте: без flex:1/min-height:0 он
+   рос вместе с содержимым, подгонщик видел clientHeight = 0 и не мог отмерить
+   ни одной строки, а лишний текст просто вываливался за край карточки. */
+.cf-desctext{ flex:1 1 auto; min-height:0; overflow:hidden; }
+/* Рубашка: когда описание уместилось на лицевой, оборот не остаётся пустой
+   кремовой карточкой — показываем узорчатый задник, как в боевой странице. */
+.cf-card .cb-rubashka{ position:absolute; inset:0; z-index:3; display:none; }
+.cf-card.cf-blank .cb-rubashka{ display:block; }
+.cf-card.cf-blank > *:not(.cb-rubashka){ visibility:hidden; }
+.cf-deschdr{ display:flex; align-items:center; gap:8px; flex-shrink:0;
+  font-family:'Times New Roman',Times,serif; font-size:9.5px; font-weight:700;
+  letter-spacing:.16em; text-transform:uppercase; color:#7d5f24; margin-bottom:3px; }
+.cf-deschdr::after{ content:""; flex:1; height:1px; background:rgba(160,120,56,.5); }
+
+/* 11px — как на боевой странице. Пробовал 11.5, чтобы посадить чёрточки на
+   целый пиксель, — стало хуже: на целой позиции 2px рисуются двумя сплошными
+   пикселями и выглядят плотными. На половине (рамка карточки 2.5px)
+   сглаживание даёт одинаковый тонкий штрих слева и справа. */
+.cf-foot{ flex:0 0 auto; height:20px; margin-top:2px; padding:0 11px;
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  border-top:.5px solid rgba(90,72,32,.3); }
+/* Обе половины подвала одной высоты: иначе высота обёртки равнялась самому
+   высокому ребёнку — слева чёрточка 11px, справа гем 12px, — и текст в них
+   центрировался по разным коробкам, отчего половины стояли на разной высоте. */
+.cf-sign,.cf-right{ height:12px; }
+.cf-sign{ display:flex; align-items:center; gap:7px; flex-shrink:0; }
+.cf-tick{ width:2px; height:11px; background:var(--gem); }
+.cf-cat{ font-family:'Times New Roman',Times,serif; font-size:9.5px; font-weight:600;
+  letter-spacing:.2em; text-transform:uppercase; color:#6f6045; white-space:nowrap; }
+.cf-right{ display:flex; align-items:center; gap:9px; flex-shrink:0; }
+.cf-weight{ font-family:'Times New Roman',Times,serif; font-size:9.5px;
+  letter-spacing:.04em; color:#75634a;
+  font-variant-numeric:tabular-nums; white-space:nowrap; }
+.cf-gem{ width:12px; height:12px; border-radius:50%; border:1px solid #3a2810;
+  background:linear-gradient(180deg,rgba(246,241,227,.32),rgba(0,0,0,.2)),var(--gem); }
+
 </style>
 <link rel="stylesheet" href="mobile.css"/>
 </head>
@@ -537,7 +632,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
       </span>
     </div>
     </div>
-    <h1 style="font-size:12px;color:var(--text2);font-family:'Crimson Text',serif;font-style:italic;font-weight:400;margin:0;">— Произвольная карточка</h1>
+    <h1 style="font-size:12px;color:var(--text2);font-family:'Crimson Text',serif;font-style:italic;font-weight:400;margin:0;">— Снаряжение <b style="color:#c8941a;">тест</b></h1>
   </div>
 <!-- Кнопки шапки генератора: PNG, печать, операции с выбранными, проект -->
 <div class="header-btns">
@@ -579,15 +674,20 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 
 <!-- SIDEBAR FORM -->
 <aside class="sb">
-  <label class="lbl" for="ftype">Тип карточки (плашка внизу)</label>
-  <div class="field-wrap field-mb">
-    <input class="si" type="text" id="ftype" placeholder="Особенность" maxlength="40"/>
-    <span class="char-counter" id="cnt-type">0/40</span>
+  <div class="lbl">Редкость</div>
+  <div class="rprow" role="radiogroup" aria-label="Редкость">
+    <div class="rp on" data-r="nonmagic" title="Немагический"></div>
+    <div class="rp" data-r="common"    title="Обычный"></div>
+    <div class="rp"    data-r="uncommon"  title="Необычный"></div>
+    <div class="rp"    data-r="rare"      title="Редкий"></div>
+    <div class="rp"    data-r="veryrare"  title="Очень редкий"></div>
+    <div class="rp"    data-r="legendary" title="Легендарный"></div>
+    <span class="rname" id="rn">Немагический</span>
   </div>
 
   <label class="lbl" for="fn">Название</label>
   <div class="field-wrap field-mb">
-    <input class="si" type="text" id="fn" placeholder="Ярость крови" maxlength="34"/>
+    <input class="si" type="text" id="fn" placeholder="Верёвка, пеньковая" maxlength="34"/>
     <span class="char-counter" id="cnt-fn">0/34</span>
   </div>
 
@@ -608,19 +708,126 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     Удалить изображение
   </button>
 
+  <div class="row2" style="margin-top:13px;">
+    <div class="sf"><label class="lbl" style="margin:0 0 5px;" for="fc">Цена</label><input class="si" type="text" id="fc" placeholder="15" maxlength="7" inputmode="decimal"/></div>
+    <div class="sf"><label class="lbl" style="margin:0 0 5px;" for="fcoin">Монеты</label>
+      <select class="si" id="fcoin">
+        <option>мм</option><option>см</option><option>эм</option><option selected>зм</option><option>пм</option>
+      </select>
+    </div>
+  </div>
+  <div class="row2" style="margin-top:7px;">
+    <div class="sf"><label class="lbl" style="margin:0 0 5px;" for="fwgt">Вес (фунтов)</label><input class="si" type="text" id="fwgt" placeholder="10" maxlength="7" inputmode="decimal"/></div>
+    <div class="sf"></div>
+  </div>
+
   <div class="divider"></div>
 
-  <div class="lbl">Содержимое</div>
-  <div class="fmt-warn" id="blocks-warn" role="status" aria-live="polite" style="display:none;"></div>
-  <div id="blocks-list"></div>
-  <div class="add-bar" id="add-bar">
-    <button type="button" data-add="header">＋ Заголовок</button>
-    <button type="button" data-add="text">＋ Текст</button>
-    <button type="button" data-add="list">＋ Список</button>
-    <button type="button" data-add="chip">＋ Плашка</button>
-    <button type="button" data-add="stats">＋ Статблок</button>
-    <button type="button" data-add="table">＋ Таблица</button>
-    <button type="button" data-add="divider">＋ Разделитель</button>
+  <label class="lbl" for="fcategory">Категория</label>
+  <select class="si" id="fcategory">
+    <option value="">— выбрать —</option>
+    <option>Боеприпасы</option>
+    <option>Вспомогательные предметы</option>
+    <option>Заклинательные фокусировки</option>
+    <option>Контейнеры</option>
+    <option>Одежда</option>
+    <option>Осветительные приборы</option>
+    <option>Предмет снаряжения</option>
+    <option>Религиозные принадлежности</option>
+    <option>Торговые товары</option>
+    <option>Украшения</option>
+    <option>Прочее</option>
+  </select>
+
+  <!-- только у категории «Боеприпасы»: тип снаряда уже сказан названием -->
+  <div id="pack-wrap" style="display:none;">
+    <label class="lbl" for="fpack">В пачке, шт.</label>
+    <div class="field-wrap field-mb">
+      <input class="si" type="text" id="fpack" placeholder="20" maxlength="4" inputmode="numeric"/>
+    </div>
+  </div>
+
+  <label class="lbl" for="fitype">Тип предмета</label>
+  <select class="si" id="fitype">
+    <option value="">— немагический —</option>
+    <option>Чудесный предмет</option>
+    <option>Кольцо</option>
+    <option>Палочка</option>
+    <option>Посох</option>
+    <option>Жезл</option>
+  </select>
+
+  <div id="attune-wrap" style="display:none;">
+    <label class="lbl" for="fattune">Настройка</label>
+    <select class="si" id="fattune">
+      <option value="">— не указано —</option>
+      <option value="Требует настройки">Требует настройки</option>
+      <option value="Не требует настройки">Не требует настройки</option>
+    </select>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="lbl">Магический бонус</div>
+  <div class="magseg" id="magseg" role="radiogroup" aria-label="Магический бонус">
+    <button type="button" class="on" data-v="" role="radio" aria-checked="true" aria-label="без бонуса">—</button>
+    <button type="button" data-v="1" role="radio" aria-checked="false">+1</button>
+    <button type="button" data-v="2" role="radio" aria-checked="false">+2</button>
+    <button type="button" data-v="3" role="radio" aria-checked="false">+3</button>
+  </div>
+  <!-- у стрелы и кольца одинаковое «+1» значит разное — назначение обязательно -->
+  <div id="magt-wrap" style="display:none;">
+    <label class="lbl" for="fmagt">Бонус к чему</label>
+    <div class="field-wrap field-mb">
+      <!-- как «Восстановление зарядов»: две строки для чтения, перевод строки
+           склеивается в пробел, в данных остаётся одна строка -->
+      <textarea class="si" id="fmagt" placeholder="к КБ и спасброскам" maxlength="40" style="height:58px;min-height:58px;resize:none;"></textarea>
+      <span class="char-counter" id="cnt-magt">0/40</span>
+    </div>
+  </div>
+
+  <!-- заряды: подписи в одну строку, восстановление отдельно, оно длинное.
+       margin-top руками: заголовка над строкой нет, а подписи внутри .sf
+       обнуляют свой верхний отступ, и блок прилипал к переключателю бонуса -->
+  <div class="row2" style="margin-top:13px;">
+    <div class="sf"><label class="lbl" style="margin:0 0 5px;" for="fchg">Зарядов всего</label>
+      <input class="si" type="text" id="fchg" placeholder="36" maxlength="3" inputmode="numeric"/></div>
+    <div class="sf"><label class="lbl" style="margin:0 0 5px;" for="fchgu">Расход</label>
+      <input class="si" type="text" id="fchgu" placeholder="1–5" maxlength="5"/></div>
+  </div>
+  <label class="lbl" for="fchgr">Восстановление зарядов</label>
+  <div class="field-wrap field-mb">
+    <!-- две строки для чтения; перевод строки склеивается в пробел, в данных
+         одна строка. Высота с запасом под обе строки, ручка изменения размера
+         убрана: раз всё видно, тянуть нечего. -->
+    <textarea class="si" id="fchgr" placeholder="1к20 ежедневно на рассвете" maxlength="60" style="height:58px;min-height:58px;resize:none;"></textarea>
+    <span class="char-counter" id="cnt-chgr">0/60</span>
+  </div>
+
+  <label class="noimg-toggle" style="margin-top:9px;"><input type="checkbox" id="fcursed"/><span>Проклят</span></label>
+  <!-- текст проклятия — мастеру: в данные и галерею, на карточку игрока не печатается -->
+  <div id="cursed-wrap" style="display:none;">
+    <label class="lbl" for="fcursedtxt">В чём проклятие</label>
+    <div class="field-wrap field-mb">
+      <textarea class="si" id="fcursedtxt" maxlength="300" style="height:64px;" placeholder="Снять предмет можно только заклинанием снятие проклятия…"></textarea>
+      <span class="char-counter" id="cnt-cursed">0/300</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="lbl">Описание / Эффект</div>
+<!-- Панель форматирования описания (Ж/К/П); копия живёт в weapon-form-b.html,
+     т.к. вложенные включения build.py не разворачивает -->
+<div class="fmt-bar" role="group" aria-label="Форматирование описания">
+    <button type="button" class="fmt-btn" data-fmt="**" title="Полужирный (Ctrl+B)" aria-label="Полужирный"><b>Ж</b></button>
+    <button type="button" class="fmt-btn" data-fmt="*" title="Курсив (Ctrl+I)" aria-label="Курсив"><i>К</i></button>
+    <button type="button" class="fmt-btn" data-fmt="__" title="Подчёркнутый (Ctrl+U)" aria-label="Подчёркнутый"><u>П</u></button>
+  </div>
+  <div class="field-wrap field-mb">
+    <textarea class="si" id="fdesc" maxlength="2400" placeholder="Описание предмета и его эффект… (перенос на оборот — автоматически)" style="height:350px;"></textarea>
+    <span class="char-counter" id="cnt-desc">0/2000</span>
+    <div class="fmt-warn" id="desc-warn" role="status" aria-live="polite" style="display:none;"></div>
   </div>
 
   <button class="btn-build" id="gbtn">✦ Создать карточку</button>
@@ -637,32 +844,91 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   <div class="cards-row" id="cards-row">
   <div class="card-col">
   <div class="side-lbl">Лицевая</div>
-    <div class="dc" id="pc">
-      <div class="c-stripe" id="ps"></div>
-      <div class="c-stripe-under"></div>
-        <div class="c-title">
-          <div class="c-name" id="pnm">Произвольная карточка</div>
-        </div>
-      <div class="c-img" id="cib">
+    <div class="cf-card" id="pc">
+      <div class="cf-rar"></div>
+      <div class="cf-head">
+        <div class="cf-name" id="pnm">Снаряжение</div>
+        <div class="cf-sub" id="peqtype" style="display:none;"></div>
+      </div>
+      <div class="cf-art" id="cib">
+        <div class="cf-art__bleed" id="cf-bleed"></div>
         <div class="c-img-ph" id="img-ph">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#8a7860" stroke-width="1.2" width="48" height="48"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#8a7860" stroke-width="1.2" width="48" height="48"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="16" y1="10" x2="8" y2="10"/></svg>
+        </div>
+        <div class="cf-pennant"></div>
+        <div class="cf-art__foot">
+          <div class="cf-artline">
+            <div class="cf-cursed" id="cf-cursed" style="display:none;"><span>Проклят</span></div>
+            <span class="cf-price" id="p-cost" style="visibility:hidden;">—</span>
+            <span class="cf-attune" id="p-attune" style="display:none;">Настройка</span>
+            <span class="cf-rarname" id="p-rar">Немагический</span>
+          </div>
         </div>
       </div>
-      <div class="c-body">
-        <div class="c-blocks" id="pblocks"></div>
+      <div class="cf-props" id="cf-props" style="display:none;"></div>
+      <div class="cf-body" id="pdesc"></div>
+      <div class="cf-foot">
+        <span class="cf-sign"><span class="cf-tick"></span><span class="cf-cat" id="p-type">Снаряжение</span></span>
+        <span class="cf-right"><span class="cf-weight" id="pwgt"></span><span class="cf-gem"></span></span>
       </div>
-      <div class="c-foot"><div class="c-typeplate" id="p-type">Произвольная карточка</div><div class="c-gem" id="pgm"></div></div>
     </div>
   </div><!-- /.card-col front -->
   <div class="card-col">
   <div class="side-lbl">Оборотная</div>
-  <div class="dc dc-back" id="pb">
-    <div class="c-stripe" id="pbs"></div>
-    <div class="c-stripe-under"></div>
-    <div class="cb-body" id="pb-body">
-      <div class="c-blocks" id="pbblocks"></div>
+  <div class="cf-card" id="pb">
+    <div class="cb-rubashka" id="pb-rubashka">
+      <svg width="100%" height="100%" viewBox="0 0 250 354" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="rgrad-e" cx="50%" cy="50%" r="65%">
+            <stop offset="0%" stop-color="#1e1a0c"/>
+            <stop offset="100%" stop-color="#080604"/>
+          </radialGradient>
+          <pattern id="rpat-e" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse">
+            <circle cx="6" cy="6" r="0.8" fill="#8a6820" opacity="0.22"/>
+          </pattern>
+        </defs>
+        <rect width="250" height="354" fill="url(#rgrad-e)"/>
+        <rect width="250" height="354" fill="url(#rpat-e)"/>
+        <rect x="6" y="6" width="238" height="342" rx="5" fill="none" stroke="#a07828" stroke-width="2" opacity="0.85"/>
+        <rect x="10" y="10" width="230" height="334" rx="3" fill="none" stroke="#c8941a" stroke-width="0.8" opacity="0.45"/>
+        <path d="M6,22 L6,6 L22,6" fill="none" stroke="#c8941a" stroke-width="2" opacity="0.7" stroke-linecap="square"/>
+        <path d="M228,6 L244,6 L244,22" fill="none" stroke="#c8941a" stroke-width="2" opacity="0.7" stroke-linecap="square"/>
+        <path d="M6,332 L6,348 L22,348" fill="none" stroke="#c8941a" stroke-width="2" opacity="0.7" stroke-linecap="square"/>
+        <path d="M228,348 L244,348 L244,332" fill="none" stroke="#c8941a" stroke-width="2" opacity="0.7" stroke-linecap="square"/>
+        <line x1="8" y1="20" x2="20" y2="8" stroke="#c8941a" stroke-width="0.8" opacity="0.45"/>
+        <line x1="230" y1="8" x2="242" y2="20" stroke="#c8941a" stroke-width="0.8" opacity="0.45"/>
+        <line x1="8" y1="334" x2="20" y2="346" stroke="#c8941a" stroke-width="0.8" opacity="0.45"/>
+        <line x1="230" y1="346" x2="242" y2="334" stroke="#c8941a" stroke-width="0.8" opacity="0.45"/>
+        <line x1="22" y1="8" x2="228" y2="8" stroke="#a07828" stroke-width="0.5" opacity="0.4"/>
+        <line x1="22" y1="346" x2="228" y2="346" stroke="#a07828" stroke-width="0.5" opacity="0.4"/>
+        <line x1="8" y1="22" x2="8" y2="332" stroke="#a07828" stroke-width="0.5" opacity="0.4"/>
+        <line x1="242" y1="22" x2="242" y2="332" stroke="#a07828" stroke-width="0.5" opacity="0.4"/>
+        <circle cx="125" cy="177" r="58" fill="none" stroke="#a07828" stroke-width="1.2" opacity="0.5"/>
+        <circle cx="125" cy="177" r="54" fill="none" stroke="#c8941a" stroke-width="0.5" opacity="0.28"/>
+        <polygon points="125,125 130,164 149,153 138,172 177,177 138,182 149,201 130,190 125,229 120,190 101,201 112,182 73,177 112,172 101,153 120,164" fill="#a07828" opacity="0.62"/>
+        <circle cx="125" cy="177" r="16" fill="#140e08" stroke="#c8941a" stroke-width="1.2" opacity="0.95"/>
+        <circle cx="125" cy="177" r="12" fill="none" stroke="#a07828" stroke-width="0.6" opacity="0.45"/>
+        <path d="M125,163 L128,177 L125,177 L122,177 Z" fill="#c8941a" opacity="0.9"/>
+        <path d="M125,191 L128,177 L125,177 L122,177 Z" fill="#6a4810" opacity="0.65"/>
+        <line x1="125" y1="123" x2="125" y2="119" stroke="#c8941a" stroke-width="1.5" opacity="0.65"/>
+        <line x1="125" y1="231" x2="125" y2="235" stroke="#c8941a" stroke-width="1.5" opacity="0.65"/>
+        <line x1="71" y1="177" x2="67" y2="177" stroke="#c8941a" stroke-width="1.5" opacity="0.65"/>
+        <line x1="179" y1="177" x2="183" y2="177" stroke="#c8941a" stroke-width="1.5" opacity="0.65"/>
+        <path d="M125,52 L130,63 L125,74 L120,63 Z" fill="#a07828" opacity="0.65"/>
+        <path d="M125,280 L130,291 L125,302 L120,291 Z" fill="#a07828" opacity="0.65"/>
+        <path d="M28,177 L39,172 L50,177 L39,182 Z" fill="#a07828" opacity="0.65"/>
+        <path d="M200,177 L211,172 L222,177 L211,182 Z" fill="#a07828" opacity="0.65"/>
+      </svg>
     </div>
-    <div class="c-foot" id="pb-foot"><div class="c-gem" id="pbgm"></div></div>
+    <div class="cf-rar cf-rar--back"></div>
+    <div class="cf-body cf-body--back" id="pb-body">
+      <div class="cf-deschdr">Описание</div>
+      <div class="cf-desctext" id="pb-desc"></div>
+    </div>
+    <div class="cf-foot">
+      <span class="cf-gem"></span>
+      <span class="cf-sign"><span class="cf-cat">Снаряжение</span><span class="cf-tick"></span></span>
+    </div>
   </div>
   </div><!-- /.card-col back -->
   </div><!-- /.cards-row -->
@@ -691,7 +957,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   </div>
   <div class="coll-list" id="coll-list">
     <div class="coll-empty" id="coll-empty">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/></svg>
       Коллекция пуста.<br/>Создайте карточку.
     </div>
   </div>
@@ -782,55 +1048,10 @@ function applyPal(rar){
     ['ps','pbs'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=g;});}
   if(d.gem){['pgm','pbgm'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=d.gem;});}
 }
-/* ═══ ЦВЕТА СЕКЦИЙ — ЭТО НЕ РЕДКОСТЬ ═══
-   Инструменты, яды и произвольные карточки редкости не имеют вовсе: у них
-   один фиксированный цвет на всю секцию. Раньше он лежал россыпью — в
-   applyToolPal, _backPal, COLL_PAL, STRIPE и GAL_GROUPPAL — и описывался
-   теми же полями grad/gem, что и палитра редкостей в rarities.js. При беглом
-   чтении «gem» у инструментов было не отличить от «gem» у легендарного
-   предмета, а одно и то же значение приходилось править в трёх-четырёх
-   местах. Здесь оно одно, и названия полей намеренно другие:
-
-     label  — как называется цвет, для человека
-     dark   — тёмный конец полосы
-     light  — светлый конец полосы и цвет метки
-     mark   — гем, точка в галерее, засечка в панели коллекции
-
-   Ключ — это _group карточки (он же ключ GAL_GROUPPAL). Добавили генератор
-   без редкости — добавьте строку сюда, и больше нигде. */
-var SECTION_PAL={
-  tools:  {label:'латунь', dark:'#5a430d', light:'#8b6914', mark:'#8b6914'},
-  poisons:{label:'полынь', dark:'#3a4a1e', light:'#63802f', mark:'#63802f'},
-  /* у произвольных полоса одноцветная: охра без затемнённых концов */
-  custom: {label:'охра',   dark:'#8a6b2e', light:'#8a6b2e', mark:'#8a6b2e'}
-};
-
-/* Полоса шапки. У custom оба конца одинаковые, поэтому градиент вырождается
-   в ровную заливку — так и было до выноса в общий файл. */
-function sectionGrad(key){
-  var p=SECTION_PAL[key];if(!p)return '';
-  return (p.dark===p.light)?p.light
-    :('linear-gradient(90deg,'+p.dark+','+p.light+','+p.dark+')');
-}
-/* Раскраска карточки в генераторе: полосы ps/pbs и гемы pgm/pbgm.
-   Заменяет применявшиеся раньше applyToolPal / applyPoisonPal / applyPal. */
-function applySectionPal(key){
-  var p=SECTION_PAL[key];if(!p)return;
-  var g=sectionGrad(key);
-  ['ps','pbs'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=g;});
-  ['pgm','pbgm'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=p.mark;});
-}
-/* Хук _backPal, который зовёт renderback.js: оборот не должен краситься по
-   data.rarity, у секции свой цвет. */
-function sectionBackPal(key,stripe,gem){
-  var p=SECTION_PAL[key];if(!p)return;
-  if(stripe)stripe.style.background=sectionGrad(key);
-  if(gem)gem.style.background=p.mark;
-}
-var LS_KEY='dnd_cardforge_custom';
-/* панель коллекции: без секций редкости, полоски охряные (см. collection.js) */
-var COLL_PAL={gem:SECTION_PAL.custom.mark};
-var IDB_NAME='dnd_custom_imgs';
+var LS_KEY='dnd_cardforge_equipment';
+var IDB_NAME='dnd_equipment_imgs';
+/* Настройка (attunement): у «Немагический» блок скрыт и значение очищается. */
+function updateAttuneWrap(){document.getElementById('attune-wrap').style.display=cr==='nonmagic'?'none':'block';if(cr==='nonmagic')document.getElementById('fattune').value='';}
 var cr='nonmagic', imgDataUrl=null, collection=[], currentCard=null;
 var IDB_STORE='imgs',_idb=null;
 function _openIDB(cb){if(_idb){cb(_idb);return;}var r=indexedDB.open(IDB_NAME,1);r.onupgradeneeded=function(e){e.target.result.createObjectStore(IDB_STORE);};r.onsuccess=function(e){_idb=e.target.result;cb(_idb);};r.onerror=function(){cb(null);};}
@@ -922,7 +1143,46 @@ function mkCounter(inputId,countId,max,lenFn){
   }
   if(!inp._cbound){inp.addEventListener('input',upd);inp._cbound=true;}upd();
 }
-mkCounter('fn','cnt-fn',34);mkCounter('ftype','cnt-type',40);
+mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcursedtxt','cnt-cursed',300);mkCounter('fchgr','cnt-chgr',60);mkCounter('fmagt','cnt-magt',40);
+/* Переключатель магического бонуса предмета (— / +1 / +2 / +3) в панели.
+   Кнопки не дают input/change, поэтому ререндер вызываем сами. Страница
+   читает значение через _magVal() и восстанавливает через _magSet(v). */
+document.querySelectorAll('#magseg button').forEach(function(b){
+  b.addEventListener('click',function(){
+    document.querySelectorAll('#magseg button').forEach(function(x){x.classList.remove('on');x.setAttribute('aria-checked','false');});
+    b.classList.add('on');b.setAttribute('aria-checked','true');
+    renderCard(readForm());
+  });
+});
+function _magVal(){var b=document.querySelector('#magseg button.on');return b?b.getAttribute('data-v'):'';}
+function _magSet(v){
+  v=String(v||'');
+  document.querySelectorAll('#magseg button').forEach(function(x){
+    var on=x.getAttribute('data-v')===v;
+    x.classList.toggle('on',on);x.setAttribute('aria-checked',on?'true':'false');
+  });
+}
+
+/* «Восстановление» — многострочное поле только ради чтения: перевод строки
+   склеивается в пробел, в данных остаётся одна строка */
+['fchgr','fmagt'].forEach(function(_id){(function(){var f=document.getElementById(_id);
+  f.addEventListener('input',function(){if(this.value.indexOf('\n')<0)return;
+    var before=this.value.slice(0,this.selectionStart).replace(/\s*\n+\s*/g,' ');
+    this.value=this.value.replace(/\s*\n+\s*/g,' ');
+    this.selectionStart=this.selectionEnd=before.length;});})();});
+
+/* «В пачке» нужно только боеприпасам, «к чему» — только при бонусе,
+   текст проклятия — только проклятым */
+function syncWraps(){
+  var isAmmo=document.getElementById('fcategory').value==='Боеприпасы';
+  document.getElementById('pack-wrap').style.display=isAmmo?'block':'none';
+  /* сменили категорию с «Боеприпасов» — пачка теряет смысл, чистим,
+     иначе «В пачке» так и висело бы на карточке */
+  if(!isAmmo)document.getElementById('fpack').value='';
+  document.getElementById('magt-wrap').style.display=_magVal()?'block':'none';
+  document.getElementById('cursed-wrap').style.display=
+    document.getElementById('fcursed').checked?'block':'none';
+}
 
 /* Автошрифт названия: одна строка, лестница кеглей 16→10, дальше многоточие
    (по образцу заклинаний). Общий для всех семи генераторов — spells crop.js
@@ -1217,9 +1477,45 @@ function applyImgThumb(data){
   document.getElementById('btn-del-img').style.display=on?'flex':'none';
 }
 
-/* оставлено ради читаемости renderCard; значение — из общей таблицы секций */
-var STRIPE=SECTION_PAL.custom.mark;
+/* Размытая заливка по бокам обязана следовать за самой картинкой, а не за
+   renderCard: «Применить» в кропе и «Удалить картинку» зовут setCardImg
+   напрямую, минуя рендер. Из-за этого свежезагруженная картинка оставалась
+   без заливки до первой же перерисовки, а удалённая — оставляла отпечаток. */
+var _setCardImgBase=setCardImg;
+setCardImg=function(src){
+  _setCardImgBase(src);
+  var bl=document.getElementById('cf-bleed');
+  if(!bl)return;
+  bl.style.backgroundImage=src?'url("'+String(src).replace(/"/g,'\\"')+'")':'';
+  bl.style.display=src?'':'none';
+};
 
+/* ── readForm ── */
+function readForm(){
+  return {
+    type:'equipment',
+    rarity:cr,
+    category:document.getElementById('fcategory').value,
+    itemType:document.getElementById('fitype').value,
+    name:document.getElementById('fn').value.trim(),
+    cost:document.getElementById('fc').value.trim(),coin:document.getElementById('fcoin').value,
+    wgt:document.getElementById('fwgt').value.trim(),
+    magicBonus:_magVal(),
+    magicTarget:document.getElementById('fmagt').value.trim(),
+    charges:document.getElementById('fchg').value.trim(),
+    chargeUse:document.getElementById('fchgu').value.trim(),
+    chargeRecovery:document.getElementById('fchgr').value.trim(),
+    cursed:document.getElementById('fcursed').checked,
+    cursedText:document.getElementById('fcursedtxt').value.trim(),
+    pack:document.getElementById('fpack').value.trim(),
+    desc:document.getElementById('fdesc').value,
+    attune:document.getElementById('fattune').value,
+    noImg:document.getElementById('f-noimg').checked,
+    img:imgDataUrl,rawImg:rawImgDataUrl
+  };
+}
+
+/* ── splitDesc ── */
 /* ── Разметка описания: **полужирный** *курсив* __подчёркнутый__ ──
    Текст без маркеров даёт один ран, поэтому старые карточки, импорт и шаблоны
    рендерятся ровно как прежде — миграция не нужна.
@@ -1352,296 +1648,291 @@ function renderRuns(el,runs){
     if(lo>0)document.execCommand('insertText',false,data.slice(0,lo));
   });
 })();
-
-/* ═══════════ ДВИЖОК БЛОКОВ ═══════════
-   Содержимое карточки — массив блоков. Каждый блок знает свой тип, сторону
-   (front/back) и поля. Редактор в сайдбаре строится из массива; карточка
-   рендерит блоки лицо/оборот, а хвост, не влезший на лицо, сам льётся на оборот. */
-var blocks=[];
-var BTITLE={header:'Заголовок',text:'Текст',list:'Список',chip:'Плашка',stats:'Статблок',table:'Таблица',divider:'Разделитель'};
-var FS_MIN=8,FS_MAX=12;
-
-function newBlock(t){
-  var b={t:t,side:'front'};
-  if(t==='header')b.text='Заголовок';
-  else if(t==='text'){b.text='';b.fs=10;}
-  else if(t==='list'){b.ordered=false;b.text='';b.fs=10;}
-  else if(t==='chip'){b.label='';b.value='';b.style='gold';}
-  else if(t==='stats')b.cells=[{l:'',v:''},{l:'',v:''}];
-  else if(t==='table'){b.header=true;b.cols=2;b.rows=[['',''],['','']];}
-  return b;
+/* Единое описание с разметкой и автокеглем. Лицевая заполняется, излишек уходит
+   на оборот. Кегль 12→10 общий для обеих сторон (--desc-fs). Разметка **__ __**
+   рендерится ранами, поэтому режем по ВИДИМОМУ смещению, а не по строке — иначе
+   срез разорвал бы тег пополам; sliceRuns закрывает и переоткрывает теги сам.
+   Оборот двух видов: renderBackCard (equipment/tools/poisons — прячет пустую
+   сторону в рубашку) или прямой #pbk (armor/weapon — оборот виден всегда).
+   _rafSoon: rAF с таймаут-фолбэком — в фоновой вкладке rAF заморожен, без него
+   экспорт из галерей давал бы карточки без описания. */
+var DESC_FS=[12,11.5,11,10.5,10];
+function _rafSoon(cb){var done=false;function run(){if(!done){done=true;cb();}}requestAnimationFrame(run);setTimeout(run,60);}
+function _descWarn(n){
+  var el=document.getElementById('desc-warn');if(!el)return;
+  if(n>0){var ni=document.getElementById('f-noimg');
+    el.textContent='⚠ Текст не помещается на карточку — обрезано '+n+' симв. Сократите описание'
+      +(ni&&!ni.checked?' или уберите картинку.':'.');
+    el.style.display='';}
+  else{el.style.display='none';}
 }
-
-/* таблица: старый формат (grid со строками «a | b») → cols/rows */
-function _migrateTable(b){
-  if(b.t!=='table'||b.rows)return b;
-  var lines=String(b.grid||'').split('\n').filter(function(l){return l.trim()!=='';});
-  var rows=lines.map(function(l){return l.split('|').map(function(c){return c.trim();});});
-  var cols=Math.max(1,rows.reduce(function(m,r){return Math.max(m,r.length);},0));
-  rows.forEach(function(r){while(r.length<cols)r.push('');});
-  if(!rows.length)rows=[['','']],cols=2;
-  b.cols=cols;b.rows=rows;delete b.grid;
-  return b;
+/* наибольший видимый префикс с from, влезающий в el по высоте, с откатом до слова */
+function _cutRuns(el,runs,vis,from){
+  var ch=el.clientHeight,lo=from,hi=vis.length;
+  while(lo<hi-1){var mid=(lo+hi)>>1;renderRuns(el,sliceRuns(runs,from,mid));
+    if(el.scrollHeight<=ch+2)lo=mid;else hi=mid;}
+  var cut=lo;
+  for(var i=cut;i>Math.max(from,cut-60);i--){if(vis.charAt(i)===' '||vis.charAt(i)==='\n'){cut=i;break;}}
+  return cut;
 }
-function _tableSetCols(b,n){
-  b.cols=Math.min(5,Math.max(1,n));
-  b.rows.forEach(function(r){while(r.length<b.cols)r.push('');r.length=b.cols;});
-}
+function splitDesc(data){
+  var faceEl=document.getElementById('pds')||document.getElementById('pdesc');
+  var backEl=document.getElementById('pbk')||document.getElementById('pb-desc');
+  var hasRB=(typeof renderBackCard==='function');
+  var runs=parseFmt(data.desc||''),vis=runsText(runs);
+  function showBack(on){if(hasRB)renderBackCard({rarity:data.rarity,back:on?'x':''});}
+  function fillBack(from,to){showBack(true);renderRuns(backEl,sliceRuns(runs,from,to));}
+  function emptyBack(){showBack(false);if(!hasRB)renderRuns(backEl,[]);}
 
-function _el(tag,cls,attrs){var e=document.createElement(tag);if(cls)e.className=cls;if(attrs)for(var k in attrs)e.setAttribute(k,attrs[k]);return e;}
-
-/* обёртка выделения маркерами разметки (Ж/К/П) для любого textarea */
-function fmtWrap(ta,mark){
-  var ml=mark.length,st=ta.selectionStart,en=ta.selectionEnd,v=ta.value,inner=v.slice(st,en),nv;
-  if(st>=ml&&v.slice(st-ml,st)===mark&&v.slice(en,en+ml)===mark){
-    nv=v.slice(0,st-ml)+inner+v.slice(en+ml);ta.value=nv;ta.setSelectionRange(st-ml,st-ml+inner.length);
-  }else if(inner.length>=ml*2&&inner.slice(0,ml)===mark&&inner.slice(inner.length-ml)===mark){
-    var bare=inner.slice(ml,inner.length-ml);nv=v.slice(0,st)+bare+v.slice(en);ta.value=nv;ta.setSelectionRange(st,st+bare.length);
-  }else{
-    nv=v.slice(0,st)+mark+inner+mark+v.slice(en);ta.value=nv;ta.setSelectionRange(st+ml,st+ml+inner.length);
-  }
-  ta.focus();ta.dispatchEvent(new Event('input',{bubbles:true}));
-}
-
-/* ── редактор блоков в сайдбаре ── */
-function _fsStep(b){
-  var wrap=_el('div','fs-step');
-  var minus=_el('button','',{type:'button','data-act':'fs-'});minus.textContent='−';
-  var val=_el('span','fs-val');val.textContent=(b.fs||10)+' px';
-  var plus=_el('button','',{type:'button','data-act':'fs+'});plus.textContent='+';
-  wrap.appendChild(minus);wrap.appendChild(val);wrap.appendChild(plus);
-  return wrap;
-}
-function _fmtBar(){
-  var bar=_el('div','blk-fmt');
-  [['**','Ж','b'],['*','К','i'],['__','П','u']].forEach(function(m){
-    var btn=_el('button','fmt-btn',{type:'button','data-fmt':m[0]});
-    var tag=document.createElement(m[2]);tag.textContent=m[1];btn.appendChild(tag);
-    bar.appendChild(btn);
-  });
-  return bar;
-}
-function buildEditor(b,i){
-  var ed=_el('div','blk-ed',{'data-i':i});
-  var head=_el('div','blk-ed-head');
-  var title=_el('span','blk-ed-title');title.textContent=BTITLE[b.t]||b.t;
-  var ctrls=_el('div','blk-ed-ctrls');
-  var side=_el('button','side-btn'+(b.side==='back'?' on':''),{type:'button','data-act':'side'});side.textContent=b.side==='back'?'Оборот':'Лицо';
-  var up=_el('button','',{type:'button','data-act':'up'});up.textContent='↑';
-  var dn=_el('button','',{type:'button','data-act':'down'});dn.textContent='↓';
-  var del=_el('button','',{type:'button','data-act':'del'});del.textContent='✕';
-  ctrls.appendChild(side);ctrls.appendChild(up);ctrls.appendChild(dn);ctrls.appendChild(del);
-  head.appendChild(title);head.appendChild(ctrls);ed.appendChild(head);
-
-  var body=_el('div','blk-ed-body');
-  if(b.t==='header'){
-    var inp=_el('input','si',{type:'text','data-f':'text',placeholder:'Заголовок секции',maxlength:'40'});inp.value=b.text||'';body.appendChild(inp);
-  }else if(b.t==='text'||b.t==='list'){
-    var top=_el('div','blk-fmt');top.appendChild(_fmtBar());top.appendChild(_fsStep(b));
-    if(b.t==='list'){
-      var ck=_el('label','blk-ck');var cb=_el('input','',{type:'checkbox','data-f':'ordered'});cb.checked=!!b.ordered;var cs=document.createElement('span');cs.textContent='Нумерованный';ck.appendChild(cb);ck.appendChild(cs);
-      top=_el('div');top.style.cssText='display:flex;flex-direction:column;gap:6px;';var r1=_el('div','blk-fmt');r1.appendChild(_fmtBar());r1.appendChild(_fsStep(b));top.appendChild(r1);top.appendChild(ck);
-    }
-    body.appendChild(top);
-    var ta=_el('textarea','si',{'data-f':'text',placeholder:b.t==='list'?'Пункты — по строкам':'Текст с разметкой **Ж** *К* __П__'});ta.value=b.text||'';body.appendChild(ta);
-  }else if(b.t==='chip'){
-    var row=_el('div','blk-row2');
-    var l=_el('input','si',{type:'text','data-f':'label',placeholder:'Подпись',maxlength:'22'});l.value=b.label||'';
-    var v=_el('input','si',{type:'text','data-f':'value',placeholder:'Значение',maxlength:'40'});v.value=b.value||'';
-    row.appendChild(l);row.appendChild(v);body.appendChild(row);
-    var sel=_el('select','si',{'data-f':'style'});
-    [['gold','Золотой фон'],['red','Красная черта']].forEach(function(o){var op=document.createElement('option');op.value=o[0];op.textContent=o[1];if(b.style===o[0])op.selected=true;sel.appendChild(op);});
-    body.appendChild(sel);
-  }else if(b.t==='stats'){
-    (b.cells||[]).forEach(function(c,ci){
-      var row=_el('div','blk-cell-row');
-      var l=_el('input','si',{type:'text','data-cell':ci,'data-cv':'l',placeholder:'Подпись',maxlength:'12'});l.value=c.l||'';
-      var v=_el('input','si',{type:'text','data-cell':ci,'data-cv':'v',placeholder:'Значение',maxlength:'12'});v.value=c.v||'';
-      var x=_el('button','',{type:'button','data-act':'cell-del','data-cell':ci});x.textContent='✕';
-      row.appendChild(l);row.appendChild(v);row.appendChild(x);body.appendChild(row);
-    });
-    if((b.cells||[]).length<4){var add=_el('button','blk-mini',{type:'button','data-act':'cell-add'});add.textContent='＋ ячейка';body.appendChild(add);}
-  }else if(b.t==='table'){
-    _migrateTable(b);
-    /* верхняя строка: степпер колонок + чекбокс шапки */
-    var top2=_el('div','tbl-top');
-    var lbl2=_el('span','tbl-lbl');lbl2.textContent='Колонок';
-    var cminus=_el('button','',{type:'button','data-act':'col-'});cminus.textContent='−';
-    var cval=_el('span','tbl-cols');cval.textContent=b.cols;
-    var cplus=_el('button','',{type:'button','data-act':'col+'});cplus.textContent='+';
-    top2.appendChild(lbl2);top2.appendChild(cminus);top2.appendChild(cval);top2.appendChild(cplus);
-    var ck2=_el('label','blk-ck');ck2.style.marginLeft='auto';
-    var cb2=_el('input','',{type:'checkbox','data-f':'header'});cb2.checked=b.header!==false;
-    var cs2=document.createElement('span');cs2.textContent='Шапка';
-    ck2.appendChild(cb2);ck2.appendChild(cs2);top2.appendChild(ck2);
-    body.appendChild(top2);
-    /* сетка полей: строка таблицы = ряд инпутов + кнопка удаления */
-    var grid=_el('div','tbl-grid');grid.style.gridTemplateColumns='repeat('+b.cols+',minmax(0,1fr)) 20px';
-    b.rows.forEach(function(row,ri){
-      for(var ci=0;ci<b.cols;ci++){
-        var inp2=_el('input','si'+(ri===0&&b.header!==false?' hdr':''),{type:'text','data-row':ri,'data-col':ci,
-          placeholder:ri===0&&b.header!==false?'Заголовок':'',maxlength:'40'});
-        inp2.value=row[ci]||'';grid.appendChild(inp2);
+  renderRuns(faceEl,[]);
+  if(!vis){emptyBack();_descWarn(0);return;}
+  _rafSoon(function(){
+    for(var i=0;i<DESC_FS.length;i++){
+      document.documentElement.style.setProperty('--desc-fs',DESC_FS[i]+'px');
+      renderRuns(faceEl,sliceRuns(runs,0,vis.length));
+      var ch=faceEl.clientHeight;
+      /* Лицо не даёт места вовсе: у инструментов кузнеца перечень изготовления
+         занимает всё тело, и .c-desc схлопывается в ноль. Раньше здесь стоял
+         continue, из-за чего цикл проваливался мимо всех ступеней в аварийную
+         ветку: кегль падал до 10px, а хвост описания срезался, хотя на обороте
+         места вдоволь. Отдаём оборот целиком и подбираем кегль по нему. */
+      if(!ch){
+        renderRuns(faceEl,[]);
+        fillBack(0,vis.length);
+        if(backEl.scrollHeight<=backEl.clientHeight+2){_descWarn(0);return;}
+        continue;
       }
-      var rx=_el('button','',{type:'button','data-act':'row-del','data-row':ri});rx.textContent='✕';grid.appendChild(rx);
-    });
-    body.appendChild(grid);
-    var radd=_el('button','blk-mini',{type:'button','data-act':'row-add'});radd.textContent='＋ строка';body.appendChild(radd);
-  }else if(b.t==='divider'){
-    var h=_el('div','blk-hint');h.textContent='Тонкая золотая линия.';body.appendChild(h);
+      /* всё уместилось на лице — оборот в рубашку */
+      if(faceEl.scrollHeight<=ch+2){emptyBack();_descWarn(0);return;}
+      /* режем лицо, остаток — на оборот */
+      var cut=_cutRuns(faceEl,runs,vis,0);
+      renderRuns(faceEl,sliceRuns(runs,0,cut));
+      var bs=(vis.charAt(cut)===' '||vis.charAt(cut)==='\n')?cut+1:cut;
+      fillBack(bs,vis.length);
+      if(backEl.scrollHeight<=backEl.clientHeight+2){_descWarn(0);return;}
+      /* оборот переполнен — следующая ступень кегля */
+    }
+    /* не влезло даже на 10px — обрезаем оборот, считаем остаток для предупреждения */
+    var last=DESC_FS[DESC_FS.length-1];
+    document.documentElement.style.setProperty('--desc-fs',last+'px');
+    renderRuns(faceEl,sliceRuns(runs,0,vis.length));
+    var cut=_cutRuns(faceEl,runs,vis,0);
+    renderRuns(faceEl,sliceRuns(runs,0,cut));
+    var bs=(vis.charAt(cut)===' '||vis.charAt(cut)==='\n')?cut+1:cut;
+    showBack(true);
+    var bcut=_cutRuns(backEl,runs,vis,bs);
+    renderRuns(backEl,sliceRuns(runs,bs,bcut));
+    _descWarn(vis.length-bcut);
+  });
+}
+
+/* ── renderCard (тест 5a-Б) ── */
+function _esc(s){return String(s==null?'':s).replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+
+/* Цвет редкости — три переменные на обеих карточках. Значения берём из R,
+   чтобы палитра осталась в одном месте (rarities.js), а не разъехалась.
+   Идентификаторы ps/pbs/pgm/pbgm намеренно сняты с разметки: applyPal ставит
+   по ним инлайновый background, а он затирал слоёную заливку гема из макета
+   (светлый слой 32% поверх цвета) и подменял её плоским цветом. */
+function cfPal(rar){
+  var d=R[rar]||R.common;
+  var g=d.grad||[d.a,d.a,d.a];
+  ['pc','pb'].forEach(function(id){
+    var el=document.getElementById(id);if(!el)return;
+    el.style.setProperty('--rar-1',g[0]);
+    el.style.setProperty('--rar-2',g[1]);
+    el.style.setProperty('--gem',d.gem||d.a);
+  });
+}
+
+/* Подгонка описания. Лестница из макета: сначала высоту отдаёт арт (136→120),
+   затем интерлиньяж (1.3→1.26), и лишь потом кегль (10→9.5). Что не влезло —
+   уходит на оборот, без многоточий и без «продолжения». */
+/* Лестница подгонки. Ступени арта здесь НЕТ намеренно: кадр держит 16:9,
+   и уменьшение блока резало картинку по вертикали.
+   Кегль идёт СВЕРХУ вниз, от 12 к 9.5, как в общем splitDesc: берётся самый
+   крупный, при котором текст умещается на обе стороны. В макете стояло жёстко
+   10px, но тогда короткое описание оставляло треть лицевой пустой. */
+var CF_LH=[1.3,1.26], CF_FS=[12,11.5,11,10.5,10,9.5];
+function cfParas(text){
+  return String(text||'').split(/\n\s*\n|\n/).map(function(s){return s.trim();})
+    .filter(Boolean).map(function(s){var r=parseFmt(s);return {runs:r,vis:runsText(r)};});
+}
+/* Заполнение стороны. Абзацы кладутся по очереди; тот, что не влез целиком,
+   режется ВНУТРИ по границе слова — иначе в конце лицевой стороны оставалась
+   пустая треть, а весь абзац прыгал на оборот. Режем по видимому смещению,
+   а не по строке: разметка **__ __** живёт ранами, и срез по строке порвал бы
+   тег пополам. Возвращает точку продолжения {p,off} или null, если всё влезло. */
+function cfPara(runs,from,to){
+  var pEl=document.createElement('p');
+  renderRuns(pEl,sliceRuns(runs,from,to));
+  return pEl;
+}
+function cfWordBack(vis,cut,from){
+  for(var i=cut;i>Math.max(from,cut-60);i--){
+    var ch=vis.charAt(i);
+    if(ch===' '||ch==='\n')return i;
   }
-  ed.appendChild(body);
-  return ed;
+  return cut;
 }
-function renderBlocksEditor(){
-  var list=document.getElementById('blocks-list');list.innerHTML='';
-  blocks.forEach(function(b,i){list.appendChild(buildEditor(b,i));});
-}
-
-/* добавление блока */
-document.getElementById('add-bar').addEventListener('click',function(e){
-  var btn=e.target.closest('button[data-add]');if(!btn)return;
-  blocks.push(newBlock(btn.getAttribute('data-add')));
-  renderBlocksEditor();renderCard(readForm());
-});
-
-/* правки внутри редактора: клики (кнопки) */
-document.getElementById('blocks-list').addEventListener('click',function(e){
-  var btn=e.target.closest('button');if(!btn)return;
-  var ed=e.target.closest('.blk-ed');if(!ed)return;
-  var i=+ed.getAttribute('data-i'),b=blocks[i],act=btn.getAttribute('data-act');
-  if(btn.classList.contains('fmt-btn')){var ta=ed.querySelector('textarea[data-f=text]');if(ta)fmtWrap(ta,btn.getAttribute('data-fmt'));return;}
-  if(act==='del'){blocks.splice(i,1);renderBlocksEditor();renderCard(readForm());return;}
-  if(act==='up'&&i>0){var t=blocks[i-1];blocks[i-1]=blocks[i];blocks[i]=t;renderBlocksEditor();renderCard(readForm());return;}
-  if(act==='down'&&i<blocks.length-1){var t2=blocks[i+1];blocks[i+1]=blocks[i];blocks[i]=t2;renderBlocksEditor();renderCard(readForm());return;}
-  if(act==='side'){b.side=b.side==='back'?'front':'back';renderBlocksEditor();renderCard(readForm());return;}
-  if(act==='fs+'||act==='fs-'){var d=act==='fs+'?0.5:-0.5;b.fs=Math.min(FS_MAX,Math.max(FS_MIN,(b.fs||10)+d));var val=ed.querySelector('.fs-val');if(val)val.textContent=b.fs+' px';renderCard(readForm());return;}
-  if(act==='cell-add'){b.cells.push({l:'',v:''});renderBlocksEditor();renderCard(readForm());return;}
-  if(act==='cell-del'){b.cells.splice(+btn.getAttribute('data-cell'),1);renderBlocksEditor();renderCard(readForm());return;}
-  if(act==='col+'||act==='col-'){_tableSetCols(b,b.cols+(act==='col+'?1:-1));renderBlocksEditor();renderCard(readForm());return;}
-  if(act==='row-add'){b.rows.push(new Array(b.cols).fill(''));renderBlocksEditor();renderCard(readForm());return;}
-  if(act==='row-del'){if(b.rows.length>1)b.rows.splice(+btn.getAttribute('data-row'),1);renderBlocksEditor();renderCard(readForm());return;}
-});
-
-/* правки внутри редактора: ввод в поля (без перестроения — фокус сохраняется) */
-function _blockInput(e){
-  var ed=e.target.closest('.blk-ed');if(!ed)return;
-  var i=+ed.getAttribute('data-i'),b=blocks[i];if(!b)return;
-  var t=e.target,cell=t.getAttribute('data-cell'),row=t.getAttribute('data-row'),f=t.getAttribute('data-f');
-  if(row!=null&&t.getAttribute('data-col')!=null){b.rows[+row][+t.getAttribute('data-col')]=t.value;}
-  else if(cell!=null){b.cells[+cell][t.getAttribute('data-cv')]=t.value;}
-  else if(f==='ordered'){b[f]=t.checked;}
-  else if(f==='header'){b[f]=t.checked;renderBlocksEditor();}
-  else if(f){b[f]=t.value;}
-  renderCard(readForm());
-}
-document.getElementById('blocks-list').addEventListener('input',_blockInput);
-document.getElementById('blocks-list').addEventListener('change',_blockInput);
-
-/* ── рендер одного блока на карточку ── */
-function _buildTable(b){
-  _migrateTable(b);
-  var t=_el('table','blk blk-table'),rows=b.rows||[],start=0;
-  if(b.header!==false&&rows.length){
-    var thead=_el('thead'),tr=_el('tr');
-    rows[0].forEach(function(c){var th=_el('th');th.textContent=c||'';tr.appendChild(th);});
-    thead.appendChild(tr);t.appendChild(thead);start=1;
+function cfFill(el,paras,start){
+  el.innerHTML='';
+  var ch=el.clientHeight;
+  for(var i=start.p;i<paras.length;i++){
+    var from=(i===start.p)?start.off:0;
+    var runs=paras[i].runs,vis=paras[i].vis;
+    if(from>=vis.length)continue;
+    var pEl=cfPara(runs,from,vis.length);
+    el.appendChild(pEl);
+    if(el.scrollHeight<=ch+1)continue;
+    /* абзац не влез целиком — ищем наибольший префикс, который влезает */
+    el.removeChild(pEl);
+    var lo=from,hi=vis.length,probe=cfPara(runs,from,from);
+    el.appendChild(probe);
+    while(lo<hi-1){
+      var mid=(lo+hi)>>1;
+      renderRuns(probe,sliceRuns(runs,from,mid));
+      if(el.scrollHeight<=ch+1)lo=mid;else hi=mid;
+    }
+    var cut=cfWordBack(vis,lo,from);
+    if(cut<=from){el.removeChild(probe);return {p:i,off:from};}
+    renderRuns(probe,sliceRuns(runs,from,cut));
+    return {p:i,off:cut};
   }
-  var tb=_el('tbody');
-  for(var i=start;i<rows.length;i++){
-    var r=_el('tr');
-    rows[i].forEach(function(c){var td=_el('td');renderRuns(td,parseFmt(c||''));r.appendChild(td);});
-    tb.appendChild(r);
+  return null;
+}
+function cfSetSteps(lh,fs){
+  document.documentElement.style.setProperty('--desc-lh',lh);
+  document.documentElement.style.setProperty('--desc-fs',fs+'px');
+}
+/* Пустой оборот прячется под рубашку — карточка не печатается чистой. */
+function cfBlank(on){
+  var pb=document.getElementById('pb');
+  if(pb)pb.classList.toggle('cf-blank',!!on);
+}
+function cfSplit(data){
+  var face=document.getElementById('pdesc'),back=document.getElementById('pb-desc');
+  var paras=cfParas(data.desc);
+  if(!paras.length){
+    cfSetSteps(CF_LH[0],CF_FS[0]);
+    face.innerHTML='';back.innerHTML='';cfBlank(true);
+    if(typeof _descWarn==='function')_descWarn(0);
+    return;
   }
-  t.appendChild(tb);return t;
-}
-function renderBlockTo(b,cont){
-  var el;
-  /* пустой заголовок не рисуем — иначе на карточке остаётся голая черта */
-  if(b.t==='header'){if(!(b.text||'').trim())return;el=_el('div','blk blk-h');el.textContent=b.text;}
-  else if(b.t==='text'){el=_el('div','blk blk-t');el.style.fontSize=(b.fs||10)+'px';renderRuns(el,parseFmt(b.text||''));}
-  else if(b.t==='list'){el=_el(b.ordered?'ol':'ul','blk blk-list');el.style.fontSize=(b.fs||10)+'px';
-    (b.text||'').split('\n').forEach(function(line){var li=_el('li');renderRuns(li,parseFmt(line));el.appendChild(li);});}
-  else if(b.t==='chip'){el=_el('div','blk');var chip=_el('span','blk-chip'+(b.style==='red'?' red':''));
-    if(b.label){var l=_el('span','blk-chip-l');l.textContent=b.label+' · ';chip.appendChild(l);}
-    chip.appendChild(document.createTextNode(b.value||''));el.appendChild(chip);}
-  else if(b.t==='stats'){el=_el('div','blk blk-stats');
-    (b.cells||[]).forEach(function(c){var st=_el('div','blk-st');var l=_el('div','blk-st-l');l.textContent=c.l||'';var v=_el('div','blk-st-v');v.textContent=c.v||'';st.appendChild(l);st.appendChild(v);el.appendChild(st);});}
-  else if(b.t==='table'){el=_buildTable(b);}
-  else if(b.t==='divider'){el=_el('div','blk blk-div');}
-  if(el)cont.appendChild(el);
-}
-
-/* ── readForm ── */
-function readForm(){
-  return {
-    type:'custom',
-    name:document.getElementById('fn').value.trim(),
-    cardType:document.getElementById('ftype').value.trim(),
-    noImg:document.getElementById('f-noimg').checked,
-    blocks:JSON.parse(JSON.stringify(blocks)),
-    img:imgDataUrl,rawImg:rawImgDataUrl
-  };
+  _rafSoon(function(){
+    var steps=[];
+    for(var f=0;f<CF_FS.length;f++)for(var l=0;l<CF_LH.length;l++)steps.push([CF_LH[l],CF_FS[f]]);
+    /* Ступень принимается, когда текст уместился на ОБЕ стороны, а не только на
+       лицевую. Иначе любое описание длиннее лица сразу падало на самый мелкий
+       кегль — автоподбор переставал работать. */
+    var cont=null,rest=null,s;
+    for(s=0;s<steps.length;s++){
+      cfSetSteps(steps[s][0],steps[s][1]);
+      cont=cfFill(face,paras,{p:0,off:0});
+      if(!cont){
+        back.innerHTML='';cfBlank(true);
+        if(typeof _descWarn==='function')_descWarn(0);
+        return;
+      }
+      cfBlank(false);
+      rest=cfFill(back,paras,cont);
+      if(!rest){if(typeof _descWarn==='function')_descWarn(0);return;}
+    }
+    /* не уместилось нигде — остаёмся на последней ступени и считаем потерю */
+    var lost=0;
+    for(var i=rest.p;i<paras.length;i++)
+      lost+=paras[i].vis.length-((i===rest.p)?rest.off:0);
+    if(typeof _descWarn==='function')_descWarn(lost);
+  });
 }
 
-/* плашка типа авто-ширины: если текст упёрся в max-width — ужимаем кегль */
-function _fitType(){
-  var el=document.getElementById('p-type');if(!el)return;
-  var steps=[9.5,9,8.5,8,7.5,7];
-  for(var i=0;i<steps.length;i++){el.style.fontSize=steps[i]+'px';if(el.scrollWidth<=el.clientWidth)return;}
-}
-
-/* ── renderCard ── */
 function renderCard(data){
-  document.getElementById('pnm').textContent=data.name||'Произвольная карточка';
-  _fitName();
-  document.getElementById('pc').classList.toggle('no-img',!!data.noImg);
-  document.getElementById('p-type').textContent=data.cardType||'Произвольная карточка';
-  _fitType();
-  setCardImg(data.img||null);
-  /* фикс-палитра: полоса и гем цвета бронзы, без редкости */
-  ['ps','pbs'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=STRIPE;});
-  ['pgm','pbgm'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=STRIPE;});
-  /* блоки: лицо / оборот + перелив хвоста */
-  var bl=data.blocks||[];
-  var front=document.getElementById('pblocks'),back=document.getElementById('pbblocks');
-  front.innerHTML='';back.innerHTML='';
-  var frontB=[],backB=[];
-  bl.forEach(function(b){(b.side==='back'?backB:frontB).push(b);});
-  frontB.forEach(function(b){renderBlockTo(b,front);});
-  /* перелив: пока лицевое тело переполнено — снимаем последний блок на оборот */
-  var body=document.querySelector('#pc .c-body'),overflow=[];
-  var guard=0;
-  while(front.children.length>1&&body.scrollHeight>body.clientHeight+1&&guard++<50){
-    overflow.unshift(frontB.pop());front.removeChild(front.lastChild);
-  }
-  overflow.concat(backB).forEach(function(b){renderBlockTo(b,back);});
-  /* оборот — последняя страница: излишек уже некуда переливать, он уйдёт
-     за край и пропадёт при печати. Предупреждаем явно. */
-  var bb=document.querySelector('#pb .cb-body'),warn=document.getElementById('blocks-warn');
-  if(warn){
-    var over=bb.scrollHeight-bb.clientHeight;
-    if(over>1){warn.textContent='Содержимое не помещается на карточку — уменьшите кегль или удалите блок.';warn.style.display='';}
-    else warn.style.display='none';
-  }
+  syncWraps();
+  var rar=data.rarity||'common';
+  document.getElementById('pnm').textContent=data.name||'Снаряжение';
+  /* подзаголовок: категория, затем тип предмета */
+  var et=document.getElementById('peqtype');
+  var sub=[data.category,data.itemType].filter(Boolean).join(' · ');
+  if(sub){et.textContent=sub;et.style.display='';}else{et.style.display='none';}
+  /* цена на полосе арта, вес в подвале — рядом они не стоят */
+  var cm=document.getElementById('p-cost');
+  if(data.cost){cm.textContent=data.cost+' '+(data.coin||'зм');cm.style.visibility='visible';}
+  else{cm.style.visibility='hidden';}
+  document.getElementById('pwgt').textContent=data.wgt?data.wgt+' фнт.':'';
+  /* в подвале — тип генератора, он же на обороте; категория живёт в подзаголовке */
+  document.getElementById('p-type').textContent='Снаряжение';
+  /* блок свойств: «Бонус» строкой, ниже до трёх колонок, затем «Восстановление» */
+  var mg=parseInt(data.magicBonus,10)||0;
+  var _pack=(data.pack&&data.category==='Боеприпасы');
+  var cells=[];
+  if(_pack)cells.push(['В пачке',_esc(data.pack)]);
+  if(data.charges)cells.push(['Заряды',_esc(data.charges)]);
+  if(data.chargeUse)cells.push(['Расход',_esc(data.chargeUse)]);
+  var h='';
+  if(mg)h+='<div class="cf-row cf-row--b"><span class="cf-lbl">Бонус</span><span class="cf-val">+'+mg+
+    (data.magicTarget?' '+_esc(data.magicTarget):'')+'</span></div>';
+  if(cells.length){h+='<div class="cf-grid">';
+    cells.forEach(function(c){h+='<div class="cf-cell"><div class="cf-lbl">'+c[0]+
+      '</div><div class="cf-num">'+c[1]+'</div></div>';});
+    h+='</div>';}
+  if(data.chargeRecovery)h+='<div class="cf-row cf-row--r"><span class="cf-lbl">Восстановление</span>'+
+    '<span class="cf-restore">'+_esc(data.chargeRecovery)+'</span></div>';
+  var pr=document.getElementById('cf-props');
+  pr.innerHTML=h;pr.style.display=h?'flex':'none';
+  /* настройка — по центру полосы арта, между ценой и редкостью */
+  var at=document.getElementById('p-attune');
+  at.style.display=(data.attune&&data.attune.indexOf('Требует')===0)?'':'none';
+  /* на карточку идёт только ФАКТ проклятия; текст — мастеру, в данные и галерею */
+  document.getElementById('cf-cursed').style.display=data.cursed?'flex':'none';
+  /* картинка: обёрнутый setCardImg сам тянет за собой размытую заливку */
+  setCardImg(data.noImg?null:(data.img||null));
+  applyR(rar);applyPal(rar);cfPal(rar);
+  cfSplit(data);
 }
+
 
 /* ── applyFormData ── */
 function applyFormData(data){
+  cr=data.rarity||'nonmagic';
+  document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');});
+  var rEl=document.querySelector('.rp[data-r="'+cr+'"]');if(rEl)rEl.classList.add('on');
+  document.getElementById('rn').textContent=R[cr].l;
+  document.getElementById('fcategory').value=data.category||'';
+  document.getElementById('fitype').value=data.itemType||'';
   document.getElementById('fn').value=data.name||'';
-  document.getElementById('ftype').value=data.cardType||'';
-  blocks=Array.isArray(data.blocks)?JSON.parse(JSON.stringify(data.blocks)):[];
-  blocks.forEach(_migrateTable);
-  renderBlocksEditor();
+  document.getElementById('fc').value=data.cost||'';
+  document.getElementById('fcoin').value=data.coin||'зм';
+  document.getElementById('fwgt').value=data.wgt||'';
+  _magSet(data.magicBonus);
+  document.getElementById('fmagt').value=data.magicTarget||'';
+  document.getElementById('fchg').value=data.charges||'';
+  document.getElementById('fchgu').value=data.chargeUse||'';
+  document.getElementById('fchgr').value=data.chargeRecovery||'';
+  document.getElementById('fcursed').checked=!!data.cursed;
+  document.getElementById('fcursedtxt').value=data.cursedText||'';
+  document.getElementById('fpack').value=data.pack||'';
+  document.getElementById('fdesc').value=data.desc||'';
+  document.getElementById('fattune').value=data.attune||'';
+  updateAttuneWrap();syncWraps();
   applyImgThumb(data);
-  mkCounter('fn','cnt-fn',34);mkCounter('ftype','cnt-type',40);
+  mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcursedtxt','cnt-cursed',300);mkCounter('fchgr','cnt-chgr',60);mkCounter('fmagt','cnt-magt',40);
 }
 
 /* ── reset ── */
 document.getElementById('btn-reset').addEventListener('click',function(){
   if(!confirm('Сбросить все поля?'))return;
-  ['fn','ftype'].forEach(function(id){document.getElementById(id).value='';});
-  blocks=[];renderBlocksEditor();
+  cr='nonmagic';
+  document.querySelectorAll('.rp').forEach(function(x){x.classList.remove('on');});
+  document.querySelector('.rp[data-r="nonmagic"]').classList.add('on');
+  document.getElementById('rn').textContent=R.nonmagic.l;
+  ['fn','fc','fwgt','fdesc','fmagt','fchg','fchgu','fchgr','fcursedtxt','fpack'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('fcoin').value='зм';
+  document.getElementById('fcategory').selectedIndex=0;
+  document.getElementById('fitype').selectedIndex=0;
+  document.getElementById('fcursed').checked=false;
+  _magSet('');
+  document.getElementById('fattune').selectedIndex=0;
+  document.getElementById('attune-wrap').style.display='none';
   imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();
   var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';
   document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';
@@ -1649,18 +1940,18 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   document.getElementById('btn-recrop').style.display='none';
   document.getElementById('btn-del-img').style.display='none';
   setCardImg(null);resetNoImg();
-  document.getElementById('pnm').textContent='Произвольная карточка';
-  document.getElementById('p-type').textContent='Произвольная карточка';
+  /* карточку не собираем руками по кускам, а перерисовываем целиком: так
+     сброс не может разойтись с renderCard, как это было со старой раскладкой */
   renderCard(readForm());
-  mkCounter('fn','cnt-fn',34);mkCounter('ftype','cnt-type',40);
+  mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcursedtxt','cnt-cursed',300);mkCounter('fchgr','cnt-chgr',60);mkCounter('fmagt','cnt-magt',40);
   toast('Поля сброшены');
 });
 
-/* стартовая палитра */
-renderCard(readForm());
+/* ── create card ── */
+applyPal(cr);
 
-var DEFAULT_NAME='Карточка';
-function collItemSub(card){return card.cardType||'Произвольная';}
+var DEFAULT_NAME='Снаряжение';
+function collItemSub(card){return card.category||(card.type==='equipment'?'Снаряжение':'');}
 /* Для PDF: PNG со скейлом 3 (375 dpi) → JPEG 92% при 300 dpi. Рендер общий с
    ZIP, поэтому конвертируем только на входе в печать — мастер-копии не портим. */
 function _pdfImage(src,cb){
@@ -2116,6 +2407,15 @@ function toast(msg){var t=document.getElementById('toast');t.textContent=msg;t.c
 
 applyR('common');
 loadFromLS();
+/* Категории, убранные при переработке 2026-08-09: старые карточки переводим на
+   новые имена, иначе select покажет пустое значение (loadFromLS уже заполнил
+   collection синхронно). */
+(function(){var MAP={'Авантюрное снаряжение':'Предмет снаряжения',
+  'Медицинские принадлежности':'Вспомогательные предметы',
+  'Навигационные принадлежности':'Прочее'};
+  var ch=false;collection.forEach(function(c){
+    if(MAP[c.category]){c.category=MAP[c.category];ch=true;}});
+  if(ch)saveToLS();})();
 /* Внешний рендер карточки для галерей (collection/templates).
    Галерея грузит страницу-генератор в скрытый iframe и вызывает эту функцию,
    переиспользуя applyFormData+renderCard страницы и html2canvas. Отдаёт PNG

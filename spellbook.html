@@ -162,7 +162,7 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .pv-body{flex:1;min-width:0;max-width:62ch;}
 
 .pv-img{border:2px solid #3a2810;border-radius:3px;background:#cfc0a0;position:relative;overflow:hidden;
-  width:100%;aspect-ratio:296/149;box-sizing:content-box;margin-bottom:14px;}
+  width:100%;aspect-ratio:16/9;box-sizing:content-box;margin-bottom:14px;}
 .pv-img::after{content:'';position:absolute;inset:4px;border:1px solid rgba(160,120,56,.7);border-radius:2px;pointer-events:none;}
 .pv-img img{width:100%;height:100%;object-fit:contain;display:block;}
 
@@ -344,7 +344,7 @@ table.gx-t{width:100%;min-width:100%;border-collapse:collapse;font-size:12.5px;t
 .gx-ce{font-size:11px;font-style:italic;color:#7a6850;margin-top:1px;}
 /* Слот картинки повторяет генератор: та же тёмная рамка с внутренним волоском
    (.c-img в card-new.css) и ровно та пропорция, к которой режет кроп —
-   CARD_RATIO = 296/149 в crop.js. Поэтому изображение из генератора просто
+   CARD_RATIO = 16/9 в crop.js. Поэтому изображение из генератора просто
    уменьшается один в один. object-fit:contain, а не cover: у правильно
    обрезанной картинки результат тот же, но случайная нестандартная не потеряет
    края. Нет картинки — остаётся пустой слот. */
@@ -353,7 +353,7 @@ table.gx-t{width:100%;min-width:100%;border-collapse:collapse;font-size:12.5px;t
    в один» перестаёт быть точным. */
 /* border-box, иначе рамка в 2px прибавляется к 100% ширины: слот вылезал на
    4px шире строк свойств и панель получала горизонтальную прокрутку */
-.gx-img{width:100%;aspect-ratio:296/149;box-sizing:border-box;border:2px solid #3a2810;border-radius:3px;background:#cfc0a0;position:relative;overflow:hidden;flex-shrink:0;}
+.gx-img{width:100%;aspect-ratio:16/9;box-sizing:border-box;border:2px solid #3a2810;border-radius:3px;background:#cfc0a0;position:relative;overflow:hidden;flex-shrink:0;}
 .gx-img::after{content:'';position:absolute;inset:4px;border:1px solid rgba(160,120,56,.7);border-radius:2px;pointer-events:none;}
 .gx-img img{width:100%;height:100%;object-fit:contain;display:block;}
 .gx-st{width:100%;font-size:13px;}
