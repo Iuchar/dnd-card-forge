@@ -1213,29 +1213,78 @@ function _blurBg(src,cb){
       var gP=bProc.getContext('2d');
       if('filter' in gP)gP.filter='blur(18px) saturate(0.65) brightness(1.04)';
       gP.drawImage(c0,0,0);
-      /* маска чистой копии: 1 над кадром, smoothstep вниз к краям.
-         Горизонтальный спад 28px, вертикальный 14 (поля там уже). */
-      gO.globalCompositeOperation='destination-in';
-      var Rh=28,Rv=14;
-      var mh=gO.createLinearGradient(0,0,W,0);
+      /* Маска чистой копии: 1 над кадром, smoothstep вниз к краям
+         (спад 28px по горизонтали, 14 по вертикали).
+         Горизонтальная рампа ВОЛНИСТАЯ: каждая строка сдвигает её на +-5px
+         плавным value-шумом с периодом ~14px. Идеально прямая вертикаль
+         этой рампы — то, что на однотонных картинках читалось тонкой
+         линией даже после градиентного обесцвечивания: кроссфейд там
+         невидим, и глаз собирал по вертикали единственную прямую
+         структуру. Волну кромке кадра давать бесполезно и не нужно — это
+         проверено и откатано, линию давала именно рампа. Шум сеян
+         константой: узор одинаков для всех картинок и стабилен между
+         перерисовками, кэш не страдает. */
+      var Rh=28,Rv=14,maxSh=6;
+      var strip=document.createElement('canvas');
+      strip.width=W+2*maxSh;strip.height=1;
+      var gs2=strip.getContext('2d');
+      var mh=gs2.createLinearGradient(maxSh,0,maxSh+W,0);
       for(var k=0;k<=4;k++){
         var t=k/4,sst=t*t*(3-2*t);
         mh.addColorStop(Math.max(0,(mx-Rh+Rh*t))/W,'rgba(0,0,0,'+sst+')');
         mh.addColorStop(Math.min(W,(mx+FW+Rh-Rh*t))/W,'rgba(0,0,0,'+sst+')');
       }
-      gO.fillStyle=mh;gO.fillRect(0,0,W,H);
-      var mv=gO.createLinearGradient(0,0,0,H);
-      for(var k2=0;k2<=4;k2++){
-        var t2=k2/4,ss2=t2*t2*(3-2*t2);
-        mv.addColorStop(Math.max(0,(my-Rv+Rv*t2))/H,'rgba(0,0,0,'+ss2+')');
-        mv.addColorStop(Math.min(H,(my+FH+Rv-Rv*t2))/H,'rgba(0,0,0,'+ss2+')');
+      gs2.fillStyle=mh;gs2.fillRect(0,0,strip.width,1);
+      var mcv=document.createElement('canvas');mcv.width=W;mcv.height=H;
+      var gm=mcv.getContext('2d');
+      var grid=[],seed=7;
+      for(var i2=0;i2<64;i2++){seed=(seed*1103515245+12345)%2147483648;grid.push(seed/2147483648*2-1);}
+      var noise=function(y){var pnt=y/14,i3=Math.floor(pnt),fr=pnt-i3;
+        var t2=fr*fr*(3-2*fr);
+        return grid[i3%64]+(grid[(i3+1)%64]-grid[i3%64])*t2;};
+      for(var y2=0;y2<H;y2++){
+        gm.drawImage(strip,Math.round(noise(y2)*5)-maxSh,y2);
       }
-      gO.fillStyle=mv;gO.fillRect(0,0,W,H);
-      /* сборка: бледная везде, чистая — поверх, с маской */
+      /* вертикальная составляющая остаётся прямой: горизонтальные поля
+         всего 18px, линии там глаз не строит */
+      var mv=gm.createLinearGradient(0,0,0,H);
+      for(var k2=0;k2<=4;k2++){
+        var t2b=k2/4,ss2=t2b*t2b*(3-2*t2b);
+        mv.addColorStop(Math.max(0,(my-Rv+Rv*t2b))/H,'rgba(0,0,0,'+ss2+')');
+        mv.addColorStop(Math.min(H,(my+FH+Rv-Rv*t2b))/H,'rgba(0,0,0,'+ss2+')');
+      }
+      gm.globalCompositeOperation='destination-in';
+      gm.fillStyle=mv;gm.fillRect(0,0,W,H);
+      /* маска — на КОПИЮ чистой версии: сама bOrig нужна целой и для
+         замера пестроты, и как базовый слой при слабой обработке */
+      var bMask=document.createElement('canvas');bMask.width=W;bMask.height=H;
+      var gk=bMask.getContext('2d');
+      gk.drawImage(bOrig,0,0);
+      gk.globalCompositeOperation='destination-in';
+      gk.drawImage(mcv,0,0);
+      /* АДАПТИВНОСТЬ ПО СОДЕРЖИМОМУ. На плоском однотоне любая тональная
+         разница кадра и поля видна: растягивание рампы и волна ломают
+         ступень и прямизну, но саму разницу тонов не убрать — кроме неё на
+         ровном фоне смотреть не на что. Поэтому сила обесцвечивания зависит
+         от пестроты краевых колонок кадра (по уже размытой копии):
+         однотонные кромки -> поля становятся чистой размытой копией, тон
+         совпадает с кадром, линии не из чего возникнуть; живые кромки ->
+         полная обработка, бледные поля как утверждено. Переход плавный,
+         smoothstep между сигма 3 и 12. */
+      var ed=gO.getImageData(0,0,W,H).data;
+      var _sig=function(x0,x1){var s1=0,s2=0,n=0;
+        for(var yy=my+6;yy<my+FH-6;yy+=2)for(var xx=x0;xx<x1;xx+=2){
+          var ii=(yy*W+xx)*4;var L=(ed[ii]+ed[ii+1]+ed[ii+2])/3;
+          s1+=L;s2+=L*L;n++;}
+        var mid=s1/n;return Math.sqrt(Math.max(0,s2/n-mid*mid));};
+      var sig=Math.max(_sig(mx+2,mx+14),_sig(mx+FW-14,mx+FW-2));
+      var wA=(sig-3)/9;wA=wA<0?0:(wA>1?1:wA);wA=wA*wA*(3-2*wA);
+      /* сборка: чистая как база, бледная поверх с силой wA, у кадра — чистая */
       var c=document.createElement('canvas');c.width=W;c.height=H;
       var g=c.getContext('2d');
-      g.drawImage(bProc,0,0);
       g.drawImage(bOrig,0,0);
+      g.globalAlpha=wA;g.drawImage(bProc,0,0);g.globalAlpha=1;
+      g.drawImage(bMask,0,0);
       /* PNG, а не JPEG: у вырезанных картинок фон прозрачный, JPEG альфу
          не хранит и заливал его чёрным — вся полоса выходила чёрной, а
          растушёвка на чёрном читалась ребром. PNG сохраняет прозрачность,
