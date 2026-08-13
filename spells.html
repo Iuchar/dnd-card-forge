@@ -162,7 +162,22 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
    cover, а не 100% 100%: кадры из старых коллекций сняты под прежнюю
    пропорцию, и срезать им края лучше, чем растягивать по вертикали на 12%.
    Новые кадры выходят из кадровщика ровно 16:9 — для них разницы нет. */
-.c-img-el{position:absolute;top:7px;left:7px;width:calc(100% - 14px);height:calc(100% - 14px);background-size:cover;background-position:center;background-repeat:no-repeat;border-radius:2px;display:block;}
+/* Кадр: 240x135 — ровно 16:9, по центру полосы. Боковые края растушёваны,
+   поэтому картинка не обрывается ребром, а растворяется в подложке.
+   Растушёвка выжжена в самих пикселях (_fadeEdges в crop.js), а не сделана
+   mask-image: маску html2canvas игнорирует, и в PNG край выходил резким. */
+.c-img-el{position:absolute;z-index:1;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:240px;height:135px;background-size:cover;background-position:center;
+  background-repeat:no-repeat;border-radius:0;display:block;}
+/* Подложка: размытая копия кадра, закрывающая полосу по бокам. Размытие НЕ
+   через filter:blur — html2canvas его игнорирует, и в PNG-экспорте вместо
+   мягкого фона выходила бы резкая растянутая копия. Картинка размывается
+   заранее в canvas (см. _blurBg в crop.js), сюда приходит уже готовой.
+   inset:-18px — подложка нарочно шире полосы: при inset:0 она повторяет кадр
+   один в один, совпадает с ним по рисунку, и граница кадра читается ребром.
+   Само смещение html2canvas переносит верно, это обычное позиционирование. */
+.c-img-bleed{position:absolute;z-index:0;inset:-18px;background-size:cover;
+  background-position:center;background-repeat:no-repeat;}
 .c-foot{height:26px;flex-shrink:0;padding:0 14px;display:flex;align-items:center;justify-content:space-between;position:relative;}
 .c-wgt{font-family:'Times New Roman',Times,serif;font-size:10px;color:#8a7860;letter-spacing:.04em;}
 /* рамка типа в подвале карточки (ромбы + линии) */

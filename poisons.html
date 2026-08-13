@@ -162,7 +162,22 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
    cover, а не 100% 100%: кадры из старых коллекций сняты под прежнюю
    пропорцию, и срезать им края лучше, чем растягивать по вертикали на 12%.
    Новые кадры выходят из кадровщика ровно 16:9 — для них разницы нет. */
-.c-img-el{position:absolute;top:7px;left:7px;width:calc(100% - 14px);height:calc(100% - 14px);background-size:cover;background-position:center;background-repeat:no-repeat;border-radius:2px;display:block;}
+/* Кадр: 240x135 — ровно 16:9, по центру полосы. Боковые края растушёваны,
+   поэтому картинка не обрывается ребром, а растворяется в подложке.
+   Растушёвка выжжена в самих пикселях (_fadeEdges в crop.js), а не сделана
+   mask-image: маску html2canvas игнорирует, и в PNG край выходил резким. */
+.c-img-el{position:absolute;z-index:1;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:240px;height:135px;background-size:cover;background-position:center;
+  background-repeat:no-repeat;border-radius:0;display:block;}
+/* Подложка: размытая копия кадра, закрывающая полосу по бокам. Размытие НЕ
+   через filter:blur — html2canvas его игнорирует, и в PNG-экспорте вместо
+   мягкого фона выходила бы резкая растянутая копия. Картинка размывается
+   заранее в canvas (см. _blurBg в crop.js), сюда приходит уже готовой.
+   inset:-18px — подложка нарочно шире полосы: при inset:0 она повторяет кадр
+   один в один, совпадает с ним по рисунку, и граница кадра читается ребром.
+   Само смещение html2canvas переносит верно, это обычное позиционирование. */
+.c-img-bleed{position:absolute;z-index:0;inset:-18px;background-size:cover;
+  background-position:center;background-repeat:no-repeat;}
 .c-foot{height:26px;flex-shrink:0;padding:0 14px;display:flex;align-items:center;justify-content:space-between;position:relative;}
 .c-wgt{font-family:'Times New Roman',Times,serif;font-size:10px;color:#8a7860;letter-spacing:.04em;}
 /* рамка типа в подвале карточки (ромбы + линии) */
@@ -378,12 +393,17 @@ button:focus:not(:focus-visible){outline:none;}
   font-family:'Times New Roman',Times,serif;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;
   color:#8a6b2e;margin:4px 0 0;}
 
-/* картинка: слот 282×167, кадр 16:9, двойная рамка через CSS */
-/* 167px = кадр 264x149 + по 7px отступа + 2px рамки с каждой стороны.
-   Чистые 16:9 требовали бы 148.5 — полпиксела съедает background-size:cover,
-   искажения нет. Пропорцию держит CARD_RATIO в shared/crop.js: менять парой. */
-.c-img{height:167px;margin:0 11px;width:auto;border:2px solid #3a2810;border-radius:3px;background:#cfc0a0;}
-.c-img::after{content:'';position:absolute;inset:4px;border:1px solid rgba(160,120,56,.7);border-radius:2px;pointer-events:none;}
+/* Картинка: полоса во всю ширину карточки, кадр 16:9 по центру, пустое место
+   по бокам закрыто размытой копией самого кадра. Рамок нет — их роль играет
+   растушёвка краёв кадра, см. .c-img-el в styles.css.
+   Пропорции взяты с эталонной страницы equipment-test.html: полоса 136px,
+   кадр 240x135 (16:9), по бокам остаётся по 32.6px подложки. Прежние 167px
+   давали всего 20px по краям, и граница кадра читалась. Освободившийся 31px
+   уходит описанию — .c-body растягивается сам. Пропорцию держит CARD_RATIO
+   в shared/crop.js — менять парой. */
+/* фон #e6dcc6 — как у эталона: края размытой подложки полупрозрачны, сквозь
+   них светит именно этот цвет, и на прежнем #cfc0a0 вся полоса темнела */
+.c-img{height:136px;margin:0;width:100%;border:0;border-radius:0;background:#e6dcc6;}
 .dc.no-img .c-img{display:none;}
 .dc.no-img .c-title{padding-bottom:0;}
 
@@ -1087,20 +1107,135 @@ document.getElementById('btn-del-img').addEventListener('click',function(){
   setCardImg(null);
 });
 
+/* Размытая подложка готовится здесь, а не CSS-фильтром: html2canvas не знает
+   ни filter:blur, ни mask-image, и в PNG-экспорте вместо мягкого фона выходила
+   бы резкая растянутая копия кадра. Размываем в canvas один раз на картинку и
+   держим результат в кэше — рендер зовётся на каждый ввод символа. */
+var _blurCache={},_fadeCache={};
+/* Растушёвка боковых краёв кадра. Тоже не CSS: mask-image html2canvas
+   игнорирует, и в PNG кадр обрывался ребром. Прозрачность выжигается прямо
+   в пикселях через destination-out, результат — PNG с альфой. */
+function _fadeEdges(src,cb){
+  if(_fadeCache[src]!==undefined)return cb(_fadeCache[src]);
+  var im=new Image();
+  im.onload=function(){
+    try{
+      var W=Math.min(im.naturalWidth,900),H=Math.round(W*im.naturalHeight/im.naturalWidth);
+      var c=document.createElement('canvas');c.width=W;c.height=H;
+      var g=c.getContext('2d');
+      g.drawImage(im,0,0,W,H);
+      /* SMOOTHSTEP (3t^2-2t^3): вход и выход с нулевой скоростью, середина
+         крутая. Совмещает достоинства двух прежних кривых: у линейной старт
+         с изломом, и глаз ловил границу начала растушёвки (бутылочный
+         эталон); у куба старт гладкий, но 50% лишь на 27px, и чёткая зона
+         сужалась (пейзажный эталон). Smoothstep: старт невидим, 50% на
+         эталонных 17px. Зона 9% ширины (была 14%): на пейзаже растворение
+         залезало слишком глубоко к центру выделения. Градиент интерполирует
+         между стопами линейно, поэтому кривая набрана девятью точками. */
+      var f=0.09;
+      var gr=g.createLinearGradient(0,0,W,0);
+      for(var k=0;k<=8;k++){
+        var t=k/8,s=t*t*(3-2*t);
+        gr.addColorStop(f*t,'rgba(0,0,0,'+(1-s)+')');
+        gr.addColorStop(1-f*t,'rgba(0,0,0,'+(1-s)+')');
+      }
+      g.globalCompositeOperation='destination-out';
+      g.fillStyle=gr;g.fillRect(0,0,W,H);
+      _fadeCache[src]=c.toDataURL('image/png');
+    }catch(e){_fadeCache[src]=null;}
+    cb(_fadeCache[src]);
+  };
+  im.onerror=function(){_fadeCache[src]=null;cb(null);};
+  im.src=src;
+}
+function _blurBg(src,cb){
+  if(_blurCache[src]!==undefined)return cb(_blurCache[src]);
+  var im=new Image();
+  im.onload=function(){
+    try{
+      /* Точная копия эталонного CSS-фильтра blur(18px) saturate(.65)
+         brightness(1.04): холст 341 — родная экранная ширина элемента
+         подложки (полоса 305 + вынос 18 с двух сторон), поэтому и радиус
+         размытия берётся эталонный без пересчёта, и даунскейл-потерь нет.
+         Прежний холст 220 стирал мелкую структуру ещё до размытия, а радиус
+         13.5 после растяжки оборачивался 20.9px — поля выходили «пластилином»
+         (структура была в 2–4.5 раза глаже эталонной).
+         Сверять с эталоном можно ТОЛЬКО репликой обоих конвейеров в canvas:
+         html2canvas элементы с CSS-фильтром не рисует вовсе, из-за такой
+         «сверки» здесь однажды появились кривые 0.985 и зум (см. историю). */
+      /* Карта в ГЕОМЕТРИИ КАДРА: холст = элемент подложки (341x172), кадр
+         240x135 в центре, картинка ложится в него ровно тем же cover, что и
+         в резком кадре. Тогда под зоной растушёвки лежит размытая версия ТЕХ
+         ЖЕ пикселей — переход становится кроссфейдом резкое-размытое одного
+         содержимого. Прежняя карта крыла картинкой весь элемент (зум 1.42),
+         и под растушёвкой оказывалось смещённое содержимое с другой
+         обработкой — граница читалась даже при гладкой кривой.
+         Поля вокруг кадра заполняются растянутыми крайними рядами его
+         пикселей и размываются вместе с ним; до краёв холста они доходят
+         вплотную, поэтому blur не мешает прозрачность и углы остаются
+         честно-тёмными — осветлённые углы эталона были артефактом CSS. */
+      var W=341,H=172,FW=240,FH=135;
+      var mx=Math.round((W-FW)/2),my=Math.round((H-FH)/2);
+      var iw=im.naturalWidth,ih=im.naturalHeight;
+      var s=Math.max(FW/iw,FH/ih),dw=iw*s,dh=ih*s;
+      var c0=document.createElement('canvas');c0.width=W;c0.height=H;
+      var g0=c0.getContext('2d');
+      /* кадр — тем же cover, с обрезкой в границы кадра */
+      g0.save();g0.beginPath();g0.rect(mx,my,FW,FH);g0.clip();
+      g0.drawImage(im,mx+(FW-dw)/2,my+(FH-dh)/2,dw,dh);
+      g0.restore();
+      /* поля — продолжение кромок кадра */
+      var есть=function(a,b2){return Math.max(1,Math.round(a/b2));};
+      g0.drawImage(c0,mx,my,1,FH, 0,my,mx,FH);          /* левое */
+      g0.drawImage(c0,mx+FW-1,my,1,FH, mx+FW,my,W-mx-FW,FH); /* правое */
+      g0.drawImage(c0,0,my,W,1, 0,0,W,my);              /* верхнее */
+      g0.drawImage(c0,0,my+FH-1,W,1, 0,my+FH,W,H-my-FH);/* нижнее */
+      var c=document.createElement('canvas');c.width=W;c.height=H;
+      var g=c.getContext('2d');
+      if('filter' in g)g.filter='blur(18px) saturate(0.65) brightness(1.04)';
+      g.drawImage(c0,0,0);
+      /* PNG, а не JPEG: у вырезанных картинок фон прозрачный, JPEG альфу
+         не хранит и заливал его чёрным — вся полоса выходила чёрной, а
+         растушёвка на чёрном читалась ребром. PNG сохраняет прозрачность,
+         сквозь подложку виден кремовый фон карточки, как на эталоне. */
+      _blurCache[src]=c.toDataURL('image/png');
+    }catch(e){_blurCache[src]=null;}
+    cb(_blurCache[src]);
+  };
+  im.onerror=function(){_blurCache[src]=null;cb(null);};
+  im.src=src;
+}
 function setCardImg(src){
   var ci=document.getElementById('cib');
   var ex=ci.querySelector('.c-img-el');
+  var bl=ci.querySelector('.c-img-bleed');
   if(src){
     /* div с фоном, а НЕ <img>: html2canvas игнорирует object-fit и растягивает
        картинку в PNG-экспорте, а background-size:cover отрабатывает верно.
        Проверено кругом в кадре 2:1 — через <img> он давал эллипс 0.88. */
-    if(!ex){ex=document.createElement('div');ex.className='c-img-el';ci.insertBefore(ex,ci.firstChild);}
-    ex.style.backgroundImage='url("'+src.replace(/"/g,'\\"')+'")';
+    if(!bl){bl=document.createElement('div');bl.className='c-img-bleed';ci.insertBefore(bl,ci.firstChild);}
+    if(!ex){ex=document.createElement('div');ex.className='c-img-el';ci.insertBefore(ex,bl.nextSibling);}
+    /* Кадр и подложка применяются ОДНИМ махом, когда готовы обе: раньше
+       сначала вставал резкий исходник, а спустя момент его подменяли
+       растушёвкой с подложкой — при переключении карточек виден был прыжок.
+       Пока считается, на карточке остаётся прежняя картинка; для уже
+       виденных изображений оба кэша срабатывают синхронно, без задержки. */
+    var _wait=2,_fg=null,_bg=null,_my=setCardImg._tok=(setCardImg._tok||0)+1;
+    var _apply=function(){
+      if(--_wait>0)return;
+      if(setCardImg._tok!==_my)return; /* пришла более свежая картинка */
+      var e=ci.querySelector('.c-img-el'),b=ci.querySelector('.c-img-bleed');
+      if(e)e.style.backgroundImage='url("'+(_fg||src).replace(/"/g,'\\"')+'")';
+      if(b)b.style.backgroundImage=_bg?('url("'+_bg.replace(/"/g,'\\"')+'")'):'none';
+    };
+    _fadeEdges(src,function(fg){_fg=fg;_apply();});
+    _blurBg(src,function(bg){_bg=bg;_apply();});
     document.getElementById('img-ph').style.display='none';
     document.getElementById('btn-recrop').style.display='flex';
     document.getElementById('btn-del-img').style.display='flex';
   }else{
     if(ex)ex.remove();
+    if(bl)bl.remove();
     document.getElementById('img-ph').style.display='flex';
     document.getElementById('btn-recrop').style.display='none';
     document.getElementById('btn-del-img').style.display='none';
