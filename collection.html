@@ -735,7 +735,11 @@ function applyPal(rar){
   var d=R[rar]||R.common||R[Object.keys(R)[0]];
   if(d.grad){var g='linear-gradient(90deg,'+d.grad[0]+','+d.grad[1]+','+d.grad[0]+')';
     ['ps','pbs'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=g;});}
-  if(d.gem){['pgm','pbgm'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=d.gem;});}
+  if(d.gem){['pgm','pbgm'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=d.gem;});
+    /* тот же цвет как переменная на самой карточке: им красятся засечки
+       счётчиков в снаряжении, а брать его со стиля гема нельзя — гем
+       рисуется градиентом поверх */
+    ['pc','pb'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.setProperty('--gem',d.gem);});}
 }
 /* ═══ ЦВЕТА СЕКЦИЙ — ЭТО НЕ РЕДКОСТЬ ═══
    Инструменты, яды и произвольные карточки редкости не имеют вовсе: у них
@@ -774,6 +778,9 @@ function applySectionPal(key){
   var g=sectionGrad(key);
   ['ps','pbs'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=g;});
   ['pgm','pbgm'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=p.mark;});
+  /* тот же цвет переменной на самих карточках: им красится засечка в подвале.
+     У генераторов с редкостью это делает applyPal, здесь редкости нет. */
+  ['pc','pb'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.setProperty('--gem',p.mark);});
 }
 /* Хук _backPal, который зовёт renderback.js: оборот не должен краситься по
    data.rarity, у секции свой цвет. */
@@ -781,6 +788,8 @@ function sectionBackPal(key,stripe,gem){
   var p=SECTION_PAL[key];if(!p)return;
   if(stripe)stripe.style.background=sectionGrad(key);
   if(gem)gem.style.background=p.mark;
+  var pb=document.getElementById('pb');
+  if(pb)pb.style.setProperty('--gem',p.mark);
 }
 var COLLECTIONS=[
   {key:'dnd_cardforge_weapon',src:'weapon',group:'weapon',label:'Оружие',gen:'weapon.html',idb:'dnd_weapon_imgs'},
@@ -1055,7 +1064,8 @@ function galCost(c){return c.cost?(c.cost+' '+(c.coin||'зм')):'—';}
 /* Цвет карточки. У ядов и произвольных редкости нет вовсе — генератор красит их
    собственной палитрой (полынь и охра), поэтому она перебивает шкалу редкости.
    Значения держим здесь же, чтобы галерея не расходилась с генератором:
-   яды — poisons.html (_backPal/applyPoisonPal), произвольные — custom.html (STRIPE). */
+   яды — poisons.html (_backPal/applyPoisonPal), произвольные — custom.html
+   (applySectionPal). */
 /* Секции без редкости берут цвет из SECTION_PAL (shared/sectionpal.js) —
    единственное место, где он объявлен. Поля здесь называются как у редкостей
    (gem/grad), потому что galPal подставляет запись вместо записи из R; сама

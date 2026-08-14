@@ -202,8 +202,9 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-foot{height:26px;flex-shrink:0;padding:0 14px;display:flex;align-items:center;justify-content:space-between;position:relative;}
 .c-wgt{font-family:'Times New Roman',Times,serif;font-size:10px;color:#8a7860;letter-spacing:.04em;}
 /* рамка типа в подвале карточки (ромбы + линии) */
-.c-typeframe{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:150px;height:20px;pointer-events:none;}
-.c-tfsvg{width:100%;height:100%;display:block;}
+/* .c-typeframe/.c-tfsvg (резной картуш в подвале) удалены: подвал переехал на
+   вид с эталонной страницы — засечка и имя раздела капителью, см. card-new.css.
+   У заклинаний свой подвал и картушем они не пользовались. */
 
 .crop-modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;display:none;align-items:center;justify-content:center;}
 .crop-modal-bg.open{display:flex;}
@@ -391,14 +392,21 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-stripe{height:7px;}
 .c-stripe-under{display:none;}
 
-/* мета-бар: редкость по центру, цена слева, настройка справа */
-.c-meta{border-bottom:.5px solid rgba(90,72,32,.15);background:rgba(90,72,32,.06);}
+/* мета-бар: редкость по центру, цена слева, настройка справа.
+   Высота 20px вместо 24: строка в нём одна, кегль 9-9.5px, и лишние 4px
+   отбирались у описания. Ромбы уменьшены следом, иначе они упирались в края
+   полосы. */
+.c-meta{height:20px;border-bottom:.5px solid rgba(90,72,32,.15);background:rgba(90,72,32,.06);}
+.c-meta-orn{width:18px;}
+.c-meta-orn svg{width:14px;height:14px;}
 .c-meta-inner{position:relative;justify-content:center;}
+/* цена и редкость 9.5px — как на эталоне equipment-test */
+.c-meta-item{font-size:9.5px;}
 .c-meta-item.cost{position:absolute;left:6px;}
 .c-meta-attune{position:absolute;right:6px;font-family:'Crimson Text',Georgia,serif;font-style:italic;font-size:9.5px;color:#6a5236;}
 
 /* блок имени над картинкой: имя + подзаголовок капителью */
-.c-title{flex-shrink:0;padding:5px 11px 5px;}
+.c-title{flex-shrink:0;padding:3px 11px 5px;}
 .c-title .c-name{margin-bottom:0;}
 .c-name{font-size:var(--name-fs,16px);}
 .c-title .c-dmgline,.c-title .c-eqtype,.c-title .c-ttype{
@@ -449,15 +457,47 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 
 /* единые боковые отступы 11px */
 .c-body{padding:5px 11px 3px;}
-.cb-body{flex:1;min-height:0;padding:11px 11px 6px;display:flex;flex-direction:column;overflow:hidden;}
-.c-foot{padding:0 11px;border-top:.5px solid rgba(90,72,32,.2);}
+/* Верхний отступ 5px, а не 11: строка «Описание» на обороте встаёт серединой
+   ровно против середины мета-полосы на лице (обе 20px от верха карточки).
+   Связка ручная — оборот про высоту лицевой полосы ничего не знает, поэтому
+   при изменении .c-meta{height} этот отступ надо пересчитывать. */
+.cb-body{flex:1;min-height:0;padding:5px 11px 6px;display:flex;flex-direction:column;overflow:hidden;}
+/* Подвал — с эталонной equipment-test. Слева засечка цвета редкости и имя
+   раздела капителью, справа вес и гем; на обороте зеркально, без веса.
+   Резной картуш (.c-typeframe) и плашка типа (.c-typeplate) убраны.
+   11px — как боковые отступы карточки: на целой позиции засечка 2px рисуется
+   двумя сплошными пикселями и выглядит плотной, на половине (рамка 2.5px)
+   сглаживание даёт одинаковый тонкий штрих слева и справа. */
+.c-foot{height:20px;margin-top:2px;padding:0 11px;border-top:.5px solid rgba(90,72,32,.3);}
+/* Обе половины одной высоты: иначе высота обёртки равнялась самому высокому
+   ребёнку (слева засечка 11px, справа гем 12px) и текст в них центрировался по
+   разным коробкам, отчего половины стояли на разной высоте. */
+.c-sign,.c-right{height:12px;display:flex;align-items:center;flex-shrink:0;}
+.c-sign{gap:7px;}
+.c-right{gap:9px;}
+/* у произвольной карточки подпись задаёт пользователь и может быть пустой */
+.c-foot:has(.c-cat:empty) .c-sign{display:none;}
+.c-tick{width:2px;height:11px;background:var(--gem,#8a6b2e);}
+.c-cat{font-family:'Times New Roman',Times,serif;font-size:9.5px;font-weight:600;
+  letter-spacing:.2em;text-transform:uppercase;color:#6f6045;white-space:nowrap;}
+.c-wgt{font-size:9.5px;color:#75634a;font-variant-numeric:tabular-nums;white-space:nowrap;}
+/* Блик поверх цвета: сам цвет ставит applyPal инлайном (background), поэтому
+   градиент даём отдельным слоем, иначе инлайн его затирает. */
+.c-gem{width:12px;height:12px;opacity:1;position:relative;}
+.c-gem::after{content:'';position:absolute;inset:0;border-radius:50%;
+  background:linear-gradient(180deg,rgba(246,241,227,.32),rgba(0,0,0,.2));}
 
 .c-quote{margin:6px 0 2px;line-height:1.3;}
-/* межстрочный интервал описания: 1.4 — как у заклинаний (было 1.5).
+/* межстрочный интервал описания: 1.35 (было 1.5, потом 1.4 как у заклинаний).
+   Ужат ради лишней строки на лице. Значение безразмерное и потому действует на
+   все ступени лестницы кеглей разом: 12px→16.2, 11.5→15.53, 11→14.85, 10.5→14.18,
+   10→13.5. На 11.5px семь строк проходят с запасом всего 0.3px, и подстрочные
+   элементы последней строки идут близко к подвалу — если понадобится воздух,
+   добирать его надо нижним полем .c-body, а не интерлиньяжем.
    Остальные свойства пришли сюда из пяти одинаковых локальных копий; там
    стояло line-height:1.5, которое это правило и так перебивало. */
-.c-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);line-height:1.4;color:#2a1e0a;flex:1;overflow:hidden;white-space:pre-wrap;}
-.cb-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);line-height:1.4;color:#2a1e0a;flex:1;overflow:hidden;white-space:pre-wrap;}
+.c-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);line-height:1.35;color:#2a1e0a;flex:1;overflow:hidden;white-space:pre-wrap;}
+.cb-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);line-height:1.35;color:#2a1e0a;flex:1;overflow:hidden;white-space:pre-wrap;}
 .c-gem{opacity:1;}
 
 /* оборот: заголовок «Описание» золотой с чертой, подвал с ромбами */
@@ -465,10 +505,8 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   display:flex;align-items:center;text-align:left;text-transform:uppercase;
   border-bottom:none;padding:0;margin-bottom:6px;flex-shrink:0;}
 .cb-lbl::after{content:'';flex:1;height:1px;background:rgba(160,120,56,.5);}
-.dc-back .c-foot{position:relative;}
-/* три ромба — тот же SVG, что в подвале заклинаний: центральный крупнее */
-.dc-back .c-foot::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  width:42px;height:12px;background:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 42 12'%3E%3Cpath d='M5 6 L8 3 L11 6 L8 9 Z' fill='%234a3a24'/%3E%3Cpath d='M17 6 L21 2 L25 6 L21 10 Z' fill='%234a3a24'/%3E%3Cpath d='M31 6 L34 3 L37 6 L34 9 Z' fill='%234a3a24'/%3E%3C/svg%3E") center/contain no-repeat;}
+/* Ромбов по центру оборота больше нет: там теперь та же подпись раздела, что
+   и на лице, зеркально — гем слева, имя и засечка справа. */
 
 /* Плашки «+N» у названия больше нет: бонус пишут в самом названии, и знак его
    дублировал. Убран вместе с .c-title-main.has-mag; сам .c-title-main остался
@@ -843,8 +881,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
           <div class="c-desc" id="pds"></div>
         </div>
         <div class="c-foot">
-          <span class="c-wgt" id="pwgt"></span>
-          <span class="c-typeframe"><svg class="c-tfsvg" viewBox="0 0 210 28" xmlns="http://www.w3.org/2000/svg"><polygon points="40,14 51,3 159,3 170,14 159,25 51,25" fill="#fbf4e2" stroke="#5a4820" stroke-width="1.4"/><line x1="23" y1="14" x2="40" y2="14" stroke="#5a4820" stroke-width="1.3"/><line x1="170" y1="14" x2="187" y2="14" stroke="#5a4820" stroke-width="1.3"/><polygon points="15,6 23,14 15,22 7,14" fill="#d4c4a0" stroke="#5a4820" stroke-width="1.3"/><circle cx="15" cy="14" r="2" fill="#5a4820"/><polygon points="195,6 203,14 195,22 187,14" fill="#d4c4a0" stroke="#5a4820" stroke-width="1.3"/><circle cx="195" cy="14" r="2" fill="#5a4820"/><text x="105" y="18.5" text-anchor="middle" font-family="Crimson Text,Georgia,serif" font-style="italic" font-size="13" fill="#3a2810">Оружие</text></svg></span><div class="c-gem" id="pgm"></div>
+          <span class="c-sign"><span class="c-tick"></span><span class="c-cat">Оружие</span></span><span class="c-right"><span class="c-wgt" id="pwgt"></span><div class="c-gem" id="pgm"></div></span>
         </div>
       </div>
     </div>
@@ -856,7 +893,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
           <div class="cb-lbl">Описание</div>
           <div class="cb-desc" id="pbk"></div>
         </div>
-        <div class="c-foot"><div class="c-gem" id="pbgm"></div></div>
+        <div class="c-foot"><div class="c-gem" id="pbgm"></div><span class="c-sign"><span class="c-cat">Оружие</span><span class="c-tick"></span></span></div>
       </div>
     </div>
   </div>
@@ -1036,7 +1073,11 @@ function applyPal(rar){
   var d=R[rar]||R.common||R[Object.keys(R)[0]];
   if(d.grad){var g='linear-gradient(90deg,'+d.grad[0]+','+d.grad[1]+','+d.grad[0]+')';
     ['ps','pbs'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=g;});}
-  if(d.gem){['pgm','pbgm'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=d.gem;});}
+  if(d.gem){['pgm','pbgm'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.background=d.gem;});
+    /* тот же цвет как переменная на самой карточке: им красятся засечки
+       счётчиков в снаряжении, а брать его со стиля гема нельзя — гем
+       рисуется градиентом поверх */
+    ['pc','pb'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.setProperty('--gem',d.gem);});}
 }
 /* Слияние двух коллекций оружия (2014/2024) в одну с полем edition.
    LS-часть синхронная и выполняется ДО core.js/collection.js, чтобы loadFromLS
