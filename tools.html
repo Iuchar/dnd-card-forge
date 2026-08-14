@@ -755,7 +755,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
       <span class="char-counter" id="cnt-craft">0/600</span>
     </div>
 
-  <div class="lbl">Описание</div>
+  <label class="lbl" for="fdesc">Описание</label>
 <!-- Панель форматирования описания (Ж/К/П); копия живёт в weapon-form-b.html,
      т.к. вложенные включения build.py не разворачивает -->
 <div class="fmt-bar" role="group" aria-label="Форматирование описания">
@@ -885,7 +885,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   </a>
   <div class="coll-search-wrap">
     <svg class="coll-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input class="coll-search" id="coll-search" type="text" placeholder="Поиск по коллекции…" autocomplete="off"/>
+    <input class="coll-search" id="coll-search" type="text" aria-label="Поиск по коллекции" placeholder="Поиск по коллекции…" autocomplete="off"/>
     <button class="coll-search-clear" id="coll-search-clear" title="Очистить">✕</button>
   </div>
   <div class="coll-list" id="coll-list">

@@ -800,10 +800,12 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   </select>
   </div>
 <!-- Панель оружия, часть B (после «Мастерства») — общая для 2014 и 2024 -->
-  <label class="lbl" for="fr1">Дистанция (обычная / макс.)</label>
+  <!-- заголовок пары, а не подпись поля: имена полям дают подписи внутри
+       (иначе диктор читал бы «Дистанция (обычная / макс.) Обычная») -->
+  <div class="lbl">Дистанция (обычная / макс.)</div>
   <div class="row2">
-    <div class="sf"><div class="sl">Обычная</div><input class="si" type="text" id="fr1" placeholder="20" maxlength="4" inputmode="numeric"/></div>
-    <div class="sf"><div class="sl">Максимальная</div><input class="si" type="text" id="fr2" placeholder="60" maxlength="4" inputmode="numeric"/></div>
+    <div class="sf"><label class="sl" for="fr1">Обычная</label><input class="si" type="text" id="fr1" placeholder="20" maxlength="4" inputmode="numeric"/></div>
+    <div class="sf"><label class="sl" for="fr2">Максимальная</label><input class="si" type="text" id="fr2" placeholder="60" maxlength="4" inputmode="numeric"/></div>
   </div>
   <div class="lbl">Урон</div>
   <div class="row2">
@@ -840,7 +842,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     <span class="char-counter" id="cnt-flv">0/70</span>
   </div>
 
-  <div class="lbl">Описание / Эффект</div>
+  <label class="lbl" for="fdesc">Описание / Эффект</label>
   <div class="fmt-bar" role="group" aria-label="Форматирование описания">
     <button type="button" class="fmt-btn" data-fmt="**" title="Полужирный (Ctrl+B)" aria-label="Полужирный"><b>Ж</b></button>
     <button type="button" class="fmt-btn" data-fmt="*" title="Курсив (Ctrl+I)" aria-label="Курсив"><i>К</i></button>
@@ -938,7 +940,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   </a>
   <div class="coll-search-wrap">
     <svg class="coll-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input class="coll-search" id="coll-search" type="text" placeholder="Поиск по коллекции…" autocomplete="off"/>
+    <input class="coll-search" id="coll-search" type="text" aria-label="Поиск по коллекции" placeholder="Поиск по коллекции…" autocomplete="off"/>
     <button class="coll-search-clear" id="coll-search-clear" title="Очистить">✕</button>
   </div>
   <div class="coll-list" id="coll-list">
