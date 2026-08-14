@@ -59,6 +59,10 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .nav-toggle{padding:7px 13px;font-family:'Times New Roman',Times,serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);transition:all .14s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
 .nav-section-lbl{font-family:'Times New Roman',Times,serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);padding:5px 10px 3px;pointer-events:none;}
 :focus-visible{outline:2px solid var(--gold-l,#f0b830);outline-offset:2px;border-radius:3px;}
+/* Обводку гасим только там, где она пришла НЕ с клавиатуры: :focus-visible выше
+   остаётся видимым. Обе строки лежали копиями в ядах и инструментах. */
+html:focus,body:focus{outline:none;}
+button:focus:not(:focus-visible){outline:none;}
 .si:focus-visible,.coll-search:focus-visible,textarea:focus-visible{outline:none;}
 .si:focus-visible{border-color:var(--gold-l,#f0b830);border-width:1.5px;}
 .coll-search:focus-visible{border-color:var(--accent-l);border-width:1.5px;}
@@ -427,6 +431,13 @@ table.gx-t{width:100%;min-width:100%;border-collapse:collapse;font-size:12.5px;t
 /* CARD CSS (same as generator pages) */
 
 /* CONFIRM MODAL */
+/* Подтверждение удаления в галереях. Отдельный файл, а не часть
+   gallery-styles.css: модалка есть только там, где что-то удаляют, — в
+   коллекции и книге заклинаний. В шаблонах удалять нечего, и правила туда
+   не едут.
+   У генераторов своя такая же модалка (app-chrome.css + gen-confirm-modal.html),
+   с другими именами классов и id. Свести обе в одну — отдельная работа:
+   придётся переименовывать и разметку, и обработчики на семи страницах. */
 .conf-bg{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:400;display:none;align-items:center;justify-content:center;}
 .conf-bg.open{display:flex;}
 .conf-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:12px;padding:26px 24px 20px;width:290px;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,.5);}
@@ -588,6 +599,7 @@ table.gx-t{width:100%;min-width:100%;border-collapse:collapse;font-size:12.5px;t
 </div>
 
 <!-- CONFIRM DELETE MODAL -->
+<!-- Подтверждение удаления в галереях; текст в h3 подставляет showConfirm -->
 <div class="conf-bg" id="conf-bg">
   <div class="conf-box">
     <h3 id="conf-h">Удалить карточку?</h3>
@@ -1647,10 +1659,26 @@ document.getElementById('prev-close').addEventListener('click',closePreview);
 document.getElementById('prev-bg').addEventListener('click',function(e){if(e.target===this)closePreview();});
 function deleteCard(card){var idx=allCards.findIndex(function(c){return c===card||(c.id===card.id&&c._source===card._source);});if(idx===-1)return;var src=allCards[idx]._source;allCards.splice(idx,1);saveBack(src);renderGrid();toast('Карточка удалена');}
 document.getElementById('btn-m-del').addEventListener('click',function(){if(!previewCard)return;showConfirm('Удалить карточку «'+(previewCard.name||'без названия')+'»?',function(){var c=previewCard;closePreview();deleteCard(c);});});
+/* Модалка подтверждения в галереях: showConfirm(текст, что делать по «Удалить»).
+   Обработчики вешаются сразу при подключении, поэтому include идёт ПОСЛЕ
+   разметки gal-confirm-modal.html — как и весь остальной скрипт страницы.
+   Колбэк сбрасывается в обеих ветках: иначе повторное открытие модалки без
+   подтверждения оставляло бы висеть предыдущее действие. */
 var confirmCallback=null;
-function showConfirm(msg,cb){document.getElementById('conf-h').textContent=msg;confirmCallback=cb;document.getElementById('conf-bg').classList.add('open');}
-document.getElementById('conf-yes').addEventListener('click',function(){document.getElementById('conf-bg').classList.remove('open');if(confirmCallback)confirmCallback();confirmCallback=null;});
-document.getElementById('conf-no').addEventListener('click',function(){document.getElementById('conf-bg').classList.remove('open');confirmCallback=null;});
+function showConfirm(msg,cb){
+  document.getElementById('conf-h').textContent=msg;
+  confirmCallback=cb;
+  document.getElementById('conf-bg').classList.add('open');
+}
+document.getElementById('conf-yes').addEventListener('click',function(){
+  document.getElementById('conf-bg').classList.remove('open');
+  if(confirmCallback)confirmCallback();
+  confirmCallback=null;
+});
+document.getElementById('conf-no').addEventListener('click',function(){
+  document.getElementById('conf-bg').classList.remove('open');
+  confirmCallback=null;
+});
 document.getElementById('btn-clear-all').addEventListener('click',function(){showConfirm('Удалить ВСЕ карточки из всех коллекций?',function(){allCards=[];COLLECTIONS.forEach(function(col){try{localStorage.removeItem(col.key);}catch(e){}});renderGrid();toast('Коллекция очищена');});});
 var toastTimer=null;
 

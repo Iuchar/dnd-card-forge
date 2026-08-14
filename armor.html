@@ -60,6 +60,10 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
 .nav-toggle{padding:7px 13px;font-family:'Times New Roman',Times,serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);transition:all .14s;display:flex;align-items:center;gap:6px;white-space:nowrap;}
 .nav-section-lbl{font-family:'Times New Roman',Times,serif;font-size:8px;letter-spacing:.18em;text-transform:uppercase;color:var(--text3);padding:5px 10px 3px;pointer-events:none;}
 :focus-visible{outline:2px solid var(--gold-l,#f0b830);outline-offset:2px;border-radius:3px;}
+/* Обводку гасим только там, где она пришла НЕ с клавиатуры: :focus-visible выше
+   остаётся видимым. Обе строки лежали копиями в ядах и инструментах. */
+html:focus,body:focus{outline:none;}
+button:focus:not(:focus-visible){outline:none;}
 .si:focus-visible,.coll-search:focus-visible,textarea:focus-visible{outline:none;}
 .si:focus-visible{border-color:var(--gold-l,#f0b830);border-width:1.5px;}
 .coll-search:focus-visible{border-color:var(--accent-l);border-width:1.5px;}
@@ -125,6 +129,13 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .hbtn-file{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;}
 .hbtn-upload:has(.hbtn-file:focus-visible){outline:2px solid var(--gold-l);outline-offset:2px;}
 .img-thumb{position:absolute;inset:0;background-size:cover;background-position:center;border-radius:6px;}
+/* Галка со словом в сайдбаре (свойства оружия, доспехов, заклинаний). Базовые
+   правила были тремя копиями в этих страницах; локально осталась только
+   разница: у оружия строки плотнее, у заклинаний выше пальцевая цель. */
+.pcb{display:flex;align-items:center;gap:5px;cursor:pointer;padding:3px 0;}
+.pcb input[type=checkbox]{accent-color:var(--gold);width:13px;height:13px;cursor:pointer;flex-shrink:0;}
+.pcb span{font-size:13px;color:var(--text2);}
+
 /* Скрытая справка у подписи поля: кружок «?» разворачивает текст под ним.
    Нужна там, где поле влияет на карточку не напрямую (магический бонус входит
    в атаку, урон и КБ, но сам на карточке не печатается). Свёрнута по
@@ -177,7 +188,8 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-meta-orn svg{width:20px;height:20px;}
 .c-meta-inner{flex:1;position:relative;display:flex;align-items:center;justify-content:center;padding:0 10px;min-width:0;}
 .c-meta-item{font-family:'Times New Roman',Times,serif;font-size:9px;font-weight:700;letter-spacing:.09em;color:#5a4830;text-transform:uppercase;white-space:nowrap;}
-.c-meta-item.cost{color:#8a6010;position:absolute;left:10px;}
+/* цена: #8a6010 давал контраст 4.34 на подложке карточки, ниже порога 4.5 */
+.c-meta-item.cost{color:#805811;position:absolute;left:10px;}
 /* Фон, а не <img>: html2canvas игнорирует object-fit и растягивает кадр в
    PNG-экспорте, background-size:cover же отрабатывает верно (см. setCardImg).
    cover, а не 100% 100%: кадры из старых коллекций сняты под прежнюю
@@ -328,9 +340,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 /* миниатюра карточки в панели «Коллекция» — единый размер и фон */
 .coll-item-thumb{width:30px;height:42px;border-radius:4px;flex-shrink:0;background:var(--bg4);overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.08);}
 
-.pcb{display:flex;align-items:center;gap:5px;cursor:pointer;padding:3px 0;}
-.pcb input[type=checkbox]{accent-color:var(--gold);width:13px;height:13px;cursor:pointer;flex-shrink:0;}
-.pcb span{font-size:13px;color:var(--text2);}
 /* Общие стили карточки и пикера редкости (7 генераторов).
    Байт-идентичные правила, вынесены из страниц 2026-07-04. */
 .c-body{flex:1;min-height:0;padding:5px 14px 3px;display:flex;flex-direction:column;overflow:hidden;}
@@ -365,15 +374,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-ac-lbl{font-family:'Times New Roman',Times,serif;font-size:7px;letter-spacing:.12em;color:#a09070;text-transform:uppercase;text-align:center;}
 .c-ac-num{font-family:'Times New Roman',Times,serif;font-size:32px;font-weight:700;color:#2a1e0a;line-height:1;}
 .c-ac-mod{font-size:10px;color:#5a4828;text-align:center;line-height:1.25;white-space:pre-line;}
-.dc-back{
-  width:310px;height:437px;
-  border-radius:12px;overflow:hidden;
-  border:3px solid var(--cb,#a09080);
-  background:#e8dcc8;
-  display:flex;flex-direction:column;
-  font-family:'Crimson Text',Georgia,serif;
-  transition:border-color .2s;
-}
 .crop-area img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;}
 .coll-empty svg{opacity:.2;display:block;margin:0 auto 10px;}
 .coll-sel-info{font-family:'Times New Roman',Times,serif;font-size:10px;color:var(--text3);text-align:center;letter-spacing:.06em;}
@@ -388,7 +388,12 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 /* Геометрия лицевой стороны. Была продублирована слово в слово в шести
    генераторах, причём объявленные там border-color и background всё равно
    перебивались правилом ниже — то есть половина копии была мертва. */
-.dc{width:310px;height:437px;border-radius:12px;overflow:hidden;
+/* .dc-back названа отдельно: у снаряжения, инструментов, ядов и произвольных
+   оборот несёт оба класса (dc dc-back), а у оружия и доспехов — только второй.
+   Раньше из-за этого геометрия оборота лежала копией в обеих страницах, причём
+   объявленные там border-color и background всё равно перебивались правилом
+   ниже — жила только половина копии. */
+.dc,.dc-back{width:310px;height:437px;border-radius:12px;overflow:hidden;
     border:3px solid var(--cb,#a09080);display:flex;flex-direction:column;
     font-family:'Crimson Text',Georgia,serif;transition:border-color .2s;position:relative;}
 
@@ -416,9 +421,11 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-title{flex-shrink:0;padding:3px 11px 5px;}
 .c-title .c-name{margin-bottom:0;}
 .c-name{font-size:var(--name-fs,16px);}
+/* подзаголовок: #8a6b2e давал контраст 3.87 на подложке карточки, ниже порога
+   4.5 для мелкого текста; тот же цвет, что и у заголовка оборота */
 .c-title .c-dmgline,.c-title .c-eqtype,.c-title .c-ttype{
   font-family:'Times New Roman',Times,serif;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;
-  color:#8a6b2e;margin:4px 0 0;}
+  color:#7d5f24;margin:4px 0 0;}
 
 /* Картинка: полоса во всю ширину карточки, кадр 16:9 по центру, пустое место
    по бокам закрыто размытой копией самого кадра. Рамок нет — их роль играет
@@ -487,7 +494,8 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-tick{width:2px;height:11px;background:var(--gem,#8a6b2e);}
 .c-cat{font-family:'Times New Roman',Times,serif;font-size:9.5px;font-weight:600;
   letter-spacing:.2em;text-transform:uppercase;color:#6f6045;white-space:nowrap;}
-.c-wgt{font-size:9.5px;color:#75634a;font-variant-numeric:tabular-nums;white-space:nowrap;}
+/* вес: #75634a стоял ровно на границе (4.49) */
+.c-wgt{font-size:9.5px;color:#6f5d45;font-variant-numeric:tabular-nums;white-space:nowrap;}
 /* Блик поверх цвета: сам цвет ставит applyPal инлайном (background), поэтому
    градиент даём отдельным слоем, иначе инлайн его затирает. */
 .c-gem{width:12px;height:12px;opacity:1;position:relative;}
@@ -507,7 +515,8 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .cb-desc{font-family:'Crimson Text',Georgia,serif;font-size:var(--desc-fs,12px);line-height:1.35;color:#2a1e0a;flex:1;overflow:hidden;white-space:pre-wrap;}
 
 /* оборот: заголовок «Описание» золотой с чертой */
-.cb-lbl{font-family:'Times New Roman',Times,serif;font-size:8.5px;font-weight:700;color:#8a6b2e;letter-spacing:.16em;gap:8px;
+/* заголовок оборота: #8a6b2e давал 3.87 */
+.cb-lbl{font-family:'Times New Roman',Times,serif;font-size:8.5px;font-weight:700;color:#7d5f24;letter-spacing:.16em;gap:8px;
   display:flex;align-items:center;text-align:left;text-transform:uppercase;
   border-bottom:none;padding:0;margin-bottom:6px;flex-shrink:0;}
 .cb-lbl::after{content:'';flex:1;height:1px;background:rgba(160,120,56,.5);}
