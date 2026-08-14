@@ -113,8 +113,11 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
 .sf{display:flex;flex-direction:column;gap:3px;}
 /* Настройка и Проклятие — два статуса предмета в одну строку, единым блоком
-   во всех генераторах: под редкостью, перед магическим бонусом. */
-.flags-row{display:flex;gap:18px;align-items:center;margin:11px 0 6px;flex-wrap:wrap;}
+   во всех генераторах: под ценой и весом, перед магическим бонусом.
+   Оправы у пары нет: строка устроена как «Концентрация / Ритуал» у заклинаний —
+   голые подписи со знаком-печатью, разделённые воздухом. Вес даёт сам знак и
+   окраска подписи, капсула оказалась лишней. */
+.flags-row{display:flex;gap:14px;align-items:center;margin:0 0 6px;flex-wrap:wrap;}
 .flags-row .noimg-toggle{margin-bottom:0;}
 /* «Загрузить проект»: input был display:none и выпадал из таб-порядка, а label
    сам не фокусируется — кнопку проскакивало. Теперь input прозрачно накрывает
@@ -126,8 +129,93 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
    правила были тремя копиями в этих страницах; локально осталась только
    разница: у оружия строки плотнее, у заклинаний выше пальцевая цель. */
 .pcb{display:flex;align-items:center;gap:5px;cursor:pointer;padding:3px 0;}
-.pcb input[type=checkbox]{accent-color:var(--gold);width:13px;height:13px;cursor:pointer;flex-shrink:0;}
 .pcb span{font-size:13px;color:var(--text2);}
+
+/* ═══ ЗНАКИ ЧЕКБОКСОВ ═══
+   Сам input становится знаком: appearance:none снимает системную отрисовку и
+   разрешает псевдоэлементы. Разметку не трогаем, поэтому знак получают и те
+   чекбоксы, которые создаёт скрипт: свойства оружия, блоки произвольной
+   карточки. Элемент остаётся настоящим чекбоксом — Tab, пробел и озвучивание
+   работают как прежде.
+   Цвет семейства живёт в переменных на label: --mk для знака, --mk-on для
+   подписи включённого пункта. */
+.sb label{--mk:var(--gold);--mk-on:var(--gold-l);}
+.sb input[type=checkbox]{
+  appearance:none;-webkit-appearance:none;
+  width:13px;height:13px;margin:0;flex-shrink:0;cursor:pointer;position:relative;
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--mk);opacity:.55;
+  border:1.5px solid currentColor;border-radius:50%;background:transparent;
+  transition:opacity .14s,background .14s,border-color .14s;
+}
+/* знак по умолчанию — звено: кольцо, в котором появляется сердцевина */
+.sb input[type=checkbox]::before{
+  content:'';width:4px;height:4px;border-radius:50%;background:transparent;
+}
+.sb input[type=checkbox]:checked{opacity:1;}
+.sb input[type=checkbox]:checked::before{background:currentColor;}
+/* включённый пункт красится целиком: знак и подпись */
+.sb label:has(input[type=checkbox]:checked) span{color:var(--mk-on);}
+/* винные семейства */
+.sb label:has(#fcursed),.sb label:has(#fritual),.sb label:has(#fstealth){
+  --mk:#a8402f;--mk-on:#e8b6a9;
+}
+
+/* ── печать: статусы предмета и пара «концентрация / ритуал» ── */
+.sb input#fcursed,.sb input#fattune,.sb input#fconc,.sb input#fritual{
+  width:12px;height:12px;border-width:1px;
+}
+.sb input#fcursed::before,.sb input#fattune::before,
+.sb input#fconc::before,.sb input#fritual::before{content:none;}
+.sb input#fcursed:checked,.sb input#fattune:checked,
+.sb input#fconc:checked,.sb input#fritual:checked{
+  background:currentColor;
+  box-shadow:inset 0 2px 2px rgba(255,255,255,.45),inset 0 -2px 3px rgba(0,0,0,.35);
+}
+
+/* ── крест: «Без картинки» ── */
+.sb input#f-noimg{
+  border-radius:2px;border-width:1px;
+  font-family:'Times New Roman',Times,serif;font-size:11px;line-height:1;
+}
+.sb input#f-noimg::before{
+  content:'✕';width:auto;height:auto;background:none;border-radius:0;opacity:0;
+}
+.sb input#f-noimg:checked::before{opacity:1;background:none;}
+
+/* ── рамка: помеха скрытности ──
+   Скобы из двух уголков рядом с остальными знаками читались как «ничего»:
+   это единственная галка, у которой не было замкнутого контура. Замкнули —
+   небольшая прямоугольная рамка со скруглением, внутри проступает ядро. */
+.sb input#fstealth{border-radius:3px;border-width:1px;}
+.sb input#fstealth::before{width:5px;height:5px;border-radius:1px;}
+
+/* ── око: типы яда ── */
+.sb #fptype-wrap input[type=checkbox]{border-width:1px;}
+.sb #fptype-wrap input[type=checkbox]::before{
+  width:5px;height:5px;border-radius:0;transform:rotate(45deg);
+  border:1px solid currentColor;background:transparent;
+}
+.sb #fptype-wrap input[type=checkbox]:checked::before{background:currentColor;}
+
+/* ── гранёный камень: компоненты В / С / М ── */
+.sb input#fcv,.sb input#fcs,.sb input#fcm{
+  border:0;border-radius:0;background:currentColor;opacity:.35;
+  clip-path:polygon(50% 0,100% 26%,100% 74%,50% 100%,0 74%,0 26%);
+}
+.sb input#fcv::before,.sb input#fcs::before,.sb input#fcm::before{content:none;}
+.sb input#fcv:checked,.sb input#fcs:checked,.sb input#fcm:checked{opacity:1;}
+
+/* ── клеймо: «Нумерованный» в редакторе блоков ── */
+.sb .blk-ck input[type=checkbox][data-f="ordered"]{
+  border-radius:3px;border-width:1px;background:rgba(230,220,198,.10);
+  font-family:'Times New Roman',Times,serif;font-size:11px;line-height:1;
+}
+.sb .blk-ck input[type=checkbox][data-f="ordered"]::before{
+  content:'✓';width:auto;height:auto;background:none;border-radius:0;opacity:0;
+}
+.sb .blk-ck input[type=checkbox][data-f="ordered"]:checked{background:rgba(230,220,198,.16);}
+.sb .blk-ck input[type=checkbox][data-f="ordered"]:checked::before{opacity:1;background:none;}
 
 /* Скрытая справка у подписи поля: кружок «?» разворачивает текст под ним.
    Нужна там, где поле влияет на карточку не напрямую (магический бонус входит
@@ -502,9 +590,26 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
    давали всего 20px по краям, и граница кадра читалась. Освободившийся 31px
    уходит описанию — .c-body растягивается сам. Пропорцию держит CARD_RATIO
    в shared/crop.js — менять парой. */
-/* фон #e6dcc6 — как у эталона: края размытой подложки полупрозрачны, сквозь
-   них светит именно этот цвет, и на прежнем #cfc0a0 вся полоса темнела */
-.c-img{height:136px;margin:0;width:100%;border:0;border-radius:0;background:#e6dcc6;}
+/* Фон слота виден в двух случаях, и они хотят РАЗНОГО тона.
+   Пустая карточка: светлый #e6dcc6 — тёмная плашка на полкарточки выглядит
+   тяжело, когда в ней ничего нет.
+   Под вырезом без фона (.cutout ставит setCardImg): тёмный #cfc0a0 — рядом
+   много блоков близкого к #e6dcc6 тона, и предмет без фона на светлом с ними
+   сливается.
+   У фотографий и картинок с плоской подложкой фон слота не виден вовсе: там
+   лежит непрозрачная подложка (размытая копия или ровная заливка). */
+/* Волосяные линии сверху и снизу — те же, что отбивают блок свойств. Без них
+   полоса с ровной заливкой сливается с фоном карточки, и картинка выглядит
+   висящей в воздухе.
+   Линии живут на псевдоэлементе поверх слоёв картинки, а не на самой полосе:
+   border забрал бы высоту у содержимого (box-sizing:border-box глобальный) и
+   обрезал кадр 135px, а inset-тень рисуется НИЖЕ детей — её закрывали собой
+   размытая подложка и кадр, поэтому линии пропадали, как только появлялась
+   картинка. z-index 3 — над подложкой (0) и кадром (1). */
+.c-img{height:136px;margin:0;width:100%;border:0;border-radius:0;background:#e6dcc6;position:relative;}
+.c-img.cutout{background:#cfc0a0;}
+.c-img::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:3;
+  border-top:.5px solid rgba(90,72,32,.24);border-bottom:.5px solid rgba(90,72,32,.24);}
 /* Подвал картинки — нулевой по высоте якорь СРАЗУ ПОСЛЕ слота, а не внутри
    него. Внутри слота метка умирала вместе с ним при «Без картинки»: слот
    уходит в display:none целиком. Снаружи она живёт всегда и садится под
@@ -1208,6 +1313,51 @@ function _blurBg(src,cb){
       g0.drawImage(c0,mx+FW-1,my,1,FH, mx+FW,my,W-mx-FW,FH); /* правое */
       g0.drawImage(c0,0,my,W,1, 0,0,W,my);              /* верхнее */
       g0.drawImage(c0,0,my+FH-1,W,1, 0,my+FH,W,H-my-FH);/* нижнее */
+      /* ПЛОСКАЯ КРОМКА — РАЗМЫВАТЬ НЕЧЕГО.
+         Предмет, снятый на ровной подложке (или вырез без фона), даёт по краям
+         кадра однотонную полосу. Размытие такой полосы не добавляет фактуры, а
+         растягивает по бокам сам предмет: за доспехом появлялся его призрак, у
+         клинка — серая муть. Заливаем полосу тем же цветом, что и кромка кадра,
+         тогда шва между кадром и полем не видно вообще.
+         Признак — разброс яркости краевых колонок кадра: замер по восьми
+         шаблонным картинкам дал 0 у всех плоских подложек и 31 и 59 у настоящих
+         фотографий, поэтому порог 4 стоит с запасом в обе стороны.
+         У выреза с альфой усреднять нечего, и подложка ему вообще не нужна:
+         отдаём null, тогда setCardImg не ставит слой подложки и сквозь кадр
+         виден фон самого слота (.c-img в card-new.css). Так цвет живёт в одном
+         месте: поменяли фон слота — вырезы поехали за ним сами. */
+      var _edge=function(x0,x1){
+        var dd=g0.getImageData(x0,my+6,x1-x0,FH-12).data;
+        var s1=0,s2=0,n=0,clear=0,tot=0,r=0,gg=0,b=0;
+        for(var i=0;i<dd.length;i+=4){
+          tot++;
+          if(dd[i+3]<24){clear++;continue;}
+          var L=(dd[i]+dd[i+1]+dd[i+2])/3;s1+=L;s2+=L*L;n++;
+          r+=dd[i];gg+=dd[i+1];b+=dd[i+2];
+        }
+        var m=s1/(n||1);
+        return {sig:Math.sqrt(Math.max(0,s2/(n||1)-m*m)),clear:clear/(tot||1),
+                col:[Math.round(r/(n||1)),Math.round(gg/(n||1)),Math.round(b/(n||1))]};
+      };
+      var eL=_edge(mx+2,mx+14),eR=_edge(mx+FW-14,mx+FW-2);
+      var плоская=Math.max(eL.sig,eR.sig)<4;
+      var вырез=Math.max(eL.clear,eR.clear)>0.5;
+      if(вырез){
+        /* маркер, а не картинка: слоя подложки у выреза нет вовсе, сквозь кадр
+           виден фон слота, а setCardImg по этому маркеру вешает на слот класс
+           .cutout — под вырезом фон темнее, чем у пустой карточки (цвета в CSS,
+           см. .c-img/.c-img.cutout в card-new.css). */
+        _blurCache[src]='cutout';
+        return cb('cutout');
+      }
+      if(плоская){
+        var flat=document.createElement('canvas');flat.width=W;flat.height=H;
+        var gf=flat.getContext('2d');
+        gf.fillStyle='rgb('+eL.col[0]+','+eL.col[1]+','+eL.col[2]+')';
+        gf.fillRect(0,0,W,H);
+        _blurCache[src]=flat.toDataURL('image/png');
+        return cb(_blurCache[src]);
+      }
       /* Обесцвечивание — ГРАДИЕНТОМ по расстоянию от кадра, а не разом.
          saturate(.65)+brightness(1.04) делают дальние поля бледным фоном, но
          применённые ступенькой они стыковались с необработанным кадром прямо
@@ -1328,7 +1478,12 @@ function setCardImg(src){
       if(setCardImg._tok!==_my)return; /* пришла более свежая картинка */
       var e=ci.querySelector('.c-img-el'),b=ci.querySelector('.c-img-bleed');
       if(e)e.style.backgroundImage='url("'+(_fg||src).replace(/"/g,'\\"')+'")';
-      if(b)b.style.backgroundImage=_bg?('url("'+_bg.replace(/"/g,'\\"')+'")'):'none';
+      /* 'cutout' — не картинка, а признак: у выреза подложки нет, фон даёт сам
+         слот, и он должен быть темнее, чем у пустой карточки (иначе предмет
+         без фона сливается с соседними блоками того же тона). */
+      var _вырез=(_bg==='cutout');
+      ci.classList.toggle('cutout',_вырез);
+      if(b)b.style.backgroundImage=(_bg&&!_вырез)?('url("'+_bg.replace(/"/g,'\\"')+'")'):'none';
     };
     _fadeEdges(src,function(fg){_fg=fg;_apply();});
     _blurBg(src,function(bg){_bg=bg;_apply();});
@@ -1338,6 +1493,7 @@ function setCardImg(src){
   }else{
     if(ex)ex.remove();
     if(bl)bl.remove();
+    ci.classList.remove('cutout');   /* пустой слот — светлый фон */
     document.getElementById('img-ph').style.display='flex';
     document.getElementById('btn-recrop').style.display='none';
     document.getElementById('btn-del-img').style.display='none';

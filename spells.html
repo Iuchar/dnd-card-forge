@@ -113,8 +113,11 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
 .sf{display:flex;flex-direction:column;gap:3px;}
 /* Настройка и Проклятие — два статуса предмета в одну строку, единым блоком
-   во всех генераторах: под редкостью, перед магическим бонусом. */
-.flags-row{display:flex;gap:18px;align-items:center;margin:11px 0 6px;flex-wrap:wrap;}
+   во всех генераторах: под ценой и весом, перед магическим бонусом.
+   Оправы у пары нет: строка устроена как «Концентрация / Ритуал» у заклинаний —
+   голые подписи со знаком-печатью, разделённые воздухом. Вес даёт сам знак и
+   окраска подписи, капсула оказалась лишней. */
+.flags-row{display:flex;gap:14px;align-items:center;margin:0 0 6px;flex-wrap:wrap;}
 .flags-row .noimg-toggle{margin-bottom:0;}
 /* «Загрузить проект»: input был display:none и выпадал из таб-порядка, а label
    сам не фокусируется — кнопку проскакивало. Теперь input прозрачно накрывает
@@ -126,8 +129,93 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
    правила были тремя копиями в этих страницах; локально осталась только
    разница: у оружия строки плотнее, у заклинаний выше пальцевая цель. */
 .pcb{display:flex;align-items:center;gap:5px;cursor:pointer;padding:3px 0;}
-.pcb input[type=checkbox]{accent-color:var(--gold);width:13px;height:13px;cursor:pointer;flex-shrink:0;}
 .pcb span{font-size:13px;color:var(--text2);}
+
+/* ═══ ЗНАКИ ЧЕКБОКСОВ ═══
+   Сам input становится знаком: appearance:none снимает системную отрисовку и
+   разрешает псевдоэлементы. Разметку не трогаем, поэтому знак получают и те
+   чекбоксы, которые создаёт скрипт: свойства оружия, блоки произвольной
+   карточки. Элемент остаётся настоящим чекбоксом — Tab, пробел и озвучивание
+   работают как прежде.
+   Цвет семейства живёт в переменных на label: --mk для знака, --mk-on для
+   подписи включённого пункта. */
+.sb label{--mk:var(--gold);--mk-on:var(--gold-l);}
+.sb input[type=checkbox]{
+  appearance:none;-webkit-appearance:none;
+  width:13px;height:13px;margin:0;flex-shrink:0;cursor:pointer;position:relative;
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--mk);opacity:.55;
+  border:1.5px solid currentColor;border-radius:50%;background:transparent;
+  transition:opacity .14s,background .14s,border-color .14s;
+}
+/* знак по умолчанию — звено: кольцо, в котором появляется сердцевина */
+.sb input[type=checkbox]::before{
+  content:'';width:4px;height:4px;border-radius:50%;background:transparent;
+}
+.sb input[type=checkbox]:checked{opacity:1;}
+.sb input[type=checkbox]:checked::before{background:currentColor;}
+/* включённый пункт красится целиком: знак и подпись */
+.sb label:has(input[type=checkbox]:checked) span{color:var(--mk-on);}
+/* винные семейства */
+.sb label:has(#fcursed),.sb label:has(#fritual),.sb label:has(#fstealth){
+  --mk:#a8402f;--mk-on:#e8b6a9;
+}
+
+/* ── печать: статусы предмета и пара «концентрация / ритуал» ── */
+.sb input#fcursed,.sb input#fattune,.sb input#fconc,.sb input#fritual{
+  width:12px;height:12px;border-width:1px;
+}
+.sb input#fcursed::before,.sb input#fattune::before,
+.sb input#fconc::before,.sb input#fritual::before{content:none;}
+.sb input#fcursed:checked,.sb input#fattune:checked,
+.sb input#fconc:checked,.sb input#fritual:checked{
+  background:currentColor;
+  box-shadow:inset 0 2px 2px rgba(255,255,255,.45),inset 0 -2px 3px rgba(0,0,0,.35);
+}
+
+/* ── крест: «Без картинки» ── */
+.sb input#f-noimg{
+  border-radius:2px;border-width:1px;
+  font-family:'Times New Roman',Times,serif;font-size:11px;line-height:1;
+}
+.sb input#f-noimg::before{
+  content:'✕';width:auto;height:auto;background:none;border-radius:0;opacity:0;
+}
+.sb input#f-noimg:checked::before{opacity:1;background:none;}
+
+/* ── рамка: помеха скрытности ──
+   Скобы из двух уголков рядом с остальными знаками читались как «ничего»:
+   это единственная галка, у которой не было замкнутого контура. Замкнули —
+   небольшая прямоугольная рамка со скруглением, внутри проступает ядро. */
+.sb input#fstealth{border-radius:3px;border-width:1px;}
+.sb input#fstealth::before{width:5px;height:5px;border-radius:1px;}
+
+/* ── око: типы яда ── */
+.sb #fptype-wrap input[type=checkbox]{border-width:1px;}
+.sb #fptype-wrap input[type=checkbox]::before{
+  width:5px;height:5px;border-radius:0;transform:rotate(45deg);
+  border:1px solid currentColor;background:transparent;
+}
+.sb #fptype-wrap input[type=checkbox]:checked::before{background:currentColor;}
+
+/* ── гранёный камень: компоненты В / С / М ── */
+.sb input#fcv,.sb input#fcs,.sb input#fcm{
+  border:0;border-radius:0;background:currentColor;opacity:.35;
+  clip-path:polygon(50% 0,100% 26%,100% 74%,50% 100%,0 74%,0 26%);
+}
+.sb input#fcv::before,.sb input#fcs::before,.sb input#fcm::before{content:none;}
+.sb input#fcv:checked,.sb input#fcs:checked,.sb input#fcm:checked{opacity:1;}
+
+/* ── клеймо: «Нумерованный» в редакторе блоков ── */
+.sb .blk-ck input[type=checkbox][data-f="ordered"]{
+  border-radius:3px;border-width:1px;background:rgba(230,220,198,.10);
+  font-family:'Times New Roman',Times,serif;font-size:11px;line-height:1;
+}
+.sb .blk-ck input[type=checkbox][data-f="ordered"]::before{
+  content:'✓';width:auto;height:auto;background:none;border-radius:0;opacity:0;
+}
+.sb .blk-ck input[type=checkbox][data-f="ordered"]:checked{background:rgba(230,220,198,.16);}
+.sb .blk-ck input[type=checkbox][data-f="ordered"]:checked::before{opacity:1;background:none;}
 
 /* Скрытая справка у подписи поля: кружок «?» разворачивает текст под ним.
    Нужна там, где поле влияет на карточку не напрямую (магический бонус входит
