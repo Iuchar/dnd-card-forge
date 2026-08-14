@@ -667,8 +667,8 @@ textarea.si.si-rows{resize:none;min-height:0;overflow-y:auto;}
 
   <label class="lbl" for="fn">Название</label>
   <div class="field-wrap field-mb">
-    <input class="si" type="text" id="fn" placeholder="Огненный шар" maxlength="34"/>
-    <span class="char-counter" id="cnt-fn">0/34</span>
+    <input class="si" type="text" id="fn" placeholder="Огненный шар" maxlength="60"/>
+    <span class="char-counter" id="cnt-fn">0/60</span>
   </div>
 
   <div class="row2" style="margin-top:13px;">
@@ -1201,7 +1201,7 @@ var DESC_LIMIT=4400;
   });
 })();
 
-mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',4400,visLen);mkCounter('fhl','cnt-hl',340);mkCounter('fsub','cnt-sub',120);mkCounter('fmat','cnt-mat',400);mkCounter('fcond','cnt-cond',70);
+mkCounter('fn','cnt-fn',60);mkCounter('fdesc','cnt-desc',4400,visLen);mkCounter('fhl','cnt-hl',340);mkCounter('fsub','cnt-sub',120);mkCounter('fmat','cnt-mat',400);mkCounter('fcond','cnt-cond',70);
   /* поля-textarea только ради переноса по ширине: значение однострочное */
   ['fsub','fmat','fcond'].forEach(function(id){
     document.getElementById(id).addEventListener('keydown',function(e){if(e.key==='Enter')e.preventDefault();});
@@ -1597,7 +1597,7 @@ function applyFormData(data){
   document.getElementById('fcond').value=data.condition||'';
   document.getElementById('fdesc').value=data.desc||'';
   document.getElementById('fhl').value=data.hl||'';
-  mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',4400,visLen);mkCounter('fhl','cnt-hl',340);mkCounter('fsub','cnt-sub',120);mkCounter('fmat','cnt-mat',400);mkCounter('fcond','cnt-cond',70);
+  mkCounter('fn','cnt-fn',60);mkCounter('fdesc','cnt-desc',4400,visLen);mkCounter('fhl','cnt-hl',340);mkCounter('fsub','cnt-sub',120);mkCounter('fmat','cnt-mat',400);mkCounter('fcond','cnt-cond',70);
 }
 
 /* ── reset ── */
@@ -1625,7 +1625,7 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   _descWarn(0);
   spSplit({desc:'',hl:'',rarity:'evocation'});
   if(window.__syncSelects)window.__syncSelects();
-  mkCounter('fn','cnt-fn',34);mkCounter('fdesc','cnt-desc',4400,visLen);mkCounter('fhl','cnt-hl',340);mkCounter('fsub','cnt-sub',120);mkCounter('fmat','cnt-mat',400);mkCounter('fcond','cnt-cond',70);
+  mkCounter('fn','cnt-fn',60);mkCounter('fdesc','cnt-desc',4400,visLen);mkCounter('fhl','cnt-hl',340);mkCounter('fsub','cnt-sub',120);mkCounter('fmat','cnt-mat',400);mkCounter('fcond','cnt-cond',70);
   toast('Поля сброшены');
 });
 
@@ -1693,6 +1693,11 @@ function buildPrintPDF(mode,items){
   doc.save('dnd_print_'+stamp+(mode==='single'?'_1стор':'_2стор')+'.pdf');
   toast('✦ PDF для печати скачан');
 }
+/* Ключ для поиска по названию. «Ё» приравнена к «е»: пользователь набирает
+   «перышко» и должен найти «Пёрышко», а не пустой список — на клавиатуре ё
+   стоит на отшибе, и в русских текстах её пишут через раз. Один и тот же ключ
+   применяется и к запросу, и к названию, иначе сравнение развалится. */
+function srchKey(s){return String(s||'').toLowerCase().replace(/ё/g,'е');}
 var editingId=null;
 function _stamp(){var d=new Date(),p=function(n){return(n<10?'0':'')+n;};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'_'+p(d.getHours())+'-'+p(d.getMinutes())+'-'+p(d.getSeconds());}
 function updateBuildBtn(){var g=document.getElementById('gbtn'),n=document.getElementById('gbtn-new');if(!g)return;if(editingId){g.textContent='✦ Сохранить изменения';if(n)n.style.display='';}else{g.textContent='✦ Создать карточку';if(n)n.style.display='none';}}
@@ -1836,13 +1841,16 @@ function renderCollection(){
 /* collection search */
 var collSearchQuery='';
 function applyCollSearch(){
-  var q=collSearchQuery.toLowerCase().trim();
+  /* srchkey.js подключён всеми боевыми страницами; проверка нужна ради
+     equipment-test.html — эталон правим только по прямой просьбе */
+  var _к=(typeof srchKey==='function')?srchKey:function(s){return String(s||'').toLowerCase();};
+  var q=_к(collSearchQuery).trim();
   document.getElementById('coll-search-clear').style.display=q?'':'none';
   /* элементы ищем по всему списку: на COLL_PAL-страницах они лежат
      без секций-обёрток, прямо в #coll-list */
   document.querySelectorAll('#coll-list .coll-item').forEach(function(item){
     var name=(item.querySelector('.coll-item-name')||{}).textContent||'';
-    item.style.display=(!q||name.toLowerCase().includes(q))?'':'none';
+    item.style.display=(!q||_к(name).includes(q))?'':'none';
   });
   document.querySelectorAll('.coll-sect-wrap').forEach(function(wrap){
     var visible=0;

@@ -1340,6 +1340,11 @@ function pvOpen(card){
   if(t)t.textContent='Полное описание';
   document.getElementById('prev-bg').classList.add('open');
 }
+/* Ключ для поиска по названию. «Ё» приравнена к «е»: пользователь набирает
+   «перышко» и должен найти «Пёрышко», а не пустой список — на клавиатуре ё
+   стоит на отшибе, и в русских текстах её пишут через раз. Один и тот же ключ
+   применяется и к запросу, и к названию, иначе сравнение развалится. */
+function srchKey(s){return String(s||'').toLowerCase().replace(/ё/g,'е');}
 /* Выпадающие фильтры галерей (collection/templates/spellbook).
    Множественный выбор: пусто = без ограничения; ИЛИ внутри категории, И между
    категориями.
@@ -1391,6 +1396,11 @@ function _galVals(c,f){
     var маг=(r&&r!=='nonmagic')||!!(c.itemType||'').trim()||(!isNaN(mb2)&&mb2!==0);
     return [маг?'yes':'no'];
   }
+  /* Класс, тип и категория доспеха пустуют у предметов с открытой базой («любой
+     меч»). Без сентинела они не отдавали ни одного значения: любой выбранный
+     фильтр прятал всю полку «Универсальные магические предметы», и вернуть её
+     было нечем — пункта в списке не существовало. */
+  if((f==='cat'||f==='kind'||f==='armorType')&&!(c[f]||'').trim())return ['_univ'];
   var v=c[f];
   if(v==null||v==='')return [];
   if(Array.isArray(v))return v.map(function(x){return String(x).trim();});
@@ -1403,6 +1413,7 @@ function _galLabel(f,v){
   if(f==='_cursed')return v==='yes'?'Проклят':'Не проклят';
   if(f==='_charges')return v==='yes'?'С зарядами':'Без зарядов';
   if(f==='_magicitem')return v==='yes'?'Магический':'Обычный';
+  if(v==='_univ')return 'Универсальный';
   return v;
 }
 /* Порядок значений книжный, а не алфавитный: иначе «Воинское» встаёт раньше
@@ -1446,8 +1457,8 @@ function getFiltered(){
     if(_galOn()&&GAL_SEC!=='all'&&c._group!==GAL_SEC)return false;
     if(typeof galEdMatch==='function'&&!galEdMatch(c))return false;
     /* nameEn есть у заклинаний и у готовых шаблонов; где пусто — условие не сработает */
-    if(FILT.query&&(c.name||'').toLowerCase().indexOf(FILT.query)<0
-       &&(c.nameEn||'').toLowerCase().indexOf(FILT.query)<0)return false;
+    if(FILT.query&&srchKey(c.name).indexOf(FILT.query)<0
+       &&srchKey(c.nameEn).indexOf(FILT.query)<0)return false;
     for(var i=0;i<FILTER_DEFS.length;i++){
       var def=FILTER_DEFS[i],sel=FILT[def.key];
       if(!sel||!sel.size)continue;
@@ -1573,7 +1584,7 @@ function _buildSortBar(){
 (function(){
   var s=document.getElementById('filter-search');
   if(s)s.addEventListener('input',function(){
-    FILT.query=this.value.toLowerCase().trim();
+    FILT.query=srchKey(this.value).trim();
     var cl=document.getElementById('filter-search-clear');if(cl)cl.style.display=FILT.query?'':'none';
     renderGrid();});
   var sc=document.getElementById('filter-search-clear');

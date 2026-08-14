@@ -935,8 +935,10 @@ function galSvg(key,sz){
   return '<svg viewBox="0 0 24 24" width="'+(sz||12)+'" height="'+(sz||12)+'" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+inner+'</svg>';
 }
 function galIconKey(c){
-  if(c._group==='weapon')return (GAL_ICONSET==='A')?galSetA(c):(GAL_FAM[c.name]||galSetA(c));
-  if(c._group==='armor')return GAL_ARM[c.armorType]||'shield';
+  /* У предмета с открытой базой («любой меч») класса нет, и galSetA свалился бы
+     в свой фолбэк 'aSword' — топор берсерка получал значок меча из чужого набора */
+  if(c._group==='weapon')return (c.cat&&c.kind)?((GAL_ICONSET==='A')?galSetA(c):(GAL_FAM[c.name]||galSetA(c))):'star';
+  if(c._group==='armor')return c.armorType?(GAL_ARM[c.armorType]||'shield'):'star';
   if(c._group==='poisons')return GAL_POIS[galPt1(c)]||'poisContact';
   if(c._group==='tools')return 'tool';
   if(c._group==='equipment')return 'pack';
@@ -948,10 +950,17 @@ function galIcon(c,sz){return galSvg(galIconKey(c),sz);}
    Порядок задан явно, книжный. По алфавиту получалось «Воинское» раньше
    «Простого» и тяжёлый доспех раньше лёгкого. */
 function galPt1(c){return String(c.poisonType||'').split(',')[0].trim();}
+/* Предмет вида «любой меч», «любой доспех» не принадлежит ни одному классу:
+   класс задаёт база, а её выбирает игрок. Отдельная полка в своей же группе —
+   выдуманного класса («Прочее оружие») в правилах нет. Объявление стоит выше
+   обоих потребителей: подними GAL_SUBORDER над ним — в массив ляжет undefined. */
+var GAL_UNIVSUB='Универсальные магические предметы';
 function galSubOf(c){
   var g=c._group;
-  if(g==='weapon')return (c.cat||'Прочее')+' '+String(c.kind||'').toLowerCase()+' оружие';
-  if(g==='armor')return c.armorType==='Щит'?'Щит':(c.armorType||'Прочий')+' доспех';
+  /* класс без типа не достраиваем: «рукопашное» по умолчанию — выдумка, из-за
+     которой самоделка с пустым типом попадала бы не на свою полку */
+  if(g==='weapon')return (c.cat&&c.kind)?c.cat+' '+c.kind.toLowerCase()+' оружие':GAL_UNIVSUB;
+  if(g==='armor')return c.armorType?(c.armorType==='Щит'?'Щит':c.armorType+' доспех'):GAL_UNIVSUB;
   if(g==='poisons')return galPt1(c)||'Прочие';
   if(g==='tools')return c.toolType||'Прочие';
   if(g==='equipment')return c.category||'Прочее';
@@ -959,13 +968,19 @@ function galSubOf(c){
 }
 var GAL_SUBORDER={
   weapon:['Простое рукопашное оружие','Простое дальнобойное оружие','Воинское рукопашное оружие','Воинское дальнобойное оружие',
-          'Импровизированное рукопашное оружие','Импровизированное дальнобойное оружие'],
-  armor:['Лёгкий доспех','Средний доспех','Тяжёлый доспех','Щит'],
-  poisons:['Контактный','Поглощаемый','Вдыхаемый','Оружейный']
+          'Импровизированное рукопашное оружие','Импровизированное дальнобойное оружие',GAL_UNIVSUB],
+  armor:['Лёгкий доспех','Средний доспех','Тяжёлый доспех','Щит',GAL_UNIVSUB],
+  poisons:['Контактный','Поглощаемый','Вдыхаемый','Оружейный'],
+  /* порядок как в селектах генераторов: «Прочее» — пункт-помойка, ему место
+     в хвосте, а по алфавиту 115 карточек вставали в середину списка */
+  equipment:['Боеприпасы','Вспомогательные предметы','Заклинательные фокусировки','Контейнеры','Одежда',
+             'Осветительные приборы','Предмет снаряжения','Религиозные принадлежности','Торговые товары',
+             'Украшения','Прочее'],
+  tools:['Ремесленные инструменты','Музыкальный инструмент','Игровой набор','Прочее']
 };
 var GAL_VALORDER={
-  cat:['Простое','Воинское','Импровизированное'],kind:['Рукопашное','Дальнобойное'],dt:['Рубящий','Дробящий','Колющий'],
-  armorType:['Лёгкий','Средний','Тяжёлый','Щит'],
+  cat:['Простое','Воинское','Импровизированное','_univ'],kind:['Рукопашное','Дальнобойное','_univ'],dt:['Рубящий','Дробящий','Колющий'],
+  armorType:['Лёгкий','Средний','Тяжёлый','Щит','_univ'],
   poisonType:['Контактный','Поглощаемый','Вдыхаемый','Оружейный'],
   /* У двусторонних признаков «да» должно стоять первым: по алфавиту 'no'
      обгоняет 'yes', и список открывался отрицанием. */
@@ -1571,6 +1586,11 @@ document.getElementById('prev-close').addEventListener('click',closePreview);
 document.getElementById('prev-bg').addEventListener('click',function(e){if(e.target===this)closePreview();});
 var toastTimer=null;
 
+/* Ключ для поиска по названию. «Ё» приравнена к «е»: пользователь набирает
+   «перышко» и должен найти «Пёрышко», а не пустой список — на клавиатуре ё
+   стоит на отшибе, и в русских текстах её пишут через раз. Один и тот же ключ
+   применяется и к запросу, и к названию, иначе сравнение развалится. */
+function srchKey(s){return String(s||'').toLowerCase().replace(/ё/g,'е');}
 /* Выпадающие фильтры галерей (collection/templates/spellbook).
    Множественный выбор: пусто = без ограничения; ИЛИ внутри категории, И между
    категориями.
@@ -1622,6 +1642,11 @@ function _galVals(c,f){
     var маг=(r&&r!=='nonmagic')||!!(c.itemType||'').trim()||(!isNaN(mb2)&&mb2!==0);
     return [маг?'yes':'no'];
   }
+  /* Класс, тип и категория доспеха пустуют у предметов с открытой базой («любой
+     меч»). Без сентинела они не отдавали ни одного значения: любой выбранный
+     фильтр прятал всю полку «Универсальные магические предметы», и вернуть её
+     было нечем — пункта в списке не существовало. */
+  if((f==='cat'||f==='kind'||f==='armorType')&&!(c[f]||'').trim())return ['_univ'];
   var v=c[f];
   if(v==null||v==='')return [];
   if(Array.isArray(v))return v.map(function(x){return String(x).trim();});
@@ -1634,6 +1659,7 @@ function _galLabel(f,v){
   if(f==='_cursed')return v==='yes'?'Проклят':'Не проклят';
   if(f==='_charges')return v==='yes'?'С зарядами':'Без зарядов';
   if(f==='_magicitem')return v==='yes'?'Магический':'Обычный';
+  if(v==='_univ')return 'Универсальный';
   return v;
 }
 /* Порядок значений книжный, а не алфавитный: иначе «Воинское» встаёт раньше
@@ -1677,8 +1703,8 @@ function getFiltered(){
     if(_galOn()&&GAL_SEC!=='all'&&c._group!==GAL_SEC)return false;
     if(typeof galEdMatch==='function'&&!galEdMatch(c))return false;
     /* nameEn есть у заклинаний и у готовых шаблонов; где пусто — условие не сработает */
-    if(FILT.query&&(c.name||'').toLowerCase().indexOf(FILT.query)<0
-       &&(c.nameEn||'').toLowerCase().indexOf(FILT.query)<0)return false;
+    if(FILT.query&&srchKey(c.name).indexOf(FILT.query)<0
+       &&srchKey(c.nameEn).indexOf(FILT.query)<0)return false;
     for(var i=0;i<FILTER_DEFS.length;i++){
       var def=FILTER_DEFS[i],sel=FILT[def.key];
       if(!sel||!sel.size)continue;
@@ -1804,7 +1830,7 @@ function _buildSortBar(){
 (function(){
   var s=document.getElementById('filter-search');
   if(s)s.addEventListener('input',function(){
-    FILT.query=this.value.toLowerCase().trim();
+    FILT.query=srchKey(this.value).trim();
     var cl=document.getElementById('filter-search-clear');if(cl)cl.style.display=FILT.query?'':'none';
     renderGrid();});
   var sc=document.getElementById('filter-search-clear');
