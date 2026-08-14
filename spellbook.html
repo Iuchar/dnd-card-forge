@@ -126,7 +126,9 @@ body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,s
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important;}
 }
 /* TOAST */
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:9px 18px;font-family:'Times New Roman',Times,serif;font-size:11px;color:var(--text);letter-spacing:.06em;z-index:500;transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
+/* Кривая без перелёта, как у генераторов (styles.css): прежняя уводила тост
+   выше конечной точки и возвращала обратно, он подпрыгивал в конце появления. */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:9px 18px;font-family:'Times New Roman',Times,serif;font-size:11px;color:var(--text);letter-spacing:.06em;z-index:500;transition:transform .3s cubic-bezier(.22,1,.36,1);pointer-events:none;}
 
 /* группы галереи */
 #grid-area{display:block;padding:0;background:#efe9db;margin:16px;border-radius:12px;overflow:hidden;min-height:calc(100% - 32px);}
@@ -1290,8 +1292,8 @@ function _galOn(){return typeof GAL_SEC!=='undefined';}
 
 /* ── определения фильтров по разделам (только коллекция/шаблоны) ── */
 var GAL_FDEFS={
-  weapon:[['_rarity','Редкость'],['_magic','Магический бонус'],['cat','Класс оружия'],['kind','Тип оружия'],['dt','Тип урона'],['props','Свойства'],['xType','Тип доп. урона'],['mastery','Мастерство'],['ammo','Боеприпас'],['_attune','Настройка']],
-  armor:[['_rarity','Редкость'],['_magic','Магический бонус'],['armorType','Категория доспеха'],['acDisplay','КБ'],['spec','Особое свойство'],['specType','Тип урона (сопротивление)'],['strReq','Требование Силы'],['_stealth','Скрытность'],['_attune','Настройка']],
+  weapon:[['_rarity','Редкость'],['_magic','Магический бонус'],['cat','Класс оружия'],['kind','Тип оружия'],['dt','Тип урона'],['props','Свойства'],['xType','Тип доп. урона'],['mastery','Мастерство'],['ammo','Боеприпас'],['_attune','Настройка'],['_cursed','Проклятие']],
+  armor:[['_rarity','Редкость'],['_magic','Магический бонус'],['armorType','Категория доспеха'],['acDisplay','КБ'],['spec','Особое свойство'],['specType','Тип урона (сопротивление)'],['strReq','Требование Силы'],['_stealth','Скрытность'],['_attune','Настройка'],['_cursed','Проклятие']],
   poisons:[['poisonType','Тип яда'],['savingThrow','Спасбросок'],['saveStat','Характеристика спасброска']],
   tools:[['toolType','Категория'],['stat','Характеристика']],
   equipment:[['category','Категория'],['itemType','Тип предмета'],['_rarity','Редкость'],['_magic','Магический бонус'],['_attune','Настройка'],['_cursed','Проклятие']],

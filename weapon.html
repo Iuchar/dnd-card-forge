@@ -110,6 +110,10 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .sf{display:flex;flex-direction:column;gap:3px;}
 /* Галка «Без картинки» стоит над зоной загрузки; при включении зона прячется. */
 .noimg-toggle{display:flex;align-items:center;gap:7px;margin-bottom:8px;cursor:pointer;font-size:12.5px;color:#c9b78e;user-select:none;}
+/* Настройка и Проклятие — два статуса предмета в одну строку, единым блоком
+   во всех генераторах: под редкостью, перед магическим бонусом. */
+.flags-row{display:flex;gap:18px;align-items:center;margin:11px 0 6px;flex-wrap:wrap;}
+.flags-row .noimg-toggle{margin-bottom:0;}
 .noimg-toggle input{width:15px;height:15px;accent-color:#a9722c;cursor:pointer;flex-shrink:0;margin:0;}
 .img-drop{width:100%;height:56px;border:1.5px dashed var(--border2);border-radius:7px;display:flex;align-items:center;justify-content:center;gap:7px;color:var(--text3);font-family:'Times New Roman',Times,serif;font-size:11px;letter-spacing:.07em;cursor:pointer;transition:all .14s;position:relative;overflow:hidden;}
 .img-drop:hover{border-color:var(--accent-l);color:var(--text2);background:rgba(255,255,255,.03);}
@@ -121,6 +125,23 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .hbtn-file{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;}
 .hbtn-upload:has(.hbtn-file:focus-visible){outline:2px solid var(--gold-l);outline-offset:2px;}
 .img-thumb{position:absolute;inset:0;background-size:cover;background-position:center;border-radius:6px;}
+/* Скрытая справка у подписи поля: кружок «?» разворачивает текст под ним.
+   Нужна там, где поле влияет на карточку не напрямую (магический бонус входит
+   в атаку, урон и КБ, но сам на карточке не печатается). Свёрнута по
+   умолчанию: это подсказка на один раз, а не часть формы. */
+.lbl-hint{display:flex;align-items:center;gap:7px;}
+.hint-btn{width:14px;height:14px;flex-shrink:0;padding:0;border:1px solid var(--border2);border-radius:50%;
+  background:rgba(255,255,255,.05);color:var(--text2);cursor:pointer;
+  font-family:'Times New Roman',Times,serif;font-size:10px;font-weight:700;line-height:1;
+  display:flex;align-items:center;justify-content:center;transition:all .14s;}
+.hint-btn:hover{border-color:var(--gold);color:var(--gold-l);background:rgba(200,148,26,.13);}
+.hint-btn[aria-expanded="true"]{border-color:var(--gold);color:var(--gold-l);background:rgba(200,148,26,.13);}
+.hint-box{margin:0 0 9px;padding:7px 0 7px 9px;border-left:2px solid rgba(200,148,26,.35);
+  font-family:'Crimson Text',Georgia,serif;font-size:12.5px;line-height:1.45;color:var(--text2);}
+.hint-box p{margin:0 0 5px;}
+.hint-box p:last-child{margin-bottom:0;}
+/* строки формул: выделены светлее и не разрываются на слова внутри слагаемых */
+.hint-box .hint-f{font-family:'Times New Roman',Times,serif;font-size:12px;color:var(--text);}
 .divider{height:0.5px;background:var(--border);margin:12px 0;}
 .btn-reset{width:100%;padding:8px 9px;margin-top:10px;font-family:'Times New Roman',Times,serif;font-size:10px;font-weight:600;letter-spacing:.08em;cursor:pointer;border:1px solid rgba(220,60,60,.35);border-radius:6px;background:rgba(220,60,60,.08);color:#cf8474;transition:all .14s;display:flex;align-items:center;justify-content:center;gap:5px;}
 .btn-reset:hover{background:rgba(220,60,60,.18);color:#ec9282;border-color:rgba(220,60,60,.55);}
@@ -233,7 +254,10 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .coll-sect-chevron{flex-shrink:0;color:var(--text3);transition:transform .18s;}
 .coll-sect-wrap.collapsed .coll-sect-chevron{transform:rotate(-90deg);}
 .coll-sect-wrap.collapsed .coll-sect-body{display:none;}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:9px 18px;font-family:'Times New Roman',Times,serif;font-size:11px;color:var(--text);letter-spacing:.06em;z-index:200;transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
+/* Кривая без перелёта: прежняя уводила тост на 56% выше конечной точки и
+   возвращала обратно, то есть в конце появления он подпрыгивал. Копия этого
+   правила есть в gallery-styles.css, отличается только z-index: менять парой. */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:9px 18px;font-family:'Times New Roman',Times,serif;font-size:11px;color:var(--text);letter-spacing:.06em;z-index:200;transition:transform .3s cubic-bezier(.22,1,.36,1);pointer-events:none;}
 
 .coll-sel-btn{padding:3px 9px;font-family:'Times New Roman',Times,serif;font-size:10px;font-weight:500;letter-spacing:.08em;cursor:pointer;border:0.5px solid var(--border2);border-radius:20px;background:transparent;color:var(--text3);transition:all .14s;}
 .coll-sel-btn:hover,.coll-sel-btn.active{background:rgba(160,120,56,.15);color:var(--text2);border-color:rgba(160,120,56,.4);}
@@ -392,8 +416,36 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 /* фон #e6dcc6 — как у эталона: края размытой подложки полупрозрачны, сквозь
    них светит именно этот цвет, и на прежнем #cfc0a0 вся полоса темнела */
 .c-img{height:136px;margin:0;width:100%;border:0;border-radius:0;background:#e6dcc6;}
+/* Подвал картинки — нулевой по высоте якорь СРАЗУ ПОСЛЕ слота, а не внутри
+   него. Внутри слота метка умирала вместе с ним при «Без картинки»: слот
+   уходит в display:none целиком. Снаружи она живёт всегда и садится под
+   заголовком, если картинки нет.
+   Именно контейнер, а не голая плашка: если позже вниз переедет строка цены
+   и редкости, она встанет вторым элементом столбика и метка поднимется
+   сама, без правки позиций (так это устроено на эталоне). */
+.c-img-foot{position:relative;height:0;z-index:2;
+  display:flex;flex-direction:column;align-items:flex-end;}
+.c-img-foot>*{position:absolute;bottom:0;right:0;}
+/* Статус, а не свойство: полупрозрачная винная плашка поверх картинки.
+   На карточку идёт только ФАКТ проклятия — текст остаётся мастеру,
+   в данных и галерее. */
+.c-cursed{align-self:flex-end;padding:2px 9px;border-radius:3px 0 0 0;
+  background:rgba(124,35,26,.72);display:flex;align-items:center;}
+.c-cursed span{font-family:'Times New Roman',Times,serif;font-size:9.5px;
+  font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#fdf3e4;}
 .dc.no-img .c-img{display:none;}
 .dc.no-img .c-title{padding-bottom:0;}
+/* Без картинки метка занимает её место: якорь становится обычной строкой в
+   потоке, плашка растягивается во всю ширину и центрируется. Прижатая вправо
+   плашка на нулевом якоре легла бы поверх подзаголовка — прижимать её не к
+   чему, картинки под ней нет.
+   Полупрозрачность здесь не нужна: просвечивать нечему, под полосой фон
+   карточки, а не картинка. Отступ сверху задан самой плашке, а не якорю: у
+   непроклятого предмета якорь пуст, и отступ на нём сдвинул бы описание. */
+.dc.no-img .c-img-foot{height:auto;align-items:stretch;}
+.dc.no-img .c-img-foot>*{position:static;}
+.dc.no-img .c-cursed{width:100%;justify-content:center;border-radius:0;padding:2px 11px;
+  margin-top:6px;background:#7c231a;}
 
 /* единые боковые отступы 11px */
 .c-body{padding:5px 11px 3px;}
@@ -418,17 +470,9 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .dc-back .c-foot::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   width:42px;height:12px;background:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 42 12'%3E%3Cpath d='M5 6 L8 3 L11 6 L8 9 Z' fill='%234a3a24'/%3E%3Cpath d='M17 6 L21 2 L25 6 L21 10 Z' fill='%234a3a24'/%3E%3Cpath d='M31 6 L34 3 L37 6 L34 9 Z' fill='%234a3a24'/%3E%3C/svg%3E") center/contain no-repeat;}
 
-/* Знак магического бонуса «+N» справа от названия (оружие, доспехи).
-   Выведен из потока: во flex-строке он забирал бы ширину у всего блока
-   заголовка, и подпись под названием переносилась на вторую строку. Рамка
-   повторяет коробку строки названия (line-height 1.2 от кегля имени), место
-   резервирует только .c-name — её clientWidth учитывает _fitName. Позицию
-   знака внутри рамки задаёт line-height: в строчном боксе шрифта заголовков
-   резервируется место под выносные элементы, которых у «+N» нет.
-   Кегль имени дублирует на .c-title-main сам renderCard страницы. */
-.c-title-main{position:relative;}
-.c-mag{position:absolute;right:0;top:0;box-sizing:border-box;height:calc(var(--name-fs,16px)*1.2);line-height:calc(var(--name-fs,16px)*1.5 - 5px);font-family:'Times New Roman',Times,serif;font-size:11px;font-weight:700;letter-spacing:.02em;color:#6b4a12;border:.5px solid #b89a58;background:rgba(138,96,16,.10);border-radius:3px;padding:0 7px;}
-.c-title-main.has-mag .c-name{padding-right:34px;}
+/* Плашки «+N» у названия больше нет: бонус пишут в самом названии, и знак его
+   дублировал. Убран вместе с .c-title-main.has-mag; сам .c-title-main остался
+   как группа «имя + подпись» в разметке оружия и доспехов. */
 .c-stripe-wrap{flex-shrink:0;}
 
 /* Специфика карточки оружия (поверх общих правил) — общая для 2014 и 2024.
@@ -592,13 +636,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     <span class="rname" id="rn">Немагический</span>
   </div>
 
-  <div class="lbl">Магический бонус</div>
-  <div class="magseg" id="magseg" role="radiogroup" aria-label="Магический бонус">
-    <button type="button" class="on" data-v="" role="radio" aria-checked="true" aria-label="без бонуса">—</button>
-    <button type="button" data-v="1" role="radio" aria-checked="false">+1</button>
-    <button type="button" data-v="2" role="radio" aria-checked="false">+2</button>
-    <button type="button" data-v="3" role="radio" aria-checked="false">+3</button>
-  </div>
 
   <label class="lbl" for="fn">Название</label>
   <div class="field-wrap field-mb">
@@ -636,16 +673,41 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     <div class="sf"></div>
   </div>
 
+  <!-- Проклятие и Настройка: два статуса предмета одной строкой, единый блок
+       во всех генераторах. Проклятие первым: оно бывает и без настройки, а
+       настройка скрывается у немагических (attune.js) — при обратном порядке
+       строка у немагического предмета начиналась бы с дыры. -->
+  <div class="flags-row">
+    <label class="noimg-toggle"><input type="checkbox" id="fcursed"/><span>Проклят</span></label>
+    <label class="noimg-toggle" id="attune-wrap" style="display:none;"><input type="checkbox" id="fattune"/><span>Настройка</span></label>
+  </div>
+  <!-- текст проклятия — мастеру: в данные и галерею, на карточку не печатаем -->
+  <div id="cursed-wrap" style="display:none;">
+    <label class="lbl" for="fcursedtxt">В чём проклятие</label>
+    <div class="field-wrap field-mb">
+      <textarea class="si" id="fcursedtxt" maxlength="300" style="height:64px;" placeholder="Снять предмет можно только заклинанием снятия проклятия"></textarea>
+      <span class="char-counter" id="cnt-cursed">0/300</span>
+    </div>
+  </div>
+  <div class="lbl lbl-hint">Магический бонус
+    <button type="button" class="hint-btn" id="maghint-btn" aria-expanded="false" aria-controls="maghint" aria-label="Что делает магический бонус">?</button>
+  </div>
+  <div class="hint-box" id="maghint" hidden>
+    <p>Бонус к атаке и урону, сразу подставляется в автоматическую формулу расчёта показателей на карточку:</p>
+    <p class="hint-f">Атака = Характеристика (Сила/Ловкость) + Бонус Владения (Мастерства) + Магический Бонус.<br/>
+      Урон = Бросок кубика + Характеристика (Сила/Ловкость) + Магический Бонус.</p>
+    <p>На дополнительный урон не влияет.</p>
+    <p>Строка «Атака» появляется, когда заполнено хотя бы одно из трёх слагаемых.</p>
+  </div>
+  <div class="magseg" id="magseg" role="radiogroup" aria-label="Магический бонус">
+    <button type="button" class="on" data-v="" role="radio" aria-checked="true" aria-label="без бонуса">—</button>
+    <button type="button" data-v="1" role="radio" aria-checked="false">+1</button>
+    <button type="button" data-v="2" role="radio" aria-checked="false">+2</button>
+    <button type="button" data-v="3" role="radio" aria-checked="false">+3</button>
+  </div>
+
   <div class="divider"></div>
 
-  <div id="attune-wrap" style="display:none;">
-    <label class="lbl" for="fattune">Настройка</label>
-    <select class="si" id="fattune">
-      <option value="">— не указано —</option>
-      <option value="Требует настройки">Требует настройки</option>
-      <option value="Не требует настройки">Не требует настройки</option>
-    </select>
-  </div>
 
   <label class="lbl" for="fk">Тип оружия</label>
   <select class="si" id="fk"><option value="">— выбрать —</option><option>Рукопашное</option><option>Дальнобойное</option></select>
@@ -693,7 +755,18 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     <div class="sf"><label class="sl" for="fxd">Кубики</label><input class="si" type="text" id="fxd" placeholder="2d6" maxlength="5"/></div>
     <div class="sf"><label class="sl" for="fxt">Тип</label><select class="si" id="fxt"><option value="">—</option><option>Огонь</option><option>Холод</option><option>Электричество</option><option>Кислота</option><option>Яд</option><option>Звук</option><option>Излучение</option><option>Некротическая энергия</option><option>Психическая энергия</option><option>Силовое поле</option></select></div>
   </div>
-  <div class="lbl">Бонусы владельца</div>
+  <div class="lbl lbl-hint">Бонусы владельца
+    <button type="button" class="hint-btn" id="ownhint-btn" aria-expanded="false" aria-controls="ownhint" aria-label="Как считаются бонусы владельца">?</button>
+  </div>
+  <div class="hint-box" id="ownhint" hidden>
+    <p>Необязательные поля.</p>
+    <p>Сила/Ловкость — Характеристика персонажа, идёт бонусом и в атаку, и в урон.</p>
+    <p>Владение — Бонус Владения (Мастерства), идёт бонусом только в атаку.</p>
+    <p>Бонусы к атаке и урону сразу подставляются в автоматическую формулу расчёта показателей на карточку:</p>
+    <p class="hint-f">Атака = Характеристика (Сила/Ловкость) + Бонус Владения (Мастерства) + Магический Бонус.<br/>
+      Урон = Бросок кубика + Характеристика (Сила/Ловкость) + Магический Бонус.</p>
+    <p>Строка «Атака» появляется, когда заполнено хотя бы одно из трёх слагаемых.</p>
+  </div>
   <div class="row2">
     <div class="sf"><label class="sl" for="fstr">Сила / Ловкость</label><input class="si" type="text" id="fstr" placeholder="3" maxlength="2" inputmode="numeric"/></div>
     <div class="sf"><label class="sl" for="fpr">Владение</label><input class="si" type="text" id="fpr" placeholder="2" maxlength="2" inputmode="numeric"/></div>
@@ -718,6 +791,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     <span class="char-counter" id="cnt-desc">0/2000</span>
     <div class="fmt-warn" id="desc-warn" role="status" aria-live="polite" style="display:none;"></div>
   </div>
+
 
   <button class="btn-build" id="gbtn">✦ Создать карточку</button>
   <button class="btn-build-alt" id="gbtn-new" style="display:none;">+ Создать как новую</button>
@@ -748,7 +822,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
         </div>
         <div class="c-title">
           <div class="c-title-main">
-            <span class="c-mag" id="pmag" style="display:none;"></span>
             <div class="c-name" id="pnm">Оружие</div>
             <div class="c-dmgline" id="pdmgl" style="display:none;"></div>
           </div>
@@ -757,6 +830,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
           <div class="c-img-ph" id="img-ph"><svg viewBox="0 0 24 24" fill="none" stroke="#8a7860" stroke-width="1.2"><path d="M14.5 17.5L3 6V3h3l11.5 11.5"/><path d="M13 19l6-6"/><path d="M2 22l7.5-7.5"/></svg></div>
 
         </div>
+        <div class="c-img-foot"><div class="c-cursed" id="p-cursed" style="display:none;"><span>Проклят</span></div></div>
         <div class="c-body">
           <div class="c-stats" id="pst"></div>
           <div class="c-amrow" id="pamrow" style="display:none;">
@@ -884,8 +958,59 @@ PROPS.forEach(function(p){
   pg.appendChild(l);
 });
 
-/* Настройка (attunement): у «Немагический» блок скрыт и значение очищается. */
-function updateAttuneWrap(){document.getElementById('attune-wrap').style.display=cr==='nonmagic'?'none':'block';if(cr==='nonmagic')document.getElementById('fattune').value='';}
+/* Настройка (attunement) — чекбокс: у «Немагический» скрыт и снимается.
+   В данных по-прежнему строка «Требует настройки»/пусто, чтобы карточка,
+   галерея и уже сохранённые коллекции читались без миграции. Прежний селект
+   имел третье состояние «Не требует настройки» — оно схлопнуто в снятую
+   галку: на карточке и в галерее показывалось только «Требует». */
+function updateAttuneWrap(){
+  var wr=document.getElementById('attune-wrap'),cb=document.getElementById('fattune');
+  if(!wr||!cb)return;
+  wr.style.display=cr==='nonmagic'?'none':'';
+  if(cr==='nonmagic')cb.checked=false;
+}
+function attuneVal(){
+  var cb=document.getElementById('fattune');
+  return (cb&&cb.checked)?'Требует настройки':'';
+}
+function attuneSet(v){
+  var cb=document.getElementById('fattune');
+  if(cb)cb.checked=String(v||'').indexOf('Требует')===0;
+}
+/* Проклятие. На карточку идёт только ФАКТ — винная метка поверх картинки
+   (.c-cursed в card-new.css). Сам текст проклятия остаётся мастеру: он живёт
+   в данных и в галерее, игроку его не печатаем.
+
+   Поле «в чём проклятие» показывается только при поднятой галке. Значение при
+   снятии галки НЕ чистим: пользователь мог снять её случайно, а текст бывает
+   длинным — та же логика, что у скрытых полей редакции в оружии. */
+function updateCursedWrap(){
+  var cb=document.getElementById('fcursed'),wr=document.getElementById('cursed-wrap');
+  if(!cb||!wr)return;
+  wr.style.display=cb.checked?'block':'none';
+}
+(function(){
+  var cb=document.getElementById('fcursed');
+  if(cb)cb.addEventListener('change',updateCursedWrap);
+  updateCursedWrap();
+})();
+/* Кружок «?» у подписи поля разворачивает справку под ней (.hint-box).
+   Общий обработчик на все кнопки страницы: справок в форме может быть больше
+   одной, а поведение у них одинаковое. Связь кнопки с текстом — через
+   aria-controls, отдельного data-атрибута не заводим: он всё равно нужен
+   для доступности.
+   Состояние в данные карточки не попадает: это подсказка, а не поле. */
+(function(){
+  document.querySelectorAll('.hint-btn').forEach(function(b){
+    var box=document.getElementById(b.getAttribute('aria-controls')||'');
+    if(!box)return;
+    b.addEventListener('click',function(){
+      var show=box.hasAttribute('hidden');
+      if(show)box.removeAttribute('hidden');else box.setAttribute('hidden','');
+      b.setAttribute('aria-expanded',show?'true':'false');
+    });
+  });
+})();
 
 /* Палитра редкостей (общая для генераторов, кроме kits — у него своя
    единственная «Немагический»). Порядок секций RARITY_ORDER — в collection.js.
@@ -1084,7 +1209,7 @@ function mkCounter(inputId,countId,max,lenFn){
 }
 ['fr1','fr2'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9]/g,'').slice(0,4);this.setSelectionRange(p,p);});});
 ['fstr','fpr'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;var v=this.value.replace(/[^0-9-]/g,'');v=v.charAt(0)+v.slice(1).replace(/-/g,'');this.value=v.slice(0,2);this.setSelectionRange(p,p);});});
-mkCounter('fn','cnt-fn',34);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);
+mkCounter('fn','cnt-fn',34);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcursedtxt','cnt-cursed',300);
 /* Редакция страницы. Дефолт — 2014; параметр ?ed=2014|2024, которым приходят
    редиректы со старых адресов weapon-2014/2024.html, перебивает.
    За выбором галереи страница НЕ следует: генератор — своё рабочее место. */
@@ -1665,7 +1790,9 @@ function readForm(){
     props:props,ammo:document.getElementById('fammo').value,
     /* в 2014 селекта мастерства нет — поле остаётся пустым */
     mastery:(function(){var e=document.getElementById('fmastery');return e?e.value:'';})(),
-    attune:document.getElementById('fattune').value,
+    cursed:document.getElementById('fcursed').checked,
+    cursedText:document.getElementById('fcursedtxt').value.trim(),
+    attune:attuneVal(),
     noImg:document.getElementById('f-noimg').checked,
     img:imgDataUrl,rawImg:rawImgDataUrl
   };
@@ -1933,16 +2060,10 @@ function renderCard(data){
   var atk=(_has(data.strBonus)||_has(data.profBonus)||mg)
     ?fmtB(_n(data.strBonus)+_n(data.profBonus)+mg):'';
   document.getElementById('pnm').textContent=data.name||'Оружие';
-  /* плашку ставим до _fitName: она забирает ширину у строки названия */
-  var mgEl=document.getElementById('pmag');
-  if(mg){mgEl.textContent=fmtB(mg);mgEl.style.display='';}else{mgEl.style.display='none';}
-  var tmEl=document.querySelector('.c-title-main');
-  tmEl.classList.toggle('has-mag',!!mg);
+  /* Плашки «+N» у названия нет: бонус пишут прямо в названии («Длинный меч +1»),
+     и плашка дублировала бы его. Сам бонус по-прежнему считается в строках
+     атаки и урона выше, справку об этом даёт «?» рядом с переключателем. */
   _fitName();
-  /* Плашка — сестра .c-name, переменную кегля _fitName ставит на само имя,
-     поэтому дублируем её на родителя: top плашки считается от кегля названия,
-     иначе при ужатом имени плашка не совпадёт со строкой названия по высоте. */
-  tmEl.style.setProperty('--name-fs',getComputedStyle(document.getElementById('pnm')).fontSize);
 document.getElementById('pc').classList.toggle('no-img',!!data.noImg);
   var co=document.getElementById('p-cost');
   if(data.cost){co.textContent=data.cost+' '+(data.coin||'зм');co.style.visibility='visible';}
@@ -1982,6 +2103,10 @@ document.getElementById('pc').classList.toggle('no-img',!!data.noImg);
   if(data.flv){qEl.textContent='«'+data.flv.replace(/^[«"]/,'').replace(/[»"]$/,'')+'»';qEl.style.display='block';}else{qEl.style.display='none';}
   splitDesc(data);
   document.getElementById('pwgt').textContent=data.wgt?data.wgt+' фнт.':'';
+  /* метка «Проклят» на картинке: на карточку идёт только факт,
+     текст проклятия остаётся мастеру — в данных и галерее */
+  var _cu=document.getElementById('p-cursed');
+  if(_cu)_cu.style.display=data.cursed?'flex':'none';
   setCardImg(data.img||null);
   applyR(data.rarity||'common');applyPal(data.rarity||'common');
 }
@@ -2011,15 +2136,17 @@ function applyFormData(data){
   document.getElementById('fr2').value=data.r2||'';
   document.getElementById('fammo').value=data.ammo||'';
   var _fm=document.getElementById('fmastery');if(_fm)_fm.value=data.mastery||'';
-  document.getElementById('fattune').value=data.attune||'';
+  attuneSet(data.attune);
   document.getElementById('fdesc').value=data.desc||'';
+  document.getElementById('fcursed').checked=!!data.cursed;
+  document.getElementById('fcursedtxt').value=data.cursedText||'';
   document.getElementById('fflv').value=data.flv||'';
   document.querySelectorAll('#pg input[type=checkbox]').forEach(function(cb){cb.checked=(data.props||[]).indexOf(cb.value)>-1;});
   var _os=document.getElementById('pg-osoboe');
   if(_os)_os.checked=(data.props||[]).indexOf('Особое')>-1;
-  updateAttuneWrap();
+  updateAttuneWrap();updateCursedWrap();
   applyImgThumb(data);
-  mkCounter('fn','cnt-fn',34);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);
+  mkCounter('fn','cnt-fn',34);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcursedtxt','cnt-cursed',300);
 }
 
 /* reset */
@@ -2034,11 +2161,13 @@ document.getElementById('btn-reset').addEventListener('click',function(){
      в карточку, и перекидывать его на 2014 посреди работы с 2024 — потеря места */
   var _os2=document.getElementById('pg-osoboe');
   if(_os2)_os2.checked=false;
-  ['fn','fc','fstr','fpr','fxd','fwgt','fr1','fr2','fdesc','fflv'].forEach(function(id){document.getElementById(id).value='';});
+  ['fn','fc','fstr','fpr','fxd','fwgt','fr1','fr2','fdesc','fflv','fcursedtxt'].forEach(function(id){document.getElementById(id).value='';});
   document.getElementById('fcoin').value='зм';
   var _fm2=document.getElementById('fmastery');if(_fm2)_fm2.value='';
-  ['fk','fcat','fdt','fd1','fd2','fxt','fammo','fattune'].forEach(function(id){document.getElementById(id).selectedIndex=0;});
-  document.getElementById('attune-wrap').style.display='none';
+  ['fk','fcat','fdt','fd1','fd2','fxt','fammo'].forEach(function(id){document.getElementById(id).selectedIndex=0;});
+  document.getElementById('fattune').checked=false;
+  updateAttuneWrap();
+  document.getElementById('fcursed').checked=false;updateCursedWrap();
   document.querySelectorAll('#pg input[type=checkbox]').forEach(function(cb){cb.checked=false;});
   imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();
   var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';
@@ -2055,8 +2184,8 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   document.getElementById('pds').textContent='';
   document.getElementById('pwgt').textContent='';
   document.getElementById('pbk').textContent='';
-  setCardImg(null);resetNoImg();applyR('nonmagic');applyPal('nonmagic');var _at=document.getElementById('p-attune');if(_at)_at.style.display='none';['pammo','pmastery','pamrow','pxdmg','pmag'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='none';});document.querySelector('.c-title-main').classList.remove('has-mag');
-  mkCounter('fn','cnt-fn',34);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);
+  setCardImg(null);resetNoImg();applyR('nonmagic');applyPal('nonmagic');var _at=document.getElementById('p-attune');if(_at)_at.style.display='none';['pammo','pmastery','pamrow','pxdmg'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='none';});
+  mkCounter('fn','cnt-fn',34);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcursedtxt','cnt-cursed',300);
   toast('Поля сброшены');
 });
 

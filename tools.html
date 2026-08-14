@@ -110,6 +110,10 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .sf{display:flex;flex-direction:column;gap:3px;}
 /* Галка «Без картинки» стоит над зоной загрузки; при включении зона прячется. */
 .noimg-toggle{display:flex;align-items:center;gap:7px;margin-bottom:8px;cursor:pointer;font-size:12.5px;color:#c9b78e;user-select:none;}
+/* Настройка и Проклятие — два статуса предмета в одну строку, единым блоком
+   во всех генераторах: под редкостью, перед магическим бонусом. */
+.flags-row{display:flex;gap:18px;align-items:center;margin:11px 0 6px;flex-wrap:wrap;}
+.flags-row .noimg-toggle{margin-bottom:0;}
 .noimg-toggle input{width:15px;height:15px;accent-color:#a9722c;cursor:pointer;flex-shrink:0;margin:0;}
 .img-drop{width:100%;height:56px;border:1.5px dashed var(--border2);border-radius:7px;display:flex;align-items:center;justify-content:center;gap:7px;color:var(--text3);font-family:'Times New Roman',Times,serif;font-size:11px;letter-spacing:.07em;cursor:pointer;transition:all .14s;position:relative;overflow:hidden;}
 .img-drop:hover{border-color:var(--accent-l);color:var(--text2);background:rgba(255,255,255,.03);}
@@ -121,6 +125,23 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .hbtn-file{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;}
 .hbtn-upload:has(.hbtn-file:focus-visible){outline:2px solid var(--gold-l);outline-offset:2px;}
 .img-thumb{position:absolute;inset:0;background-size:cover;background-position:center;border-radius:6px;}
+/* Скрытая справка у подписи поля: кружок «?» разворачивает текст под ним.
+   Нужна там, где поле влияет на карточку не напрямую (магический бонус входит
+   в атаку, урон и КБ, но сам на карточке не печатается). Свёрнута по
+   умолчанию: это подсказка на один раз, а не часть формы. */
+.lbl-hint{display:flex;align-items:center;gap:7px;}
+.hint-btn{width:14px;height:14px;flex-shrink:0;padding:0;border:1px solid var(--border2);border-radius:50%;
+  background:rgba(255,255,255,.05);color:var(--text2);cursor:pointer;
+  font-family:'Times New Roman',Times,serif;font-size:10px;font-weight:700;line-height:1;
+  display:flex;align-items:center;justify-content:center;transition:all .14s;}
+.hint-btn:hover{border-color:var(--gold);color:var(--gold-l);background:rgba(200,148,26,.13);}
+.hint-btn[aria-expanded="true"]{border-color:var(--gold);color:var(--gold-l);background:rgba(200,148,26,.13);}
+.hint-box{margin:0 0 9px;padding:7px 0 7px 9px;border-left:2px solid rgba(200,148,26,.35);
+  font-family:'Crimson Text',Georgia,serif;font-size:12.5px;line-height:1.45;color:var(--text2);}
+.hint-box p{margin:0 0 5px;}
+.hint-box p:last-child{margin-bottom:0;}
+/* строки формул: выделены светлее и не разрываются на слова внутри слагаемых */
+.hint-box .hint-f{font-family:'Times New Roman',Times,serif;font-size:12px;color:var(--text);}
 .divider{height:0.5px;background:var(--border);margin:12px 0;}
 .btn-reset{width:100%;padding:8px 9px;margin-top:10px;font-family:'Times New Roman',Times,serif;font-size:10px;font-weight:600;letter-spacing:.08em;cursor:pointer;border:1px solid rgba(220,60,60,.35);border-radius:6px;background:rgba(220,60,60,.08);color:#cf8474;transition:all .14s;display:flex;align-items:center;justify-content:center;gap:5px;}
 .btn-reset:hover{background:rgba(220,60,60,.18);color:#ec9282;border-color:rgba(220,60,60,.55);}
@@ -233,7 +254,10 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .coll-sect-chevron{flex-shrink:0;color:var(--text3);transition:transform .18s;}
 .coll-sect-wrap.collapsed .coll-sect-chevron{transform:rotate(-90deg);}
 .coll-sect-wrap.collapsed .coll-sect-body{display:none;}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:9px 18px;font-family:'Times New Roman',Times,serif;font-size:11px;color:var(--text);letter-spacing:.06em;z-index:200;transition:transform .3s cubic-bezier(.34,1.56,.64,1);pointer-events:none;}
+/* Кривая без перелёта: прежняя уводила тост на 56% выше конечной точки и
+   возвращала обратно, то есть в конце появления он подпрыгивал. Копия этого
+   правила есть в gallery-styles.css, отличается только z-index: менять парой. */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:9px 18px;font-family:'Times New Roman',Times,serif;font-size:11px;color:var(--text);letter-spacing:.06em;z-index:200;transition:transform .3s cubic-bezier(.22,1,.36,1);pointer-events:none;}
 
 .coll-sel-btn{padding:3px 9px;font-family:'Times New Roman',Times,serif;font-size:10px;font-weight:500;letter-spacing:.08em;cursor:pointer;border:0.5px solid var(--border2);border-radius:20px;background:transparent;color:var(--text3);transition:all .14s;}
 .coll-sel-btn:hover,.coll-sel-btn.active{background:rgba(160,120,56,.15);color:var(--text2);border-color:rgba(160,120,56,.4);}
@@ -418,8 +442,36 @@ button:focus:not(:focus-visible){outline:none;}
 /* фон #e6dcc6 — как у эталона: края размытой подложки полупрозрачны, сквозь
    них светит именно этот цвет, и на прежнем #cfc0a0 вся полоса темнела */
 .c-img{height:136px;margin:0;width:100%;border:0;border-radius:0;background:#e6dcc6;}
+/* Подвал картинки — нулевой по высоте якорь СРАЗУ ПОСЛЕ слота, а не внутри
+   него. Внутри слота метка умирала вместе с ним при «Без картинки»: слот
+   уходит в display:none целиком. Снаружи она живёт всегда и садится под
+   заголовком, если картинки нет.
+   Именно контейнер, а не голая плашка: если позже вниз переедет строка цены
+   и редкости, она встанет вторым элементом столбика и метка поднимется
+   сама, без правки позиций (так это устроено на эталоне). */
+.c-img-foot{position:relative;height:0;z-index:2;
+  display:flex;flex-direction:column;align-items:flex-end;}
+.c-img-foot>*{position:absolute;bottom:0;right:0;}
+/* Статус, а не свойство: полупрозрачная винная плашка поверх картинки.
+   На карточку идёт только ФАКТ проклятия — текст остаётся мастеру,
+   в данных и галерее. */
+.c-cursed{align-self:flex-end;padding:2px 9px;border-radius:3px 0 0 0;
+  background:rgba(124,35,26,.72);display:flex;align-items:center;}
+.c-cursed span{font-family:'Times New Roman',Times,serif;font-size:9.5px;
+  font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:#fdf3e4;}
 .dc.no-img .c-img{display:none;}
 .dc.no-img .c-title{padding-bottom:0;}
+/* Без картинки метка занимает её место: якорь становится обычной строкой в
+   потоке, плашка растягивается во всю ширину и центрируется. Прижатая вправо
+   плашка на нулевом якоре легла бы поверх подзаголовка — прижимать её не к
+   чему, картинки под ней нет.
+   Полупрозрачность здесь не нужна: просвечивать нечему, под полосой фон
+   карточки, а не картинка. Отступ сверху задан самой плашке, а не якорю: у
+   непроклятого предмета якорь пуст, и отступ на нём сдвинул бы описание. */
+.dc.no-img .c-img-foot{height:auto;align-items:stretch;}
+.dc.no-img .c-img-foot>*{position:static;}
+.dc.no-img .c-cursed{width:100%;justify-content:center;border-radius:0;padding:2px 11px;
+  margin-top:6px;background:#7c231a;}
 
 /* единые боковые отступы 11px */
 .c-body{padding:5px 11px 3px;}
@@ -444,17 +496,9 @@ button:focus:not(:focus-visible){outline:none;}
 .dc-back .c-foot::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
   width:42px;height:12px;background:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 42 12'%3E%3Cpath d='M5 6 L8 3 L11 6 L8 9 Z' fill='%234a3a24'/%3E%3Cpath d='M17 6 L21 2 L25 6 L21 10 Z' fill='%234a3a24'/%3E%3Cpath d='M31 6 L34 3 L37 6 L34 9 Z' fill='%234a3a24'/%3E%3C/svg%3E") center/contain no-repeat;}
 
-/* Знак магического бонуса «+N» справа от названия (оружие, доспехи).
-   Выведен из потока: во flex-строке он забирал бы ширину у всего блока
-   заголовка, и подпись под названием переносилась на вторую строку. Рамка
-   повторяет коробку строки названия (line-height 1.2 от кегля имени), место
-   резервирует только .c-name — её clientWidth учитывает _fitName. Позицию
-   знака внутри рамки задаёт line-height: в строчном боксе шрифта заголовков
-   резервируется место под выносные элементы, которых у «+N» нет.
-   Кегль имени дублирует на .c-title-main сам renderCard страницы. */
-.c-title-main{position:relative;}
-.c-mag{position:absolute;right:0;top:0;box-sizing:border-box;height:calc(var(--name-fs,16px)*1.2);line-height:calc(var(--name-fs,16px)*1.5 - 5px);font-family:'Times New Roman',Times,serif;font-size:11px;font-weight:700;letter-spacing:.02em;color:#6b4a12;border:.5px solid #b89a58;background:rgba(138,96,16,.10);border-radius:3px;padding:0 7px;}
-.c-title-main.has-mag .c-name{padding-right:34px;}
+/* Плашки «+N» у названия больше нет: бонус пишут в самом названии, и знак его
+   дублировал. Убран вместе с .c-title-main.has-mag; сам .c-title-main остался
+   как группа «имя + подпись» в разметке оружия и доспехов. */
 .c-stripe-wrap{flex-shrink:0;}
 </style>
 <link rel="stylesheet" href="mobile.css"/>
