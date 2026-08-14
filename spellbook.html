@@ -109,6 +109,11 @@ button:focus:not(:focus-visible){outline:none;}
 .empty-state svg{opacity:.15;}
 .empty-state-title{font-family:'Times New Roman',Times,serif;font-size:13px;font-weight:600;color:var(--text3);letter-spacing:.1em;}
 .empty-state-sub{font-family:'Crimson Text',Georgia,serif;font-size:13px;color:var(--text3);text-align:center;line-height:1.7;max-width:320px;}
+/* ссылки под пустым состоянием: были копиями в коллекции и книге заклинаний,
+   в шаблонах их нет — правила лёгкие, пусть едут со всей галерейной вёрсткой */
+.empty-state-links{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;justify-content:center;}
+.empty-state-link{padding:7px 16px;font-family:'Times New Roman',Times,serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);text-decoration:none;transition:all .14s;}
+.empty-state-link:hover{background:rgba(255,255,255,.09);color:var(--text);}
 /* PREVIEW MODAL */
 .prev-bg{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;display:none;align-items:center;justify-content:center;padding:16px;}
 .prev-bg.open{display:flex;}
@@ -116,6 +121,8 @@ button:focus:not(:focus-visible){outline:none;}
 .prev-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-shrink:0;}
 .prev-title{font-family:'Times New Roman',Times,serif;font-size:13px;font-weight:700;color:var(--gold-l);letter-spacing:.07em;}
 .prev-close{width:28px;height:28px;background:rgba(255,255,255,.05);border:0.5px solid var(--border2);border-radius:50%;color:var(--text2);cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all .13s;flex-shrink:0;}
+/* наведение было копией во всех трёх галереях, хотя само правило уже общее */
+.prev-close:hover{background:rgba(220,60,60,.15);color:#e08070;border-color:rgba(220,60,60,.3);}
 .side-lbl{font-family:'Times New Roman',Times,serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#b0a890;}
 .prev-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;flex-shrink:0;}
 .c-meta-item.cost{color:#8a6010;}
@@ -419,10 +426,6 @@ table.gx-t{width:100%;min-width:100%;border-collapse:collapse;font-size:12.5px;t
    У полей ввода своя индикация (рамка золотеет), поэтому им обводка не нужна:
    иначе получалось два кольца. */
 .grid-wrap{flex:1;min-height:0;overflow-y:auto;background:#1a1814;scrollbar-width:thin;scrollbar-color:var(--bg4) transparent;}
-.prev-close:hover{background:rgba(220,60,60,.15);color:#e08070;border-color:rgba(220,60,60,.3);}
-.empty-state-links{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;justify-content:center;}
-.empty-state-link{padding:7px 16px;font-family:'Times New Roman',Times,serif;font-size:10px;font-weight:600;letter-spacing:.09em;cursor:pointer;border:0.5px solid var(--border2);border-radius:7px;background:rgba(255,255,255,.04);color:var(--text2);text-decoration:none;transition:all .14s;}
-.empty-state-link:hover{background:rgba(255,255,255,.09);color:var(--text);}
 
 /* ── СОРТИРОВКА ── */
 /* Условие лицензии CC BY 4.0, под которой Wizards выпустили SRD: без указания
@@ -799,6 +802,39 @@ function renderRuns(el,runs){
     if(r.b){var bo=document.createElement('b');bo.appendChild(node);node=bo;}
     el.appendChild(node);
   }
+}
+
+/* ── Ввод разметки в поле: кнопки Ж/К/П и Ctrl+B/I/U ──
+   Живёт здесь, а не в fmt-ui.js, потому что нужна и там, где своя привязка
+   кнопок: у произвольной карточки поле в каждом блоке своё, у заклинаний
+   собственная панель. Раньше это была одна реализация на троих в трёх копиях,
+   причём копия произвольных писала в ta.value и стирала стек отмены. */
+
+/* Замена куска поля с сохранением нативной отмены: присваивание ta.value
+   очищает историю браузера, поэтому пишем через execCommand, а откат value
+   оставлен для движков, где команда не поддержана. */
+function fmtReplace(ta,from,to,text){
+  ta.focus();ta.setSelectionRange(from,to);
+  var ok=false;try{ok=document.execCommand('insertText',false,text);}catch(e){ok=false;}
+  if(ok)return;
+  var v=ta.value;ta.value=v.slice(0,from)+text+v.slice(to);
+  ta.dispatchEvent(new Event('input',{bubbles:true}));
+}
+
+/* Обернуть выделение маркерами; повторный вызов на уже обёрнутом — снимает.
+   Маркеры ищем и снаружи выделения, и внутри него: пользователь может выделить
+   как «текст», так и «**текст**». */
+function fmtWrap(ta,mark){
+  var ml=mark.length,st=ta.selectionStart,en=ta.selectionEnd,v=ta.value,inner=v.slice(st,en);
+  if(st>=ml&&v.slice(st-ml,st)===mark&&v.slice(en,en+ml)===mark){
+    fmtReplace(ta,st-ml,en+ml,inner);ta.setSelectionRange(st-ml,st-ml+inner.length);
+  }else if(inner.length>=ml*2&&inner.slice(0,ml)===mark&&inner.slice(inner.length-ml)===mark){
+    var bare=inner.slice(ml,inner.length-ml);
+    fmtReplace(ta,st,en,bare);ta.setSelectionRange(st,st+bare.length);
+  }else{
+    fmtReplace(ta,st,en,mark+inner+mark);ta.setSelectionRange(st+ml,st+ml+inner.length);
+  }
+  ta.focus();
 }
 
 /* Палитра школ магии — единственный источник (генератор заклинаний + книга).
