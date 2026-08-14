@@ -346,6 +346,15 @@ table.gx-t{width:100%;min-width:100%;border-collapse:collapse;font-size:12.5px;t
 .gx-tn{display:flex;align-items:center;gap:8px;color:#2a1e0a;font-weight:600;}
 .gx-tn svg{width:14px;height:14px;flex-shrink:0;color:#8a7550;}
 .gx-en{font-style:italic;color:#9a8a6c;font-size:12.5px;font-weight:400;}
+/* Статусы строки — те же печати, что в форме генератора: винная у проклятия,
+   золотая у настройки. Кладём рядом, а не текстом, чтобы колонка оставалась
+   узкой и читалась одним взглядом вдоль столбца. */
+.gx-flag{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;
+  vertical-align:-1px;border:1px solid rgba(0,0,0,.28);
+  box-shadow:inset 0 2px 2px rgba(255,255,255,.4),inset 0 -2px 3px rgba(0,0,0,.3);}
+.gx-flag:last-child{margin-right:0;}
+.gx-flag.cursed{background:#7c231a;}
+.gx-flag.attune{background:#c8941a;}
 .gx-dim{color:#9a8a6c;font-size:12.5px;}
 
 /* панель карточки справа */
@@ -1081,7 +1090,11 @@ var GAL_SUBORDER={
 var GAL_VALORDER={
   cat:['Простое','Воинское','Импровизированное'],kind:['Рукопашное','Дальнобойное'],dt:['Рубящий','Дробящий','Колющий'],
   armorType:['Лёгкий','Средний','Тяжёлый','Щит'],
-  poisonType:['Контактный','Поглощаемый','Вдыхаемый','Оружейный']
+  poisonType:['Контактный','Поглощаемый','Вдыхаемый','Оружейный'],
+  /* У двусторонних признаков «да» должно стоять первым: по алфавиту 'no'
+     обгоняет 'yes', и список открывался отрицанием. */
+  _attune:['yes','no'],_cursed:['yes','no'],_charges:['yes','no'],
+  _magicitem:['yes','no'],_stealth:['dis','ok']
 };
 var GAL_RORD={nonmagic:0,common:1,uncommon:2,rare:3,veryrare:4,legendary:5};
 function galRank(list,v){if(!list)return 500;var i=list.indexOf(v);return i<0?499:i;}
@@ -1139,6 +1152,16 @@ function galNameCell(c){
     (c.nameEn?'<span class="gx-en">'+_gxEsc(c.nameEn)+'</span>':'')+'</div>';
 }
 function _gxEsc(t){return String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+/* Статусы предмета прямо в строке таблицы: те же печати, что в форме
+   генератора, — винная у проклятия, золотая у настройки. Раньше статус был
+   виден только в фильтре и в предпросмотре, то есть строку приходилось
+   открывать, чтобы узнать про неё главное. */
+function galStatuses(c){
+  var out='';
+  if(c.cursed)out+='<span class="gx-flag cursed" title="Проклят"></span>';
+  if(String(c.attune||'').indexOf('Требует')===0)out+='<span class="gx-flag attune" title="Требует настройки"></span>';
+  return out||'—';
+}
 
 /* ── колонки таблицы по разделам ── */
 /* Колонки таблицы раздела = те же свойства, что и в панели, кроме прозы.
@@ -1174,9 +1197,12 @@ var GAL_SCHEMA={
     cell:function(c){var u=galToolUseCell(c);return [galNameCell(c),c.toolType||'—',c.stat||'—',
       u||'—',
       c.craft?'<span class="gx-wrap">'+_gxEsc(c.craft)+'</span>':'—',galWgt(c),galCost(c)];}},
-  equipment:{cols:['Название','Маг.','Категория','Тип предмета','Вес','Цена'],num:[4,5],
-    w:[0,48,0,150,0,0],wmin:[0,0,104,0,0,0],opt:[1,3],
-    cell:function(c){return [galNameCell(c),galMagic(c)||'—',c.category||'—',
+  /* «Статусы» стоят сразу за названием и уже́ прочих колонок: это метка, а не
+     значение, читается знаком. Колонка необязательная (opt) — если в разделе
+     нет ни проклятых, ни требующих настройки, она исчезает. */
+  equipment:{cols:['Название','Статусы','Маг.','Категория','Тип предмета','Вес','Цена'],num:[5,6],
+    w:[0,58,48,0,150,0,0],wmin:[0,0,0,104,0,0,0],opt:[1,2,4],
+    cell:function(c){return [galNameCell(c),galStatuses(c),galMagic(c)||'—',c.category||'—',
       c.itemType||'—',galWgt(c),galCost(c)];}},
   custom:{cols:['Название','Тип карточки'],num:[],
     w:[0,0],wmin:[0,154],
@@ -1747,7 +1773,7 @@ var GAL_FDEFS={
   armor:[['_rarity','Редкость'],['_magic','Магический бонус'],['armorType','Категория доспеха'],['acDisplay','КБ'],['spec','Особое свойство'],['specType','Тип урона (сопротивление)'],['strReq','Требование Силы'],['_stealth','Скрытность'],['_attune','Настройка'],['_cursed','Проклятие']],
   poisons:[['poisonType','Тип яда'],['savingThrow','Спасбросок'],['saveStat','Характеристика спасброска']],
   tools:[['toolType','Категория'],['stat','Характеристика']],
-  equipment:[['category','Категория'],['itemType','Тип предмета'],['_rarity','Редкость'],['_magic','Магический бонус'],['_attune','Настройка'],['_cursed','Проклятие']],
+  equipment:[['category','Категория'],['itemType','Тип предмета'],['_magicitem','Магический'],['_rarity','Редкость'],['_magic','Магический бонус'],['_charges','Заряды'],['_attune','Настройка'],['_cursed','Проклятие']],
   custom:[['cardType','Тип карточки']]
 };
 function _galVals(c,f){
@@ -1757,7 +1783,18 @@ function _galVals(c,f){
   if(f==='_attune')return [_attuneState(c)];
   if(f==='_stealth')return [c.stealth===true?'dis':'ok'];
   if(f==='_magic'){var mb=parseInt(c.magicBonus,10);return (isNaN(mb)||mb===0)?[]:['+'+mb];}
-  if(f==='_cursed')return c.cursed?['да']:[];
+  /* Проклятие двустороннее, как настройка и скрытность: раньше непроклятые
+     карточки не отдавали значения вовсе, поэтому в списке был единственный
+     пункт «да» и выбрать «покажи обычные» было нельзя. */
+  if(f==='_cursed')return [c.cursed?'yes':'no'];
+  if(f==='_charges')return [c.charges?'yes':'no'];
+  /* «Магический» — одна проверка вместо трёх: вещь магическая, если у неё есть
+     редкость выше немагической, тип из магических правил или бонус. */
+  if(f==='_magicitem'){
+    var r=(c.rarity||'').trim(),mb2=parseInt(c.magicBonus,10);
+    var маг=(r&&r!=='nonmagic')||!!(c.itemType||'').trim()||(!isNaN(mb2)&&mb2!==0);
+    return [маг?'yes':'no'];
+  }
   var v=c[f];
   if(v==null||v==='')return [];
   if(Array.isArray(v))return v.map(function(x){return String(x).trim();});
@@ -1767,6 +1804,9 @@ function _galLabel(f,v){
   if(f==='_rarity')return _RLBL(v);
   if(f==='_attune')return v==='yes'?'Требует настройки':'Не требует настройки';
   if(f==='_stealth')return v==='dis'?'С помехой':'Без помехи';
+  if(f==='_cursed')return v==='yes'?'Проклят':'Не проклят';
+  if(f==='_charges')return v==='yes'?'С зарядами':'Без зарядов';
+  if(f==='_magicitem')return v==='yes'?'Магический':'Обычный';
   return v;
 }
 /* Порядок значений книжный, а не алфавитный: иначе «Воинское» встаёт раньше
