@@ -308,7 +308,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-meta-item{font-family:'Times New Roman',Times,serif;font-size:9px;font-weight:700;letter-spacing:.09em;color:#5a4830;text-transform:uppercase;white-space:nowrap;}
 /* цена: #8a6010 давал контраст 4.34 на подложке карточки, ниже порога 4.5 */
 .c-meta-item.cost{color:#805811;position:absolute;left:10px;}
-/* Фон, а не <img>: html2canvas игнорирует object-fit и растягивает кадр в
+/* Фон, а не тег картинки: html2canvas игнорирует object-fit и растягивает кадр в
    PNG-экспорте, background-size:cover же отрабатывает верно (см. setCardImg).
    cover, а не 100% 100%: кадры из старых коллекций сняты под прежнюю
    пропорцию, и срезать им края лучше, чем растягивать по вертикали на 12%.
@@ -626,9 +626,28 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .dc.no-img .c-img-foot>*{position:static;}
 .dc.no-img .c-cursed{width:100%;justify-content:center;border-radius:0;padding:2px 11px;
   margin-top:6px;background:#7c231a;}
+/* Снаряжение: за якорем идёт полоса свойств, а не описание, и без картинки с
+   непроклятым предметом она ложилась вплотную к подзаголовку — метка проклятия
+   была единственным, что давало просвет. Отступ переносим на якорь: он есть в
+   обоих случаях, и зазор до полосы одинаков — проклят предмет или нет.
+   Плашка в DOM всегда и прячется инлайновым display, поэтому отбор идёт по
+   соседней полосе свойств, а не по её наличию. */
+/* Снаряжение: полоса свойств прилегает вплотную и к картинке, и к метке
+   проклятия — обе дают собственную кромку. Отступ нужен только когда сверху
+   голый подзаголовок: там текст, а не кромка. */
+.dc.no-img .c-img-foot:has(+ .c-eqprops){margin-top:6px;}
+.dc.no-img .c-img-foot:has(+ .c-eqprops) .c-cursed{margin-top:0;}
 
 /* единые боковые отступы 11px */
-.c-body{padding:5px 11px 3px;}
+/* Первый блок тела отступает от того, что над ним, на 6px — одинаково во всех
+   генераторах и при любом верхе: картинка, метка проклятия или голый
+   подзаголовок. Числа 5 и 0 разошлись по страницам исторически, и карточки
+   выглядели по-разному без причины. */
+.c-body{padding:6px 11px 3px;}
+/* Верхний отступ у первого блока гасим: он складывался с полем тела и давал
+   разные просветы на разных страницах — 8px у инструментов, 10px у оружия при
+   заявленных 6. Источник отступа должен быть один. */
+.c-body>*:first-child{margin-top:0;}
 /* Верхний отступ 5px, а не 11: строка «Описание» на обороте встаёт серединой
    ровно против середины мета-полосы на лице (обе 20px от верха карточки).
    Связка ручная — оборот про высоту лицевой полосы ничего не знает, поэтому
@@ -693,7 +712,6 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-stats .cst:last-child{border-right:none;}
 .cst-l{font-family:'Times New Roman',Times,serif;font-size:7px;letter-spacing:.06em;text-transform:uppercase;color:#8a6b2e;margin-bottom:1px;}
 .cst-v{font-size:15px;font-weight:700;color:#2a1e0a;}
-.dc.no-img .c-stats{margin-top:0;}
 /* дополнительный урон — плашка того же вида, что «Боеприпас» */
 .c-xdmg{font-size:9.5px;color:#4a3a24;line-height:1.35;margin:5px 0 0;background:rgba(138,96,16,.08);border-radius:5px;padding:3px 9px;overflow:hidden;}
 /* боеприпас + мастерство — одной строкой, кегль обеих подбирает _fitLine */
@@ -1807,9 +1825,9 @@ function setCardImg(src){
   var ex=ci.querySelector('.c-img-el');
   var bl=ci.querySelector('.c-img-bleed');
   if(src){
-    /* div с фоном, а НЕ <img>: html2canvas игнорирует object-fit и растягивает
-       картинку в PNG-экспорте, а background-size:cover отрабатывает верно.
-       Проверено кругом в кадре 2:1 — через <img> он давал эллипс 0.88. */
+    /* div с фоном, а НЕ тег картинки: html2canvas игнорирует object-fit и
+       растягивает картинку в PNG-экспорте, а background-size:cover отрабатывает
+       верно. Проверено кругом в кадре 2:1 — тегом он давал эллипс 0.88. */
     if(!bl){bl=document.createElement('div');bl.className='c-img-bleed';ci.insertBefore(bl,ci.firstChild);}
     if(!ex){ex=document.createElement('div');ex.className='c-img-el';ci.insertBefore(ex,bl.nextSibling);}
     /* Кадр и подложка применяются ОДНИМ махом, когда готовы обе: раньше
@@ -2430,6 +2448,9 @@ document.getElementById('pc').classList.toggle('no-img',!!data.noImg);
      текст проклятия остаётся мастеру — в данных и галерее */
   var _cu=document.getElementById('p-cursed');
   if(_cu)_cu.style.display=data.cursed?'flex':'none';
+  /* класс на карточке: плашка всегда в DOM и прячется инлайном, а CSS нужно
+     знать про проклятие — от него зависит зазор под шапкой */
+  var _pc=document.getElementById('pc');if(_pc)_pc.classList.toggle('cursed',!!data.cursed);
   setCardImg(data.img||null);
   applyR(data.rarity||'common');applyPal(data.rarity||'common');
 }
@@ -2471,7 +2492,7 @@ function applyFormData(data){
   if(_os)_os.checked=(data.props||[]).indexOf('Особое')>-1;
   updateAttuneWrap();updateCursedWrap();
   applyImgThumb(data);
-  mkCounter('fn','cnt-fn',34);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcursedtxt','cnt-cursed',300);
+  mkCounter('fn','cnt-fn',60);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcursedtxt','cnt-cursed',1200);
 }
 
 /* reset */
@@ -2513,7 +2534,7 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   /* чистое поле показываем открытым: печатать вслепую невозможно */
   if(typeof setCursedMask==='function')setCursedMask(false);
 var _at=document.getElementById('p-attune');if(_at)_at.style.display='none';['pammo','pmastery','pamrow','pxdmg'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='none';});
-  mkCounter('fn','cnt-fn',34);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcursedtxt','cnt-cursed',300);
+  mkCounter('fn','cnt-fn',60);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcursedtxt','cnt-cursed',1200);
   toast('Поля сброшены');
 });
 

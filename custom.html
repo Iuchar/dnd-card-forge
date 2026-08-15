@@ -308,7 +308,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-meta-item{font-family:'Times New Roman',Times,serif;font-size:9px;font-weight:700;letter-spacing:.09em;color:#5a4830;text-transform:uppercase;white-space:nowrap;}
 /* цена: #8a6010 давал контраст 4.34 на подложке карточки, ниже порога 4.5 */
 .c-meta-item.cost{color:#805811;position:absolute;left:10px;}
-/* Фон, а не <img>: html2canvas игнорирует object-fit и растягивает кадр в
+/* Фон, а не тег картинки: html2canvas игнорирует object-fit и растягивает кадр в
    PNG-экспорте, background-size:cover же отрабатывает верно (см. setCardImg).
    cover, а не 100% 100%: кадры из старых коллекций сняты под прежнюю
    пропорцию, и срезать им края лучше, чем растягивать по вертикали на 12%.
@@ -513,9 +513,17 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 
 /* ── рендер блоков на карточке ── */
 .c-blocks{display:flex;flex-direction:column;}
+/* Общее правило гасит отступ у первого ребёнка тела, но здесь это обёртка
+   блоков: свой margin остаётся у первого блока внутри неё. У разделителя он
+   1px, и просвет под картинкой выходил 7px вместо 6. */
+.c-blocks>.blk:first-child{margin-top:0;}
 .blk{margin-bottom:6px;}
 .blk:last-child{margin-bottom:0;}
-.blk-h{font-family:'Times New Roman',Times,serif;font-weight:700;font-size:8.5px;letter-spacing:.16em;color:#8a6b2e;text-transform:uppercase;display:flex;align-items:center;gap:8px;}
+/* Высота нечётная (11px) намеренно: линия ::after центрируется, и при чётной
+   высоте её край приходился на половину пикселя — она размазывалась на два ряда
+   и рядом с разделителем выглядела то толще, то тоньше. При 11px смещение
+   ровно 5px, и обе линии ложатся одинаково. */
+.blk-h{font-family:'Times New Roman',Times,serif;font-weight:700;font-size:8.5px;line-height:11px;letter-spacing:.16em;color:#8a6b2e;text-transform:uppercase;display:flex;align-items:center;gap:8px;}
 .blk-h::after{content:'';flex:1;height:1px;background:rgba(160,120,56,.5);}
 .blk-t{font-family:'Crimson Text',Georgia,serif;color:#241a08;line-height:1.4;white-space:pre-wrap;}
 .blk-list{margin:0;padding-left:1.5em;font-family:'Crimson Text',Georgia,serif;color:#241a08;line-height:1.45;}
@@ -534,7 +542,10 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .blk-table td{padding:3px 6px;}
 .blk-table th:not(:last-child),.blk-table td:not(:last-child){border-right:.5px solid rgba(160,120,56,.4);}
 .blk-table tbody tr:nth-child(even) td{background:rgba(138,96,16,.07);}
-.blk-div{height:1px;background:rgba(160,120,56,.5);margin:1px 0;}
+/* Отступы как у прочих блоков: свои 1px оставляли после разделителя ровно
+   пиксель, и стоящий следом статблок с собственной верхней рамкой сливался с
+   ним в одну жирную линию. Сверху отступ даёт margin-bottom предыдущего блока. */
+.blk-div{height:1px;background:rgba(160,120,56,.5);margin:0 0 6px;}
 
 /* ── редактор блоков в сайдбаре ── */
 .add-bar{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
@@ -686,9 +697,28 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .dc.no-img .c-img-foot>*{position:static;}
 .dc.no-img .c-cursed{width:100%;justify-content:center;border-radius:0;padding:2px 11px;
   margin-top:6px;background:#7c231a;}
+/* Снаряжение: за якорем идёт полоса свойств, а не описание, и без картинки с
+   непроклятым предметом она ложилась вплотную к подзаголовку — метка проклятия
+   была единственным, что давало просвет. Отступ переносим на якорь: он есть в
+   обоих случаях, и зазор до полосы одинаков — проклят предмет или нет.
+   Плашка в DOM всегда и прячется инлайновым display, поэтому отбор идёт по
+   соседней полосе свойств, а не по её наличию. */
+/* Снаряжение: полоса свойств прилегает вплотную и к картинке, и к метке
+   проклятия — обе дают собственную кромку. Отступ нужен только когда сверху
+   голый подзаголовок: там текст, а не кромка. */
+.dc.no-img .c-img-foot:has(+ .c-eqprops){margin-top:6px;}
+.dc.no-img .c-img-foot:has(+ .c-eqprops) .c-cursed{margin-top:0;}
 
 /* единые боковые отступы 11px */
-.c-body{padding:5px 11px 3px;}
+/* Первый блок тела отступает от того, что над ним, на 6px — одинаково во всех
+   генераторах и при любом верхе: картинка, метка проклятия или голый
+   подзаголовок. Числа 5 и 0 разошлись по страницам исторически, и карточки
+   выглядели по-разному без причины. */
+.c-body{padding:6px 11px 3px;}
+/* Верхний отступ у первого блока гасим: он складывался с полем тела и давал
+   разные просветы на разных страницах — 8px у инструментов, 10px у оружия при
+   заявленных 6. Источник отступа должен быть один. */
+.c-body>*:first-child{margin-top:0;}
 /* Верхний отступ 5px, а не 11: строка «Описание» на обороте встаёт серединой
    ровно против середины мета-полосы на лице (обе 20px от верха карточки).
    Связка ручная — оборот про высоту лицевой полосы ничего не знает, поэтому
@@ -1520,9 +1550,9 @@ function setCardImg(src){
   var ex=ci.querySelector('.c-img-el');
   var bl=ci.querySelector('.c-img-bleed');
   if(src){
-    /* div с фоном, а НЕ <img>: html2canvas игнорирует object-fit и растягивает
-       картинку в PNG-экспорте, а background-size:cover отрабатывает верно.
-       Проверено кругом в кадре 2:1 — через <img> он давал эллипс 0.88. */
+    /* div с фоном, а НЕ тег картинки: html2canvas игнорирует object-fit и
+       растягивает картинку в PNG-экспорте, а background-size:cover отрабатывает
+       верно. Проверено кругом в кадре 2:1 — тегом он давал эллипс 0.88. */
     if(!bl){bl=document.createElement('div');bl.className='c-img-bleed';ci.insertBefore(bl,ci.firstChild);}
     if(!ex){ex=document.createElement('div');ex.className='c-img-el';ci.insertBefore(ex,bl.nextSibling);}
     /* Кадр и подложка применяются ОДНИМ махом, когда готовы обе: раньше
