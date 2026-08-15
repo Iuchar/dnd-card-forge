@@ -31,6 +31,13 @@ html{font-size:15px;height:100%;overflow:hidden;}
 body{background:var(--bg);color:var(--text);font-family:'Crimson Text',Georgia,serif;height:100%;display:flex;flex-direction:column;overflow:hidden;}
 .header{padding:13px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid var(--border);background:linear-gradient(to bottom,rgba(200,148,26,.06),transparent);gap:12px;flex-wrap:wrap;flex-shrink:0;}
 .logo{font-family:'Times New Roman',Times,serif;font-size:17px;font-weight:700;letter-spacing:.12em;color:var(--gold-l);white-space:nowrap;}
+/* Пояснение про редакции у подзаголовка страницы. Шапка обязана оставаться в
+   одну строку: перенос выталкивает кнопки действий вниз и поднимает её высоту
+   втрое. Поэтому подпись мельче, не переносится, а на узком экране прячется —
+   в строке разделов год и так написан на кнопках. */
+.hdr-note{font-size:11px;color:var(--text3);white-space:nowrap;}
+/* 1240px — замер: при 1280 подпись кончается на 895, кнопки начинаются с 938 */
+@media (max-width:1240px){.hdr-note{display:none;}}
 .logo span{color:var(--text2);font-weight:400;}
 .hbtn:hover{background:rgba(255,255,255,.09);color:var(--text);}
 .hbtn svg{width:13px;height:13px;flex-shrink:0;}
@@ -269,8 +276,6 @@ button:focus:not(:focus-visible){outline:none;}
 /* строка разделов живёт внутри .filter-bar; фильтры и сортировка — своими строками */
 .gx-secbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;row-gap:6px;}
 .filter-bar-sub{padding:7px 20px;background:rgba(200,148,26,.05);}
-.gx-edbar{display:flex;align-items:center;gap:8px;padding:7px 20px;border-bottom:0.5px solid var(--border);flex-wrap:wrap;row-gap:6px;background:rgba(200,148,26,.05);}
-.gx-ednote{margin-left:auto;font-family:'Crimson Text',Georgia,serif;font-style:italic;font-size:11px;color:var(--text3);white-space:nowrap;}
 .gx-sortbar{display:none;align-items:center;gap:7px;padding:7px 20px;border-bottom:0.5px solid var(--border);flex-wrap:wrap;row-gap:6px;background:rgba(200,148,26,.05);}
 .gx-sortbar.open{display:flex;}
 .gx-blbl{font-family:'Times New Roman',Times,serif;font-size:8.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--gold);white-space:nowrap;}
@@ -535,7 +540,7 @@ table.gx-t{width:100%;min-width:100%;border-collapse:collapse;font-size:12.5px;t
       </span>
     </div>
     </div>
-    <h1 style="font-size:12px;color:var(--text2);font-family:'Crimson Text',serif;font-style:italic;font-weight:400;margin:0;">— Готовые шаблоны</h1>
+    <h1 style="font-size:12px;color:var(--text2);font-family:'Crimson Text',serif;font-style:italic;font-weight:400;margin:0;">— Готовые шаблоны<span class="hdr-note">: по годам различается только оружие, остальные разделы общие</span></h1>
   </div>
   <div class="header-right">
     <button class="hbtn" id="btn-select-mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><span class="bsm-lbl">Выбрать</span></button>
@@ -545,9 +550,6 @@ table.gx-t{width:100%;min-width:100%;border-collapse:collapse;font-size:12.5px;t
 </header>
 
 <div class="pg-layout">
-
-  <!-- EDITION BAR -->
-  <div class="gx-edbar" id="gx-edbar"></div>
 
   <!-- FILTER BAR -->
   <div class="filter-bar">
@@ -867,47 +869,30 @@ function closePreview(){document.getElementById('prev-bg').classList.remove('ope
    карточка (мастерство против «Особого»). Остальные разделы, включая
    инструменты, общие — там 2024 просто добавляет полей к тому же предмету.
    Оружие несёт редакцию в _edition/_source. */
-var GAL_ED_KEY='dnd_gallery_edition';
+/* Редакция НЕ запоминается между заходами: страница всегда открывается на 2014.
+   Сохранённый выбор молча прятал карточки — человек возвращался в галерею через
+   день, видел неполный список и шёл искать причину в фильтрах, а не в годе.
+   Внутри сессии выбор, конечно, держится: сбрасывает его только перезагрузка. */
 var GAL_ED='2014';
-try{var _e=localStorage.getItem(GAL_ED_KEY);if(_e==='2014'||_e==='2024')GAL_ED=_e;}catch(e){}
 
+/* Три источника подряд, как в _cardEdOf (weapon-render.js): карточки лежат в
+   разных местах и называют редакцию по-разному.
+   `edition` — карточки пользователя: генератор оружия пишет именно это поле, а
+   в «Моей коллекции» _source всегда просто 'weapon' (это ключ хранилища, а не
+   редакция). Без этой ветки редакция у своих карточек не определялась вовсе,
+   пустое значение означает «видна в обеих», и переключатель их не делил.
+   `_edition` — готовые шаблоны. `_source` — путь через галерейные обёртки. */
 function galCardEd(c){
-  var e=c._edition;
-  if(e==='2014'||e==='2024')return e;      /* оружие */
+  var e=c.edition;
+  if(e==='2014'||e==='2024')return e;      /* своя карточка оружия */
+  e=c._edition;
+  if(e==='2014'||e==='2024')return e;      /* шаблон */
   var s=c._source;
   if(s==='weapon2014')return '2014';
   if(s==='weapon2024')return '2024';
   return '';                                /* общая для обеих */
 }
 function galEdMatch(c){var e=galCardEd(c);return !e||e===GAL_ED;}
-
-function galBuildEdBar(){
-  var host=document.getElementById('gx-edbar');
-  if(!host)return;
-  host.innerHTML='<span class="gx-blbl">Редакция</span>'+
-    ['2014','2024'].map(function(v){
-      return '<button type="button" class="gx-sec'+(v===GAL_ED?' on':'')+'" data-ed="'+v+'">'+v+'</button>';
-    }).join('')+
-    '<span class="gx-ednote">по годам различается только оружие, остальные разделы общие</span>';
-  host.querySelectorAll('button[data-ed]').forEach(function(b){
-    b.addEventListener('click',function(){
-      var v=b.getAttribute('data-ed');
-      if(v===GAL_ED)return;
-      GAL_ED=v;
-      try{localStorage.setItem(GAL_ED_KEY,v);}catch(e){}
-      galBuildEdBar();
-      /* Выбранная карточка живёт только в своей редакции: после переключения
-         боковая панель показывала «Боевую кирку» с приёмом 2024, когда список
-         под ней уже пуст. Снимаем выбор, если карточка не из этой редакции. */
-      if(typeof galCurrent!=='undefined'&&galCurrent&&typeof galEdMatch==='function'&&!galEdMatch(galCurrent))
-        galCurrent=null;
-      /* фильтры пересобираем: набор значений в разделе зависит от редакции */
-      if(typeof buildFilters==='function')buildFilters();
-      if(typeof renderGrid==='function')renderGrid();
-      if(typeof galRenderSide==='function')galRenderSide();
-    });
-  });
-}
 /* Указатель и таблица галерей (collection + templates).
    Включать ВНУТРИ IIFE страницы, после gallery-core.js: опирается на GROUPS,
    getFiltered, R, а также на хуки страницы galCardExtras/openPreview.
@@ -1854,15 +1839,24 @@ function _updBtn(btn,def){var sel=FILT[def.key];var c=btn.querySelector('.fdd-cn
 function _closePanels(){[].forEach.call(document.querySelectorAll('.fdd-panel.open'),function(p){p.classList.remove('open');});}
 document.addEventListener('click',function(){_closePanels();});
 
-/* строка разделов: она же переключает указатель/таблицу (только галереи) */
+/* Строка разделов: она же переключает указатель/таблицу и редакцию (только
+   галереи). Год входит в выбор раздела, отдельной оси нет: что нажато, то и
+   видно. Прежняя полоса «Редакция» сливалась с фоном шапки, и пропавшие
+   карточки искали в фильтрах.
+   Удваиваются только «Всё» и «Оружие»: по годам различается одно оружие (у него
+   отличается сама карточка), у остальных разделов пара была бы неотличима. */
 function buildSections(){
   var host=document.getElementById('gx-secbar');if(!host||!_galOn())return;
   host.innerHTML='<span class="gx-blbl">Раздел</span>';
-  function mk(id,label){
+  function mk(id,label,ed){
     var b=document.createElement('button');b.type='button';
-    b.className='gx-sec'+(GAL_SEC===id?' on':'');b.textContent=label;
+    /* «Всё 2014» и «Всё 2024» несут один GAL_SEC, поэтому активную ищем по паре
+       «раздел + год», иначе горели бы обе */
+    var активна=(GAL_SEC===id)&&(!ed||typeof GAL_ED==='undefined'||GAL_ED===ed);
+    b.className='gx-sec'+(активна?' on':'');b.textContent=label;
     b.addEventListener('click',function(){
       GAL_SEC=id;
+      if(ed&&typeof GAL_ED!=='undefined')GAL_ED=ed;
       FILTER_DEFS.forEach(function(d){if(FILT[d.key])FILT[d.key].clear();});
       /* при входе в раздел — название по возрастанию, это колонка 0 у всех схем */
       galSortF='#0';galSortDir=1;galCurrent=null;
@@ -1870,10 +1864,16 @@ function buildSections(){
     });
     host.appendChild(b);
   }
-  mk('all','Всё');
+  /* Пустые разделы не прячем: правило то же, что у колонок и фильтров —
+     исчезнувший пункт вводит в заблуждение сильнее пустого. У пустой коллекции
+     строка разделов раньше пустовала целиком. */
+  var сГодом=(typeof GAL_ED!=='undefined');
+  if(сГодом){mk('all','Всё 2014','2014');mk('all','Всё 2024','2024');}
+  else mk('all','Всё');
   GROUPS.forEach(function(g){
-    if(!allCards.some(function(c){return c._group===g.id;}))return;
-    mk(g.id,g.label);
+    if(g.id==='weapon'&&сГодом){
+      mk('weapon','Оружие 2014','2014');mk('weapon','Оружие 2024','2024');
+    }else mk(g.id,g.label);
   });
 }
 
@@ -2225,7 +2225,7 @@ if(!allCards.length){
   document.getElementById('empty-sub').textContent='';
   fetch('templates-data.json',{cache:'no-cache'}).then(function(r){return r.json();}).then(function(seed){
     window.SEED_TEMPLATES=seed;
-    if(!allCards.length){galBuildEdBar();loadAll();buildSections();buildFilters();renderGrid();galRenderSide();}
+    if(!allCards.length){loadAll();buildSections();buildFilters();renderGrid();galRenderSide();}
   }).catch(function(){document.getElementById('empty-title').textContent='Шаблонов пока нет';});
 }
 })();
