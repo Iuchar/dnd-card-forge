@@ -201,6 +201,19 @@ button:focus:not(:focus-visible){outline:none;}
 .pv-sec h3{font-family:'Times New Roman',Times,serif;font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
   color:#8a6b2e;margin:0 0 6px;}
 .pv-text{font-size:16px;line-height:1.7;color:#241a08;white-space:pre-wrap;overflow-wrap:break-word;}
+/* Текст мастера: закрыт, пока его не откроют. Стоит последним разделом и
+   выглядит как замок, а не как заголовок, — иначе игрок прочитает проклятие
+   через плечо раньше, чем оно сработает. */
+.pv-gm{border-top:1px solid rgba(90,72,32,.2);padding-top:14px;margin-top:4px;}
+.pv-gm-btn{display:inline-flex;align-items:center;gap:7px;font-family:'Times New Roman',Times,serif;
+  font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#7c231a;
+  background:rgba(124,35,26,.07);border:1px solid rgba(124,35,26,.28);border-radius:20px;
+  padding:6px 13px;cursor:pointer;transition:background .14s,color .14s;}
+.pv-gm-btn:hover{background:rgba(124,35,26,.13);}
+.pv-gm-btn.on{background:rgba(124,35,26,.16);color:#5e1a13;}
+/* засечка слева 2px — тот же приём, что у счётчиков на карточке (.c-eqcell),
+   а не украшение ради украшения */
+.pv-gm-box{margin-top:11px;padding-left:13px;border-left:2px solid rgba(124,35,26,.35);}
 .pv-text u{text-decoration:underline;text-underline-offset:2px;}
 .pv-empty{font-size:15px;font-style:italic;color:#8a7550;}
 @media (max-width:700px){
@@ -277,8 +290,17 @@ button:focus:not(:focus-visible){outline:none;}
 /* #grid-area из старой сетки живёт ниже и по ID перебивает .gx-main — гасим его
    здесь. Само правило не трогаем: по нему до сих пор рисуется книга заклинаний. */
 .gx-stage > #grid-area{display:block;padding:0;margin:0;background:transparent;border-radius:0;min-height:0;overflow:auto;}
-.gx-main::-webkit-scrollbar{width:5px;}
+.gx-main::-webkit-scrollbar{width:5px;height:5px;}
 .gx-main::-webkit-scrollbar-thumb{background:rgba(90,72,32,.35);border-radius:3px;}
+/* Полоса прокрутки идёт вдоль всей высоты контейнера, в том числе мимо липкой
+   шапки, и справа от шапки оставалась тёмная подложка страницы — на светлом
+   пергаменте это резало глаз. Красим верх контейнера в цвет шапки: фон
+   контейнера не уезжает вместе с содержимым, поэтому полоска стоит на месте.
+   Высота 30px = высота строки шапки (padding 9px + 10px кегля + рамка). */
+/* селектор с id: иначе #grid-area со своим background перебьёт по весу */
+.gx-stage > #grid-area.gx-main,.gx-main{background:linear-gradient(#ddd2b6 0 30px,transparent 30px);}
+.gx-main::-webkit-scrollbar-track{background:transparent;}
+.gx-main::-webkit-scrollbar-track-piece:vertical:start{background:#ddd2b6;}
 
 /* уровень 1 — генератор, уровень 2 — подраздел */
 /* Уровень генератора — тёмная полоса, как разделитель главы в книге. Раньше обе
@@ -813,6 +835,30 @@ var LS_KEY='dnd_cardforge_templates';
    плиток вместе с makeGridCard/subLabel — картинка есть у считанных карточек,
    и сетка показывала стену одинаковых серых прямоугольников. */
 var GROUPS=[{id:'weapon',label:'Оружие'},{id:'armor',label:'Доспехи'},{id:'equipment',label:'Снаряжение'},{id:'tools',label:'Инструменты'},{id:'poisons',label:'Яды'},{id:'custom',label:'Произвольные'}];
+/* Строка «N из M · раздел: K». Считает по видимому набору, а не по всей базе:
+   раньше знаменатель и разбивка брались из allCards напрямую, и в режиме 2014
+   строка сообщала «66 из 529 · Оружие: 132» — сложенные обе редакции. Разбивка
+   в режиме раздела сжимается до него одного: перечислять то, чего нет на экране,
+   незачем. Код был одинаков в обеих галереях, поэтому живёт здесь. */
+function galStatsHTML(vis){
+  var база=allCards.filter(function(c){return typeof galEdMatch!=='function'||galEdMatch(c);});
+  var сек=(typeof GAL_SEC!=='undefined')?GAL_SEC:'all';
+  /* В разделе знаменатель — сам раздел: «Оружие: 8 из 66». Общая база там
+     бесполезна, по ней не видно, сколько отсеяли фильтры. Полный список
+     разделов остаётся только в режиме «Всё». */
+  if(сек!=='all'){
+    var g=null;
+    GROUPS.forEach(function(x){if(x.id===сек)g=x;});
+    var всего=база.filter(function(c){return c._group===сек;}).length;
+    return (g?g.label+': ':'')+'<b>'+vis+'</b> из <b>'+всего+'</b>';
+  }
+  var parts=['<b>'+vis+'</b> из <b>'+база.length+'</b>'];
+  GROUPS.forEach(function(g2){
+    var n=база.filter(function(c){return c._group===g2.id;}).length;
+    if(n)parts.push(g2.label+': <b>'+n+'</b>');
+  });
+  return parts.join('&nbsp;· ');
+}
 function toast(msg){var el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(function(){el.classList.remove('show');},2200);}
 function closePreview(){document.getElementById('prev-bg').classList.remove('open');previewCard=null;}
 /* Редакция как область видимости галереи (не фильтр): 2014 или 2024.
@@ -850,6 +896,11 @@ function galBuildEdBar(){
       GAL_ED=v;
       try{localStorage.setItem(GAL_ED_KEY,v);}catch(e){}
       galBuildEdBar();
+      /* Выбранная карточка живёт только в своей редакции: после переключения
+         боковая панель показывала «Боевую кирку» с приёмом 2024, когда список
+         под ней уже пуст. Снимаем выбор, если карточка не из этой редакции. */
+      if(typeof galCurrent!=='undefined'&&galCurrent&&typeof galEdMatch==='function'&&!galEdMatch(galCurrent))
+        galCurrent=null;
       /* фильтры пересобираем: набор значений в разделе зависит от редакции */
       if(typeof buildFilters==='function')buildFilters();
       if(typeof renderGrid==='function')renderGrid();
@@ -905,11 +956,19 @@ var GAL_ICON={
 var GAL_FAM={};
 (function(){
   function reg(icon,names){names.forEach(function(n){GAL_FAM[n]=icon;});}
-  reg('sword',['Двуручный меч','Длинный меч','Короткий меч','Скимитар','Рапира','Кинжал','Кинжал яда +1']);
-  reg('axe',['Секира','Большой топор','Ручной топор']);
-  reg('blunt',['Булава','Боевой молот','Кувалда','Лёгкий молот','Дубинка','Палица','Моргенштерн','Цеп','Боевой чекан']);
-  reg('polearm',['Алебарда','Глефа','Пика','Кавалерийская пика','Копьё','Метательное копьё','Трезубец','Боевой посох']);
-  reg('bow',['Длинный лук','Короткий лук']);
+  /* Таблица закрытая и ведётся руками. Имени в ней нет — код падает в набор A,
+     который рисует по классу и виду и предназначен для самоделок пользователя;
+     на странице шаблонов это выглядит как топор со значком меча. Поэтому сюда
+     дописаны и переименования 2024, и магические предметы с конкретной базой. */
+  reg('sword',['Двуручный меч','Длинный меч','Короткий меч','Скимитар','Рапира','Кинжал','Кинжал яда +1',
+               'Кинжал яда','Скимитар скорости','Солнечный клинок']);
+  reg('axe',['Секира','Большой топор','Ручной топор','Боевой топор']);
+  reg('blunt',['Булава','Боевой молот','Кувалда','Лёгкий молот','Дубинка','Палица','Моргенштерн','Цеп','Боевой чекан',
+               'Молот','Боевая кирка','Булава расторжения','Булава разящего удара','Булава ужаса',
+               'Молот громовых стрел','Дварфийский метатель']);
+  reg('polearm',['Алебарда','Глефа','Пика','Кавалерийская пика','Копьё','Метательное копьё','Трезубец','Боевой посох',
+                 'Длинное копьё','Копьё молний','Трезубец повелевания рыбами']);
+  reg('bow',['Длинный лук','Короткий лук','Лук клятвы']);
   reg('xbow',['Лёгкий арбалет','Тяжёлый арбалет','Ручной арбалет']);
   reg('thrown',['Дротик','Праща','Духовая трубка']);
   reg('special',['Сеть','Кнут','Серп']);
@@ -1010,7 +1069,11 @@ function galToolUseCell(c){
 function galMagic(c){var n=parseInt(c.magicBonus,10);return(isNaN(n)||n===0)?'':'+'+n;}
 function galProps(c){var p=c.props;return Array.isArray(p)?p.join(', '):(p||'');}
 function galStealth(c){return c.stealth===true?'помеха':'без помехи';}
-function galSave(c){var s=c.savingThrow;return s?((c.saveStat||'Тел')+' '+s):'';}
+/* Пустой saveStat означает «Телосложение»: в генераторе первый пункт селекта
+   идёт с пустым значением и подписью «Тел». Правило одно на таблицу, фильтр и
+   боковую панель, поэтому живёт в одной функции. */
+function galSaveStat(c){return (c.saveStat||'').trim()||'Тел';}
+function galSave(c){var s=c.savingThrow;return s?(galSaveStat(c)+' '+s):'';}
 function galWgt(c){return c.wgt?(c.wgt+' фнт'):'—';}
 function galCost(c){return c.cost?(c.cost+' '+(c.coin||'зм')):'—';}
 /* Цвет карточки. У ядов и произвольных редкости нет вовсе — генератор красит их
@@ -1065,7 +1128,7 @@ function galStatuses(c){
    0 = ширины нет: такие колонки делят между собой всё, что осталось. */
 var GAL_SCHEMA={
   weapon:{cols:['Название','Маг.','Класс','Тип','Урон','Тип урона','Доп. урон','Дистанция','Свойства','Мастерство','Боеприпас','Вес','Цена'],num:[11,12],
-    w:[0,48,92,124,64,102,150,108,0,116,162,0,0],opt:[1,6],
+    w:[0,48,92,124,64,102,150,108,0,116,162,0,0],ed:{'Мастерство':'2024'},
     cell:function(c){return [galNameCell(c),
       galMagic(c)||'—',
       c.cat||'—',c.kind||'—',galDmg(c)||'—',c.dt||'—',xDmgText(c)||'—',
@@ -1075,16 +1138,19 @@ var GAL_SCHEMA={
   armor:{cols:['Название','Маг.','Категория','КБ','Материал','Особое свойство','Треб. Силы','Скрытность','Надевание','Снятие','Вес','Цена'],num:[6,10,11],
     /* тянется «Материал», а не «Особое свойство»: второе необязательное и в
        пустом разделе выпадает, оставляя таблицу вовсе без гибкой колонки */
-    w:[0,48,104,146,0,196,106,118,106,98,0,0],wmin:[0,0,0,0,156,0,0,0,0,0,0,0],opt:[1,5],
+    w:[0,48,104,146,0,196,106,118,106,98,0,0],wmin:[0,0,0,0,156,0,0,0,0,0,0,0],
     cell:function(c){return [galNameCell(c),galMagic(c)||'—',c.armorType||'—',c.acDisplay||'—',c.material||'—',
       specText(c)||'—',c.strReq||'—',galStealth(c),c.donnTime||'—',c.doffTime||'—',galWgt(c),galCost(c)];}},
-  poisons:{cols:['Название','Тип','Спасбросок','Урон','Длительность','Вес','Цена'],num:[5,6],
-    w:[0,212,116,160,0,0,0],wmin:[0,0,0,0,250,0,0],
-    cell:function(c){return [galNameCell(c),c.poisonType||'—',galSave(c)||'—',c.damageDice||'—','<span class="gx-wrap">'+_gxEsc(c.duration||'—')+'</span>',galWgt(c),galCost(c)];}},
+  /* Характеристика и Сл разведены по колонкам: склеенное «Тел 15» сортировалось
+     только по числу, и сгруппировать яды по характеристике было нечем. */
+  poisons:{cols:['Название','Тип','Хар. спас','Сл','Урон','Длительность','Вес','Цена'],num:[6,7],
+    w:[0,212,84,52,160,0,0,0],wmin:[0,0,0,0,0,250,0,0],
+    cell:function(c){return [galNameCell(c),c.poisonType||'—',galSaveStat(c),c.savingThrow||'—',
+      c.damageDice||'—','<span class="gx-wrap">'+_gxEsc(c.duration||'—')+'</span>',galWgt(c),galCost(c)];}},
   tools:{cols:['Название','Категория','Хар.','Использование','Изготовление','Вес','Цена'],num:[5,6],
     /* фиксированы все, кроме «Использования» и «Изготовления»: при расширении
        окна место достаётся только этим двум */
-    w:[380,190,110,0,0,95,90],wmin:[0,0,0,100,170,0,0],opt:[3,4],
+    w:[380,190,110,0,0,95,90],wmin:[0,0,0,100,170,0,0],
     cell:function(c){var u=galToolUseCell(c);return [galNameCell(c),c.toolType||'—',c.stat||'—',
       u||'—',
       c.craft?'<span class="gx-wrap">'+_gxEsc(c.craft)+'</span>':'—',galWgt(c),galCost(c)];}},
@@ -1092,7 +1158,7 @@ var GAL_SCHEMA={
      значение, читается знаком. Колонка необязательная (opt) — если в разделе
      нет ни проклятых, ни требующих настройки, она исчезает. */
   equipment:{cols:['Название','Статусы','Маг.','Категория','Тип предмета','Вес','Цена'],num:[5,6],
-    w:[0,58,48,0,150,0,0],wmin:[0,0,0,104,0,0,0],opt:[1,2,4],
+    w:[0,58,48,0,150,0,0],wmin:[0,0,0,104,0,0,0],
     cell:function(c){return [galNameCell(c),galStatuses(c),galMagic(c)||'—',c.category||'—',
       c.itemType||'—',galWgt(c),galCost(c)];}},
   custom:{cols:['Название','Тип карточки'],num:[],
@@ -1113,21 +1179,20 @@ Object.keys(GAL_SCHEMA).forEach(function(k){
   s.cols.forEach(function(h,i){if(GAL_WSHARED[h]!=null)s.w[i]=GAL_WSHARED[h];});
 });
 
-var GAL_SORTS={
-  weapon:[['Название','name'],['Класс','cat'],['Тип урона','dt'],['Редкость','_rar']],
-  armor:[['Название','name'],['Категория','armorType'],['КБ','_ac'],['Редкость','_rar']],
-  poisons:[['Название','name'],['Тип','_pt1'],['Спасбросок','_dc']],
-  tools:[['Название','name'],['Категория','toolType'],['Характеристика','stat']],
-  equipment:[['Название','name'],['Категория','category']],
-  custom:[['Название','name'],['Тип карточки','cardType']]
-};
-var galSortF='name',galSortDir=1;
+/* Сортировка — щелчком по шапке колонки. Прежде на каждый раздел заводился свой
+   список кнопок (GAL_SORTS), и он отставал от схемы: колонку добавили, а в
+   список её вписать забыли. Теперь сортируется всё, что видно, и вести нечего.
+   Ключ '#N' — индекс колонки; остальные ключи остались для боковой панели. */
+/* '#N' — индекс колонки схемы, '_rar' — редкость (колонкой она не выводится,
+   в таблице это кружок у имени). Стартуем с названия по возрастанию. */
+var galSortF='#0',galSortDir=1;
 function galVal(c,f){
   if(f==='_rar')return GAL_RORD[c.rarity||'common']||0;
   /* итоговый КБ = базовый + бонус: у «Кольчуги +1» слагаемые лежат порознь,
      а сортировать надо по тому числу, что стоит на карточке */
   if(f==='_ac')return (parseFloat(c.acBase)||0)+(parseFloat(c.magicBonus)||0);
   if(f==='_dc')return parseFloat(c.savingThrow)||0;
+  if(f==='_svst')return galSaveStat(c);
   if(f==='_pt1')return galPt1(c);
   return c[f];
 }
@@ -1209,36 +1274,48 @@ function galRenderIndex(cards,host){
 }
 
 /* ── таблица раздела ── */
+/* Сравнение по колонке: берём то же, что показано в ячейке, и режем разметку.
+   Числовые колонки объявлены в схеме (s.num) — «19» не должно идти после «110». */
+function galColCmp(s,i){
+  var числовая=s.num.indexOf(i)>=0;
+  return function(a,b){
+    var x=_gxStrip(s.cell(a)[i]),y=_gxStrip(s.cell(b)[i]);
+    if(числовая){
+      var nx=parseFloat(x.replace(',','.')),ny=parseFloat(y.replace(',','.'));
+      if(isNaN(nx)&&isNaN(ny))return 0;
+      if(isNaN(nx))return 1;
+      if(isNaN(ny))return -1;
+      if(nx!==ny)return nx-ny;
+    }
+    /* прочерк — это «нет значения», ему место в конце, а не среди букв */
+    if(x==='—'&&y!=='—')return 1;
+    if(y==='—'&&x!=='—')return -1;
+    return x.localeCompare(y,'ru');
+  };
+}
+function _gxStrip(html){return String(html==null?'':html).replace(/<[^>]*>/g,' ').replace(/\s+/g,' ').trim();}
+
 function galRenderTable(cards,host,gid){
   var s=GAL_SCHEMA[gid];if(!s)return;
-  var rows=cards.slice().sort(galCmp(galSortF));
+  var поКолонке=(String(galSortF).charAt(0)==='#')?parseInt(galSortF.slice(1),10):-1;
+  var rows=cards.slice().sort(поКолонке>=0?galColCmp(s,поКолонке):galCmp(galSortF));
   if(galSortDir<0)rows.reverse();
   var wrap=document.createElement('div');wrap.className='gx-tw';
   /* последняя колонка — под кнопку удаления. В готовых шаблонах удалять нечего,
      и она остаётся пустой: правило одно для обеих галерей. */
   /* colgroup + table-layout:fixed: иначе браузер раздаёт ширину по содержимому
      и «Цена» с «Весом» занимают столько же, сколько название. */
-  /* Колонки из s.opt показываем, только если хоть у одной карточки раздела есть
-     значение. «Маг.» и «Доп. урон» есть у считаных предметов, а пустая пара
-     колонок стоит 200px и загоняет таблицу в горизонтальную прокрутку. */
+  /* Колонки показываем все. Прежде схема прятала «необязательные» — те, где ни
+     у одной карточки выборки нет значения, — и ширины скакали от того, что
+     попало в фильтр; заодно страховка ширин писала прямо в GAL_SCHEMA и портила
+     её до перезагрузки. Скрытие пустого — косметика для релиза, а не поведение
+     на время наполнения: пока шаблоны заполняются, пустая колонка полезнее
+     исчезнувшей. Убрано 2026-08-15 по решению пользователя.
+     Исключение — колонка чужой редакции: «Мастерство» существует только в 2024,
+     и в 2014 её нет не потому, что данные не заполнены, а потому что поля нет. */
   var idx=s.cols.map(function(_,i){return i;});
-  if(s.opt&&s.opt.length){
-    var filled={};
-    cards.forEach(function(c){var r=s.cell(c);
-      s.opt.forEach(function(i){if(r[i]&&r[i]!=='—')filled[i]=1;});});
-    idx=idx.filter(function(i){return s.opt.indexOf(i)<0||filled[i];});
-  }
-  /* Страховка общего правила ширин: если после отсева необязательных колонок
-     не осталось ни одной гибкой, браузер растянет ВСЕ пропорционально, и
-     «Название», «Вес», «Цена» разъедутся против GAL_WSHARED. Отпускаем самую
-     широкую из оставшихся, кроме этих трёх. */
-  if(!idx.some(function(i){return !((s.w&&s.w[i])||0);})){
-    var free=-1,fw=-1;
-    idx.forEach(function(i){
-      if(GAL_WSHARED[s.cols[i]]!=null)return;
-      var x=(s.w&&s.w[i])||0;if(x>fw){fw=x;free=i;}});
-    if(free>=0){s.wmin=s.wmin||[];s.wmin[free]=s.w[free];s.w[free]=0;}
-  }
+  if(s.ed&&typeof GAL_ED!=='undefined')
+    idx=idx.filter(function(i){var e=s.ed[s.cols[i]];return !e||e===GAL_ED;});
   var minW=34;
   var cg='<colgroup>'+idx.map(function(i){
       var h=s.cols[i],w=(s.w&&s.w[i])||0;
@@ -1273,6 +1350,11 @@ function galRenderTable(cards,host,gid){
 /* ── панель карточки справа (на узком экране вместо неё модалка) ── */
 var galCurrent=null;
 function galIsNarrow(){return window.innerWidth<900;}
+/* В режиме раздела боковая панель не нужна: всё, что она показывала, стоит в
+   колонках таблицы, а 216px справа — это место под сами колонки. Щелчок по
+   строке открывает полное описание сразу. В указателе («Всё») панель остаётся:
+   там у строки только имя, и без неё карточку не разглядеть. */
+function galSideMode(){return (typeof GAL_SEC==='undefined')||GAL_SEC==='all';}
 function galSelect(card,el){
   galCurrent=card;
   var host=document.getElementById('gx-side');
@@ -1280,7 +1362,7 @@ function galSelect(card,el){
     [].forEach.call(document.querySelectorAll('.gx-sel'),function(x){x.classList.remove('gx-sel');});
     if(el)el.classList.add('gx-sel');
   }
-  if(galIsNarrow()){if(typeof openPreview==='function')openPreview(card);return;}
+  if(galIsNarrow()||!galSideMode()){if(typeof openPreview==='function')openPreview(card);return;}
   galRenderSide();
 }
 /* Окно «Полное описание» переехало в shared/preview-full.js — им пользуется
@@ -1506,11 +1588,33 @@ function pvHTML(c){
   var asideF=[],bodyF=[];
   fields.forEach(function(r){(_pvIn(toBody,r[0])?bodyF:asideF).push(r);});
 
+  /* Проклятие пишется мастеру, а не игроку: в столбце свойств оно ужималось до
+     многоточия, а игрок читал его через плечо. Прячем за кнопкой и показываем
+     целиком — текст бывает почти в тысячу знаков. */
+  var прокл=null;
+  function _вынуть(список){
+    return список.filter(function(r){
+      if(r[0]!=='Проклятие'||!r[1]||r[1]==='да')return true;
+      прокл=r[1];return false;});
+  }
+  /* галереи кладут проклятие в тело окна (GAL_BODYF), книга заклинаний такого
+     поля не знает вовсе — вынимаем из обоих списков, где найдётся */
+  asideF=_вынуть(asideF);bodyF=_вынуть(bodyF);
+
   var img=imgUrl?'<div class="pv-img"><img src="'+imgUrl+'" alt=""/></div>':'';
   var stat=asideF.length?('<div class="pv-stat">'+asideF.map(function(r){
       var w=_pvIn(toWide,r[0])?' wide':'';
       return '<div class="pv-strow'+w+'"><span class="k">'+pvEsc(r[0])+'</span><span class="v">'+pvEsc(r[1])+'</span></div>';
     }).join('')+'</div>'):'';
+  var прокл_html=прокл?('<section class="pv-sec pv-gm">'+
+      '<button type="button" class="pv-gm-btn" id="pv-gm-btn" aria-expanded="false" aria-controls="pv-gm-box">'+
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">'+
+      '<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'+
+      'Скрытый текст для мастера</button>'+
+      /* «Проклятье.» ставим сами, а не ждём в данных: строка должна открывать
+         блок у любой карточки, и в поле генератора её набирать не надо */
+      '<div class="pv-text pv-gm-box" id="pv-gm-box" hidden><b>Проклятье.</b><br/><br/>'+
+      pvRuns(прокл)+'</div></section>'):'';
   /* перечни идут перед прозой: это свойства предмета, а не рассказ о нём */
   var body=bodyF.map(function(r){
       return '<section class="pv-sec"><h3>'+pvEsc(r[0])+'</h3><div class="pv-text pv-list">'+pvEsc(r[1])+'</div></section>';
@@ -1518,7 +1622,7 @@ function pvHTML(c){
     (prose.length?prose.map(function(p){
       if(p.q)return '<blockquote class="pv-quote">'+pvRuns(p.t)+'</blockquote>';
       return '<section class="pv-sec"><h3>'+pvEsc(p.l)+'</h3><div class="pv-text">'+pvRuns(p.t)+'</div></section>';
-    }).join(''):'<div class="pv-empty">У этой карточки нет описания.</div>');
+    }).join(''):'<div class="pv-empty">У этой карточки нет описания.</div>')+прокл_html;
 
   return '<div class="pv-stripe" style="background:'+stripe+'"></div>'+
     '<div class="pv-page">'+
@@ -1543,6 +1647,11 @@ function pvOpen(card){
   var t=document.getElementById('prev-title');
   if(t)t.textContent='Полное описание';
   document.getElementById('prev-bg').classList.add('open');
+  /* текст мастера открывается по кнопке: обработчик вешаем после вставки */
+  var gb=document.getElementById('pv-gm-btn'),gx=document.getElementById('pv-gm-box');
+  if(gb&&gx)gb.addEventListener('click',function(){
+    var открыт=!gx.hidden;gx.hidden=открыт;gb.setAttribute('aria-expanded',открыт?'false':'true');
+    gb.classList.toggle('on',!открыт);});
 }
 var GENPAGE={weapon:'weapon.html',armor:'armor.html',equipment:'equipment.html',tools:'tools.html',poisons:'poisons.html',custom:'custom.html'};
 function grpLabel(id){for(var i=0;i<GROUPS.length;i++)if(GROUPS[i].id===id)return GROUPS[i].label;return id;}
@@ -1558,9 +1667,7 @@ function renderGrid(){
   area.innerHTML='';
   var total=allCards.length,vis=cards.length,statsEl=document.getElementById('filter-stats');
   if(total===0){statsEl.textContent='Шаблонов нет';}
-  else{var parts=['<b>'+vis+'</b> из <b>'+total+'</b>'];
-    GROUPS.forEach(function(g){var n=allCards.filter(function(c){return c._group===g.id;}).length;if(n)parts.push(g.label+': <b>'+n+'</b>');});
-    statsEl.innerHTML=parts.join('&nbsp;· ');}
+  else{statsEl.innerHTML=galStatsHTML(vis);}
   if(vis===0){
     empty.style.display='';area.style.display='none';if(side)side.style.display='none';
     if(total>0){document.getElementById('empty-title').textContent='Ничего не найдено';
@@ -1568,7 +1675,9 @@ function renderGrid(){
     else{document.getElementById('empty-title').textContent='Шаблонов пока нет';
       document.getElementById('empty-sub').innerHTML='Готовые шаблоны появятся здесь,<br/>когда будут добавлены.';}
     return;}
-  empty.style.display='none';area.style.display='';if(side)side.style.display='';
+  empty.style.display='none';area.style.display='';
+  /* панель только в указателе: в разделе её место занимают колонки */
+  if(side)side.style.display=galSideMode()?'':'none';
   if(GAL_SEC==='all')galRenderIndex(cards,area);else galRenderTable(cards,area,GAL_SEC);
 }
 /* открыть шаблон в генераторе: карточка уходит через sessionStorage как НОВАЯ */
@@ -1616,7 +1725,7 @@ function _galOn(){return typeof GAL_SEC!=='undefined';}
 
 /* ── определения фильтров по разделам (только коллекция/шаблоны) ── */
 var GAL_FDEFS={
-  weapon:[['_rarity','Редкость'],['_magic','Магический бонус'],['cat','Класс оружия'],['kind','Тип оружия'],['dt','Тип урона'],['props','Свойства'],['xType','Тип доп. урона'],['mastery','Мастерство'],['ammo','Боеприпас'],['_attune','Настройка'],['_cursed','Проклятие']],
+  weapon:[['_rarity','Редкость'],['_magic','Магический бонус'],['cat','Класс оружия'],['kind','Тип оружия'],['dt','Тип урона'],['props','Свойства'],['xType','Тип доп. урона'],['mastery','Мастерство','2024'],['ammo','Боеприпас'],['_attune','Настройка'],['_cursed','Проклятие']],
   armor:[['_rarity','Редкость'],['_magic','Магический бонус'],['armorType','Категория доспеха'],['acDisplay','КБ'],['spec','Особое свойство'],['specType','Тип урона (сопротивление)'],['strReq','Требование Силы'],['_stealth','Скрытность'],['_attune','Настройка'],['_cursed','Проклятие']],
   poisons:[['poisonType','Тип яда'],['savingThrow','Спасбросок'],['saveStat','Характеристика спасброска']],
   tools:[['toolType','Категория'],['stat','Характеристика']],
@@ -1629,6 +1738,8 @@ function _galVals(c,f){
   if(f==='_rarity')return [c.rarity||'common'];
   if(f==='_attune')return [_attuneState(c)];
   if(f==='_stealth')return [c.stealth===true?'dis':'ok'];
+  /* пустая характеристика спасброска означает «Тел» — так устроен селект */
+  if(f==='saveStat'&&c._group==='poisons')return [typeof galSaveStat==='function'?galSaveStat(c):(c.saveStat||'Тел')];
   if(f==='_magic'){var mb=parseInt(c.magicBonus,10);return (isNaN(mb)||mb===0)?[]:['+'+mb];}
   /* Проклятие двустороннее, как настройка и скрытность: раньше непроклятые
      карточки не отдавали значения вовсе, поэтому в списке был единственный
@@ -1664,11 +1775,28 @@ function _galLabel(f,v){
 }
 /* Порядок значений книжный, а не алфавитный: иначе «Воинское» встаёт раньше
    «Простого», а тяжёлый доспех раньше лёгкого. */
+/* Значение, которое существует только в одной редакции. Не «пока не заполнено»,
+   а «в той редакции такого поля нет»: «Особое» — чекбокс 2014, в 2024 его место
+   занял приём. Боеприпасы сюда НЕ входят: проект хоумбрю, и пули с патронами
+   уместны в любой редакции. */
+var GAL_VAL_ED={props:{'Особое':'2014'}};
+
+/* Значения, которые задаёт генератор, а не данные. Список характеристик
+   спасброска существует независимо от того, встретился ли уже яд на Ловкость:
+   фильтр должен предлагать всё, что можно выбрать в редакторе. Список обязан
+   совпадать с селектом #fsbstat в poisons.html — за этим следит tools/audit.py,
+   иначе копия здесь молча разойдётся с оригиналом. */
+var GAL_VAL_SRC={saveStat:['Сил','Лов','Тел','Инт','Мдр','Хар']};
+
 function _galOpts(f){
-  var seen={},vals=[];
+  var seen={},vals=[],ред=GAL_VAL_ED[f];
+  if(GAL_VAL_SRC[f]&&_galOn()&&GAL_SEC!=='all')
+    GAL_VAL_SRC[f].forEach(function(v){if(!seen[v]){seen[v]=1;vals.push(v);}});
   allCards.forEach(function(c){
     if(GAL_SEC!=='all'&&c._group!==GAL_SEC)return;
-    _galVals(c,f).forEach(function(v){if(v&&!seen[v]){seen[v]=1;vals.push(v);}});
+    _galVals(c,f).forEach(function(v){
+      if(ред&&ред[v]&&typeof GAL_ED!=='undefined'&&ред[v]!==GAL_ED)return;
+      if(v&&!seen[v]){seen[v]=1;vals.push(v);}});
   });
   if(f==='_rarity')vals.sort(function(a,b){return _RSEQ.indexOf(a)-_RSEQ.indexOf(b);});
   /* спасбросок, требование Силы и КБ — числа: по алфавиту «9» встало бы после «18» */
@@ -1690,7 +1818,12 @@ function _galOpts(f){
     return {v:v,l:_galLabel(f,v),dot:(f==='_rarity'?_RCOL(v):null)};});
 }
 function _galDefs(){
-  return (GAL_FDEFS[GAL_SEC]||[]).map(function(d){
+  /* Третий элемент определения — редакция, в которой поле существует. У 2014
+     нет мастерства вовсе, поэтому фильтр не «пустой», а неприменимый: показывать
+     его со списком значений, каждое из которых даёт ноль, — обман. */
+  return (GAL_FDEFS[GAL_SEC]||[]).filter(function(d){
+    return !d[2] || typeof GAL_ED==='undefined' || d[2]===GAL_ED;
+  }).map(function(d){
     var f=d[0];
     return {key:f,label:d[1],
       val:function(c){return _galVals(c,f);},
@@ -1731,7 +1864,8 @@ function buildSections(){
     b.addEventListener('click',function(){
       GAL_SEC=id;
       FILTER_DEFS.forEach(function(d){if(FILT[d.key])FILT[d.key].clear();});
-      galSortF='name';galSortDir=1;galCurrent=null;
+      /* при входе в раздел — название по возрастанию, это колонка 0 у всех схем */
+      galSortF='#0';galSortDir=1;galCurrent=null;
       buildSections();buildFilters();renderGrid();galRenderSide();
     });
     host.appendChild(b);
@@ -1757,19 +1891,12 @@ function buildFilters(){
     var sel=FILT[def.key];
     /* очистим выбор от значений, которых больше нет */
     sel.forEach(function(v){if(!opts.some(function(o){return o.v===v;})&&def.key!=='_attune'&&def.key!=='_stealth'&&def.key!=='attune'&&def.key!=='stealth')sel.delete(v);});
-    /* Прячем фильтр, только если он ничего не сужает: одно значение И оно есть
-       у всех карточек раздела. Единственное значение, которое встречается лишь
-       у части (мастерство есть у одного оружия из 38), — как раз полезный
-       фильтр, и раньше он молча исчезал. */
-    if(_galOn()&&opts.length<2){
-      if(!opts.length)return;
-      var inSec=0,withVal=0;
-      allCards.forEach(function(c){
-        if(GAL_SEC!=='all'&&c._group!==GAL_SEC)return;
-        inSec++;if(_galVals(c,def.key).length)withVal++;
-      });
-      if(withVal===inSec)return;
-    }
+    /* Фильтры показываем все, объявленные в GAL_FDEFS, даже пустые. Прежде
+       фильтр с одним значением молча исчезал, и было не понять, есть он вообще
+       или просто нечего выбирать. Скрытие бесполезного — косметика для релиза;
+       на время наполнения шаблонов видимость важнее. Убрано 2026-08-15.
+       Фильтр чужой редакции — другое дело: он отсеян в _galDefs, потому что
+       поля просто нет, а не потому, что данные не заполнены. */
     shown++;
     var wrap=document.createElement('div');wrap.className='fdd-wrap';wrap.setAttribute('data-fkey',def.key);
     var btn=document.createElement('button');btn.className='fdd'+(sel.size?' on':'');btn.type='button';
@@ -1808,23 +1935,58 @@ function buildFilters(){
   }
 }
 
-/* сортировка отдельной строкой под фильтрами */
+/* Сортировка двумя капсулами: по чему и в какую сторону. Список полей строится
+   из самой схемы раздела, поэтому не отстаёт от неё, как отставал прежний набор
+   кнопок под каждый раздел. Редкость колонкой не выводится (она кружком в имени),
+   но сортировать по ней надо, поэтому её вставляем сразу за названием. */
+function _sortFields(){
+  var поля=[];
+  if(typeof GAL_SCHEMA==='undefined'||!GAL_SCHEMA[GAL_SEC])return поля;
+  var s=GAL_SCHEMA[GAL_SEC];
+  var ред=(typeof GAL_ED==='undefined')?null:GAL_ED;
+  поля.push({v:'#0',l:s.cols[0]});
+  if(allCards.some(function(c){return c._group===GAL_SEC&&(c.rarity||'')&&c.rarity!=='nonmagic';}))
+    поля.push({v:'_rar',l:'Редкость'});
+  s.cols.forEach(function(h,i){
+    if(i===0)return;
+    if(s.ed&&s.ed[h]&&ред&&s.ed[h]!==ред)return;   /* колонка чужой редакции */
+    поля.push({v:'#'+i,l:h});
+  });
+  return поля;
+}
+function _sortCapsule(host,label,opts,текущее,выбрать){
+  var wrap=document.createElement('div');wrap.className='fdd-wrap';
+  /* без класса «on»: у фильтров он означает «выбрано и что-то отсекает», а
+     сортировка выбрана всегда, и две вечно горящие капсулы перетягивали на себя
+     весь взгляд. Подпись без слова «сортировка» — оно уже стоит меткой слева. */
+  var btn=document.createElement('button');btn.className='fdd';btn.type='button';
+  var подпись=(opts.filter(function(o){return o.v===текущее;})[0]||opts[0]).l;
+  btn.innerHTML='<span>'+_gxEsc(подпись)+'</span><svg class="fdd-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="11" height="11"><polyline points="6 9 12 15 18 9"/></svg>';
+  var panel=document.createElement('div');panel.className='fdd-panel';
+  opts.forEach(function(o){
+    var opt=document.createElement('div');opt.className='fdd-opt';
+    opt.setAttribute('tabindex','0');opt.setAttribute('role','radio');
+    opt.setAttribute('aria-checked',o.v===текущее?'true':'false');
+    opt.innerHTML='<span class="fdd-cbx'+(o.v===текущее?' ck':'')+'">'+_cbxHTML(o.v===текущее)+'</span><span class="fdd-optlbl">'+_gxEsc(o.l)+'</span>';
+    opt.addEventListener('click',function(e){e.stopPropagation();_closePanels();выбрать(o.v);});
+    opt.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();opt.click();}});
+    panel.appendChild(opt);
+  });
+  btn.addEventListener('click',function(e){e.stopPropagation();var open=panel.classList.contains('open');_closePanels();if(!open)panel.classList.add('open');});
+  panel.addEventListener('click',function(e){e.stopPropagation();});
+  wrap.appendChild(btn);wrap.appendChild(panel);host.appendChild(wrap);
+}
 function _buildSortBar(){
   var sortBar=document.getElementById('gx-sortbar'),sHost=document.getElementById('gx-sorts');
   if(!sortBar||!sHost)return;
-  var sorts=(typeof GAL_SORTS!=='undefined')?GAL_SORTS[GAL_SEC]:null;
-  if(!sorts){sortBar.classList.remove('open');sHost.innerHTML='';return;}
-  sortBar.classList.add('open');sHost.innerHTML='';
-  sorts.forEach(function(s){
-    var on=galSortF===s[1];
-    var b=document.createElement('button');b.type='button';
-    b.className='gx-sec'+(on?' on':'');
-    b.textContent=s[0]+(on?(galSortDir>0?' ▲':' ▼'):'');
-    b.addEventListener('click',function(){
-      if(galSortF===s[1])galSortDir=-galSortDir;else{galSortF=s[1];galSortDir=1;}
-      _buildSortBar();renderGrid();});
-    sHost.appendChild(b);
-  });
+  var поля=_galOn()?_sortFields():[];
+  sHost.innerHTML='';
+  if(!поля.length){sortBar.classList.remove('open');return;}
+  sortBar.classList.add('open');
+  if(!поля.some(function(o){return o.v===galSortF;})){galSortF='#0';galSortDir=1;}
+  _sortCapsule(sHost,'Сортировка',поля,galSortF,function(v){galSortF=v;_buildSortBar();renderGrid();});
+  _sortCapsule(sHost,'Порядок',[{v:'1',l:'По возрастанию'},{v:'-1',l:'По убыванию'}],String(galSortDir),
+    function(v){galSortDir=parseInt(v,10);_buildSortBar();renderGrid();});
 }
 
 (function(){

@@ -239,6 +239,47 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .btn-reset:hover{background:rgba(220,60,60,.18);color:#ec9282;border-color:rgba(220,60,60,.55);}
 .btn-reset svg{width:12px;height:12px;}
 .field-wrap{position:relative;}
+/* Маска поверх поля проклятия. Накрывает textarea, не трогая её значение:
+   подмена текста на «Текст скрыт» стоила бы потерянного проклятия при первом
+   же сохранении. Щелчок по маске открывает текст. */
+/* display у класса перебивает браузерное [hidden]{display:none} — без этой
+   строки маска не пропадала ни по галке, ни по щелчку */
+.mask-veil[hidden]{display:none;}
+.mask-veil{position:absolute;inset:0;border-radius:8px;overflow:hidden;cursor:pointer;
+  background:var(--bg3);border:1px solid rgba(200,148,26,.22);transition:border-color .15s;
+  display:flex;flex-direction:column;align-items:stretch;gap:7px;padding:13px 11px 11px 15px;}
+.mask-veil:hover{border-color:rgba(200,148,26,.4);}
+/* засечка проклятия: тот же винный, что у метки на карточке */
+.mask-veil::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:#7c231a;}
+/* полоски-строки: видно, что текст есть и какой он длины, но не прочесть */
+.mask-bar{height:8px;border-radius:4px;background:linear-gradient(90deg,rgba(160,144,112,.26),rgba(160,144,112,.09));}
+.mask-bar:nth-of-type(2){width:92%;}
+.mask-bar:nth-of-type(3){width:74%;}
+.mask-bar:nth-of-type(4){width:86%;}
+.mask-over{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  background:linear-gradient(180deg,rgba(37,32,24,.58),rgba(37,32,24,.9));transition:background .15s;}
+.mask-veil:hover .mask-over{background:linear-gradient(180deg,rgba(37,32,24,.48),rgba(37,32,24,.84));}
+.mask-seal{width:26px;height:26px;border-radius:50%;border:1px solid rgba(200,148,26,.45);
+  display:flex;align-items:center;justify-content:center;color:var(--gold);margin-bottom:2px;}
+.mask-ttl{font-family:'Times New Roman',Times,serif;font-size:11px;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--text2);}
+.mask-hint{font-family:'Crimson Text',Georgia,serif;font-size:12px;color:var(--text3);}
+/* Подпись поля и галка «скрыть» в одну строку. Перенос разрешён: на узкой
+   панели пара «кружок + текст» иначе прижимается к самому краю поля. */
+.lbl-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.mask-toggle{display:inline-flex;align-items:center;gap:6px;cursor:pointer;text-transform:none;
+  letter-spacing:0;font-family:'Crimson Text',Georgia,serif;font-size:12px;color:var(--text3);
+  padding-right:2px;}
+.mask-toggle:hover{color:var(--text2);}
+/* Галочка, а не кольцо: общее правило .sb input[type=checkbox] рисует круг,
+   а здесь нужен знак согласия — тот же приём, что у «клейма» в блоках. */
+.sb .mask-toggle input[type=checkbox]{
+  border-radius:3px;border-width:1px;background:rgba(230,220,198,.10);
+  font-family:'Times New Roman',Times,serif;font-size:11px;line-height:1;}
+.sb .mask-toggle input[type=checkbox]::before{
+  content:'✓';width:auto;height:auto;background:none;border-radius:0;opacity:0;}
+.sb .mask-toggle input[type=checkbox]:checked{background:rgba(230,220,198,.16);}
+.sb .mask-toggle input[type=checkbox]:checked::before{opacity:1;background:none;}
 /* подпись половинки парного поля (.row2 > .sf) */
 .sl{font-family:'Times New Roman',Times,serif;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);}
 /* пара полей в столбик: длинные значения селектов не влезают в половину ширины
@@ -812,10 +853,9 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
     <div class="sf"><label class="lbl" style="margin:0 0 5px;" for="fsb">Спасбросок</label>
       <div class="sb-pair">
         <select class="si" id="fsbstat" aria-label="Характеристика спасброска">
-          <option value="">Тел</option>
           <option value="Сил">Сил</option>
           <option value="Лов">Лов</option>
-          <option value="Тел">Тел</option>
+          <option value="Тел" selected>Тел</option>
           <option value="Инт">Инт</option>
           <option value="Мдр">Мдр</option>
           <option value="Хар">Хар</option>
@@ -2079,8 +2119,8 @@ if(typeof _backPal==='function'){_backPal(pbs,pbgm);}
 else{var d=R[data.rarity||'common']||R.common||R[Object.keys(R)[0]];
   pbs.style.background=d.grad?'linear-gradient(90deg,'+d.grad[0]+','+d.grad[1]+','+d.grad[0]+')':d.a;
   pbgm.style.background=d.gem||d.a;}}else{rubashka.style.display='block';pbs.style.display='none';pbs2.style.display='none';pbBody.style.display='none';pbFoot.style.display='none';}}
-function applyFormData(data){var ptVals=(data.poisonType||'').split(', ');document.querySelectorAll('#fptype-wrap input[type=checkbox]').forEach(function(cb){cb.checked=ptVals.indexOf(cb.value)!==-1;});document.getElementById('fn').value=data.name||'';document.getElementById('fc').value=data.cost||'';document.getElementById('fcoin').value=data.coin||'зм';document.getElementById('fwgt').value=data.wgt||'';document.getElementById('fsb').value=data.savingThrow||'';document.getElementById('fsbstat').value=data.saveStat||'';document.getElementById('fdice').value=data.damageDice||'';document.getElementById('fdur').value=data.duration||'';document.getElementById('fdesc').value=data.desc||'';applyImgThumb(data);mkCounter('fn','cnt-fn',60);mkCounter('fdice','cnt-dice',80);mkCounter('fdur','cnt-dur',80);mkCounter('fdesc','cnt-desc',2000,visLen);}
-document.getElementById('btn-reset').addEventListener('click',function(){if(!confirm('Сбросить все поля?'))return;['fn','fc','fwgt','fsb','fdice','fdur','fdesc'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('fsbstat').selectedIndex=0;document.getElementById('fcoin').value='зм';document.querySelectorAll('#fptype-wrap input[type=checkbox]').forEach(function(cb){cb.checked=false;});imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('f-img').value='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';setCardImg(null);resetNoImg();renderCard({});toast('Поля сброшены');});
+function applyFormData(data){var ptVals=(data.poisonType||'').split(', ');document.querySelectorAll('#fptype-wrap input[type=checkbox]').forEach(function(cb){cb.checked=ptVals.indexOf(cb.value)!==-1;});document.getElementById('fn').value=data.name||'';document.getElementById('fc').value=data.cost||'';document.getElementById('fcoin').value=data.coin||'зм';document.getElementById('fwgt').value=data.wgt||'';document.getElementById('fsb').value=data.savingThrow||'';document.getElementById('fsbstat').value=data.saveStat||'Тел';document.getElementById('fdice').value=data.damageDice||'';document.getElementById('fdur').value=data.duration||'';document.getElementById('fdesc').value=data.desc||'';applyImgThumb(data);mkCounter('fn','cnt-fn',60);mkCounter('fdice','cnt-dice',80);mkCounter('fdur','cnt-dur',80);mkCounter('fdesc','cnt-desc',2000,visLen);}
+document.getElementById('btn-reset').addEventListener('click',function(){if(!confirm('Сбросить все поля?'))return;['fn','fc','fwgt','fsb','fdice','fdur','fdesc'].forEach(function(id){document.getElementById(id).value='';});document.getElementById('fsbstat').value='Тел';document.getElementById('fcoin').value='зм';document.querySelectorAll('#fptype-wrap input[type=checkbox]').forEach(function(cb){cb.checked=false;});imgDataUrl=null;rawImgDataUrl=null;currentCard=null;editingId=null;updateBuildBtn();var th=document.getElementById('img-thumb');th.style.display='none';th.style.backgroundImage='';document.getElementById('img-icon').style.display='';document.getElementById('img-lbl').style.display='';document.getElementById('f-img').value='';document.getElementById('btn-recrop').style.display='none';document.getElementById('btn-del-img').style.display='none';setCardImg(null);resetNoImg();renderCard({});toast('Поля сброшены');});
 applyPoisonPal();
 
 var DEFAULT_NAME='Яд';

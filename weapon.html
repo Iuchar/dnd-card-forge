@@ -239,6 +239,47 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .btn-reset:hover{background:rgba(220,60,60,.18);color:#ec9282;border-color:rgba(220,60,60,.55);}
 .btn-reset svg{width:12px;height:12px;}
 .field-wrap{position:relative;}
+/* Маска поверх поля проклятия. Накрывает textarea, не трогая её значение:
+   подмена текста на «Текст скрыт» стоила бы потерянного проклятия при первом
+   же сохранении. Щелчок по маске открывает текст. */
+/* display у класса перебивает браузерное [hidden]{display:none} — без этой
+   строки маска не пропадала ни по галке, ни по щелчку */
+.mask-veil[hidden]{display:none;}
+.mask-veil{position:absolute;inset:0;border-radius:8px;overflow:hidden;cursor:pointer;
+  background:var(--bg3);border:1px solid rgba(200,148,26,.22);transition:border-color .15s;
+  display:flex;flex-direction:column;align-items:stretch;gap:7px;padding:13px 11px 11px 15px;}
+.mask-veil:hover{border-color:rgba(200,148,26,.4);}
+/* засечка проклятия: тот же винный, что у метки на карточке */
+.mask-veil::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:#7c231a;}
+/* полоски-строки: видно, что текст есть и какой он длины, но не прочесть */
+.mask-bar{height:8px;border-radius:4px;background:linear-gradient(90deg,rgba(160,144,112,.26),rgba(160,144,112,.09));}
+.mask-bar:nth-of-type(2){width:92%;}
+.mask-bar:nth-of-type(3){width:74%;}
+.mask-bar:nth-of-type(4){width:86%;}
+.mask-over{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  background:linear-gradient(180deg,rgba(37,32,24,.58),rgba(37,32,24,.9));transition:background .15s;}
+.mask-veil:hover .mask-over{background:linear-gradient(180deg,rgba(37,32,24,.48),rgba(37,32,24,.84));}
+.mask-seal{width:26px;height:26px;border-radius:50%;border:1px solid rgba(200,148,26,.45);
+  display:flex;align-items:center;justify-content:center;color:var(--gold);margin-bottom:2px;}
+.mask-ttl{font-family:'Times New Roman',Times,serif;font-size:11px;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--text2);}
+.mask-hint{font-family:'Crimson Text',Georgia,serif;font-size:12px;color:var(--text3);}
+/* Подпись поля и галка «скрыть» в одну строку. Перенос разрешён: на узкой
+   панели пара «кружок + текст» иначе прижимается к самому краю поля. */
+.lbl-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;}
+.mask-toggle{display:inline-flex;align-items:center;gap:6px;cursor:pointer;text-transform:none;
+  letter-spacing:0;font-family:'Crimson Text',Georgia,serif;font-size:12px;color:var(--text3);
+  padding-right:2px;}
+.mask-toggle:hover{color:var(--text2);}
+/* Галочка, а не кольцо: общее правило .sb input[type=checkbox] рисует круг,
+   а здесь нужен знак согласия — тот же приём, что у «клейма» в блоках. */
+.sb .mask-toggle input[type=checkbox]{
+  border-radius:3px;border-width:1px;background:rgba(230,220,198,.10);
+  font-family:'Times New Roman',Times,serif;font-size:11px;line-height:1;}
+.sb .mask-toggle input[type=checkbox]::before{
+  content:'✓';width:auto;height:auto;background:none;border-radius:0;opacity:0;}
+.sb .mask-toggle input[type=checkbox]:checked{background:rgba(230,220,198,.16);}
+.sb .mask-toggle input[type=checkbox]:checked::before{opacity:1;background:none;}
 /* подпись половинки парного поля (.row2 > .sf) */
 .sl{font-family:'Times New Roman',Times,serif;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--text3);}
 /* пара полей в столбик: длинные значения селектов не влезают в половину ширины
@@ -854,10 +895,20 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   </div>
   <!-- текст проклятия — мастеру: в данные и галерею, на карточку не печатаем -->
   <div id="cursed-wrap" style="display:none;">
-    <label class="lbl" for="fcursedtxt">В чём проклятие</label>
+    <div class="lbl lbl-row">В чём проклятие
+      <label class="mask-toggle"><input type="checkbox" id="fcursedhide"/><span>Скрыть текст</span></label>
+    </div>
     <div class="field-wrap field-mb">
-      <textarea class="si" id="fcursedtxt" maxlength="300" style="height:64px;" placeholder="Снять предмет можно только заклинанием снятия проклятия"></textarea>
-      <span class="char-counter" id="cnt-cursed">0/300</span>
+      <textarea class="si" id="fcursedtxt" maxlength="1200" style="height:128px;" placeholder="Снять предмет можно только заклинанием снятия проклятия"></textarea>
+      <div class="mask-veil" id="cursed-veil" hidden>
+        <span class="mask-bar"></span><span class="mask-bar"></span><span class="mask-bar"></span>
+        <span class="mask-over">
+          <span class="mask-seal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="13" height="13"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+          <span class="mask-ttl">Текст для мастера</span>
+          <span class="mask-hint">нажмите, чтобы показать</span>
+        </span>
+      </div>
+      <span class="char-counter" id="cnt-cursed">0/1200</span>
     </div>
   </div>
   <div class="lbl lbl-hint">Магический бонус
@@ -888,7 +939,7 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   <select class="si" id="fdt"><option value="">— выбрать —</option><option>Рубящий</option><option>Дробящий</option><option>Колющий</option></select>
   <div id="ammo-wrap">
     <label class="lbl" for="fammo">Тип боеприпаса</label>
-    <select class="si" id="fammo"><option value="">—</option><option>Стрелы</option><option>Болты</option><option>Болты (обойма×6)</option><option>Снаряды для пращи</option><option>Иглы</option></select>
+    <select class="si" id="fammo"><option value="">—</option><option>Стрелы</option><option>Болты</option><option>Болты (обойма×6)</option><option>Снаряды для пращи</option><option>Иглы</option><option>Пули</option><option>Патроны</option><option>Прочее</option></select>
   </div>
   <div class="lbl">Свойства</div>
   <div class="props-grid" id="pg"></div>
@@ -1161,10 +1212,32 @@ function updateCursedWrap(){
   if(!cb||!wr)return;
   wr.style.display=cb.checked?'block':'none';
 }
+
+/* Маска поверх поля, а не подмена значения: текст в textarea остаётся нетронутым,
+   его просто не видно. Подменять значение на «Текст скрыт» нельзя — стоит
+   пользователю сохранить карточку в таком виде, и проклятие потеряно.
+   Готовый шаблон открывается со скрытым текстом: игрок за спиной не должен
+   прочитать проклятие раньше, чем оно сработает. Свой набранный текст не
+   прячем — иначе пришлось бы печатать вслепую. */
+function setCursedMask(on){
+  var cb=document.getElementById('fcursedhide'),veil=document.getElementById('cursed-veil');
+  if(!cb||!veil)return;
+  cb.checked=!!on;veil.hidden=!on;
+}
+function updateCursedMask(){
+  var cb=document.getElementById('fcursedhide');
+  if(cb)setCursedMask(cb.checked);
+}
 (function(){
   var cb=document.getElementById('fcursed');
   if(cb)cb.addEventListener('change',updateCursedWrap);
   updateCursedWrap();
+  var hb=document.getElementById('fcursedhide');
+  if(hb)hb.addEventListener('change',updateCursedMask);
+  /* щелчок по маске открывает текст: иначе непонятно, как до него добраться */
+  var veil=document.getElementById('cursed-veil');
+  if(veil)veil.addEventListener('click',function(){setCursedMask(false);
+    var ta=document.getElementById('fcursedtxt');if(ta)ta.focus();});
 })();
 /* Кружок «?» у подписи поля разворачивает справку под ней (.hint-box).
    Общий обработчик на все кнопки страницы: справок в форме может быть больше
@@ -1385,7 +1458,7 @@ function mkCounter(inputId,countId,max,lenFn){
 }
 ['fr1','fr2'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9]/g,'').slice(0,4);this.setSelectionRange(p,p);});});
 ['fstr','fpr'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;var v=this.value.replace(/[^0-9-]/g,'');v=v.charAt(0)+v.slice(1).replace(/-/g,'');this.value=v.slice(0,2);this.setSelectionRange(p,p);});});
-mkCounter('fn','cnt-fn',60);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcursedtxt','cnt-cursed',300);
+mkCounter('fn','cnt-fn',60);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcursedtxt','cnt-cursed',1200);
 /* Редакция страницы. Дефолт — 2014; параметр ?ed=2014|2024, которым приходят
    редиректы со старых адресов weapon-2014/2024.html, перебивает.
    За выбором галереи страница НЕ следует: генератор — своё рабочее место. */
@@ -2390,6 +2463,8 @@ function applyFormData(data){
   document.getElementById('fdesc').value=data.desc||'';
   document.getElementById('fcursed').checked=!!data.cursed;
   document.getElementById('fcursedtxt').value=data.cursedText||'';
+  /* чужая карточка открывается со скрытым проклятием */
+  if(typeof setCursedMask==='function')setCursedMask(!!(data.cursedText||'').trim());
   document.getElementById('fflv').value=data.flv||'';
   document.querySelectorAll('#pg input[type=checkbox]').forEach(function(cb){cb.checked=(data.props||[]).indexOf(cb.value)>-1;});
   var _os=document.getElementById('pg-osoboe');
@@ -2434,7 +2509,10 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   document.getElementById('pds').textContent='';
   document.getElementById('pwgt').textContent='';
   document.getElementById('pbk').textContent='';
-  setCardImg(null);resetNoImg();applyR('nonmagic');applyPal('nonmagic');var _at=document.getElementById('p-attune');if(_at)_at.style.display='none';['pammo','pmastery','pamrow','pxdmg'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='none';});
+  setCardImg(null);resetNoImg();applyR('nonmagic');applyPal('nonmagic');
+  /* чистое поле показываем открытым: печатать вслепую невозможно */
+  if(typeof setCursedMask==='function')setCursedMask(false);
+var _at=document.getElementById('p-attune');if(_at)_at.style.display='none';['pammo','pmastery','pamrow','pxdmg'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='none';});
   mkCounter('fn','cnt-fn',34);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcursedtxt','cnt-cursed',300);
   toast('Поля сброшены');
 });
