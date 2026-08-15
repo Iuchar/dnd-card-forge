@@ -119,6 +119,10 @@ select.si option:hover{background:var(--gold);color:#1a1208;}
 textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
 .sf{display:flex;flex-direction:column;gap:3px;}
+/* Поле, стоящее сразу под парой .row2: без отступа его подпись липнет к
+   селекту предыдущей строки и читается как часть той пары. 8px — тот же
+   воздух, что .lbl оставляет над собой в пересчёте на мелкую подпись .sl. */
+.sf-gap{margin-top:8px;}
 /* Настройка и Проклятие — два статуса предмета в одну строку, единым блоком
    во всех генераторах: под ценой и весом, перед магическим бонусом.
    Оправы у пары нет: строка устроена как «Концентрация / Ритуал» у заклинаний —
@@ -717,22 +721,27 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
 .c-stats{display:flex;flex-wrap:nowrap;gap:0;justify-content:stretch;margin:5px 0 0;height:40px;border-top:1px solid #b89a58;border-bottom:1px solid #b89a58;background:rgba(90,70,20,.05);}
 .cst{flex:1;min-width:0;background:none;border:none;border-right:1px solid rgba(90,72,32,.22);border-radius:0;padding:0 2px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;}
 .c-stats .cst:last-child{border-right:none;}
-.cst-l{font-family:'Times New Roman',Times,serif;font-size:7px;letter-spacing:.06em;text-transform:uppercase;color:#8a6b2e;margin-bottom:1px;}
+.cst-l{font-family:'Times New Roman',Times,serif;font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#8a6b2e;margin-bottom:1px;}
 .cst-v{font-size:15px;font-weight:700;color:#2a1e0a;}
-/* дополнительный урон — плашка того же вида, что «Боеприпас» */
-.c-xdmg{font-size:9.5px;color:#4a3a24;line-height:1.35;margin:5px 0 0;background:rgba(138,96,16,.08);border-radius:5px;padding:3px 9px;overflow:hidden;}
+/* дополнительный урон — плашка того же вида, что «Боеприпас», но в две строки:
+   к значению добавилось условие («2к6 огнём — пока клинок пылает»), и в одну
+   строку оно перестало помещаться. Потолок — ровно две строки: 2 × 1.35 × 10
+   плюс padding 3+3 при глобальном border-box. Клампим max-height, а не
+   line-clamp: html2canvas понимает высоту с обрезкой, а -webkit-line-clamp нет,
+   и на экспорте плашка разъехалась бы. */
+.c-xdmg{font-size:10px;color:#4a3a24;line-height:1.35;margin:5px 0 0;background:rgba(138,96,16,.08);border-radius:5px;padding:3px 9px;overflow:hidden;max-height:33px;}
 /* боеприпас + мастерство — одной строкой, кегль обеих подбирает _fitLine */
 .c-amrow{display:flex;flex-wrap:nowrap;align-items:stretch;gap:5px;margin:5px 0 0;overflow:hidden;}
 .c-amrow>div{margin:0;white-space:nowrap;flex:0 0 auto;}
 /* боеприпас — плашка как «Материал» у заклинаний (без курсива) */
-.c-ammo{font-size:9.5px;color:#4a3a24;line-height:1.35;margin:5px 0 0;background:rgba(138,96,16,.08);border-radius:5px;padding:3px 9px;overflow:hidden;}
-.c-ammo-l{font-family:'Times New Roman',Times,serif;font-size:7.5px;font-weight:700;letter-spacing:.1em;color:#8a6010;}
+.c-ammo{font-size:10px;color:#4a3a24;line-height:1.35;margin:5px 0 0;background:rgba(138,96,16,.08);border-radius:5px;padding:3px 9px;overflow:hidden;}
+.c-ammo-l{font-family:'Times New Roman',Times,serif;font-size:9px;font-weight:700;letter-spacing:.1em;color:#8a6010;}
 /* мастерство — как «На высоких уровнях» школы Воплощения, но в одну строку */
-.c-mastery{margin:5px 0 0;border-left:3px solid #c04030;background:rgba(138,96,16,.08);border-radius:0 7px 7px 0;padding:3px 9px;font-size:9.5px;color:#241a08;line-height:1.35;overflow:hidden;}
-.c-mastery-l{font-family:'Times New Roman',Times,serif;font-size:8px;font-weight:700;letter-spacing:.12em;color:#8d2a20;}
+.c-mastery{margin:5px 0 0;border-left:3px solid #c04030;background:rgba(138,96,16,.08);border-radius:0 7px 7px 0;padding:3px 9px;font-size:10px;color:#241a08;line-height:1.35;overflow:hidden;}
+.c-mastery-l{font-family:'Times New Roman',Times,serif;font-size:9px;font-weight:700;letter-spacing:.12em;color:#8d2a20;}
 /* свойства — теги-пилюли (кегль подбирает _fitProps) */
-.c-props{display:flex;flex-wrap:wrap;justify-content:center;gap:3px 4px;margin:4px 0 0;font-family:inherit;color:inherit;font-size:9px;line-height:normal;}
-.c-prop-tag{font-size:inherit;color:#4a3820;border:.5px solid #b6a06a;background:rgba(255,255,255,.4);border-radius:20px;padding:1px 5px;}
+.c-props{display:flex;flex-wrap:wrap;justify-content:center;gap:3px 4px;margin:4px 0 0;font-family:inherit;color:inherit;font-size:10px;line-height:normal;}
+.c-prop-tag{font-size:inherit;flex:0 0 auto;white-space:nowrap;color:#4a3820;border:.5px solid #b6a06a;background:rgba(255,255,255,.4);border-radius:20px;padding:1px 5px;}
 /* кроп и панель коллекции (правила общие, из бывшего page-local) */
 .crop-area img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;}
 .coll-empty svg{opacity:.2;display:block;margin:0 auto 10px;}
@@ -1002,7 +1011,17 @@ textarea.si{resize:vertical;min-height:68px;line-height:1.5;}
   <div class="lbl">Дополнительный урон</div>
   <div class="row2">
     <div class="sf"><label class="sl" for="fxd">Кубики</label><input class="si" type="text" id="fxd" placeholder="2d6" maxlength="5"/></div>
-    <div class="sf"><label class="sl" for="fxt">Тип</label><select class="si" id="fxt"><option value="">—</option><option>Огонь</option><option>Холод</option><option>Электричество</option><option>Кислота</option><option>Яд</option><option>Звук</option><option>Излучение</option><option>Некротическая энергия</option><option>Психическая энергия</option><option>Силовое поле</option></select></div>
+    <div class="sf"><label class="sl" for="fxt">Тип</label><select class="si" id="fxt"><option value="">—</option><option>Огонь</option><option>Холод</option><option>Электричество</option><option>Кислота</option><option>Яд</option><option>Звук</option><option>Излучение</option><option>Некротическая энергия</option><option>Психическая энергия</option><option>Силовое поле</option><option>Рубящий</option><option>Дробящий</option><option>Колющий</option></select></div>
+  </div>
+  <!-- Условие: дополнительный урон почти всегда чем-то обусловлен — «на 20 при
+       атаке», «по нежити», «пока клинок пылает». Без этой строки плашка обещала
+       прибавку к каждому удару. -->
+  <div class="sf sf-gap">
+    <label class="sl" for="fxc">Условие</label>
+    <div class="field-wrap field-mb">
+      <textarea class="si" id="fxc" maxlength="60" placeholder="пока клинок пылает" style="height:72px;"></textarea>
+      <span class="char-counter" id="cnt-fxc">0/60</span>
+    </div>
   </div>
   <div class="lbl lbl-hint">Бонусы владельца
     <button type="button" class="hint-btn" id="ownhint-btn" aria-expanded="false" aria-controls="ownhint" aria-label="Как считаются бонусы владельца">?</button>
@@ -1483,7 +1502,7 @@ function mkCounter(inputId,countId,max,lenFn){
 }
 ['fr1','fr2'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;this.value=this.value.replace(/[^0-9]/g,'').slice(0,4);this.setSelectionRange(p,p);});});
 ['fstr','fpr'].forEach(function(id){document.getElementById(id).addEventListener('input',function(){var p=this.selectionStart;var v=this.value.replace(/[^0-9-]/g,'');v=v.charAt(0)+v.slice(1).replace(/-/g,'');this.value=v.slice(0,2);this.setSelectionRange(p,p);});});
-mkCounter('fn','cnt-fn',60);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcursedtxt','cnt-cursed',1200);
+mkCounter('fn','cnt-fn',60);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcursedtxt','cnt-cursed',1200);mkCounter('fxc','cnt-fxc',60);
 /* Редакция страницы. Дефолт — 2014; параметр ?ed=2014|2024, которым приходят
    редиректы со старых адресов weapon-2014/2024.html, перебивает.
    За выбором галереи страница НЕ следует: генератор — своё рабочее место. */
@@ -2089,13 +2108,27 @@ var XDMG_INSTR={
   'Огонь':'огнём','Холод':'холодом','Электричество':'электричеством',
   'Кислота':'кислотой','Яд':'ядом','Звук':'звуком','Излучение':'излучением',
   'Некротическая энергия':'некротической энергией',
-  'Психическая энергия':'психической энергией','Силовое поле':'силовым полем'
+  'Психическая энергия':'психической энергией','Силовое поле':'силовым полем',
+  /* Физические типы: дополнительный урон бывает и обычным — «Булава разящего
+     удара» на криту добавляет дробящий, «Меч остроты» рубящий. Форма та же
+     творительная, что и у остальных: тип называется и без кубиков, и одна
+     форма на оба случая лучше, чем две грамматики в одной плашке. */
+  'Рубящий':'рубящим','Дробящий':'дробящим','Колющий':'колющим'
 };
+/* Кубиков может не быть: предмет, меняющий тип урона (солнечный клинок бьёт
+   излучением), заполняет только тип. Прежде плашка молчала без кубиков, и
+   такой предмет выглядел обычным.
+   Условие — отдельным полем и через тире: почти всякая прибавка чем-то
+   обусловлена («на 20 при атаке», «по нежити»), а без оговорки плашка обещала
+   её на каждый удар. */
 function xDmgText(card){
   var d=String((card&&card.xDice)||'').trim();
-  if(!d)return '';
   var t=String((card&&card.xType)||'').trim();
-  return t?(d+' '+(XDMG_INSTR[t]||t.toLowerCase())):d;
+  var тип=t?(XDMG_INSTR[t]||t.toLowerCase()):'';
+  var осн=(d&&тип)?(d+' '+тип):(d||тип);
+  if(!осн)return '';
+  var усл=String((card&&card.xCond)||'').trim();
+  return усл?(осн+' — '+усл):осн;
 }
 
 /* fmtBonus: «+3»/«−1», ноль и пусто — пустая строка */
@@ -2120,6 +2153,9 @@ function readForm(){
     magicBonus:_magVal(),
     xDice:document.getElementById('fxd').value.trim(),
     xType:document.getElementById('fxt').value,
+    /* поле в три строки — это высота ввода, а не многострочный текст: перевод
+       строки в плашке карточки разорвал бы фразу «2к6 огнём — …» посередине */
+    xCond:document.getElementById('fxc').value.replace(/\s+/g,' ').trim(),
     wgt:document.getElementById('fwgt').value.trim(),
     r1:document.getElementById('fr1').value.trim(),r2:document.getElementById('fr2').value.trim(),
     desc:document.getElementById('fdesc').value,
@@ -2359,8 +2395,8 @@ function splitDesc(data){
 /* Рендер, applyFormData и сброс оружия — общие для 2014 и 2024. */
 /* подбор кегля строки «боеприпас + мастерство»: ужимаем обе плашки, пока не влезут */
 function _fitLine(row){
-  var steps=[[9.5,'3px 9px','3px 9px'],[9.5,'3px 7px','3px 7px'],[9.5,'3px 5px','3px 5px'],
-             [9,'3px 5px','3px 5px'],[8.5,'3px 4px','3px 4px'],[8,'3px 4px','3px 4px']];
+  var steps=[[10,'3px 9px','3px 9px'],[10,'3px 7px','3px 7px'],[10,'3px 5px','3px 5px'],
+             [9.5,'3px 5px','3px 5px'],[9,'3px 4px','3px 4px'],[8.5,'3px 4px','3px 4px']];
   var am=document.getElementById('pammo'),ma=document.getElementById('pmastery');
   for(var i=0;i<steps.length;i++){
     [am,ma].forEach(function(e,n){if(e){e.style.fontSize=steps[i][0]+'px';e.style.padding=steps[i][1+n];}});
@@ -2370,16 +2406,41 @@ function _fitLine(row){
   }
 }
 
-/* подбор кегля тегов-пилюль: ужимаем шрифт/отступы, пока не влезут в 2 строки */
+/* Подбор кегля тегов-пилюль, две попытки — как у названия карточки.
+   1. Одна строка, 10 → 9 с шагом 0.5. Строка в приоритете: разорванный
+      перечень свойств читается хуже мелкого, а разница в полкегля незаметна.
+   2. Не влезло даже на 9 — переносим на вторую строку и снова идём 10 → 9:
+      дальше ужимать незачем, две строки держат все девять свойств.
+   Ниже 8.5 не опускаемся: на 6.5, как было раньше, пилюли переставали читаться.
+
+   Последние две ступени ужимают не кегль, а обвязку. Padding и рамка съедают
+   11px на пилюлю независимо от размера шрифта — на девяти свойствах это 99px
+   при строке в 283px, и полный набор («Особое» плюс все восемь) не вставал в
+   две строки даже на 8px. Поэтому сперва поджимаем отступы на том же кегле 9 и
+   только потом уходим на 8.5: замер даёт 474px против 498px — этого хватает. */
+var PROPS_STEPS=[[10,'3px 5px','1px 6px'],[9.5,'3px 4px','1px 5px'],[9,'3px 4px','1px 5px'],
+                 [9,'2px 3px','0 4px'],[8.5,'2px 2px','0 3px']];
+var PROPS_ONELINE=3;   /* сколько первых ступеней доступно попытке «в одну строку» */
 function _fitProps(el){
   if(!el||!el.children.length)return;
-  var steps=[[9,'3px 4px','1px 5px'],[8.5,'3px 3px','1px 5px'],[8,'2px 3px','0 5px'],
-             [7.5,'2px 3px','0 4px'],[7,'2px 2px','0 4px'],[6.5,'1px 2px','0 3px']];
-  for(var i=0;i<steps.length;i++){
-    el.style.fontSize=steps[i][0]+'px';el.style.gap=steps[i][1];
-    [].forEach.call(el.children,function(c){c.style.padding=steps[i][2];});
-    var one=el.children[0].offsetHeight,rowGap=parseFloat(steps[i][1])||2;
-    if(el.offsetHeight<=one*2+rowGap+1)return;
+  function шаг(s){
+    el.style.fontSize=s[0]+'px';el.style.gap=s[1];
+    [].forEach.call(el.children,function(c){c.style.padding=s[2];});
+  }
+  var i;
+  /* Первой попытке доступны только три обычные ступени, до 9. Поджатые
+     оставлены второй: иначе пять свойств ужимались до 8.5 ради одной строки, а
+     шесть тут же прыгали обратно на 10 в двух — соседние карточки выглядели
+     разнокалиберно. Строка в приоритете, но не любой ценой. */
+  el.style.flexWrap='nowrap';
+  for(i=0;i<PROPS_ONELINE;i++){
+    шаг(PROPS_STEPS[i]);
+    if(el.scrollWidth<=el.clientWidth+1)return;
+  }
+  el.style.flexWrap='wrap';
+  for(i=0;i<PROPS_STEPS.length;i++){
+    шаг(PROPS_STEPS[i]);
+    if(el.offsetHeight<=el.children[0].offsetHeight*2+4)return;
   }
 }
 
@@ -2482,6 +2543,7 @@ function applyFormData(data){
   if(typeof _edSet==='function')_edSet(_cardEdOf(data));
   document.getElementById('fxd').value=data.xDice||'';
   document.getElementById('fxt').value=data.xType||'';
+  document.getElementById('fxc').value=data.xCond||'';
   document.getElementById('fwgt').value=data.wgt||'';
   document.getElementById('fr1').value=data.r1||'';
   document.getElementById('fr2').value=data.r2||'';
@@ -2499,7 +2561,7 @@ function applyFormData(data){
   if(_os)_os.checked=(data.props||[]).indexOf('Особое')>-1;
   updateAttuneWrap();updateCursedWrap();
   applyImgThumb(data);
-  mkCounter('fn','cnt-fn',60);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcursedtxt','cnt-cursed',1200);
+  mkCounter('fn','cnt-fn',60);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcursedtxt','cnt-cursed',1200);mkCounter('fxc','cnt-fxc',60);
 }
 
 /* reset */
@@ -2514,7 +2576,7 @@ document.getElementById('btn-reset').addEventListener('click',function(){
      в карточку, и перекидывать его на 2014 посреди работы с 2024 — потеря места */
   var _os2=document.getElementById('pg-osoboe');
   if(_os2)_os2.checked=false;
-  ['fn','fc','fstr','fpr','fxd','fwgt','fr1','fr2','fdesc','fflv','fcursedtxt'].forEach(function(id){document.getElementById(id).value='';});
+  ['fn','fc','fstr','fpr','fxd','fxc','fwgt','fr1','fr2','fdesc','fflv','fcursedtxt'].forEach(function(id){document.getElementById(id).value='';});
   document.getElementById('fcoin').value='зм';
   var _fm2=document.getElementById('fmastery');if(_fm2)_fm2.value='';
   ['fk','fcat','fdt','fd1','fd2','fxt','fammo'].forEach(function(id){document.getElementById(id).selectedIndex=0;});
@@ -2541,7 +2603,7 @@ document.getElementById('btn-reset').addEventListener('click',function(){
   /* чистое поле показываем открытым: печатать вслепую невозможно */
   if(typeof setCursedMask==='function')setCursedMask(false);
 var _at=document.getElementById('p-attune');if(_at)_at.style.display='none';['pammo','pmastery','pamrow','pxdmg'].forEach(function(id){var e=document.getElementById(id);if(e)e.style.display='none';});
-  mkCounter('fn','cnt-fn',60);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcursedtxt','cnt-cursed',1200);
+  mkCounter('fn','cnt-fn',60);mkCounter('fflv','cnt-flv',70);mkCounter('fdesc','cnt-desc',2000,visLen);mkCounter('fcursedtxt','cnt-cursed',1200);mkCounter('fxc','cnt-fxc',60);
   toast('Поля сброшены');
 });
 
